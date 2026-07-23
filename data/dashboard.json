@@ -1,0 +1,390 @@
+{
+  "schema_version": "3.0.0",
+  "data_mode": "OPERATIONAL",
+  "data_notice": "INFORMACIÓN AUTOMÁTICA PROVISORIA — PENDIENTE DE REVISIÓN",
+  "generated_at": "2026-07-22T21:12:15.905874-03:00",
+  "timezone": "America/Montevideo",
+  "stale_after_hours": 12,
+  "freshness_thresholds": {
+    "counts": {
+      "updated_max_days": 1,
+      "aged_max_days": 3
+    },
+    "mortality": {
+      "updated_max_days": 1,
+      "aged_max_days": 4
+    }
+  },
+  "campaign": {
+    "code": "2026-2027",
+    "name": "Campaña de pariciones 2026-2027",
+    "status": "ACTIVA",
+    "operational_start": "2026-07-18",
+    "expected_end": null
+  },
+  "initial_source": {
+    "file": "Planilla 2026-2027.xlsx",
+    "sha256": "A531B1BD1409B56B36BD9B4DA722550AF88C281F9D85690B2B1A87D8FD76043F",
+    "imported_at": "2026-07-22T21:26:40.369967Z",
+    "source_current": true,
+    "read_only": true,
+    "totals": {
+      "served": 888,
+      "expected_to_lamb": 813,
+      "expected_lambs": 960
+    }
+  },
+  "overview": {
+    "served_ewes": 888,
+    "expected_to_lamb": 813,
+    "lambed_ewes": null,
+    "progress_percent": null,
+    "expected_lambs": 960,
+    "born_lambs": null,
+    "born_alive": null,
+    "stillborn": null,
+    "lamb_deaths": 1,
+    "ewe_deaths": 1,
+    "deaths_last_24h": null
+  },
+  "modules": [
+    {
+      "code": "INTENSIVO",
+      "name": "INTENSIVO / Módulo de carne / Cara Mora",
+      "initial_values": {
+        "served": 103,
+        "scanned": 102,
+        "classified": 102,
+        "deaths_between_served_and_scan": 1,
+        "empty": 6,
+        "single": 65,
+        "double": 29,
+        "triple": 2,
+        "triple_state": "KNOWN",
+        "expected_to_lamb": 96,
+        "expected_lambs": 129,
+        "ai_pregnant": null,
+        "repaso_pregnant": null,
+        "weight_kg": 45.8
+      },
+      "ewe_counts": {
+        "expected_to_lamb": 96,
+        "counted_lambed": null,
+        "progress_percent": null,
+        "last_count_date": null
+      },
+      "lamb_counts": {
+        "expected_total": 129,
+        "counted": null,
+        "progress_percent": null,
+        "last_count_date": null
+      },
+      "mortality": {
+        "lamb_deaths_accumulated": 1,
+        "ewe_deaths_accumulated": 1,
+        "deaths_last_24h": null,
+        "last_report_date": "2026-07-19"
+      }
+    },
+    {
+      "code": "DOHNE",
+      "name": "MERINO DOHNE",
+      "initial_values": {
+        "served": 155,
+        "scanned": null,
+        "classified": 155,
+        "deaths_between_served_and_scan": null,
+        "empty": 11,
+        "single": 108,
+        "double": 36,
+        "triple": null,
+        "triple_state": "NOT_REPORTED",
+        "expected_to_lamb": 144,
+        "expected_lambs": 180,
+        "ai_pregnant": 53,
+        "repaso_pregnant": 91,
+        "weight_kg": 52.8,
+        "composition_two_tooth": 55,
+        "composition_adult_ewes": 100
+      },
+      "ewe_counts": {
+        "expected_to_lamb": 144,
+        "counted_lambed": null,
+        "progress_percent": null,
+        "last_count_date": null
+      },
+      "lamb_counts": {
+        "expected_total": 180,
+        "counted": null,
+        "progress_percent": null,
+        "last_count_date": null
+      },
+      "mortality": {
+        "lamb_deaths_accumulated": null,
+        "ewe_deaths_accumulated": null,
+        "deaths_last_24h": null,
+        "last_report_date": null
+      }
+    },
+    {
+      "code": "MA",
+      "name": "MERINO AUSTRALIANO",
+      "initial_values": {
+        "served": 630,
+        "scanned": 624,
+        "classified": 624,
+        "deaths_between_served_and_scan": 6,
+        "empty": 51,
+        "single": 498,
+        "double": 72,
+        "triple": 3,
+        "triple_state": "KNOWN",
+        "expected_to_lamb": 573,
+        "expected_lambs": 651,
+        "ai_pregnant": null,
+        "repaso_pregnant": null
+      },
+      "ewe_counts": {
+        "expected_to_lamb": 573,
+        "counted_lambed": null,
+        "progress_percent": null,
+        "last_count_date": null
+      },
+      "lamb_counts": {
+        "expected_total": 651,
+        "counted": null,
+        "progress_percent": null,
+        "last_count_date": null
+      },
+      "mortality": {
+        "lamb_deaths_accumulated": null,
+        "ewe_deaths_accumulated": null,
+        "deaths_last_24h": null,
+        "last_report_date": null
+      }
+    }
+  ],
+  "daily_evolution": [],
+  "environmental_forecast": {
+    "data_status": "DEMO",
+    "data_notice": "DATOS DE DEMOSTRACIÓN — NO PRODUCTIVOS",
+    "integration_status": "PENDIENTE_ACCESO_OFICIAL_CSV",
+    "source": {
+      "name": "INIA-GRAS",
+      "official_url": "https://inia.uy/gras/Aplicaciones_y_recursos/Prevision%20Corderos",
+      "model": "WRF7ens",
+      "spatial_resolution_km": 7
+    },
+    "location": {
+      "name": "CICOMA — Colonia Lavalleja, Salto",
+      "latitude": null,
+      "longitude": null
+    },
+    "grid_point": {
+      "latitude": null,
+      "longitude": null,
+      "distance_km": null,
+      "selection_method": "NEAREST_NEIGHBOR_HAVERSINE",
+      "validation_status": "PENDIENTE_ACCESO_OFICIAL_CSV"
+    },
+    "unit": "kJ/m²/h",
+    "period_type": "DAILY",
+    "aggregation_method": "No publicado por INIA-GRAS; validación pendiente",
+    "forecast_generated_at": "2026-07-22T13:06:00-03:00",
+    "queried_at": "2026-07-22T17:35:00-03:00",
+    "days": [
+      {
+        "date": "2026-07-22",
+        "period": "Jornada diaria · demostración",
+        "chill_index": 1148,
+        "risk_category": "ALTO",
+        "expected_lambings": 9,
+        "expected_lambs": 14,
+        "lambs_exposed_first_72h": 14,
+        "modules": [
+          {
+            "code": "INTENSIVO",
+            "expected_lambings": 3,
+            "expected_lambs": 5,
+            "lambs_exposed_first_72h": 5
+          },
+          {
+            "code": "DOHNE",
+            "expected_lambings": 2,
+            "expected_lambs": 3,
+            "lambs_exposed_first_72h": 3
+          },
+          {
+            "code": "MA",
+            "expected_lambings": 4,
+            "expected_lambs": 6,
+            "lambs_exposed_first_72h": 6
+          }
+        ]
+      },
+      {
+        "date": "2026-07-23",
+        "period": "Jornada diaria · demostración",
+        "chill_index": 960,
+        "risk_category": "BAJO",
+        "expected_lambings": 10,
+        "expected_lambs": 16,
+        "lambs_exposed_first_72h": 12,
+        "modules": [
+          {
+            "code": "INTENSIVO",
+            "expected_lambings": 2,
+            "expected_lambs": 3,
+            "lambs_exposed_first_72h": 2
+          },
+          {
+            "code": "DOHNE",
+            "expected_lambings": 3,
+            "expected_lambs": 5,
+            "lambs_exposed_first_72h": 4
+          },
+          {
+            "code": "MA",
+            "expected_lambings": 5,
+            "expected_lambs": 8,
+            "lambs_exposed_first_72h": 6
+          }
+        ]
+      },
+      {
+        "date": "2026-07-24",
+        "period": "Jornada diaria · demostración",
+        "chill_index": 1040,
+        "risk_category": "MEDIO",
+        "expected_lambings": 8,
+        "expected_lambs": 13,
+        "lambs_exposed_first_72h": 13,
+        "modules": [
+          {
+            "code": "INTENSIVO",
+            "expected_lambings": 2,
+            "expected_lambs": 3,
+            "lambs_exposed_first_72h": 3
+          },
+          {
+            "code": "DOHNE",
+            "expected_lambings": 2,
+            "expected_lambs": 3,
+            "lambs_exposed_first_72h": 3
+          },
+          {
+            "code": "MA",
+            "expected_lambings": 4,
+            "expected_lambs": 7,
+            "lambs_exposed_first_72h": 7
+          }
+        ]
+      },
+      {
+        "date": "2026-07-25",
+        "period": "Jornada diaria · demostración",
+        "chill_index": 930,
+        "risk_category": "BAJO",
+        "expected_lambings": 7,
+        "expected_lambs": 11,
+        "lambs_exposed_first_72h": 8,
+        "modules": [
+          {
+            "code": "INTENSIVO",
+            "expected_lambings": 1,
+            "expected_lambs": 2,
+            "lambs_exposed_first_72h": 1
+          },
+          {
+            "code": "DOHNE",
+            "expected_lambings": 2,
+            "expected_lambs": 3,
+            "lambs_exposed_first_72h": 2
+          },
+          {
+            "code": "MA",
+            "expected_lambings": 4,
+            "expected_lambs": 6,
+            "lambs_exposed_first_72h": 5
+          }
+        ]
+      },
+      {
+        "date": "2026-07-26",
+        "period": "Jornada diaria · demostración",
+        "chill_index": 1065,
+        "risk_category": "MEDIO",
+        "expected_lambings": 6,
+        "expected_lambs": 9,
+        "lambs_exposed_first_72h": 9,
+        "modules": [
+          {
+            "code": "INTENSIVO",
+            "expected_lambings": 1,
+            "expected_lambs": 2,
+            "lambs_exposed_first_72h": 2
+          },
+          {
+            "code": "DOHNE",
+            "expected_lambings": 2,
+            "expected_lambs": 3,
+            "lambs_exposed_first_72h": 3
+          },
+          {
+            "code": "MA",
+            "expected_lambings": 3,
+            "expected_lambs": 4,
+            "lambs_exposed_first_72h": 4
+          }
+        ]
+      }
+    ]
+  },
+  "recent_records": [
+    {
+      "date": "2026-07-19",
+      "module_code": "INTENSIVO",
+      "event_type": "EWE_DEATH",
+      "event_label": "Muerte de oveja",
+      "quantity": 1,
+      "observation": "Oveja con problema en una pata y baja condición corporal, encontrada muerta a la mañana siguiente.",
+      "validation_status": "CONFIRMED",
+      "source": "ZAPIA_VALIDADO"
+    },
+    {
+      "date": "2026-07-19",
+      "module_code": "INTENSIVO",
+      "event_type": "LAMB_DEATH",
+      "event_label": "Muerte de cordero",
+      "quantity": 1,
+      "observation": "Muerte de un cordero con malformación congénita informada.",
+      "validation_status": "CONFIRMED",
+      "source": "ZAPIA_VALIDADO"
+    },
+    {
+      "date": "2026-07-18",
+      "module_code": "INTENSIVO",
+      "event_type": "CAMPAIGN_MILESTONE",
+      "event_label": "Hito de campaña",
+      "quantity": null,
+      "observation": "Inicio de parición del módulo servido con Cara Mora.",
+      "validation_status": "CONFIRMED",
+      "source": "ZAPIA_VALIDADO"
+    }
+  ],
+  "automatic_provisional": {
+    "notice": "INFORMACIÓN AUTOMÁTICA PROVISORIA — PENDIENTE DE REVISIÓN",
+    "pending_count": 0,
+    "records": []
+  },
+  "update_status": {
+    "last_zip": {
+      "name": "Reporte Completo Pariciones CICOMA 2026.zip",
+      "processed_at": "2026-07-23T00:08:54.172239Z",
+      "status": "YA_PROCESADO"
+    },
+    "last_sync_at": "2026-07-22T21:12:15.905874-03:00",
+    "pending_operations": 0,
+    "public_message": "Valores iniciales confirmados desde Excel; los datos automáticos se muestran separados y no afectan los indicadores hasta su revisión."
+  }
+}

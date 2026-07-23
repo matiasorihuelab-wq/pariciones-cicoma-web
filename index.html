@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Tablero operativo del Control de Pariciones CICOMA 2026-2027"
+    />
+    <meta name="theme-color" content="#006937" />
+    <title>Control de Pariciones CICOMA 2026-2027</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="demo-ribbon" role="status">
+      <span class="demo-ribbon__dot" aria-hidden="true"></span>
+      <strong id="demo-notice">INFORMACIÓN AUTOMÁTICA PROVISORIA — PENDIENTE DE REVISIÓN</strong>
+    </div>
+
+    <header class="site-header">
+      <div class="shell site-header__inner">
+        <a class="brand" href="#inicio" aria-label="Ir al inicio">
+          <span class="logo-placeholder" aria-label="Espacio reservado para el logotipo oficial del SUL">
+            Logotipo oficial SUL
+          </span>
+          <span class="brand__copy">
+            <span class="brand__eyebrow">CICOMA · CAMPAÑA OVINA</span>
+            <span class="brand__name">Control de Pariciones</span>
+          </span>
+        </a>
+
+        <nav class="main-nav" aria-label="Navegación principal">
+          <a class="main-nav__link is-active" href="#inicio">Inicio</a>
+          <a class="main-nav__link" href="#modulos">Módulos</a>
+          <a class="main-nav__link" href="#riesgo">Riesgo ambiental</a>
+          <a class="main-nav__link" href="#registros">Registros</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <section class="hero" id="inicio" aria-labelledby="page-title">
+        <div class="shell">
+          <div class="hero__heading">
+            <div>
+              <p class="eyebrow">SEGUIMIENTO DE CAMPAÑA</p>
+              <h1 id="page-title">Control de Pariciones CICOMA 2026-2027</h1>
+              <p class="hero__intro">
+                Avance de recuentos, mortalidad y previsión ambiental en una lectura común.
+              </p>
+            </div>
+            <div class="hero__meta" aria-label="Estado del tablero">
+              <span class="status-pill status-pill--operational" id="mode-status">Tablero operativo</span>
+              <span class="updated-label">Actualizado <strong id="last-updated">—</strong></span>
+            </div>
+          </div>
+
+          <div class="hero-panel">
+            <div class="progress-spotlight">
+              <div
+                class="progress-ring"
+                id="progress-ring"
+                role="img"
+                aria-label="Avance de parición"
+              >
+                <div class="progress-ring__inner">
+                  <strong id="progress-value">—</strong>
+                  <span>de avance</span>
+                </div>
+              </div>
+              <div class="progress-spotlight__copy">
+                <p class="eyebrow eyebrow--light">AVANCE GENERAL</p>
+                <h2><span id="lambed-highlight">—</span> ovejas paridas contabilizadas</h2>
+                <p>
+                  Sobre <strong id="expected-highlight">—</strong> hembras previstas en la fuente
+                  inicial vigente.
+                </p>
+              </div>
+            </div>
+
+            <div class="hero-panel__secondary">
+              <div>
+                <span class="mini-label">Corderos vivos</span>
+                <strong id="alive-highlight">—</strong>
+              </div>
+              <div>
+                <span class="mini-label">Último procesamiento</span>
+                <strong id="processing-highlight">—</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--metrics" aria-labelledby="general-title">
+        <div class="shell">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">PANORAMA GENERAL</p>
+              <h2 id="general-title">La campaña de un vistazo</h2>
+            </div>
+            <p>Valores iniciales confirmados y observaciones validadas de la campaña.</p>
+          </div>
+          <div class="metric-grid" id="metric-grid" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="section" id="modulos" aria-labelledby="modules-title">
+        <div class="shell">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">RESUMEN POR MÓDULO</p>
+              <h2 id="modules-title">Tres módulos, una lectura común</h2>
+            </div>
+            <p>
+              Ovejas y corderos conservan recuentos, porcentajes y fechas independientes.
+            </p>
+          </div>
+          <div class="freshness-key" aria-label="Estados posibles de los recuentos">
+            <span class="freshness-badge freshness-badge--updated">ACTUALIZADO</span>
+            <span class="freshness-badge freshness-badge--aged">RECUENTO CON ANTIGÜEDAD</span>
+            <span class="freshness-badge freshness-badge--stale">SIN RECUENTO RECIENTE</span>
+          </div>
+          <div class="module-grid" id="module-grid" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="section section--chart" aria-labelledby="evolution-title">
+        <div class="shell">
+          <div class="chart-card">
+            <div class="chart-card__header">
+              <div>
+                <p class="eyebrow">EVOLUCIÓN DIARIA</p>
+                <h2 id="evolution-title">Ritmo de la parición</h2>
+              </div>
+              <div class="chart-legend" aria-label="Referencias del gráfico">
+                <span><i class="legend-mark legend-mark--ewes"></i>Ovejas paridas</span>
+                <span><i class="legend-mark legend-mark--lambs"></i>Corderos nacidos</span>
+                <span><i class="legend-mark legend-mark--line"></i>Acumulado</span>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <canvas
+                id="evolution-chart"
+                role="img"
+                aria-label="Gráfico de evolución diaria de pariciones y nacimientos"
+              ></canvas>
+            </div>
+            <p class="chart-note">
+              Las barras muestran actividad diaria; la línea representa el acumulado de ovejas
+              paridas.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section environmental-section" id="riesgo" aria-labelledby="risk-title">
+        <div class="shell">
+          <div class="section-heading section-heading--risk">
+            <div>
+              <p class="eyebrow">CHILL INDEX · PRÓXIMOS 5 DÍAS</p>
+              <h2 id="risk-title">Previsión de partos y riesgo ambiental</h2>
+            </div>
+            <a
+              class="official-link"
+              id="official-link"
+              href="https://inia.uy/gras/Aplicaciones_y_recursos/Prevision%20Corderos"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Ver previsión oficial en INIA-GRAS
+            </a>
+          </div>
+
+          <div class="source-banner">
+            <strong>Fuente meteorológica: INIA-GRAS</strong>
+              <span>Sección de demostración; no sustituye la consulta oficial.</span>
+          </div>
+
+          <div class="forecast-metadata" id="forecast-metadata" aria-live="polite"></div>
+          <div class="forecast-grid" id="forecast-grid" aria-live="polite"></div>
+
+          <div class="exposure-note">
+            <p>
+              <strong>Corderos:</strong> Corderos esperados expuestos a condiciones ambientales de
+              riesgo durante sus primeras 72 horas.
+            </p>
+            <p>
+              <strong>Ovejas:</strong> Ovejas con parto esperado durante jornadas de riesgo
+              ambiental.
+            </p>
+            <span>
+              El cálculo futuro considerará el día esperado de nacimiento y los dos días
+              posteriores, aplicará la categoría máxima y contará cada cohorte una sola vez.
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="registros" aria-labelledby="records-title">
+        <div class="shell records-layout">
+          <div class="records-panel">
+            <div class="section-heading section-heading--compact">
+              <div>
+                <p class="eyebrow">REGISTROS RECIENTES</p>
+                <h2 id="records-title">Últimas novedades</h2>
+              </div>
+              <span class="record-count" id="record-count">—</span>
+            </div>
+
+            <div class="records-table-wrap">
+              <table class="records-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Módulo</th>
+                    <th scope="col">Evento</th>
+                    <th scope="col">Cant.</th>
+                    <th scope="col">Observación general</th>
+                  </tr>
+                </thead>
+                <tbody id="records-body"></tbody>
+              </table>
+            </div>
+            <div class="record-cards" id="record-cards"></div>
+          </div>
+
+          <aside class="update-card" aria-labelledby="update-title">
+            <div class="update-card__top">
+              <span class="update-icon" aria-hidden="true"></span>
+              <div>
+                <p class="eyebrow eyebrow--light">ESTADO DE ACTUALIZACIÓN</p>
+                <h2 id="update-title">Datos del tablero</h2>
+              </div>
+            </div>
+
+            <div class="freshness" id="freshness">
+              <span class="freshness__dot" aria-hidden="true"></span>
+              <div>
+                <strong id="freshness-label">Comprobando estado…</strong>
+                <span id="freshness-detail">—</span>
+              </div>
+            </div>
+
+            <dl class="update-list">
+              <div>
+                <dt>Último ZIP procesado</dt>
+                <dd id="last-zip">—</dd>
+              </div>
+              <div>
+                <dt>Procesamiento</dt>
+                <dd id="last-processing">—</dd>
+              </div>
+              <div>
+                <dt>Última sincronización</dt>
+                <dd id="last-sync">—</dd>
+              </div>
+              <div>
+                <dt>Operaciones pendientes</dt>
+                <dd id="pending-operations">—</dd>
+              </div>
+              <div>
+                <dt>Fuente inicial vigente</dt>
+                <dd id="initial-source">—</dd>
+              </div>
+              <div>
+                <dt>SHA-256 de la fuente</dt>
+                <dd id="initial-source-hash">—</dd>
+              </div>
+              <div>
+                <dt>Importación de la fuente</dt>
+                <dd id="initial-source-date">—</dd>
+              </div>
+            </dl>
+
+            <p class="update-message" id="update-message">—</p>
+            <p class="update-message" id="provisional-message">—</p>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell site-footer__inner">
+        <div>
+          <strong>Control de Pariciones CICOMA</strong>
+          <span>Tablero operativo de consulta</span>
+        </div>
+        <p>Los datos automáticos permanecen separados hasta su revisión humana.</p>
+      </div>
+    </footer>
+
+    <div class="load-error" id="load-error" role="alert" hidden>
+      <strong>No se pudo cargar el tablero operativo.</strong>
+      <span>Generá <code>data/dashboard.json</code> y ejecutá <code>probar_web.bat</code>.</span>
+    </div>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>

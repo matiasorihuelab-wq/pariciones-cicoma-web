@@ -1,0 +1,8 @@
+dist/
+data/dashboard.demo.json
+data/chill.demo.json
+.openai/
+package.json
+scripts/
+probar_web.bat
+ESQUEMA_JSON.md
