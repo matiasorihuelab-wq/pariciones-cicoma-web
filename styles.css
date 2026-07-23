@@ -823,6 +823,11 @@ h3 {
   text-align: right;
 }
 
+.source-banner span.is-stale {
+  color: var(--alert-red);
+  font-weight: 800;
+}
+
 .forecast-metadata {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -860,6 +865,44 @@ h3 {
   font-size: 0.68rem;
 }
 
+.forecast-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 18px;
+  padding: 12px 16px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+}
+
+.forecast-controls label {
+  color: var(--ink-900);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.forecast-controls select {
+  min-width: 210px;
+  padding: 9px 34px 9px 11px;
+  border: 1px solid var(--gray-300);
+  border-radius: 7px;
+  background: #ffffff;
+  color: var(--ink-900);
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.forecast-controls span {
+  margin-left: auto;
+  color: var(--alert-orange);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
 .forecast-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -894,6 +937,11 @@ h3 {
 
 .forecast-card--critico {
   --risk-color: var(--alert-red-dark);
+}
+
+.forecast-card--pending,
+.forecast-card--unknown {
+  --risk-color: var(--institutional-gray);
 }
 
 .forecast-card > header {
@@ -951,6 +999,12 @@ h3 {
   color: #ffffff;
 }
 
+.risk-badge--pending,
+.risk-badge--unknown {
+  background: var(--gray-200);
+  color: var(--ink-700);
+}
+
 .chill-value {
   display: grid;
   justify-items: center;
@@ -962,7 +1016,7 @@ h3 {
 
 .chill-value strong {
   color: var(--ink-900);
-  font-size: 2.1rem;
+  font-size: 1.45rem;
   font-weight: 800;
   line-height: 1;
 }
@@ -1006,6 +1060,11 @@ h3 {
   font-weight: 800;
 }
 
+.forecast-totals dd.forecast-state {
+  font-size: 0.64rem;
+  text-align: right;
+}
+
 .forecast-card details {
   border-top: 1px solid var(--gray-200);
 }
@@ -1045,6 +1104,83 @@ h3 {
 .forecast-card details li span {
   color: var(--ink-600);
   text-align: right;
+}
+
+.map-link {
+  display: block;
+  margin: 0 15px 15px;
+  padding-top: 11px;
+  border-top: 1px solid var(--gray-200);
+  color: var(--sul-green-dark);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-align: center;
+  text-decoration: none;
+}
+
+.map-link:hover {
+  text-decoration: underline;
+}
+
+.map-link--disabled {
+  color: var(--gray-700);
+}
+
+.forecast-empty {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 6px;
+  padding: 24px;
+  border: 1px dashed var(--gray-300);
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+  color: var(--ink-700);
+}
+
+.forecast-chart-panel {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.32fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: center;
+  margin-top: 18px;
+  padding: 20px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+}
+
+.forecast-chart-panel h3 {
+  margin: 4px 0 0;
+  color: var(--ink-900);
+  font-size: 1.08rem;
+}
+
+.forecast-chart-wrap {
+  position: relative;
+  min-height: 280px;
+}
+
+.forecast-chart-wrap canvas {
+  width: 100%;
+  height: 280px;
+}
+
+.forecast-chart-empty {
+  display: grid;
+  min-height: 280px;
+  place-items: center;
+  margin: 0;
+  border: 1px dashed var(--gray-300);
+  border-radius: 8px;
+  background: var(--gray-100);
+  color: var(--alert-orange);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.forecast-chart-empty[hidden] {
+  display: none;
 }
 
 .exposure-note {
@@ -1428,6 +1564,10 @@ h3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .forecast-chart-panel {
+    grid-template-columns: 1fr;
+  }
+
   .records-layout {
     grid-template-columns: 1fr;
   }
@@ -1596,6 +1736,19 @@ h3 {
   .forecast-grid,
   .exposure-note {
     grid-template-columns: 1fr;
+  }
+
+  .forecast-controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .forecast-controls select {
+    width: 100%;
+  }
+
+  .forecast-controls span {
+    margin-left: 0;
   }
 
   .exposure-note > span {

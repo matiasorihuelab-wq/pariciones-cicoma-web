@@ -158,8 +158,8 @@
         <div class="shell">
           <div class="section-heading section-heading--risk">
             <div>
-              <p class="eyebrow">CHILL INDEX · PRÓXIMOS 5 DÍAS</p>
-              <h2 id="risk-title">Previsión de partos y riesgo ambiental</h2>
+              <p class="eyebrow">INIA-GRAS · INTERPRETADO POR ZAPIA</p>
+              <h2 id="risk-title">RIESGO AMBIENTAL Y PARICIONES — PRÓXIMOS 5 DÍAS</h2>
             </div>
             <a
               class="official-link"
@@ -173,12 +173,39 @@
           </div>
 
           <div class="source-banner">
-            <strong>Fuente meteorológica: INIA-GRAS</strong>
-              <span>Sección de demostración; no sustituye la consulta oficial.</span>
+            <strong>Fuente: INIA-GRAS interpretada por Zapia</strong>
+            <span id="forecast-status-banner">Cargando estado del pronóstico…</span>
           </div>
 
           <div class="forecast-metadata" id="forecast-metadata" aria-live="polite"></div>
+
+          <div class="forecast-controls">
+            <label for="module-selector">Módulo</label>
+            <select id="module-selector">
+              <option value="TODOS">TODOS</option>
+              <option value="INTENSIVO">INTENSIVO</option>
+              <option value="DOHNE">MERINO DOHNE</option>
+              <option value="MA">MERINO AUSTRALIANO</option>
+            </select>
+            <span id="product-cross-status" role="status"></span>
+          </div>
+
           <div class="forecast-grid" id="forecast-grid" aria-live="polite"></div>
+
+          <div class="forecast-chart-panel">
+            <div>
+              <p class="eyebrow">PREVISIÓN DIARIA</p>
+              <h3>Ovejas a parir y corderos a nacer</h3>
+            </div>
+            <div class="forecast-chart-wrap">
+              <canvas
+                id="forecast-chart"
+                role="img"
+                aria-label="Gráfico de barras de ovejas previstas a parir y corderos previstos a nacer"
+              ></canvas>
+              <p id="forecast-chart-empty" class="forecast-chart-empty" hidden></p>
+            </div>
+          </div>
 
           <div class="exposure-note">
             <p>
@@ -189,9 +216,9 @@
               <strong>Ovejas:</strong> Ovejas con parto esperado durante jornadas de riesgo
               ambiental.
             </p>
-            <span>
-              El cálculo futuro considerará el día esperado de nacimiento y los dos días
-              posteriores, aplicará la categoría máxima y contará cada cohorte una sola vez.
+            <span id="product-cross-message">
+              El cálculo de exposición se habilitará cuando exista una distribución diaria de
+              partos cargada.
             </span>
           </div>
         </div>

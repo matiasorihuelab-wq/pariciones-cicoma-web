@@ -1,0 +1,462 @@
+{
+  "schema_version": "1.0.0",
+  "status": "OK",
+  "source": {
+    "name": "INIA-GRAS",
+    "interpreted_by": "Zapia",
+    "label": "INIA-GRAS interpretada por Zapia",
+    "official_url": "https://inia.uy/gras/Aplicaciones_y_recursos/Prevision%20Corderos"
+  },
+  "location": {
+    "name": "CICOMA"
+  },
+  "analyzed_at": "2026-07-23T14:15:00-03:00",
+  "forecast_run_date": "2026-07-23",
+  "imported_at": "2026-07-23T19:56:28.711782-03:00",
+  "sha256": "10e2ef52a2ef9ae9d8f4d9c40eab39bca428e19ccff6cd43e1cbc66413317997",
+  "forecast_age_hours": 5.69,
+  "update_status": {
+    "state": "ACTUALIZADO",
+    "stale": false,
+    "message": "Pronóstico válido importado desde Zapia."
+  },
+  "product_cross": {
+    "status": "PENDIENTE_CURVA_DISTRIBUCION_PARTOS",
+    "message": "SIN DISTRIBUCIÓN DE PARTOS CARGADA",
+    "original_forecast_available": false,
+    "adjusted_forecast_available": false
+  },
+  "product_context": {
+    "campaign": "2026-2027",
+    "modules": [
+      {
+        "code": "INTENSIVO",
+        "name": "INTENSIVO",
+        "expected_to_lamb": 96,
+        "expected_lambs": 129,
+        "counted_lambed": null,
+        "counted_lambs": null,
+        "last_count_date": null
+      },
+      {
+        "code": "DOHNE",
+        "name": "MERINO DOHNE",
+        "expected_to_lamb": 144,
+        "expected_lambs": 180,
+        "counted_lambed": null,
+        "counted_lambs": null,
+        "last_count_date": null
+      },
+      {
+        "code": "MA",
+        "name": "MERINO AUSTRALIANO",
+        "expected_to_lamb": 573,
+        "expected_lambs": 651,
+        "counted_lambed": null,
+        "counted_lambs": null,
+        "last_count_date": null
+      }
+    ],
+    "totals": {
+      "expected_to_lamb": 813,
+      "expected_lambs": 960,
+      "counted_lambed": null,
+      "counted_lambs": null
+    }
+  },
+  "module_options": [
+    {
+      "code": "TODOS",
+      "name": "TODOS"
+    },
+    {
+      "code": "INTENSIVO",
+      "name": "INTENSIVO"
+    },
+    {
+      "code": "DOHNE",
+      "name": "MERINO DOHNE"
+    },
+    {
+      "code": "MA",
+      "name": "MERINO AUSTRALIANO"
+    }
+  ],
+  "days": [
+    {
+      "date": "2026-07-23",
+      "risk_category": "BAJO",
+      "display_risk_category": "BAJO",
+      "ci_min": 900.0,
+      "ci_max": 1000.0,
+      "ci_interval": "900–1000",
+      "ci_unit": "kJ/m2/h",
+      "confidence": 0.85,
+      "requires_review": false,
+      "automatic_use": true,
+      "image_url": "https://drive.google.com/file/d/1LzinL3hZTGCwSU8fA0MgEaYuKP47xqrg/view",
+      "expected_ewes_lambing": null,
+      "expected_lambs_born": null,
+      "lambs_in_first_72h_on_date": null,
+      "modules": [
+        {
+          "code": "INTENSIVO",
+          "name": "INTENSIVO",
+          "expected_ewes_lambing": null,
+          "expected_lambs_born": null,
+          "lambs_in_first_72h_on_date": null,
+          "original_forecast": null,
+          "adjusted_forecast": null,
+          "product_context": {
+            "code": "INTENSIVO",
+            "name": "INTENSIVO",
+            "expected_to_lamb": 96,
+            "expected_lambs": 129,
+            "counted_lambed": null,
+            "counted_lambs": null,
+            "last_count_date": null
+          }
+        },
+        {
+          "code": "DOHNE",
+          "name": "MERINO DOHNE",
+          "expected_ewes_lambing": null,
+          "expected_lambs_born": null,
+          "lambs_in_first_72h_on_date": null,
+          "original_forecast": null,
+          "adjusted_forecast": null,
+          "product_context": {
+            "code": "DOHNE",
+            "name": "MERINO DOHNE",
+            "expected_to_lamb": 144,
+            "expected_lambs": 180,
+            "counted_lambed": null,
+            "counted_lambs": null,
+            "last_count_date": null
+          }
+        },
+        {
+          "code": "MA",
+          "name": "MERINO AUSTRALIANO",
+          "expected_ewes_lambing": null,
+          "expected_lambs_born": null,
+          "lambs_in_first_72h_on_date": null,
+          "original_forecast": null,
+          "adjusted_forecast": null,
+          "product_context": {
+            "code": "MA",
+            "name": "MERINO AUSTRALIANO",
+            "expected_to_lamb": 573,
+            "expected_lambs": 651,
+            "counted_lambed": null,
+            "counted_lambs": null,
+            "last_count_date": null
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-07-24",
+      "risk_category": "BAJO",
+      "display_risk_category": "BAJO",
+      "ci_min": 900.0,
+      "ci_max": 1000.0,
+      "ci_interval": "900–1000",
+      "ci_unit": "kJ/m2/h",
+      "confidence": 0.85,
+      "requires_review": false,
+      "automatic_use": true,
+      "image_url": "https://drive.google.com/file/d/1b_zo_W9-uMrag0SSd0RMo8JoiShVD1Kd/view",
+      "expected_ewes_lambing": null,
+      "expected_lambs_born": null,
+      "lambs_in_first_72h_on_date": null,
+      "modules": [
+        {
+          "code": "INTENSIVO",
+          "name": "INTENSIVO",
+          "expected_ewes_lambing": null,
+          "expected_lambs_born": null,
+          "lambs_in_first_72h_on_date": null,
+          "original_forecast": null,
+          "adjusted_forecast": null,
+          "product_context": {
+            "code": "INTENSIVO",
+            "name": "INTENSIVO",
+            "expected_to_lamb": 96,
+            "expected_lambs": 129,
+            "counted_lambed": null,
+            "counted_lambs": null,
+            "last_count_date": null
+          }
+        },
+        {
+          "code": "DOHNE",
+          "name": "MERINO DOHNE",
+          "expected_ewes_lambing": null,
+          "expected_lambs_born": null,
+          "lambs_in_first_72h_on_date": null,
+          "original_forecast": null,
+          "adjusted_forecast": null,
+          "product_context": {
+            "code": "DOHNE",
+            "name": "MERINO DOHNE",
+            "expected_to_lamb": 144,
+            "expected_lambs": 180,
+            "counted_lambed": null,
+            "counted_lambs": null,
+            "last_count_date": null
+          }
+        },
+        {
+          "code": "MA",
+          "name": "MERINO AUSTRALIANO",
+          "expected_ewes_lambing": null,
+          "expected_lambs_born": null,
+          "lambs_in_first_72h_on_date": null,
+          "original_forecast": null,
+          "adjusted_forecast": null,
+          "product_context": {
+            "code": "MA",
+            "name": "MERINO AUSTRALIANO",
+            "expected_to_lamb": 573,
+            "expected_lambs": 651,
+            "counted_lambed": null,
+            "counted_lambs": null,
+            "last_count_date": null
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-07-25",
+      "risk_category": "BAJO",
+      "display_risk_category": "BAJO",
+      "ci_min": 900.0,
+      "ci_max": 1000.0,
+      "ci_interval": "900–1000",
+      "ci_unit": "kJ/m2/h",
+      "confidence": 0.85,
+      "requires_review": false,
+      "automatic_use": true,
+      "image_url": "https://drive.google.com/file/d/1-aBFA__PUbaQy4QZN4uqR8Dsw3K1-8hr/view",
+      "expected_ewes_lambing": null,
+      "expected_lambs_born": null,
+      "lambs_in_first_72h_on_date": null,
+      "modules": [
+        {
+          "code": "INTENSIVO",
+          "name": "INTENSIVO",
+          "expected_ewes_lambing": null,
+          "expected_lambs_born": null,
+          "lambs_in_first_72h_on_date": null,
+          "original_forecast": null,
+          "adjusted_forecast": null,
+          "product_context": {
+            "code": "INTENSIVO",
+            "name": "INTENSIVO",
+            "expected_to_lamb": 96,
+            "expected_lambs": 129,
+            "counted_lambed": null,
+            "counted_lambs": null,
+            "last_count_date": null
+          }
+        },
+        {
+          "code": "DOHNE",
+          "name": "MERINO DOHNE",
+          "expected_ewes_lambing": null,
+          "expected_lambs_born": null,
+          "lambs_in_first_72h_on_date": null,
+          "original_forecast": null,
+          "adjusted_forecast": null,
+          "product_context": {
+            "code": "DOHNE",
+            "name": "MERINO DOHNE",
+            "expected_to_lamb": 144,
+            "expected_lambs": 180,
+            "counted_lambed": null,
+            "counted_lambs": null,
+            "last_count_date": null
+          }
+        },
+        {
+          "code": "MA",
+          "name": "MERINO AUSTRALIANO",
+          "expected_ewes_lambing": null,
+          "expected_lambs_born": null,
+          "lambs_in_first_72h_on_date": null,
+          "original_forecast": null,
+          "adjusted_forecast": null,
+          "product_context": {
+            "code": "MA",
+            "name": "MERINO AUSTRALIANO",
+            "expected_to_lamb": 573,
+            "expected_lambs": 651,
+            "counted_lambed": null,
+            "counted_lambs": null,
+            "last_count_date": null
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-07-26",
+      "risk_category": "SIN_RIESGO",
+      "display_risk_category": "SIN_RIESGO",
+      "ci_min": null,
+      "ci_max": 900.0,
+      "ci_interval": "< 900",
+      "ci_unit": "kJ/m2/h",
+      "confidence": 0.85,
+      "requires_review": false,
+      "automatic_use": true,
+      "image_url": "https://drive.google.com/file/d/1LImpi-k_8JVo16BhnnqBrMETdPCn-JX-/view",
+      "expected_ewes_lambing": null,
+      "expected_lambs_born": null,
+      "lambs_in_first_72h_on_date": null,
+      "modules": [
+        {
+          "code": "INTENSIVO",
+          "name": "INTENSIVO",
+          "expected_ewes_lambing": null,
+          "expected_lambs_born": null,
+          "lambs_in_first_72h_on_date": null,
+          "original_forecast": null,
+          "adjusted_forecast": null,
+          "product_context": {
+            "code": "INTENSIVO",
+            "name": "INTENSIVO",
+            "expected_to_lamb": 96,
+            "expected_lambs": 129,
+            "counted_lambed": null,
+            "counted_lambs": null,
+            "last_count_date": null
+          }
+        },
+        {
+          "code": "DOHNE",
+          "name": "MERINO DOHNE",
+          "expected_ewes_lambing": null,
+          "expected_lambs_born": null,
+          "lambs_in_first_72h_on_date": null,
+          "original_forecast": null,
+          "adjusted_forecast": null,
+          "product_context": {
+            "code": "DOHNE",
+            "name": "MERINO DOHNE",
+            "expected_to_lamb": 144,
+            "expected_lambs": 180,
+            "counted_lambed": null,
+            "counted_lambs": null,
+            "last_count_date": null
+          }
+        },
+        {
+          "code": "MA",
+          "name": "MERINO AUSTRALIANO",
+          "expected_ewes_lambing": null,
+          "expected_lambs_born": null,
+          "lambs_in_first_72h_on_date": null,
+          "original_forecast": null,
+          "adjusted_forecast": null,
+          "product_context": {
+            "code": "MA",
+            "name": "MERINO AUSTRALIANO",
+            "expected_to_lamb": 573,
+            "expected_lambs": 651,
+            "counted_lambed": null,
+            "counted_lambs": null,
+            "last_count_date": null
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-07-27",
+      "risk_category": "BAJO",
+      "display_risk_category": "BAJO",
+      "ci_min": 900.0,
+      "ci_max": 1000.0,
+      "ci_interval": "900–1000",
+      "ci_unit": "kJ/m2/h",
+      "confidence": 0.85,
+      "requires_review": false,
+      "automatic_use": true,
+      "image_url": "https://drive.google.com/file/d/11kcQB-3ZWw0phMIUAikMWINGoh_jSzod/view",
+      "expected_ewes_lambing": null,
+      "expected_lambs_born": null,
+      "lambs_in_first_72h_on_date": null,
+      "modules": [
+        {
+          "code": "INTENSIVO",
+          "name": "INTENSIVO",
+          "expected_ewes_lambing": null,
+          "expected_lambs_born": null,
+          "lambs_in_first_72h_on_date": null,
+          "original_forecast": null,
+          "adjusted_forecast": null,
+          "product_context": {
+            "code": "INTENSIVO",
+            "name": "INTENSIVO",
+            "expected_to_lamb": 96,
+            "expected_lambs": 129,
+            "counted_lambed": null,
+            "counted_lambs": null,
+            "last_count_date": null
+          }
+        },
+        {
+          "code": "DOHNE",
+          "name": "MERINO DOHNE",
+          "expected_ewes_lambing": null,
+          "expected_lambs_born": null,
+          "lambs_in_first_72h_on_date": null,
+          "original_forecast": null,
+          "adjusted_forecast": null,
+          "product_context": {
+            "code": "DOHNE",
+            "name": "MERINO DOHNE",
+            "expected_to_lamb": 144,
+            "expected_lambs": 180,
+            "counted_lambed": null,
+            "counted_lambs": null,
+            "last_count_date": null
+          }
+        },
+        {
+          "code": "MA",
+          "name": "MERINO AUSTRALIANO",
+          "expected_ewes_lambing": null,
+          "expected_lambs_born": null,
+          "lambs_in_first_72h_on_date": null,
+          "original_forecast": null,
+          "adjusted_forecast": null,
+          "product_context": {
+            "code": "MA",
+            "name": "MERINO AUSTRALIANO",
+            "expected_to_lamb": 573,
+            "expected_lambs": 651,
+            "counted_lambed": null,
+            "counted_lambs": null,
+            "last_count_date": null
+          }
+        }
+      ]
+    }
+  ],
+  "unique_72h_exposure": {
+    "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
+    "status": "PENDIENTE_CURVA_DISTRIBUCION_PARTOS",
+    "SIN_RIESGO": null,
+    "BAJO": null,
+    "MEDIO": null,
+    "ALTO": null,
+    "CRITICO": null,
+    "RIESGO_72H_INCOMPLETO": null
+  },
+  "validation": {
+    "accepted_maps": 5,
+    "rejected_maps": 0,
+    "observations": []
+  }
+}

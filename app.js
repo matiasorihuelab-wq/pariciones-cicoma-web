@@ -2,7 +2,7 @@
 
 const DATA_URL = "./data/dashboard.json";
 const SUPPORTED_SCHEMA = "3.0.0";
-const state = { data: null };
+const state = { data: null, selectedModule: "TODOS" };
 
 const integerFormatter = new Intl.NumberFormat("es-UY", { maximumFractionDigits: 0 });
 const decimalFormatter = new Intl.NumberFormat("es-UY", {
@@ -35,6 +35,12 @@ function formatPercent(value) {
   return value === null || value === undefined ? "—" : `${decimalFormatter.format(value)} %`;
 }
 
+function formatConfidence(value) {
+  return value === null || value === undefined
+    ? "—"
+    : `${integerFormatter.format(Number(value) * 100)} %`;
+}
+
 function formatDate(dateString, options = {}) {
   if (!dateString) return "—";
   const [year, month, day] = dateString.slice(0, 10).split("-").map(Number);
@@ -44,6 +50,15 @@ function formatDate(dateString, options = {}) {
     month: options.short ? "short" : "2-digit",
     year: options.includeYear === false ? undefined : "numeric",
   }).format(new Date(year, month - 1, day));
+}
+
+function formatWeekday(dateString) {
+  if (!dateString) return "—";
+  const [year, month, day] = dateString.slice(0, 10).split("-").map(Number);
+  if (!year || !month || !day) return "—";
+  return new Intl.DateTimeFormat("es-UY", { weekday: "long" }).format(
+    new Date(year, month - 1, day),
+  );
 }
 
 function formatDateTime(value, timezone) {
@@ -57,6 +72,13 @@ function formatDateTime(value, timezone) {
     hour: "2-digit",
     minute: "2-digit",
   }).format(date);
+}
+
+function forecastAgeHours(analyzedAt) {
+  if (!analyzedAt) return null;
+  const analyzed = new Date(analyzedAt);
+  if (Number.isNaN(analyzed.getTime())) return null;
+  return Math.max(0, (Date.now() - analyzed.getTime()) / 3_600_000);
 }
 
 function formatCoordinate(value) {
@@ -397,96 +419,255 @@ function renderRecords(records) {
 
 function riskClass(category) {
   const accepted = ["SIN_RIESGO", "BAJO", "MEDIO", "ALTO", "CRITICO"];
+  if (category === "RIESGO PENDIENTE DE REVISIÓN") return "pending";
   return accepted.includes(category) ? category.toLowerCase().replace("_", "-") : "unknown";
 }
 
 function riskLabel(category) {
-  return category === "SIN_RIESGO" ? "SIN RIESGO" : category || "NO INFORMADO";
+  if (category === "SIN_RIESGO") return "SIN RIESGO";
+  return category ? String(category).replaceAll("_", " ") : "NO INFORMADO";
+}
+
+function selectedForecastValues(day) {
+  if (state.selectedModule === "TODOS") return day;
+  return (day.modules || []).find((module) => module.code === state.selectedModule) || {};
+}
+
+function forecastTooltip(day) {
+  const rows = (day.modules || []).map(
+    (module) =>
+      `${module.name || module.code}: ${formatInteger(module.expected_ewes_lambing)} ovejas, ` +
+      `${formatInteger(module.expected_lambs_born)} corderos`,
+  );
+  return [
+    `${riskLabel(day.display_risk_category || day.risk_category)} · CI ${day.ci_interval || "—"}`,
+    ...rows,
+  ].join("\n");
 }
 
 function renderForecast(forecast, timezone) {
-  const source = forecast.source;
-  const location = forecast.location;
-  const grid = forecast.grid_point;
-  byId("official-link").href = source.official_url;
-  const distance =
-    grid.distance_km === null || grid.distance_km === undefined
-      ? "Pendiente de validar"
-      : `${formatDecimal(grid.distance_km)} km`;
+  const source = forecast.source || {};
+  const location = forecast.location || {};
+  const update = forecast.update_status || {};
+  const productCross = forecast.product_cross || {};
+  const days = Array.isArray(forecast.days) ? forecast.days : [];
+  byId("official-link").href =
+    source.official_url ||
+    "https://inia.uy/gras/Aplicaciones_y_recursos/Prevision%20Corderos";
+  byId("forecast-status-banner").textContent =
+    update.state === "ACTUALIZADO"
+      ? "Pronóstico actualizado y validado."
+      : update.message || "Pronóstico desactualizado.";
+  byId("forecast-status-banner").classList.toggle(
+    "is-stale",
+    Boolean(update.stale || update.state === "DESACTUALIZADO"),
+  );
+  byId("module-selector").value = state.selectedModule;
+  byId("product-cross-status").textContent = productCross.status || "—";
+  byId("product-cross-message").textContent =
+    productCross.message ||
+    "El cálculo productivo está pendiente de la distribución diaria de partos.";
 
   byId("forecast-metadata").innerHTML = `
     <article>
       <span>Ubicación</span>
-      <strong>${escapeHtml(location.name)}</strong>
-      <small>${escapeHtml(formatCoordinate(location.latitude))}, ${escapeHtml(
-        formatCoordinate(location.longitude),
-      )}</small>
+      <strong>${escapeHtml(location.name || "CICOMA")}</strong>
+      <small>${escapeHtml(source.label || "INIA-GRAS interpretada por Zapia")}</small>
     </article>
     <article>
-      <span>Punto de grilla</span>
-      <strong>${escapeHtml(distance)}</strong>
-      <small>Resolución publicada: ${escapeHtml(formatInteger(source.spatial_resolution_km))} km</small>
+      <span>Análisis de Zapia</span>
+      <strong>${escapeHtml(formatDateTime(forecast.analyzed_at, timezone))}</strong>
+      <small>Corrida ${escapeHtml(formatDate(forecast.forecast_run_date))}</small>
     </article>
     <article>
-      <span>Pronóstico generado</span>
-      <strong>${escapeHtml(formatDateTime(forecast.forecast_generated_at, timezone))}</strong>
-      <small>Consultado ${escapeHtml(formatDateTime(forecast.queried_at, timezone))}</small>
+      <span>Importación CICOMA</span>
+      <strong>${escapeHtml(formatDateTime(forecast.imported_at, timezone))}</strong>
+      <small>Antigüedad: ${escapeHtml(formatDecimal(forecastAgeHours(forecast.analyzed_at)))} h</small>
     </article>
     <article>
-      <span>Método de agregación</span>
-      <strong>${escapeHtml(forecast.aggregation_method)}</strong>
-      <small>${escapeHtml(source.model)} · ${escapeHtml(forecast.period_type)}</small>
+      <span>Estado</span>
+      <strong>${escapeHtml(update.state || "NO DISPONIBLE")}</strong>
+      <small>${escapeHtml(productCross.message || "Cruce productivo no disponible")}</small>
     </article>`;
 
-  byId("forecast-grid").innerHTML = forecast.days
+  if (!days.length) {
+    byId("forecast-grid").innerHTML = `
+      <article class="forecast-empty">
+        <strong>No hay mapas Chill Index válidos para mostrar.</strong>
+        <span>${escapeHtml(update.message || "Esperando el reporte estructurado de Zapia.")}</span>
+      </article>`;
+    drawForecastChart(days);
+    return;
+  }
+
+  byId("forecast-grid").innerHTML = days
     .map((day) => {
-      const tone = riskClass(day.risk_category);
-      const moduleRows = day.modules
+      const displayRisk = day.display_risk_category || day.risk_category;
+      const tone = riskClass(displayRisk);
+      const values = selectedForecastValues(day);
+      const moduleRows = (day.modules || [])
         .map(
           (module) => `
             <li>
-              <strong>${escapeHtml(module.code)}</strong>
-              <span>${escapeHtml(formatInteger(module.expected_lambings))} partos</span>
-              <span>${escapeHtml(formatInteger(module.expected_lambs))} corderos</span>
+              <strong>${escapeHtml(module.name || module.code)}</strong>
+              <span>${escapeHtml(formatInteger(module.expected_ewes_lambing))} ovejas</span>
+              <span>${escapeHtml(formatInteger(module.expected_lambs_born))} corderos</span>
             </li>`,
         )
         .join("");
+      const mapLink = day.image_url
+        ? `<a class="map-link" href="${escapeHtml(
+            day.image_url,
+          )}" target="_blank" rel="noopener noreferrer">Ver mapa utilizado</a>`
+        : '<span class="map-link map-link--disabled">Mapa no disponible</span>';
       return `
-        <article class="forecast-card forecast-card--${escapeHtml(tone)}">
+        <article
+          class="forecast-card forecast-card--${escapeHtml(tone)}"
+          title="${escapeHtml(forecastTooltip(day))}"
+          aria-label="${escapeHtml(
+            `${formatWeekday(day.date)} ${formatDate(day.date)}: ${riskLabel(displayRisk)}`,
+          )}"
+        >
           <header>
             <div>
-              <span>${escapeHtml(formatDate(day.date, { short: true }))}</span>
-              <small>${escapeHtml(day.period)}</small>
+              <span>${escapeHtml(formatWeekday(day.date))}</span>
+              <small>${escapeHtml(formatDate(day.date, { short: true }))}</small>
             </div>
             <span class="risk-badge risk-badge--${escapeHtml(tone)}">${escapeHtml(
-              riskLabel(day.risk_category),
+              riskLabel(displayRisk),
             )}</span>
           </header>
           <div class="chill-value">
-            <strong>${escapeHtml(formatInteger(day.chill_index))}</strong>
-            <span>${escapeHtml(forecast.unit)}</span>
+            <strong>${escapeHtml(day.ci_interval || "—")}</strong>
+            <span>${escapeHtml(day.ci_unit || "kJ/m²/h")}</span>
           </div>
           <dl class="forecast-totals">
             <div>
-              <dt>Partos esperados</dt>
-              <dd>${escapeHtml(formatInteger(day.expected_lambings))}</dd>
+              <dt>Ovejas previstas a parir</dt>
+              <dd>${escapeHtml(formatInteger(values.expected_ewes_lambing))}</dd>
             </div>
             <div>
-              <dt>Corderos esperados</dt>
-              <dd>${escapeHtml(formatInteger(day.expected_lambs))}</dd>
+              <dt>Corderos previstos a nacer</dt>
+              <dd>${escapeHtml(formatInteger(values.expected_lambs_born))}</dd>
             </div>
             <div>
-              <dt>Expuestos primeras 72 h</dt>
-              <dd>${escapeHtml(formatInteger(day.lambs_exposed_first_72h))}</dd>
+              <dt>En primeras 72 horas</dt>
+              <dd>${escapeHtml(formatInteger(values.lambs_in_first_72h_on_date))}</dd>
+            </div>
+            <div>
+              <dt>Confianza de Zapia</dt>
+              <dd>${escapeHtml(formatConfidence(day.confidence))}</dd>
+            </div>
+            <div>
+              <dt>Actualización</dt>
+              <dd class="forecast-state">${escapeHtml(update.state || "—")}</dd>
             </div>
           </dl>
           <details>
             <summary>Desglose por módulo</summary>
             <ul>${moduleRows}</ul>
           </details>
+          ${mapLink}
         </article>`;
     })
     .join("");
+  drawForecastChart(days);
+}
+
+function drawForecastChart(days) {
+  const canvas = byId("forecast-chart");
+  const empty = byId("forecast-chart-empty");
+  const context = canvas.getContext("2d");
+  const values = days.map((day) => {
+    const selected = selectedForecastValues(day);
+    return {
+      date: day.date,
+      ewes: selected.expected_ewes_lambing,
+      lambs: selected.expected_lambs_born,
+    };
+  });
+  const hasValues = values.some((item) => item.ewes !== null || item.lambs !== null);
+  if (!hasValues) {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    canvas.hidden = true;
+    empty.hidden = false;
+    empty.textContent = "SIN DISTRIBUCIÓN DE PARTOS CARGADA";
+    return;
+  }
+
+  canvas.hidden = false;
+  empty.hidden = true;
+  const ratio = window.devicePixelRatio || 1;
+  const width = Math.max(520, canvas.clientWidth || 900);
+  const height = 280;
+  canvas.width = width * ratio;
+  canvas.height = height * ratio;
+  context.setTransform(ratio, 0, 0, ratio, 0, 0);
+  context.clearRect(0, 0, width, height);
+  const padding = { top: 35, right: 20, bottom: 48, left: 45 };
+  const chartWidth = width - padding.left - padding.right;
+  const chartHeight = height - padding.top - padding.bottom;
+  const maximum = Math.max(
+    1,
+    ...values.flatMap((item) => [Number(item.ewes) || 0, Number(item.lambs) || 0]),
+  );
+  const groupWidth = chartWidth / Math.max(1, values.length);
+  const barWidth = Math.min(26, groupWidth * 0.28);
+
+  context.strokeStyle = "#d9dfdc";
+  context.lineWidth = 1;
+  context.beginPath();
+  context.moveTo(padding.left, padding.top + chartHeight);
+  context.lineTo(width - padding.right, padding.top + chartHeight);
+  context.stroke();
+  context.font = "12px system-ui, sans-serif";
+  context.textAlign = "center";
+
+  values.forEach((item, index) => {
+    const center = padding.left + groupWidth * index + groupWidth / 2;
+    const eweHeight = ((Number(item.ewes) || 0) / maximum) * chartHeight;
+    const lambHeight = ((Number(item.lambs) || 0) / maximum) * chartHeight;
+    if (item.ewes !== null && item.ewes !== undefined) {
+      context.fillStyle = "#1f6b4f";
+      context.fillRect(
+        center - barWidth - 2,
+        padding.top + chartHeight - eweHeight,
+        barWidth,
+        eweHeight,
+      );
+    }
+    if (item.lambs !== null && item.lambs !== undefined) {
+      context.fillStyle = "#b68a24";
+      context.fillRect(
+        center + 2,
+        padding.top + chartHeight - lambHeight,
+        barWidth,
+        lambHeight,
+      );
+    }
+    context.fillStyle = "#4a5550";
+    context.fillText(formatDate(item.date, { short: true, includeYear: false }), center, height - 20);
+  });
+
+  context.textAlign = "left";
+  context.fillStyle = "#1f6b4f";
+  context.fillRect(padding.left, 10, 12, 12);
+  context.fillStyle = "#26332d";
+  context.fillText("Ovejas", padding.left + 18, 20);
+  context.fillStyle = "#b68a24";
+  context.fillRect(padding.left + 90, 10, 12, 12);
+  context.fillStyle = "#26332d";
+  context.fillText("Corderos", padding.left + 108, 20);
+  canvas.setAttribute(
+    "aria-label",
+    `Gráfico para ${state.selectedModule}: ${values
+      .map(
+        (item) =>
+          `${formatDate(item.date)}: ${formatInteger(item.ewes)} ovejas y ` +
+          `${formatInteger(item.lambs)} corderos`,
+      )
+      .join("; ")}`,
+  );
 }
 
 function friendlyStatus(status) {
@@ -710,10 +891,17 @@ function renderDashboard(data) {
   renderUpdateStatus(data);
   drawEvolutionChart(data.daily_evolution);
 
+  byId("module-selector").addEventListener("change", (event) => {
+    state.selectedModule = event.target.value;
+    renderForecast(data.environmental_forecast, data.timezone);
+  });
   let resizeFrame = null;
   window.addEventListener("resize", () => {
     if (resizeFrame) cancelAnimationFrame(resizeFrame);
-    resizeFrame = requestAnimationFrame(() => drawEvolutionChart(data.daily_evolution));
+    resizeFrame = requestAnimationFrame(() => {
+      drawEvolutionChart(data.daily_evolution);
+      drawForecastChart(data.environmental_forecast.days);
+    });
   });
   window.setInterval(() => updateFreshness(data), 60_000);
 }
