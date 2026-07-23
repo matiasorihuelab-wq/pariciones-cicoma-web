@@ -2,7 +2,7 @@
   "schema_version": "3.0.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "INFORMACIÓN AUTOMÁTICA PROVISORIA — PENDIENTE DE REVISIÓN",
-  "generated_at": "2026-07-22T22:10:07.029406-03:00",
+  "generated_at": "2026-07-22T22:29:08.467757-03:00",
   "timezone": "America/Montevideo",
   "stale_after_hours": 12,
   "freshness_thresholds": {
@@ -383,7 +383,7 @@
       "processed_at": "2026-07-23T00:08:54.172239Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-07-22T22:10:07.029406-03:00",
+    "last_sync_at": "2026-07-22T22:29:08.467757-03:00",
     "pending_operations": 0,
     "public_message": "Valores iniciales confirmados desde Excel; los datos automáticos se muestran separados y no afectan los indicadores hasta su revisión."
   }
