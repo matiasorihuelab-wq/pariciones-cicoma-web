@@ -2,7 +2,7 @@
   "schema_version": "3.0.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "INFORMACIÓN AUTOMÁTICA PROVISORIA — PENDIENTE DE REVISIÓN",
-  "generated_at": "2026-07-23T19:58:24.195809-03:00",
+  "generated_at": "2026-07-23T20:20:17.320303-03:00",
   "timezone": "America/Montevideo",
   "stale_after_hours": 12,
   "freshness_thresholds": {
@@ -704,10 +704,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte Completo Pariciones CICOMA 2026.zip",
-      "processed_at": "2026-07-23T19:19:03.433505Z",
+      "processed_at": "2026-07-23T23:00:21.705609Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-07-23T19:58:24.195809-03:00",
+    "last_sync_at": "2026-07-23T20:20:17.320303-03:00",
     "pending_operations": 0,
     "public_message": "Valores iniciales confirmados desde Excel; los datos automáticos se muestran separados y no afectan los indicadores hasta su revisión."
   }
