@@ -2,7 +2,7 @@
   "schema_version": "3.0.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "INFORMACIÓN AUTOMÁTICA PROVISORIA — PENDIENTE DE REVISIÓN",
-  "generated_at": "2026-07-24T10:19:15.496096-03:00",
+  "generated_at": "2026-07-24T14:04:50.629635-03:00",
   "timezone": "America/Montevideo",
   "stale_after_hours": 12,
   "freshness_thresholds": {
@@ -43,7 +43,7 @@
     "born_lambs": null,
     "born_alive": null,
     "stillborn": null,
-    "lamb_deaths": 1,
+    "lamb_deaths": 2,
     "ewe_deaths": 1,
     "deaths_last_24h": null
   },
@@ -80,10 +80,10 @@
         "last_count_date": null
       },
       "mortality": {
-        "lamb_deaths_accumulated": 1,
+        "lamb_deaths_accumulated": 2,
         "ewe_deaths_accumulated": 1,
         "deaths_last_24h": null,
-        "last_report_date": "2026-07-19"
+        "last_report_date": "2026-07-23"
       }
     },
     {
@@ -713,10 +713,10 @@
           "counted_lambs": null,
           "born_alive": null,
           "stillborn": null,
-          "lamb_deaths": 1,
+          "lamb_deaths": 2,
           "ewe_deaths": 1,
           "last_count_date": null,
-          "last_event_date": "2026-07-19"
+          "last_event_date": "2026-07-23"
         }
       },
       {
@@ -2513,7 +2513,7 @@
           "key": "lamb_mortality_pct",
           "label": "Mortalidad de corderos (sobre nacidos)",
           "value": null,
-          "numerator": 1,
+          "numerator": 2,
           "denominator": null,
           "denominator_label": "corderos nacidos",
           "status": "NO_INFORMADO",
@@ -3708,6 +3708,16 @@
   },
   "recent_records": [
     {
+      "date": "2026-07-23",
+      "module_code": "INTENSIVO",
+      "event_type": "LAMB_DEATH",
+      "event_label": "Muerte de cordero",
+      "quantity": 1,
+      "observation": "Evento incorporado automáticamente desde el reporte operativo (LAMB_DEATH).",
+      "validation_status": "CANDIDATE",
+      "source": "ZAPIA_VALIDADO"
+    },
+    {
       "date": "2026-07-19",
       "module_code": "INTENSIVO",
       "event_type": "EWE_DEATH",
@@ -3745,11 +3755,11 @@
   },
   "update_status": {
     "last_zip": {
-      "name": "Reporte Completo Pariciones CICOMA 2026.zip",
-      "processed_at": "2026-07-23T23:20:45.018370Z",
+      "name": "Pariciones_CICOMA_2026-07-24_10-40_con_media.zip",
+      "processed_at": "2026-07-24T17:04:05.348238Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-07-24T10:19:15.496096-03:00",
+    "last_sync_at": "2026-07-24T14:04:50.629635-03:00",
     "pending_operations": 0,
     "public_message": "Valores iniciales confirmados desde Excel; los datos automáticos se muestran separados y no afectan los indicadores hasta su revisión."
   }
