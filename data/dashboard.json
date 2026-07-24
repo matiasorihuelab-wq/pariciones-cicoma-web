@@ -2,7 +2,7 @@
   "schema_version": "3.0.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "INFORMACIÓN AUTOMÁTICA PROVISORIA — PENDIENTE DE REVISIÓN",
-  "generated_at": "2026-07-24T14:12:13.277175-03:00",
+  "generated_at": "2026-07-24T14:18:53.717309-03:00",
   "timezone": "America/Montevideo",
   "stale_after_hours": 12,
   "freshness_thresholds": {
@@ -23,8 +23,7 @@
     "expected_end": null
   },
   "initial_source": {
-    "file": "Planilla 2026-2027.xlsx",
-    "sha256": "A531B1BD1409B56B36BD9B4DA722550AF88C281F9D85690B2B1A87D8FD76043F",
+    "file": "Fuente inicial vigente",
     "imported_at": "2026-07-22T21:26:40.369967Z",
     "source_current": true,
     "read_only": true,
@@ -166,17 +165,7 @@
   ],
   "base_source": {
     "version_number": 1,
-    "snapshot_id": "20260724_091910",
-    "container_name": "files.zip",
-    "sha256": "6A4276F27EC48F9FCD7292BA93471A52BF447E5CA78CD8B9FC3234B69D4E91EC",
-    "imported_at": "2026-07-24T12:50:04.345506",
-    "primary_source": "pariciones_cicoma_agente.csv",
-    "contrast_source": "Control_Reproductivo_Pariciones_CICOMA_2026_2027.xlsx",
-    "warnings": [
-      "[MA] IA + repaso = preñadas: servicios.csv quedó con el reparto previo a la última ecografía; se conserva el valor y se contrasta contra el Excel",
-      "[DOHNE] Desglose de ecografía por categoría: sin desglose informado para: Borregas 2D, Ovejas adultas",
-      "[MA] Reparto IA/repaso: CSV vs Excel: el Excel es el valor vigente; se importa el del Excel y se conserva el del CSV en las advertencias"
-    ]
+    "imported_at": "2026-07-24T12:50:04.345506"
   },
   "lambing_curves": {
     "status": "OK",
@@ -3276,7 +3265,6 @@
     "analyzed_at": "2026-07-24T14:15:00-03:00",
     "forecast_run_date": "2026-07-24",
     "imported_at": "2026-07-24T14:12:11.403218-03:00",
-    "sha256": "ad224efc62c6c912618a61a7c93bd49296684a2eeccacf3da2f540d071c0c4a6",
     "forecast_age_hours": 0.0,
     "update_status": {
       "state": "ACTUALIZADO",
@@ -3679,7 +3667,6 @@
     "source": "INIA-GRAS interpretada por Zapia",
     "analyzed_at": "2026-07-24T14:15:00-03:00",
     "imported_at": "2026-07-24T14:12:11.403218-03:00",
-    "sha256": "ad224efc62c6c912618a61a7c93bd49296684a2eeccacf3da2f540d071c0c4a6",
     "update_status": "ACTUALIZADO",
     "product_cross_status": "OK",
     "dates": [
@@ -3759,11 +3746,11 @@
   },
   "update_status": {
     "last_zip": {
-      "name": "Reporte Completo Pariciones CICOMA 2026.zip",
+      "name": "Reporte operativo diario",
       "processed_at": "2026-07-24T17:11:41.001351Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-07-24T14:12:13.277175-03:00",
+    "last_sync_at": "2026-07-24T14:18:53.717309-03:00",
     "pending_operations": 0,
     "public_message": "Valores iniciales confirmados desde Excel; los datos automáticos se muestran separados y no afectan los indicadores hasta su revisión."
   }

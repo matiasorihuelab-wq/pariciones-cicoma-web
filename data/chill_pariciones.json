@@ -13,7 +13,6 @@
   "analyzed_at": "2026-07-24T14:15:00-03:00",
   "forecast_run_date": "2026-07-24",
   "imported_at": "2026-07-24T14:12:11.403218-03:00",
-  "sha256": "ad224efc62c6c912618a61a7c93bd49296684a2eeccacf3da2f540d071c0c4a6",
   "forecast_age_hours": 0.0,
   "update_status": {
     "state": "ACTUALIZADO",
