@@ -32,6 +32,8 @@
         <nav class="main-nav" aria-label="Navegación principal">
           <a class="main-nav__link is-active" href="#inicio">Inicio</a>
           <a class="main-nav__link" href="#modulos">Módulos</a>
+          <a class="main-nav__link" href="#ecografia">Ecografía</a>
+          <a class="main-nav__link" href="#curva">Curva de partos</a>
           <a class="main-nav__link" href="#riesgo">Riesgo ambiental</a>
           <a class="main-nav__link" href="#registros">Registros</a>
         </nav>
@@ -125,6 +127,85 @@
         </div>
       </section>
 
+      <section class="section" id="ecografia" aria-labelledby="ultrasound-title">
+        <div class="shell">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">RESUMEN DE ECOGRAFÍA</p>
+              <h2 id="ultrasound-title">Carga fetal confirmada por lote</h2>
+            </div>
+            <p>
+              Servidas, ecografiadas, vacías y carga fetal de la base productiva vigente.
+            </p>
+          </div>
+          <div class="ultrasound-table-wrap">
+            <table class="ultrasound-table" id="ultrasound-table">
+              <thead>
+                <tr>
+                  <th scope="col">Lote</th>
+                  <th scope="col">Servidas</th>
+                  <th scope="col">Ecografiadas</th>
+                  <th scope="col">Vacías</th>
+                  <th scope="col">Únicas</th>
+                  <th scope="col">Dobles</th>
+                  <th scope="col">Triples</th>
+                  <th scope="col">Preñadas</th>
+                  <th scope="col">Corderos esp.</th>
+                  <th scope="col">Prolificidad esp.</th>
+                </tr>
+              </thead>
+              <tbody id="ultrasound-body"></tbody>
+            </table>
+          </div>
+          <p class="chart-note" id="ultrasound-note">—</p>
+        </div>
+      </section>
+
+      <section class="section section--chart" id="curva" aria-labelledby="curve-title">
+        <div class="shell">
+          <div class="chart-card">
+            <div class="chart-card__header">
+              <div>
+                <p class="eyebrow">CURVA ESPERADA DE PARTOS</p>
+                <h2 id="curve-title">Distribución diaria y acumulada</h2>
+              </div>
+              <div class="chart-legend" aria-label="Referencias del gráfico de curva">
+                <span><i class="legend-mark legend-mark--ewes"></i>Ovejas previstas</span>
+                <span><i class="legend-mark legend-mark--lambs"></i>Corderos previstos</span>
+                <span><i class="legend-mark legend-mark--line"></i>Acumulado</span>
+              </div>
+            </div>
+
+            <div class="curve-controls">
+              <label for="curve-module-selector">Lote</label>
+              <select id="curve-module-selector">
+                <option value="TODOS">TODOS</option>
+              </select>
+
+              <label for="curve-series-selector">Serie</label>
+              <select id="curve-series-selector">
+                <option value="ORIGINAL">Curva original</option>
+                <option value="ADJUSTED">Curva ajustada por recuento</option>
+              </select>
+
+              <span id="curve-status" role="status"></span>
+            </div>
+
+            <div class="chart-wrap">
+              <canvas
+                id="curve-chart"
+                role="img"
+                aria-label="Gráfico de la curva esperada de partos, diaria y acumulada"
+              ></canvas>
+              <p id="curve-chart-empty" class="forecast-chart-empty" hidden></p>
+            </div>
+
+            <dl class="curve-summary" id="curve-summary"></dl>
+            <p class="chart-note" id="curve-note">—</p>
+          </div>
+        </div>
+      </section>
+
       <section class="section section--chart" aria-labelledby="evolution-title">
         <div class="shell">
           <div class="chart-card">
@@ -205,6 +286,21 @@
               ></canvas>
               <p id="forecast-chart-empty" class="forecast-chart-empty" hidden></p>
             </div>
+          </div>
+
+          <div class="exposure-panel">
+            <div class="section-heading section-heading--compact">
+              <div>
+                <p class="eyebrow">EXPOSICIÓN EN LAS PRIMERAS 72 HORAS</p>
+                <h3 id="exposure-title">
+                  Corderos esperados expuestos a condiciones ambientales de riesgo durante sus
+                  primeras 72 horas
+                </h3>
+              </div>
+              <span id="exposure-status" role="status">—</span>
+            </div>
+            <p class="exposure-rule" id="exposure-rule">—</p>
+            <div class="exposure-grid" id="exposure-grid" aria-live="polite"></div>
           </div>
 
           <div class="exposure-note">
@@ -298,7 +394,24 @@
                 <dt>Importación de la fuente</dt>
                 <dd id="initial-source-date">—</dd>
               </div>
+              <div>
+                <dt>Base productiva vigente</dt>
+                <dd id="base-source">—</dd>
+              </div>
+              <div>
+                <dt>SHA-256 de la base</dt>
+                <dd id="base-source-hash">—</dd>
+              </div>
+              <div>
+                <dt>Importación de la base</dt>
+                <dd id="base-source-date">—</dd>
+              </div>
             </dl>
+
+            <div class="base-warnings" id="base-warnings" hidden>
+              <strong>Advertencias de la base productiva</strong>
+              <ul id="base-warnings-list"></ul>
+            </div>
 
             <p class="update-message" id="update-message">—</p>
             <p class="update-message" id="provisional-message">—</p>

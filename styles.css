@@ -1831,3 +1831,246 @@ h3 {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ============================================================
+   Resumen de ecografía, curva de partos y exposición 72 h
+   ============================================================ */
+
+.ultrasound-table-wrap {
+  overflow-x: auto;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.ultrasound-table {
+  width: 100%;
+  min-width: 860px;
+  border-collapse: collapse;
+  font-size: 0.94rem;
+}
+
+.ultrasound-table th,
+.ultrasound-table td {
+  padding: 0.72rem 0.85rem;
+  text-align: right;
+  border-bottom: 1px solid var(--gray-200);
+  white-space: nowrap;
+}
+
+.ultrasound-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--sul-green);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.ultrasound-table tbody th[scope="row"] {
+  text-align: left;
+  font-weight: 600;
+  color: var(--sul-green-dark);
+}
+
+.ultrasound-table td.is-strong {
+  font-weight: 700;
+  color: var(--sul-green-dark);
+}
+
+.ultrasound-table td.is-missing {
+  color: var(--institutional-gray);
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+.ultrasound-table td.is-empty {
+  text-align: center;
+  color: var(--institutional-gray);
+  font-style: italic;
+}
+
+.ultrasound-table tr.is-total th,
+.ultrasound-table tr.is-total td {
+  background: var(--sul-green-pale);
+  font-weight: 700;
+  border-top: 2px solid var(--sul-green);
+  border-bottom: none;
+}
+
+.curve-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  margin: 0 0 1.1rem;
+}
+
+.curve-controls label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gray-700);
+}
+
+.curve-controls select {
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font: inherit;
+  color: var(--ink-900);
+}
+
+.curve-controls select:focus-visible {
+  outline: 3px solid var(--sul-green-light);
+  outline-offset: 1px;
+}
+
+.pill {
+  display: inline-block;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+  background: var(--sul-green-pale);
+  color: var(--sul-green-dark);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.pill--missing {
+  background: var(--gray-100);
+  color: var(--gray-700);
+}
+
+.curve-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.9rem;
+  margin: 1.2rem 0 0.4rem;
+  padding: 0;
+}
+
+.curve-summary div {
+  padding: 0.7rem 0.85rem;
+  background: var(--gray-100);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--sul-green);
+}
+
+.curve-summary dt {
+  margin: 0 0 0.25rem;
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gray-700);
+}
+
+.curve-summary dd {
+  margin: 0;
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.exposure-panel {
+  margin: 1.6rem 0 1.2rem;
+  padding: 1.3rem 1.4rem;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.exposure-rule {
+  margin: 0 0 1rem;
+  font-size: 0.88rem;
+  color: var(--ink-600);
+}
+
+.exposure-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.85rem;
+}
+
+.exposure-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.85rem 0.95rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--gray-200);
+  border-left-width: 5px;
+  background: var(--gray-100);
+}
+
+.exposure-card__label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--gray-700);
+}
+
+.exposure-card__value {
+  font-size: 1.65rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--ink-900);
+}
+
+.exposure-card small {
+  font-size: 0.75rem;
+  color: var(--institutional-gray);
+}
+
+.exposure-card--sin-riesgo { border-left-color: var(--sul-green); }
+.exposure-card--bajo { border-left-color: var(--sul-green-light); }
+.exposure-card--medio { border-left-color: var(--alert-yellow); }
+.exposure-card--alto { border-left-color: var(--alert-orange); }
+.exposure-card--critico { border-left-color: var(--alert-red); }
+.exposure-card--pending,
+.exposure-card--unknown {
+  border-left-color: var(--institutional-gray);
+  border-style: dashed;
+}
+
+.base-warnings {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  background: var(--alert-yellow-soft);
+  border-left: 4px solid var(--alert-yellow);
+}
+
+.base-warnings strong {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--ink-700);
+}
+
+.base-warnings ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.85rem;
+  color: var(--ink-700);
+}
+
+.base-warnings li + li {
+  margin-top: 0.35rem;
+}
+
+.forecast-totals dd.is-missing {
+  color: var(--institutional-gray);
+  font-style: italic;
+}
+
+@media (max-width: 640px) {
+  .curve-summary dd { font-size: 1rem; }
+  .exposure-card__value { font-size: 1.4rem; }
+}

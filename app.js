@@ -2,7 +2,12 @@
 
 const DATA_URL = "./data/dashboard.json";
 const SUPPORTED_SCHEMA = "3.0.0";
-const state = { data: null, selectedModule: "TODOS" };
+const state = {
+  data: null,
+  selectedModule: "TODOS",
+  curveModule: "TODOS",
+  curveSeries: "ORIGINAL",
+};
 
 const integerFormatter = new Intl.NumberFormat("es-UY", { maximumFractionDigits: 0 });
 const decimalFormatter = new Intl.NumberFormat("es-UY", {
@@ -505,6 +510,7 @@ function renderForecast(forecast, timezone) {
       const displayRisk = day.display_risk_category || day.risk_category;
       const tone = riskClass(displayRisk);
       const values = selectedForecastValues(day);
+      const cohort = day.cohort_72h || { complete: false, category: "RIESGO_72H_INCOMPLETO" };
       const moduleRows = (day.modules || [])
         .map(
           (module) => `
@@ -551,8 +557,14 @@ function renderForecast(forecast, timezone) {
               <dd>${escapeHtml(formatInteger(values.expected_lambs_born))}</dd>
             </div>
             <div>
-              <dt>En primeras 72 horas</dt>
+              <dt>Corderos en primeras 72 h</dt>
               <dd>${escapeHtml(formatInteger(values.lambs_in_first_72h_on_date))}</dd>
+            </div>
+            <div>
+              <dt>Categoría de la cohorte (D, D+1, D+2)</dt>
+              <dd class="${cohort.complete ? "" : "is-missing"}">${escapeHtml(
+                cohort.complete ? riskLabel(cohort.category) : "RIESGO 72 H INCOMPLETO",
+              )}</dd>
             </div>
             <div>
               <dt>Confianza de Zapia</dt>
@@ -882,18 +894,373 @@ function initializeNavigation() {
   sections.forEach((section) => observer.observe(section));
 }
 
+function renderUltrasound(modules, curves) {
+  const body = byId("ultrasound-body");
+  const rows = Array.isArray(modules) ? modules : [];
+  if (!rows.length) {
+    body.innerHTML =
+      '<tr><td colspan="10" class="is-empty">SIN DATO — todavía no se importó la base productiva.</td></tr>';
+    byId("ultrasound-note").textContent = "SIN DATO";
+    return;
+  }
+
+  const totals = {
+    served: 0,
+    scanned: 0,
+    empty: 0,
+    single: 0,
+    double: 0,
+    triple: 0,
+    pregnant: 0,
+    lambs: 0,
+  };
+  let scannedReported = false;
+  let tripleReported = false;
+
+  const cells = rows
+    .map((module) => {
+      const values = module.initial_values || {};
+      totals.served += values.served || 0;
+      totals.empty += values.empty || 0;
+      totals.single += values.single || 0;
+      totals.double += values.double || 0;
+      totals.pregnant += values.expected_to_lamb || 0;
+      totals.lambs += values.expected_lambs || 0;
+      if (values.scanned !== null && values.scanned !== undefined) {
+        totals.scanned += values.scanned;
+        scannedReported = true;
+      }
+      if (values.triple !== null && values.triple !== undefined) {
+        totals.triple += values.triple;
+        tripleReported = true;
+      }
+      const prolificacy =
+        values.expected_to_lamb > 0 ? values.expected_lambs / values.expected_to_lamb : null;
+      const tripleCell =
+        values.triple === null || values.triple === undefined
+          ? `<td class="is-missing" title="${escapeHtml(
+              values.triple_state || "NOT_REPORTED",
+            )}">NO INFORMADO</td>`
+          : `<td>${escapeHtml(formatInteger(values.triple))}</td>`;
+      const scannedCell =
+        values.scanned === null || values.scanned === undefined
+          ? '<td class="is-missing">NO INFORMADO</td>'
+          : `<td>${escapeHtml(formatInteger(values.scanned))}</td>`;
+      return `
+        <tr>
+          <th scope="row">${escapeHtml(module.name || module.code)}</th>
+          <td>${escapeHtml(formatInteger(values.served))}</td>
+          ${scannedCell}
+          <td>${escapeHtml(formatInteger(values.empty))}</td>
+          <td>${escapeHtml(formatInteger(values.single))}</td>
+          <td>${escapeHtml(formatInteger(values.double))}</td>
+          ${tripleCell}
+          <td class="is-strong">${escapeHtml(formatInteger(values.expected_to_lamb))}</td>
+          <td class="is-strong">${escapeHtml(formatInteger(values.expected_lambs))}</td>
+          <td>${escapeHtml(
+            prolificacy === null ? "SIN DATO" : prolificacy.toFixed(3).replace(".", ","),
+          )}</td>
+        </tr>`;
+    })
+    .join("");
+
+  const totalProlificacy =
+    totals.pregnant > 0 ? (totals.lambs / totals.pregnant).toFixed(3).replace(".", ",") : "SIN DATO";
+  body.innerHTML = `${cells}
+    <tr class="is-total">
+      <th scope="row">ESTABLECIMIENTO</th>
+      <td>${escapeHtml(formatInteger(totals.served))}</td>
+      <td>${escapeHtml(scannedReported ? formatInteger(totals.scanned) : "NO INFORMADO")}</td>
+      <td>${escapeHtml(formatInteger(totals.empty))}</td>
+      <td>${escapeHtml(formatInteger(totals.single))}</td>
+      <td>${escapeHtml(formatInteger(totals.double))}</td>
+      <td>${escapeHtml(tripleReported ? formatInteger(totals.triple) : "NO INFORMADO")}</td>
+      <td class="is-strong">${escapeHtml(formatInteger(totals.pregnant))}</td>
+      <td class="is-strong">${escapeHtml(formatInteger(totals.lambs))}</td>
+      <td>${escapeHtml(totalProlificacy)}</td>
+    </tr>`;
+
+  const base = curves?.base_source;
+  byId("ultrasound-note").textContent = base
+    ? `Preñadas = únicas + dobles + triples · Corderos esperados = únicas + 2×dobles + 3×triples. ` +
+      `Base productiva versión ${base.version_number} (${base.primary_source}).`
+    : "Preñadas = únicas + dobles + triples · Corderos esperados = únicas + 2×dobles + 3×triples.";
+}
+
+function curveSeriesFor(lot, kind) {
+  if (!lot) return [];
+  const adjusted = lot.expected_adjusted || [];
+  if (kind === "ADJUSTED") return adjusted;
+  return lot.expected_original || [];
+}
+
+function aggregateCurve(lots, kind) {
+  const byDate = new Map();
+  lots.forEach((lot) => {
+    curveSeriesFor(lot, kind).forEach((point) => {
+      const bucket = byDate.get(point.date) || { date: point.date, ewes: 0, lambs: 0 };
+      bucket.ewes += point.expected_ewes || 0;
+      bucket.lambs += point.expected_lambs || 0;
+      byDate.set(point.date, bucket);
+    });
+  });
+  const rows = [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date));
+  const total = rows.reduce((sum, row) => sum + row.ewes, 0);
+  let cumulative = 0;
+  return rows.map((row) => {
+    cumulative += row.ewes;
+    return { ...row, cumulative: total > 0 ? cumulative / total : 0 };
+  });
+}
+
+function renderCurves(curves) {
+  const status = byId("curve-status");
+  const note = byId("curve-note");
+  const summary = byId("curve-summary");
+  const lots = Array.isArray(curves?.lots) ? curves.lots : [];
+
+  if (!lots.length) {
+    status.textContent = "SIN CURVA CARGADA";
+    status.className = "pill pill--missing";
+    note.textContent =
+      curves?.message || "Todavía no se importó una base productiva con curva de partos.";
+    summary.innerHTML = "";
+    drawCurveChart([]);
+    return;
+  }
+
+  const selector = byId("curve-module-selector");
+  if (selector.options.length <= 1) {
+    lots.forEach((lot) => {
+      const option = document.createElement("option");
+      option.value = lot.code;
+      option.textContent = lot.name || lot.code;
+      selector.append(option);
+    });
+  }
+  selector.value = state.curveModule;
+  byId("curve-series-selector").value = state.curveSeries;
+
+  const scope = state.curveModule === "TODOS" ? lots : lots.filter((lot) => lot.code === state.curveModule);
+  const hasAdjusted = scope.some((lot) => (lot.expected_adjusted || []).length > 0);
+
+  if (state.curveSeries === "ADJUSTED" && !hasAdjusted) {
+    status.textContent = "SIN RECUENTO — se muestra la curva original";
+    status.className = "pill pill--missing";
+  } else {
+    status.textContent =
+      state.curveSeries === "ADJUSTED" ? "CURVA AJUSTADA POR RECUENTO" : "CURVA ORIGINAL";
+    status.className = "pill";
+  }
+
+  const effectiveKind = state.curveSeries === "ADJUSTED" && hasAdjusted ? "ADJUSTED" : "ORIGINAL";
+  const series = aggregateCurve(scope, effectiveKind);
+
+  const totalEwes = scope.reduce((sum, lot) => sum + (lot.expected_to_lamb || 0), 0);
+  const totalLambs = scope.reduce((sum, lot) => sum + (lot.expected_lambs || 0), 0);
+  const first = series.length ? series[0].date : null;
+  const last = series.length ? series[series.length - 1].date : null;
+  const method = scope.length === 1 ? scope[0].curve_method : "Método propio de cada lote";
+  const adjustment = scope.length === 1 ? scope[0].adjustment : null;
+
+  summary.innerHTML = `
+    <div><dt>Ovejas previstas a parir</dt><dd>${escapeHtml(formatInteger(totalEwes))}</dd></div>
+    <div><dt>Corderos previstos a nacer</dt><dd>${escapeHtml(formatInteger(totalLambs))}</dd></div>
+    <div><dt>Primer parto probable</dt><dd>${escapeHtml(formatDate(first))}</dd></div>
+    <div><dt>Último parto probable</dt><dd>${escapeHtml(formatDate(last))}</dd></div>
+    <div><dt>Días de parición</dt><dd>${escapeHtml(formatInteger(series.length))}</dd></div>
+    <div>
+      <dt>Último recuento aplicado</dt>
+      <dd>${escapeHtml(
+        adjustment ? `${formatDate(adjustment.count_date)} · ${adjustment.age_days} d` : "SIN RECUENTO",
+      )}</dd>
+    </div>`;
+
+  note.textContent = `Método: ${method}. Los totales presentados cierran exactamente contra el total del lote; el remanente del redondeo se reparte por resto mayor.`;
+  drawCurveChart(series);
+}
+
+function drawCurveChart(series) {
+  const canvas = byId("curve-chart");
+  const empty = byId("curve-chart-empty");
+  const wrap = canvas.parentElement;
+  if (!wrap) return;
+
+  if (!series.length) {
+    canvas.hidden = true;
+    empty.hidden = false;
+    empty.textContent = "SIN CURVA CARGADA";
+    return;
+  }
+  canvas.hidden = false;
+  empty.hidden = true;
+
+  const context = canvas.getContext("2d");
+  const width = Math.max(280, Math.floor(wrap.clientWidth));
+  const height = Math.max(260, Math.floor(wrap.clientHeight || 300));
+  const ratio = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = Math.floor(width * ratio);
+  canvas.height = Math.floor(height * ratio);
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
+  context.setTransform(ratio, 0, 0, ratio, 0, 0);
+  context.clearRect(0, 0, width, height);
+
+  const padding = { top: 18, right: 46, bottom: 42, left: 46 };
+  const plotWidth = width - padding.left - padding.right;
+  const plotHeight = height - padding.top - padding.bottom;
+  const maxValue = Math.max(...series.map((item) => Math.max(item.ewes, item.lambs)), 1);
+  const slot = plotWidth / series.length;
+  const barWidth = Math.max(1.5, Math.min(10, slot * 0.38));
+
+  context.strokeStyle = "rgba(135, 135, 134, 0.28)";
+  context.lineWidth = 1;
+  context.font = "11px Raleway, system-ui, sans-serif";
+  context.fillStyle = "#878786";
+  for (let step = 0; step <= 4; step += 1) {
+    const y = padding.top + (plotHeight / 4) * step;
+    context.beginPath();
+    context.moveTo(padding.left, y);
+    context.lineTo(padding.left + plotWidth, y);
+    context.stroke();
+    const value = (maxValue * (4 - step)) / 4;
+    context.textAlign = "right";
+    context.fillText(integerFormatter.format(Math.round(value)), padding.left - 6, y + 4);
+    context.textAlign = "left";
+    context.fillText(`${Math.round(((4 - step) / 4) * 100)}%`, padding.left + plotWidth + 8, y + 4);
+  }
+
+  series.forEach((item, index) => {
+    const centre = padding.left + slot * index + slot / 2;
+    const eweHeight = (item.ewes / maxValue) * plotHeight;
+    const lambHeight = (item.lambs / maxValue) * plotHeight;
+    roundedBar(
+      context,
+      centre - barWidth - 1,
+      padding.top + plotHeight - eweHeight,
+      barWidth,
+      eweHeight,
+      2,
+      "#006937",
+    );
+    roundedBar(
+      context,
+      centre + 1,
+      padding.top + plotHeight - lambHeight,
+      barWidth,
+      lambHeight,
+      2,
+      "#7fb69a",
+    );
+  });
+
+  context.beginPath();
+  context.strokeStyle = "#c8102e";
+  context.lineWidth = 2;
+  series.forEach((item, index) => {
+    const centre = padding.left + slot * index + slot / 2;
+    const y = padding.top + plotHeight - item.cumulative * plotHeight;
+    if (index === 0) context.moveTo(centre, y);
+    else context.lineTo(centre, y);
+  });
+  context.stroke();
+
+  context.fillStyle = "#878786";
+  context.textAlign = "center";
+  const labelEvery = Math.max(1, Math.ceil(series.length / 8));
+  series.forEach((item, index) => {
+    if (index % labelEvery !== 0 && index !== series.length - 1) return;
+    const centre = padding.left + slot * index + slot / 2;
+    context.fillText(formatDate(item.date, { short: true }), centre, height - 14);
+  });
+}
+
+function renderExposure(forecast) {
+  const exposure = forecast?.unique_72h_exposure || {};
+  const grid = byId("exposure-grid");
+  const statusEl = byId("exposure-status");
+  const ruleEl = byId("exposure-rule");
+  const categories = ["SIN_RIESGO", "BAJO", "MEDIO", "ALTO", "CRITICO", "RIESGO_72H_INCOMPLETO"];
+
+  statusEl.textContent = exposure.status || "—";
+  statusEl.className =
+    exposure.status === "OK" ? "pill" : "pill pill--missing";
+  ruleEl.textContent =
+    exposure.rule ||
+    "Cada cohorte se evalúa en D, D+1 y D+2 y se cuenta una sola vez bajo su categoría máxima.";
+
+  const scoped =
+    state.selectedModule === "TODOS"
+      ? exposure
+      : (exposure.by_module || {})[state.selectedModule] || {};
+
+  grid.innerHTML = categories
+    .map((category) => {
+      const value = scoped[category];
+      const tone = category === "RIESGO_72H_INCOMPLETO" ? "pending" : riskClass(category);
+      const label =
+        category === "RIESGO_72H_INCOMPLETO" ? "RIESGO 72 H INCOMPLETO" : riskLabel(category);
+      return `
+        <article class="exposure-card exposure-card--${escapeHtml(tone)}">
+          <span class="exposure-card__label">${escapeHtml(label)}</span>
+          <strong class="exposure-card__value">${escapeHtml(
+            value === null || value === undefined ? "SIN DATO" : formatInteger(Math.round(value)),
+          )}</strong>
+          <small>corderos esperados</small>
+        </article>`;
+    })
+    .join("");
+}
+
+function renderBaseSource(data) {
+  const base = data.base_source;
+  const warnings = byId("base-warnings");
+  const list = byId("base-warnings-list");
+  if (!base) {
+    byId("base-source").textContent = "SIN BASE IMPORTADA";
+    byId("base-source-hash").textContent = "—";
+    byId("base-source-date").textContent = "—";
+    warnings.hidden = true;
+    return;
+  }
+  byId("base-source").textContent = `${base.container_name} · versión ${base.version_number}`;
+  byId("base-source").title = `${base.primary_source} (fuente primaria) · ${
+    base.contrast_source || "sin Excel de contraste"
+  }`;
+  byId("base-source-hash").textContent = base.sha256 ? `${base.sha256.slice(0, 16)}…` : "—";
+  byId("base-source-hash").title = base.sha256 || "";
+  byId("base-source-date").textContent = formatDateTime(base.imported_at, data.timezone);
+
+  const items = Array.isArray(base.warnings) ? base.warnings : [];
+  warnings.hidden = items.length === 0;
+  list.innerHTML = items.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+}
+
 function renderDashboard(data) {
   renderHeader(data);
   renderMetrics(data.overview);
   renderModules(data.modules, data.freshness_thresholds, data.generated_at);
+  renderUltrasound(data.modules, data.lambing_curves);
+  renderCurves(data.lambing_curves);
   renderForecast(data.environmental_forecast, data.timezone);
+  renderExposure(data.environmental_forecast);
   renderRecords(data.recent_records);
   renderUpdateStatus(data);
+  renderBaseSource(data);
   drawEvolutionChart(data.daily_evolution);
 
   byId("module-selector").addEventListener("change", (event) => {
     state.selectedModule = event.target.value;
     renderForecast(data.environmental_forecast, data.timezone);
+    renderExposure(data.environmental_forecast);
+  });
+  byId("curve-module-selector").addEventListener("change", (event) => {
+    state.curveModule = event.target.value;
+    renderCurves(data.lambing_curves);
+  });
+  byId("curve-series-selector").addEventListener("change", (event) => {
+    state.curveSeries = event.target.value;
+    renderCurves(data.lambing_curves);
   });
   let resizeFrame = null;
   window.addEventListener("resize", () => {
@@ -901,6 +1268,7 @@ function renderDashboard(data) {
     resizeFrame = requestAnimationFrame(() => {
       drawEvolutionChart(data.daily_evolution);
       drawForecastChart(data.environmental_forecast.days);
+      renderCurves(data.lambing_curves);
     });
   });
   window.setInterval(() => updateFreshness(data), 60_000);
