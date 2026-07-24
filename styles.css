@@ -68,18 +68,17 @@ a {
   margin-inline: auto;
 }
 
+/* Banda informativa, no de alerta: el dato automático ya es dato vigente. */
 .demo-ribbon {
   display: flex;
   min-height: 32px;
   align-items: center;
   justify-content: center;
-  gap: 9px;
-  padding: 6px 20px;
-  background: var(--alert-yellow);
-  color: #392f0b;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
+  gap: 10px;
+  padding: 7px 20px;
+  background: var(--sul-green-pale);
+  border-bottom: 1px solid rgba(0, 105, 55, 0.18);
+  color: var(--sul-green-dark);
   text-align: center;
 }
 
@@ -88,7 +87,29 @@ a {
   height: 8px;
   flex: 0 0 auto;
   border-radius: 50%;
-  background: currentColor;
+  background: var(--sul-green);
+}
+
+.demo-ribbon__copy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px 12px;
+}
+
+.demo-ribbon__copy strong {
+  color: var(--sul-green-dark);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+}
+
+.demo-ribbon__copy > span {
+  color: var(--ink-600);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
 }
 
 .site-header {
@@ -116,19 +137,13 @@ a {
   text-decoration: none;
 }
 
-.logo-placeholder {
-  display: grid;
-  width: 96px;
-  min-height: 46px;
-  place-items: center;
-  border: 1px dashed var(--institutional-gray);
-  border-radius: 6px;
-  color: var(--gray-700);
-  font-size: 0.62rem;
-  font-weight: 700;
-  line-height: 1.15;
-  text-align: center;
-  text-transform: uppercase;
+/* Logotipo institucional: alto fijo, ancho por proporción, sin recortes. */
+.brand__logo {
+  display: block;
+  width: auto;
+  height: 56px;
+  flex: 0 0 auto;
+  object-fit: contain;
 }
 
 .brand__copy {
@@ -475,12 +490,23 @@ h3 {
   margin: -6px 0 22px;
 }
 
+/* Huella única para las tres insignias de estado. Un ancho variable dejaría al
+   título un espacio distinto en cada lote, y el bloque de cifras de abajo
+   quedaría a distinta altura según el estado que le tocara a cada tarjeta. */
 .freshness-badge {
-  width: fit-content;
+  width: 9.5rem;
   max-width: 100%;
+  flex: 0 0 auto;
   padding: 5px 9px;
   font-size: 0.58rem;
   line-height: 1.25;
+  white-space: nowrap;
+}
+
+.count-block__heading > div,
+.mortality-block__heading > div,
+.initial-baseline__heading > div {
+  min-width: 0;
 }
 
 .freshness-badge--updated {
@@ -498,14 +524,21 @@ h3 {
   color: var(--alert-red-dark);
 }
 
+/* Las tres tarjetas comparten las mismas cinco filas: encabezado, valores
+   iniciales, ovejas, corderos y mortalidad. Con `subgrid` cada bloque arranca
+   a la misma altura en los tres lotes, sin alturas fijas por tarjeta. */
 .module-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
   gap: 18px;
 }
 
 .module-card {
+  display: grid;
   overflow: hidden;
+  grid-row: span 5;
+  grid-template-rows: subgrid;
   border: 1px solid var(--gray-200);
   border-radius: var(--radius-lg);
   background: #ffffff;
@@ -513,6 +546,9 @@ h3 {
 }
 
 .module-card__header {
+  display: grid;
+  align-content: start;
+  gap: 5px;
   padding: 24px 24px 22px;
   border-bottom: 1px solid var(--gray-200);
   background: linear-gradient(135deg, var(--sul-green-pale), #ffffff 78%);
@@ -520,43 +556,75 @@ h3 {
 
 .module-card__code {
   display: block;
-  margin-bottom: 5px;
   color: var(--sul-green);
   font-size: 0.67rem;
   font-weight: 800;
   letter-spacing: 0.12em;
 }
 
+.module-card__header h3 {
+  margin: 0;
+  color: var(--sul-green-dark);
+  font-size: 1.16rem;
+  line-height: 1.2;
+}
+
+.module-card__breed {
+  margin: 0;
+  color: var(--ink-900);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
 .module-card__body {
   display: grid;
+  grid-row: span 4;
+  grid-template-rows: subgrid;
   gap: 0;
 }
 
+/* Navegadores sin `subgrid`: la tarjeta sigue ocupando todo el alto de la
+   fila y el cuerpo reparte el espacio sobrante al final. */
+@supports not (grid-template-rows: subgrid) {
+  .module-card,
+  .module-card__body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .module-card__body {
+    flex: 1;
+  }
+
+  .module-card__body > :last-child {
+    margin-top: auto;
+  }
+}
+
 .initial-baseline {
-  padding: 1rem;
-  border: 1px solid rgba(0, 105, 55, 0.16);
-  border-radius: var(--radius-md);
+  padding: 22px 24px;
+  border-bottom: 1px solid var(--gray-200);
   background: rgba(0, 105, 55, 0.045);
 }
 
 .initial-baseline__heading {
   display: flex;
-  align-items: baseline;
+  align-items: start;
   justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 0.8rem;
+  gap: 14px;
+  margin-bottom: 16px;
 }
 
-.initial-baseline__heading span {
-  color: var(--sul-green);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+.initial-baseline__heading > div {
+  display: grid;
+  gap: 5px;
 }
 
 .initial-baseline__heading strong {
-  color: var(--ink-700);
-  font-size: 0.86rem;
+  color: var(--ink-900);
+  font-size: 0.88rem;
+  line-height: 1.35;
 }
 
 .initial-baseline dl {
@@ -566,8 +634,13 @@ h3 {
   margin: 0;
 }
 
-.initial-baseline dl div {
-  display: grid;
+/* Etiqueta arriba y cifra abajo: en una misma fila las celdas se estiran a la
+   más alta, así los valores y los guiones de faltante quedan en una línea. */
+.initial-baseline dl div,
+.mortality-stats > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   gap: 0.15rem;
 }
 
@@ -1413,9 +1486,14 @@ h3 {
 
 .update-message {
   margin: 0;
-  padding: 20px 24px 24px;
+  padding: 20px 24px 8px;
   color: #d6ebdc;
   font-size: 0.72rem;
+}
+
+.update-message--muted {
+  padding: 0 24px 24px;
+  color: #a9cdb8;
 }
 
 .site-footer {
@@ -1595,10 +1673,8 @@ h3 {
     width: 100%;
   }
 
-  .logo-placeholder {
-    width: 78px;
-    min-height: 40px;
-    font-size: 0.53rem;
+  .brand__logo {
+    height: 42px;
   }
 
   .brand__eyebrow {
@@ -1843,9 +1919,11 @@ h3 {
   box-shadow: var(--shadow-sm);
 }
 
+/* Nueve columnas tras quitar la prolificidad esperada: el ancho sobrante se
+   reparte solo entre las restantes y todo queda centrado en ambos ejes. */
 .ultrasound-table {
   width: 100%;
-  min-width: 860px;
+  min-width: 760px;
   border-collapse: collapse;
   font-size: 0.94rem;
 }
@@ -1853,7 +1931,8 @@ h3 {
 .ultrasound-table th,
 .ultrasound-table td {
   padding: 0.72rem 0.85rem;
-  text-align: right;
+  text-align: center;
+  vertical-align: middle;
   border-bottom: 1px solid var(--gray-200);
   white-space: nowrap;
 }
@@ -1870,7 +1949,6 @@ h3 {
 }
 
 .ultrasound-table tbody th[scope="row"] {
-  text-align: left;
   font-weight: 600;
   color: var(--sul-green-dark);
 }
@@ -2035,34 +2113,6 @@ h3 {
 .exposure-card--unknown {
   border-left-color: var(--institutional-gray);
   border-style: dashed;
-}
-
-.base-warnings {
-  margin-top: 1rem;
-  padding: 0.85rem 1rem;
-  border-radius: var(--radius-sm);
-  background: var(--alert-yellow-soft);
-  border-left: 4px solid var(--alert-yellow);
-}
-
-.base-warnings strong {
-  display: block;
-  margin-bottom: 0.4rem;
-  font-size: 0.82rem;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  color: var(--ink-700);
-}
-
-.base-warnings ul {
-  margin: 0;
-  padding-left: 1.1rem;
-  font-size: 0.85rem;
-  color: var(--ink-700);
-}
-
-.base-warnings li + li {
-  margin-top: 0.35rem;
 }
 
 .forecast-totals dd.is-missing {

@@ -2,6 +2,12 @@
 
 const DATA_URL = "./data/dashboard.json";
 const SUPPORTED_SCHEMA = "3.0.0";
+const PUBLIC_DATA_NOTICE = "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS";
+//: Cruza declarada del lote. Sólo se muestra cuando aporta algo distinto del
+//: nombre del módulo; los alias siguen resolviéndose en la importación.
+const LOT_BREEDS = {
+  INTENSIVO: "Merino Australiano X Hampshire Down",
+};
 const state = {
   data: null,
   selectedModule: "TODOS",
@@ -106,10 +112,7 @@ function assertDashboard(data) {
   if (data.schema_version !== SUPPORTED_SCHEMA) {
     throw new Error(`Versión de esquema no compatible: ${data.schema_version}`);
   }
-  if (
-    data.data_mode !== "OPERATIONAL" ||
-    data.data_notice !== "INFORMACIÓN AUTOMÁTICA PROVISORIA — PENDIENTE DE REVISIÓN"
-  ) {
+  if (data.data_mode !== "OPERATIONAL" || data.data_notice !== PUBLIC_DATA_NOTICE) {
     throw new Error("El tablero operativo no está identificado correctamente");
   }
   for (const field of requiredObjects) {
@@ -127,7 +130,8 @@ function assertDashboard(data) {
 
 function renderHeader(data) {
   byId("demo-notice").textContent = data.data_notice;
-  byId("page-title").textContent = data.campaign.name;
+  // El título público es institucional y fijo: no se deriva del nombre interno
+  // de la campaña, que sigue identificando el registro en la base.
   byId("mode-status").textContent = "Tablero operativo";
   byId("last-updated").textContent = formatDateTime(data.generated_at, data.timezone);
 
@@ -302,17 +306,25 @@ function renderModules(modules, thresholds, generatedAt) {
         generatedAt,
       );
 
+      const breed = LOT_BREEDS[module.code];
+
       return `
         <article class="module-card">
           <header class="module-card__header">
             <span class="module-card__code">${escapeHtml(module.code)}</span>
             <h3>${escapeHtml(module.name)}</h3>
+            ${breed ? `<p class="module-card__breed">${escapeHtml(breed)}</p>` : ""}
           </header>
           <div class="module-card__body">
-            <section class="initial-baseline" aria-label="Valores iniciales del Excel vigente">
+            <section
+              class="initial-baseline"
+              aria-label="Valores iniciales de la base productiva vigente"
+            >
               <div class="initial-baseline__heading">
-                <span>FUENTE EXCEL VIGENTE</span>
-                <strong>Valores esperados</strong>
+                <div>
+                  <span class="count-block__title">Valores iniciales</span>
+                  <strong>Esperados de la base productiva</strong>
+                </div>
               </div>
               <dl>
                 <div><dt>Encarneradas</dt><dd>${escapeHtml(formatInteger(initial.served))}</dd></div>
@@ -706,18 +718,7 @@ function renderUpdateStatus(data) {
   )}`;
   byId("last-sync").textContent = formatDateTime(update.last_sync_at, data.timezone);
   byId("pending-operations").textContent = formatInteger(update.pending_operations);
-  byId("initial-source").textContent = data.initial_source?.file || "—";
-  const sourceHash = data.initial_source?.sha256;
-  byId("initial-source-hash").textContent = sourceHash
-    ? `${sourceHash.slice(0, 16)}…`
-    : "—";
-  byId("initial-source-hash").title = sourceHash || "";
-  byId("initial-source-date").textContent = formatDateTime(
-    data.initial_source?.imported_at,
-    data.timezone,
-  );
   byId("update-message").textContent = update.public_message || "—";
-  byId("provisional-message").textContent = data.automatic_provisional?.notice || "—";
   updateFreshness(data);
 }
 
@@ -899,7 +900,7 @@ function renderUltrasound(modules, curves) {
   const rows = Array.isArray(modules) ? modules : [];
   if (!rows.length) {
     body.innerHTML =
-      '<tr><td colspan="10" class="is-empty">SIN DATO — todavía no se importó la base productiva.</td></tr>';
+      '<tr><td colspan="9" class="is-empty">SIN DATO — todavía no se importó la base productiva.</td></tr>';
     byId("ultrasound-note").textContent = "SIN DATO";
     return;
   }
@@ -934,8 +935,6 @@ function renderUltrasound(modules, curves) {
         totals.triple += values.triple;
         tripleReported = true;
       }
-      const prolificacy =
-        values.expected_to_lamb > 0 ? values.expected_lambs / values.expected_to_lamb : null;
       const tripleCell =
         values.triple === null || values.triple === undefined
           ? `<td class="is-missing" title="${escapeHtml(
@@ -957,15 +956,10 @@ function renderUltrasound(modules, curves) {
           ${tripleCell}
           <td class="is-strong">${escapeHtml(formatInteger(values.expected_to_lamb))}</td>
           <td class="is-strong">${escapeHtml(formatInteger(values.expected_lambs))}</td>
-          <td>${escapeHtml(
-            prolificacy === null ? "SIN DATO" : prolificacy.toFixed(3).replace(".", ","),
-          )}</td>
         </tr>`;
     })
     .join("");
 
-  const totalProlificacy =
-    totals.pregnant > 0 ? (totals.lambs / totals.pregnant).toFixed(3).replace(".", ",") : "SIN DATO";
   body.innerHTML = `${cells}
     <tr class="is-total">
       <th scope="row">ESTABLECIMIENTO</th>
@@ -977,13 +971,12 @@ function renderUltrasound(modules, curves) {
       <td>${escapeHtml(tripleReported ? formatInteger(totals.triple) : "NO INFORMADO")}</td>
       <td class="is-strong">${escapeHtml(formatInteger(totals.pregnant))}</td>
       <td class="is-strong">${escapeHtml(formatInteger(totals.lambs))}</td>
-      <td>${escapeHtml(totalProlificacy)}</td>
     </tr>`;
 
   const base = curves?.base_source;
   byId("ultrasound-note").textContent = base
     ? `Preñadas = únicas + dobles + triples · Corderos esperados = únicas + 2×dobles + 3×triples. ` +
-      `Base productiva versión ${base.version_number} (${base.primary_source}).`
+      `Base productiva versión ${base.version_number}.`
     : "Preñadas = únicas + dobles + triples · Corderos esperados = únicas + 2×dobles + 3×triples.";
 }
 
@@ -1212,28 +1205,14 @@ function renderExposure(forecast) {
     .join("");
 }
 
+// La portada pública sólo informa cuándo se actualizó la base. Los nombres de
+// archivo, los hashes y las advertencias de importación quedan en la gestión
+// interna, bajo «Notas técnicas de la fuente».
 function renderBaseSource(data) {
   const base = data.base_source;
-  const warnings = byId("base-warnings");
-  const list = byId("base-warnings-list");
-  if (!base) {
-    byId("base-source").textContent = "SIN BASE IMPORTADA";
-    byId("base-source-hash").textContent = "—";
-    byId("base-source-date").textContent = "—";
-    warnings.hidden = true;
-    return;
-  }
-  byId("base-source").textContent = `${base.container_name} · versión ${base.version_number}`;
-  byId("base-source").title = `${base.primary_source} (fuente primaria) · ${
-    base.contrast_source || "sin Excel de contraste"
-  }`;
-  byId("base-source-hash").textContent = base.sha256 ? `${base.sha256.slice(0, 16)}…` : "—";
-  byId("base-source-hash").title = base.sha256 || "";
-  byId("base-source-date").textContent = formatDateTime(base.imported_at, data.timezone);
-
-  const items = Array.isArray(base.warnings) ? base.warnings : [];
-  warnings.hidden = items.length === 0;
-  list.innerHTML = items.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+  byId("base-source-date").textContent = base
+    ? formatDateTime(base.imported_at, data.timezone)
+    : "SIN BASE IMPORTADA";
 }
 
 function renderDashboard(data) {

@@ -1,8 +1,8 @@
 {
   "schema_version": "3.0.0",
   "data_mode": "OPERATIONAL",
-  "data_notice": "INFORMACIÓN AUTOMÁTICA PROVISORIA — PENDIENTE DE REVISIÓN",
-  "generated_at": "2026-07-24T14:18:53.717309-03:00",
+  "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
+  "generated_at": "2026-07-24T15:00:53.290745-03:00",
   "timezone": "America/Montevideo",
   "stale_after_hours": 12,
   "freshness_thresholds": {
@@ -49,7 +49,7 @@
   "modules": [
     {
       "code": "INTENSIVO",
-      "name": "INTENSIVO / Módulo de carne / Cara Mora",
+      "name": "Intensivo",
       "initial_values": {
         "served": 103,
         "scanned": 102,
@@ -87,7 +87,7 @@
     },
     {
       "code": "DOHNE",
-      "name": "MERINO DOHNE",
+      "name": "Merino Dohne",
       "initial_values": {
         "served": 155,
         "scanned": 155,
@@ -127,7 +127,7 @@
     },
     {
       "code": "MA",
-      "name": "MERINO AUSTRALIANO",
+      "name": "Merino Australiano",
       "initial_values": {
         "served": 630,
         "scanned": 624,
@@ -172,7 +172,7 @@
     "lots": [
       {
         "code": "INTENSIVO",
-        "name": "INTENSIVO / Módulo de carne / Cara Mora",
+        "name": "Intensivo",
         "expected_to_lamb": 96,
         "expected_lambs": 129,
         "first_date": "2026-07-12",
@@ -710,7 +710,7 @@
       },
       {
         "code": "DOHNE",
-        "name": "MERINO DOHNE",
+        "name": "Merino Dohne",
         "expected_to_lamb": 144,
         "expected_lambs": 180,
         "first_date": "2026-08-16",
@@ -1257,7 +1257,7 @@
       },
       {
         "code": "MA",
-        "name": "MERINO AUSTRALIANO",
+        "name": "Merino Australiano",
         "expected_to_lamb": 592,
         "expected_lambs": 670,
         "first_date": "2026-08-30",
@@ -3740,7 +3740,7 @@
     }
   ],
   "automatic_provisional": {
-    "notice": "INFORMACIÓN AUTOMÁTICA PROVISORIA — PENDIENTE DE REVISIÓN",
+    "notice": "Los datos pueden ajustarse si se recibe una corrección posterior.",
     "pending_count": 0,
     "records": []
   },
@@ -3750,8 +3750,8 @@
       "processed_at": "2026-07-24T17:11:41.001351Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-07-24T14:18:53.717309-03:00",
+    "last_sync_at": "2026-07-24T15:00:53.290745-03:00",
     "pending_operations": 0,
-    "public_message": "Valores iniciales confirmados desde Excel; los datos automáticos se muestran separados y no afectan los indicadores hasta su revisión."
+    "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
 }
