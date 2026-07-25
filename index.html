@@ -3,411 +3,85 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="CICOMA - Monitoreo de pariciones 2026"
-    />
+    <meta name="description" content="CICOMA - Monitoreo de pariciones 2026" />
     <meta name="theme-color" content="#006937" />
     <link rel="icon" href="assets/logo-sul-60.png" type="image/png" />
     <title>CICOMA - Monitoreo de pariciones 2026</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="demo-ribbon" role="status">
-      <span class="demo-ribbon__dot" aria-hidden="true"></span>
-      <span class="demo-ribbon__copy">
-        <strong id="demo-notice">DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS</strong>
-        <span id="demo-disclaimer">Los datos pueden ajustarse si se recibe una corrección posterior.</span>
-      </span>
-    </div>
+    <header class="topbar">
+      <button
+        class="nav-toggle"
+        id="nav-toggle"
+        type="button"
+        aria-label="Abrir el menú de secciones"
+        aria-controls="sidebar"
+        aria-expanded="false"
+      >
+        <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+      </button>
 
-    <header class="site-header">
-      <div class="shell site-header__inner">
-        <a class="brand" href="#inicio" aria-label="Ir al inicio">
-          <img
-            class="brand__logo"
-            src="assets/logo-sul-60.png"
-            width="562"
-            height="557"
-            alt="Secretariado Uruguayo de la Lana · 60 años"
-            decoding="async"
-          />
-          <span class="brand__copy">
-            <span class="brand__eyebrow">CICOMA . MONITOREO</span>
-            <span class="brand__name">Control de Pariciones</span>
-          </span>
-        </a>
+      <a class="brand" href="#resumen" aria-label="CICOMA · Monitoreo · ir al resumen">
+        <img
+          class="brand__logo"
+          src="assets/logo-sul-60.png"
+          width="562"
+          height="557"
+          alt="Secretariado Uruguayo de la Lana · 60 años"
+          decoding="async"
+        />
+        <span class="brand__copy">
+          <span class="brand__eyebrow">CICOMA . MONITOREO</span>
+          <span class="brand__name">Control de Pariciones</span>
+        </span>
+      </a>
 
-        <nav class="main-nav" aria-label="Navegación principal">
-          <a class="main-nav__link is-active" href="#inicio">Inicio</a>
-          <a class="main-nav__link" href="#modulos">Módulos</a>
-          <a class="main-nav__link" href="#ecografia">Ecografía</a>
-          <a class="main-nav__link" href="#curva">Curva de partos</a>
-          <a class="main-nav__link" href="#riesgo">Riesgo ambiental</a>
-          <a class="main-nav__link" href="#registros">Registros</a>
-        </nav>
+      <!-- Indicador OK/OJO compacto, siempre visible (también en móvil). -->
+      <div class="health-chip" id="health-chip" role="status" aria-live="polite">
+        <span class="health-chip__dot" aria-hidden="true"></span>
+        <span class="health-chip__state" id="health-chip-state">—</span>
       </div>
     </header>
 
-    <main id="main-content">
-      <section class="hero" id="inicio" aria-labelledby="page-title">
-        <div class="shell">
-          <div class="hero__heading">
-            <div>
-              <p class="eyebrow">SEGUIMIENTO DE CAMPAÑA</p>
-              <h1 id="page-title">CICOMA - Monitoreo de pariciones 2026</h1>
-              <p class="hero__intro">
-                Avance de recuentos, mortalidad y previsión ambiental en una lectura común.
-              </p>
-            </div>
-            <div class="hero__meta" aria-label="Estado del tablero">
-              <span class="status-pill status-pill--operational" id="mode-status">Tablero operativo</span>
-              <span class="updated-label">Actualizado <strong id="last-updated">—</strong></span>
-            </div>
-          </div>
+    <div class="layout">
+      <aside class="sidebar" id="sidebar" aria-label="Secciones">
+        <nav class="side-nav" aria-label="Navegación principal">
+          <a class="side-nav__link" data-section="resumen" href="#resumen">Resumen</a>
+          <a class="side-nav__link" data-section="intensivo" href="#intensivo">Intensivo</a>
+          <a class="side-nav__link" data-section="dohne" href="#dohne">Merino Dohne</a>
+          <a class="side-nav__link" data-section="ma" href="#ma">Merino Australiano</a>
+        </nav>
 
-          <div class="hero-panel">
-            <div class="progress-spotlight">
-              <div
-                class="progress-ring"
-                id="progress-ring"
-                role="img"
-                aria-label="Avance de parición"
-              >
-                <div class="progress-ring__inner">
-                  <strong id="progress-value">—</strong>
-                  <span>de avance</span>
-                </div>
-              </div>
-              <div class="progress-spotlight__copy">
-                <p class="eyebrow eyebrow--light">AVANCE GENERAL</p>
-                <h2><span id="lambed-highlight">—</span> ovejas paridas contabilizadas</h2>
-                <p>
-                  Sobre <strong id="expected-highlight">—</strong> hembras previstas en la fuente
-                  inicial vigente.
-                </p>
-              </div>
-            </div>
-
-            <div class="hero-panel__secondary">
-              <div>
-                <span class="mini-label">Corderos vivos</span>
-                <strong id="alive-highlight">—</strong>
-              </div>
-              <div>
-                <span class="mini-label">Último procesamiento</span>
-                <strong id="processing-highlight">—</strong>
-              </div>
-            </div>
+        <!-- Estado del sistema: OK / OJO, integrado en la parte superior del menú. -->
+        <div class="sys-health" id="sys-health" role="status" aria-live="polite">
+          <div class="sys-health__head">
+            <span class="sys-health__badge" id="sys-health-badge">—</span>
+            <span class="sys-health__headline" id="sys-health-headline">Comprobando estado…</span>
           </div>
+          <ul class="sys-health__reasons" id="sys-health-reasons"></ul>
+          <dl class="sys-health__meta">
+            <div><dt>Última actualización</dt><dd id="sys-health-updated">—</dd></div>
+            <div><dt>Antigüedad</dt><dd id="sys-health-age">—</dd></div>
+          </dl>
+          <p class="sys-health__note">
+            El detalle técnico está disponible en la gestión interna.
+          </p>
         </div>
-      </section>
+      </aside>
 
-      <section class="section section--metrics" aria-labelledby="general-title">
-        <div class="shell">
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow">PANORAMA GENERAL</p>
-              <h2 id="general-title">La campaña de un vistazo</h2>
-            </div>
-            <p>Valores iniciales confirmados y observaciones validadas de la campaña.</p>
-          </div>
-          <div class="metric-grid" id="metric-grid" aria-live="polite"></div>
-        </div>
-      </section>
+      <div class="scrim" id="scrim" hidden></div>
 
-      <section class="section" id="modulos" aria-labelledby="modules-title">
-        <div class="shell">
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow">RESUMEN POR MÓDULO</p>
-              <h2 id="modules-title">Tres módulos, una lectura común</h2>
-            </div>
-            <p>
-              Ovejas y corderos conservan recuentos, porcentajes y fechas independientes.
-            </p>
-          </div>
-          <div class="freshness-key" aria-label="Estados posibles de los recuentos">
-            <span class="freshness-badge freshness-badge--updated">ACTUALIZADO</span>
-            <span class="freshness-badge freshness-badge--aged">RECUENTO CON ANTIGÜEDAD</span>
-            <span class="freshness-badge freshness-badge--stale">SIN RECUENTO RECIENTE</span>
-          </div>
-          <div class="module-grid" id="module-grid" aria-live="polite"></div>
-        </div>
-      </section>
-
-      <section class="section" id="ecografia" aria-labelledby="ultrasound-title">
-        <div class="shell">
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow">RESUMEN DE ECOGRAFÍA</p>
-              <h2 id="ultrasound-title">Carga fetal confirmada por lote</h2>
-            </div>
-            <p>
-              Servidas, ecografiadas, vacías y carga fetal de la base productiva vigente.
-            </p>
-          </div>
-          <div class="ultrasound-table-wrap">
-            <table class="ultrasound-table" id="ultrasound-table">
-              <thead>
-                <tr>
-                  <th scope="col">Lote</th>
-                  <th scope="col">Servidas</th>
-                  <th scope="col">Ecografiadas</th>
-                  <th scope="col">Vacías</th>
-                  <th scope="col">Únicas</th>
-                  <th scope="col">Dobles</th>
-                  <th scope="col">Triples</th>
-                  <th scope="col">Preñadas</th>
-                  <th scope="col">Corderos esp.</th>
-                </tr>
-              </thead>
-              <tbody id="ultrasound-body"></tbody>
-            </table>
-          </div>
-          <p class="chart-note" id="ultrasound-note">—</p>
-        </div>
-      </section>
-
-      <section class="section section--chart" id="curva" aria-labelledby="curve-title">
-        <div class="shell">
-          <div class="chart-card">
-            <div class="chart-card__header">
-              <div>
-                <p class="eyebrow">CURVA ESPERADA DE PARTOS</p>
-                <h2 id="curve-title">Distribución diaria y acumulada</h2>
-              </div>
-              <div class="chart-legend" aria-label="Referencias del gráfico de curva">
-                <span><i class="legend-mark legend-mark--ewes"></i>Ovejas previstas</span>
-                <span><i class="legend-mark legend-mark--lambs"></i>Corderos previstos</span>
-                <span><i class="legend-mark legend-mark--line"></i>Acumulado</span>
-              </div>
-            </div>
-
-            <div class="curve-controls">
-              <label for="curve-module-selector">Lote</label>
-              <select id="curve-module-selector">
-                <option value="TODOS">TODOS</option>
-              </select>
-
-              <label for="curve-series-selector">Serie</label>
-              <select id="curve-series-selector">
-                <option value="ORIGINAL">Curva original</option>
-                <option value="ADJUSTED">Curva ajustada por recuento</option>
-              </select>
-
-              <span id="curve-status" role="status"></span>
-            </div>
-
-            <div class="chart-wrap">
-              <canvas
-                id="curve-chart"
-                role="img"
-                aria-label="Gráfico de la curva esperada de partos, diaria y acumulada"
-              ></canvas>
-              <p id="curve-chart-empty" class="forecast-chart-empty" hidden></p>
-            </div>
-
-            <dl class="curve-summary" id="curve-summary"></dl>
-            <p class="chart-note" id="curve-note">—</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="section section--chart" aria-labelledby="evolution-title">
-        <div class="shell">
-          <div class="chart-card">
-            <div class="chart-card__header">
-              <div>
-                <p class="eyebrow">EVOLUCIÓN DIARIA</p>
-                <h2 id="evolution-title">Ritmo de la parición</h2>
-              </div>
-              <div class="chart-legend" aria-label="Referencias del gráfico">
-                <span><i class="legend-mark legend-mark--ewes"></i>Ovejas paridas</span>
-                <span><i class="legend-mark legend-mark--lambs"></i>Corderos nacidos</span>
-                <span><i class="legend-mark legend-mark--line"></i>Acumulado</span>
-              </div>
-            </div>
-            <div class="chart-wrap">
-              <canvas
-                id="evolution-chart"
-                role="img"
-                aria-label="Gráfico de evolución diaria de pariciones y nacimientos"
-              ></canvas>
-            </div>
-            <p class="chart-note">
-              Las barras muestran actividad diaria; la línea representa el acumulado de ovejas
-              paridas.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section class="section environmental-section" id="riesgo" aria-labelledby="risk-title">
-        <div class="shell">
-          <div class="section-heading section-heading--risk">
-            <div>
-              <p class="eyebrow">INIA-GRAS · INTERPRETADO POR ZAPIA</p>
-              <h2 id="risk-title">RIESGO AMBIENTAL Y PARICIONES — PRÓXIMOS 5 DÍAS</h2>
-            </div>
-            <a
-              class="official-link"
-              id="official-link"
-              href="https://inia.uy/gras/Aplicaciones_y_recursos/Prevision%20Corderos"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Ver previsión oficial en INIA-GRAS
-            </a>
-          </div>
-
-          <div class="source-banner">
-            <strong>Fuente: INIA-GRAS interpretada por Zapia</strong>
-            <span id="forecast-status-banner">Cargando estado del pronóstico…</span>
-          </div>
-
-          <div class="forecast-metadata" id="forecast-metadata" aria-live="polite"></div>
-
-          <div class="forecast-controls">
-            <label for="module-selector">Módulo</label>
-            <select id="module-selector">
-              <option value="TODOS">TODOS</option>
-              <option value="INTENSIVO">Intensivo</option>
-              <option value="DOHNE">Merino Dohne</option>
-              <option value="MA">Merino Australiano</option>
-            </select>
-            <span id="product-cross-status" role="status"></span>
-          </div>
-
-          <div class="forecast-grid" id="forecast-grid" aria-live="polite"></div>
-
-          <div class="forecast-chart-panel">
-            <div>
-              <p class="eyebrow">PREVISIÓN DIARIA</p>
-              <h3>Ovejas a parir y corderos a nacer</h3>
-            </div>
-            <div class="forecast-chart-wrap">
-              <canvas
-                id="forecast-chart"
-                role="img"
-                aria-label="Gráfico de barras de ovejas previstas a parir y corderos previstos a nacer"
-              ></canvas>
-              <p id="forecast-chart-empty" class="forecast-chart-empty" hidden></p>
-            </div>
-          </div>
-
-          <div class="exposure-panel">
-            <div class="section-heading section-heading--compact">
-              <div>
-                <p class="eyebrow">EXPOSICIÓN EN LAS PRIMERAS 72 HORAS</p>
-                <h3 id="exposure-title">
-                  Corderos esperados expuestos a condiciones ambientales de riesgo durante sus
-                  primeras 72 horas
-                </h3>
-              </div>
-              <span id="exposure-status" role="status">—</span>
-            </div>
-            <p class="exposure-rule" id="exposure-rule">—</p>
-            <div class="exposure-grid" id="exposure-grid" aria-live="polite"></div>
-          </div>
-
-          <div class="exposure-note">
-            <p>
-              <strong>Corderos:</strong> Corderos esperados expuestos a condiciones ambientales de
-              riesgo durante sus primeras 72 horas.
-            </p>
-            <p>
-              <strong>Ovejas:</strong> Ovejas con parto esperado durante jornadas de riesgo
-              ambiental.
-            </p>
-            <span id="product-cross-message">
-              El cálculo de exposición se habilitará cuando exista una distribución diaria de
-              partos cargada.
-            </span>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="registros" aria-labelledby="records-title">
-        <div class="shell records-layout">
-          <div class="records-panel">
-            <div class="section-heading section-heading--compact">
-              <div>
-                <p class="eyebrow">REGISTROS RECIENTES</p>
-                <h2 id="records-title">Últimas novedades</h2>
-              </div>
-              <span class="record-count" id="record-count">—</span>
-            </div>
-
-            <div class="records-table-wrap">
-              <table class="records-table">
-                <thead>
-                  <tr>
-                    <th scope="col">Fecha</th>
-                    <th scope="col">Módulo</th>
-                    <th scope="col">Evento</th>
-                    <th scope="col">Cant.</th>
-                    <th scope="col">Observación general</th>
-                  </tr>
-                </thead>
-                <tbody id="records-body"></tbody>
-              </table>
-            </div>
-            <div class="record-cards" id="record-cards"></div>
-          </div>
-
-          <aside class="update-card" aria-labelledby="update-title">
-            <div class="update-card__top">
-              <span class="update-icon" aria-hidden="true"></span>
-              <div>
-                <p class="eyebrow eyebrow--light">ESTADO DE ACTUALIZACIÓN</p>
-                <h2 id="update-title">Datos del tablero</h2>
-              </div>
-            </div>
-
-            <div class="freshness" id="freshness">
-              <span class="freshness__dot" aria-hidden="true"></span>
-              <div>
-                <strong id="freshness-label">Comprobando estado…</strong>
-                <span id="freshness-detail">—</span>
-              </div>
-            </div>
-
-            <dl class="update-list">
-              <div>
-                <dt>Último ZIP procesado</dt>
-                <dd id="last-zip">—</dd>
-              </div>
-              <div>
-                <dt>Procesamiento</dt>
-                <dd id="last-processing">—</dd>
-              </div>
-              <div>
-                <dt>Última sincronización</dt>
-                <dd id="last-sync">—</dd>
-              </div>
-              <div>
-                <dt>Operaciones pendientes</dt>
-                <dd id="pending-operations">—</dd>
-              </div>
-              <div>
-                <dt>Actualización de la base</dt>
-                <dd id="base-source-date">—</dd>
-              </div>
-            </dl>
-
-            <p class="update-message" id="update-message">—</p>
-            <p class="update-message update-message--muted" id="source-note">
-              Fuente productiva validada. Las notas técnicas están disponibles en la gestión
-              interna.
-            </p>
-          </aside>
-        </div>
-      </section>
-    </main>
+      <main class="main" id="main">
+        <section class="view" id="view-resumen" aria-labelledby="title-resumen"></section>
+        <section class="view" id="view-intensivo" aria-labelledby="title-intensivo" hidden></section>
+        <section class="view" id="view-dohne" aria-labelledby="title-dohne" hidden></section>
+        <section class="view" id="view-ma" aria-labelledby="title-ma" hidden></section>
+      </main>
+    </div>
 
     <footer class="site-footer">
-      <div class="shell site-footer__inner">
+      <div class="site-footer__inner">
         <div>
           <strong>CICOMA - Monitoreo de pariciones 2026</strong>
           <span>Tablero operativo de consulta</span>
@@ -418,7 +92,7 @@
 
     <div class="load-error" id="load-error" role="alert" hidden>
       <strong>No se pudo cargar el tablero operativo.</strong>
-      <span>Generá <code>data/dashboard.json</code> y ejecutá <code>probar_web.bat</code>.</span>
+      <span>Generá <code>data/dashboard.json</code> y volvé a intentar.</span>
     </div>
 
     <script src="app.js" defer></script>

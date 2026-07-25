@@ -1,25 +1,26 @@
 "use strict";
 
+/* Tablero público CICOMA — monitoreo de pariciones 2026.
+ * Lee exclusivamente data/dashboard.json (esquema 3.1.0). Navegación por menú
+ * lateral con secciones por lote. Nunca convierte un faltante en cero. */
+
 const DATA_URL = "./data/dashboard.json";
-const SUPPORTED_SCHEMA = "3.0.0";
-const PUBLIC_DATA_NOTICE = "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS";
-//: Cruza declarada del lote. Sólo se muestra cuando aporta algo distinto del
-//: nombre del módulo; los alias siguen resolviéndose en la importación.
-const LOT_BREEDS = {
-  INTENSIVO: "Merino Australiano X Hampshire Down",
-};
-const state = {
-  data: null,
-  selectedModule: "TODOS",
-  curveModule: "TODOS",
-  curveSeries: "ORIGINAL",
-};
+const SUPPORTED_SCHEMA = "3.1.0";
+const SECTIONS = ["resumen", "intensivo", "dohne", "ma"];
+const LOTS = [
+  { code: "INTENSIVO", section: "intensivo", name: "Intensivo", breed: "Merino Australiano X Hampshire Down" },
+  { code: "DOHNE", section: "dohne", name: "Merino Dohne", breed: null },
+  { code: "MA", section: "ma", name: "Merino Australiano", breed: null },
+];
+const CODE_BY_SECTION = Object.fromEntries(LOTS.map((lot) => [lot.section, lot.code]));
+const RISK_ORDER = ["SIN_RIESGO", "BAJO", "MEDIO", "ALTO", "CRITICO"];
+
+let DASH = null;
+let AGE_TIMER = null;
+const CURVE_SERIES = {};
 
 const integerFormatter = new Intl.NumberFormat("es-UY", { maximumFractionDigits: 0 });
-const decimalFormatter = new Intl.NumberFormat("es-UY", {
-  minimumFractionDigits: 1,
-  maximumFractionDigits: 1,
-});
+const decimalFormatter = new Intl.NumberFormat("es-UY", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 function byId(id) {
   return document.getElementById(id);
@@ -46,10 +47,9 @@ function formatPercent(value) {
   return value === null || value === undefined ? "—" : `${decimalFormatter.format(value)} %`;
 }
 
-function formatConfidence(value) {
-  return value === null || value === undefined
-    ? "—"
-    : `${integerFormatter.format(Number(value) * 100)} %`;
+function formatExposure(value) {
+  if (value === null || value === undefined) return "—";
+  return integerFormatter.format(Math.round(Number(value)));
 }
 
 function formatDate(dateString, options = {}) {
@@ -61,15 +61,6 @@ function formatDate(dateString, options = {}) {
     month: options.short ? "short" : "2-digit",
     year: options.includeYear === false ? undefined : "numeric",
   }).format(new Date(year, month - 1, day));
-}
-
-function formatWeekday(dateString) {
-  if (!dateString) return "—";
-  const [year, month, day] = dateString.slice(0, 10).split("-").map(Number);
-  if (!year || !month || !day) return "—";
-  return new Intl.DateTimeFormat("es-UY", { weekday: "long" }).format(
-    new Date(year, month - 1, day),
-  );
 }
 
 function formatDateTime(value, timezone) {
@@ -85,1012 +76,527 @@ function formatDateTime(value, timezone) {
   }).format(date);
 }
 
-function forecastAgeHours(analyzedAt) {
-  if (!analyzedAt) return null;
-  const analyzed = new Date(analyzedAt);
-  if (Number.isNaN(analyzed.getTime())) return null;
-  return Math.max(0, (Date.now() - analyzed.getTime()) / 3_600_000);
+function riskClass(category) {
+  if (RISK_ORDER.includes(category)) return category.toLowerCase().replace("_", "-");
+  if (category === "RIESGO_72H_INCOMPLETO") return "incompleto";
+  return "unknown";
 }
 
-function formatCoordinate(value) {
-  return value === null || value === undefined ? "Pendiente" : Number(value).toFixed(7);
+function riskLabel(category) {
+  if (!category) return "NO INFORMADO";
+  if (category === "SIN_RIESGO") return "SIN RIESGO";
+  if (category === "RIESGO_72H_INCOMPLETO") return "RIESGO 72 H INCOMPLETO";
+  if (category === "NO_DETERMINADO") return "NO DETERMINADO";
+  return String(category).replaceAll("_", " ");
 }
+
+/* ---------------------------------------------------------------- carga --- */
 
 function assertDashboard(data) {
-  const requiredObjects = [
-    "campaign",
-    "overview",
-    "update_status",
-    "initial_source",
-    "automatic_provisional",
-    "freshness_thresholds",
-    "environmental_forecast",
-  ];
-  const requiredArrays = ["modules", "daily_evolution", "recent_records"];
-
   if (!data || typeof data !== "object") throw new Error("JSON inválido");
   if (data.schema_version !== SUPPORTED_SCHEMA) {
     throw new Error(`Versión de esquema no compatible: ${data.schema_version}`);
   }
-  if (data.data_mode !== "OPERATIONAL" || data.data_notice !== PUBLIC_DATA_NOTICE) {
-    throw new Error("El tablero operativo no está identificado correctamente");
+  for (const field of ["overview", "system_health", "chill_public", "field_controls"]) {
+    if (!data[field] || typeof data[field] !== "object") throw new Error(`Falta ${field}`);
   }
-  for (const field of requiredObjects) {
-    if (!data[field] || typeof data[field] !== "object") {
-      throw new Error(`Falta el objeto ${field}`);
+  if (!Array.isArray(data.modules)) throw new Error("Falta la lista de módulos");
+}
+
+async function boot() {
+  try {
+    const response = await fetch(`${DATA_URL}?t=${Date.now()}`, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    assertDashboard(data);
+    DASH = data;
+    renderAll();
+    initRouter();
+    startAgeClock();
+  } catch (error) {
+    const box = byId("load-error");
+    if (box) {
+      box.hidden = false;
+      box.querySelector("span").textContent = String(error.message || error);
     }
   }
-  for (const field of requiredArrays) {
-    if (!Array.isArray(data[field])) throw new Error(`Falta la lista ${field}`);
+}
+
+function renderAll() {
+  renderHealth();
+  renderResumen();
+  LOTS.forEach(renderLot);
+}
+
+/* --------------------------------------------------------------- salud --- */
+
+function ageMinutes() {
+  const generated = DASH.generated_at || DASH.system_health?.generated_at;
+  if (!generated) return null;
+  const stamp = new Date(generated);
+  if (Number.isNaN(stamp.getTime())) return null;
+  return Math.max(0, (Date.now() - stamp.getTime()) / 60000);
+}
+
+function ageText(minutes) {
+  if (minutes === null) return "—";
+  if (minutes < 60) return `hace ${Math.round(minutes)} min`;
+  const hours = minutes / 60;
+  if (hours < 24) return `hace ${Math.round(hours)} h`;
+  return `hace ${Math.round(hours / 24)} d`;
+}
+
+// Estado efectivo: el del servidor más la antigüedad evaluada en el cliente.
+// Aunque la PC deje de publicar, el navegador detecta la web atrasada (§3.5).
+function currentHealth() {
+  const base = DASH.system_health || { state: "OK", reasons: [] };
+  const reasons = Array.isArray(base.reasons) ? base.reasons.slice() : [];
+  let state = base.state === "OJO" ? "OJO" : "OK";
+  const minutes = ageMinutes();
+  const maxAge = Number(DASH.max_age_minutes || base.max_age_minutes || 60);
+  if (minutes !== null && minutes > maxAge) {
+    state = "OJO";
+    reasons.push({ code: "STALE_CLIENT", message: "La información publicada está atrasada." });
   }
-  if (!Array.isArray(data.environmental_forecast.days)) {
-    throw new Error("Falta la previsión ambiental diaria");
-  }
+  return { state, reasons, minutes, maxAge };
 }
 
-function renderHeader(data) {
-  byId("demo-notice").textContent = data.data_notice;
-  // El título público es institucional y fijo: no se deriva del nombre interno
-  // de la campaña, que sigue identificando el registro en la base.
-  byId("mode-status").textContent = "Tablero operativo";
-  byId("last-updated").textContent = formatDateTime(data.generated_at, data.timezone);
+function renderHealth() {
+  const health = currentHealth();
+  const isOjo = health.state === "OJO";
 
-  const progress = data.overview.progress_percent;
-  byId("progress-value").textContent = formatPercent(progress);
-  byId("progress-ring").style.setProperty(
-    "--progress",
-    `${Math.max(0, Math.min(100, Number(progress) || 0)) * 3.6}deg`,
-  );
-  byId("progress-ring").setAttribute("aria-label", `Avance de parición: ${formatPercent(progress)}`);
-  byId("lambed-highlight").textContent = formatInteger(data.overview.lambed_ewes);
-  byId("expected-highlight").textContent = formatInteger(data.overview.expected_to_lamb);
-  byId("alive-highlight").textContent = formatInteger(data.overview.born_alive);
-  byId("processing-highlight").textContent = friendlyStatus(data.update_status.last_zip?.status);
+  const chip = byId("health-chip");
+  chip.classList.toggle("health-chip--ok", !isOjo);
+  chip.classList.toggle("health-chip--ojo", isOjo);
+  byId("health-chip-state").textContent = health.state;
+  chip.title = isOjo ? health.reasons.map((r) => r.message).join(" · ") : "Todo actualizado";
+
+  const badge = byId("sys-health-badge");
+  badge.textContent = health.state;
+  badge.className = `sys-health__badge sys-health__badge--${isOjo ? "ojo" : "ok"}`;
+  byId("sys-health-headline").textContent = isOjo
+    ? health.reasons[0]?.message || "Requiere atención"
+    : "Todo actualizado";
+
+  const reasons = byId("sys-health-reasons");
+  reasons.innerHTML = isOjo
+    ? health.reasons.map((r) => `<li>${escapeHtml(r.message)}</li>`).join("")
+    : "";
+  reasons.hidden = !isOjo;
+
+  byId("sys-health-updated").textContent = formatDateTime(DASH.generated_at, DASH.timezone);
+  byId("sys-health-age").textContent = ageText(health.minutes);
 }
 
-function renderMetrics(overview) {
-  const metrics = [
-    {
-      key: "served_ewes",
-      label: "Ovejas encarneradas",
-      note: "Fuente inicial vigente",
-      tone: "",
-    },
-    {
-      key: "expected_to_lamb",
-      label: "Hembras previstas a parir",
-      note: "Ecografía resumida vigente",
-      tone: "",
-    },
-    {
-      key: "lambed_ewes",
-      label: "Ovejas paridas",
-      note: "Último recuento confirmado",
-      tone: "positive",
-    },
-    {
-      key: "progress_percent",
-      label: "Porcentaje de avance",
-      note: "Paridas sobre previstas",
-      tone: "positive",
-      percent: true,
-    },
-    {
-      key: "born_lambs",
-      label: "Corderos nacidos",
-      note: "Recuento confirmado",
-      tone: "",
-    },
-    {
-      key: "born_alive",
-      label: "Corderos vivos",
-      note: "Recuento confirmado",
-      tone: "positive",
-    },
-    {
-      key: "stillborn",
-      label: "Muertos al nacimiento",
-      note: "Registro confirmado",
-      tone: "attention",
-    },
-    {
-      key: "ewe_deaths",
-      label: "Muertes de ovejas",
-      note: "Registro confirmado",
-      tone: "attention",
-    },
-    {
-      key: "deaths_last_24h",
-      label: "Muertes en últimas 24 h",
-      note: "Sin completar ausencias con cero",
-      tone: "attention",
-    },
-    {
-      key: "expected_lambs",
-      label: "Corderos esperados",
-      note: "Fuente inicial vigente",
-      tone: "",
-    },
-  ];
-
-  byId("metric-grid").innerHTML = metrics
-    .map((metric) => {
-      const raw = overview[metric.key];
-      const display = metric.percent ? formatPercent(raw) : formatInteger(raw);
-      const tone = metric.tone ? ` metric-card--${metric.tone}` : "";
-      return `
-        <article class="metric-card${tone}">
-          <span class="metric-card__label">${escapeHtml(metric.label)}</span>
-          <strong class="metric-card__value">${escapeHtml(display)}</strong>
-          <span class="metric-card__note">${escapeHtml(metric.note)}</span>
-        </article>`;
-    })
-    .join("");
+function startAgeClock() {
+  if (AGE_TIMER) window.clearInterval(AGE_TIMER);
+  AGE_TIMER = window.setInterval(renderHealth, 60000);
 }
 
-function daysSince(dateString, referenceIso) {
-  if (!dateString || !referenceIso) return null;
-  const source = dateString.slice(0, 10).split("-").map(Number);
-  const reference = referenceIso.slice(0, 10).split("-").map(Number);
-  if (source.some(Number.isNaN) || reference.some(Number.isNaN)) return null;
-  const sourceUtc = Date.UTC(source[0], source[1] - 1, source[2]);
-  const referenceUtc = Date.UTC(reference[0], reference[1] - 1, reference[2]);
-  return Math.max(0, Math.floor((referenceUtc - sourceUtc) / 86_400_000));
-}
+/* ------------------------------------------------------------- resumen --- */
 
-function ageCopy(ageDays) {
-  if (ageDays === null) return "antigüedad no disponible";
-  if (ageDays === 0) return "hoy";
-  if (ageDays === 1) return "hace 1 día";
-  return `hace ${ageDays} días`;
-}
-
-function freshnessState(dateString, thresholds, referenceIso) {
-  const ageDays = daysSince(dateString, referenceIso);
-  if (ageDays === null || ageDays > Number(thresholds.aged_max_days)) {
-    return { key: "stale", label: "SIN RECUENTO RECIENTE", ageDays };
-  }
-  if (ageDays <= Number(thresholds.updated_max_days)) {
-    return { key: "updated", label: "ACTUALIZADO", ageDays };
-  }
-  return { key: "aged", label: "RECUENTO CON ANTIGÜEDAD", ageDays };
-}
-
-function freshnessBadge(status) {
-  return `<span class="freshness-badge freshness-badge--${escapeHtml(status.key)}">${escapeHtml(
-    status.label,
-  )}</span>`;
-}
-
-function progressBlock({ title, valueCopy, progress, dateLabel, status, note }) {
-  const safeProgress = Math.max(0, Math.min(100, Number(progress) || 0));
+function metricCard(label, value, note) {
   return `
-    <section class="count-block">
-      <div class="count-block__heading">
-        <div>
-          <span class="count-block__title">${escapeHtml(title)}</span>
-          <strong>${escapeHtml(valueCopy)}</strong>
-        </div>
-        <strong class="count-block__percent">${escapeHtml(formatPercent(progress))}</strong>
+    <article class="stat">
+      <span class="stat__label">${escapeHtml(label)}</span>
+      <strong class="stat__value">${escapeHtml(value)}</strong>
+      ${note ? `<span class="stat__note">${escapeHtml(note)}</span>` : ""}
+    </article>`;
+}
+
+function renderResumen() {
+  const view = byId("view-resumen");
+  const ov = DASH.overview;
+  const cards = [
+    metricCard("Ovejas previstas a parir", formatInteger(ov.expected_to_lamb)),
+    metricCard("Corderos esperados", formatInteger(ov.expected_lambs)),
+    metricCard("Ovejas paridas", ov.lambed_ewes === null ? "SIN RECUENTO" : formatInteger(ov.lambed_ewes)),
+    metricCard("Corderos nacidos", ov.born_lambs === null ? "SIN RECUENTO" : formatInteger(ov.born_lambs)),
+    metricCard("Nacidos vivos", ov.born_alive === null ? "SIN RECUENTO" : formatInteger(ov.born_alive)),
+    metricCard("Muertos", ov.stillborn === null ? "SIN RECUENTO" : formatInteger(ov.stillborn)),
+    metricCard("Avance de parición", formatPercent(ov.progress_percent), "sobre previstas a parir"),
+    metricCard("Última actualización", formatDateTime(DASH.generated_at, DASH.timezone)),
+  ].join("");
+
+  view.innerHTML = `
+    <header class="view__head">
+      <p class="eyebrow">PANORAMA GENERAL</p>
+      <h1 id="title-resumen">Resumen de la campaña</h1>
+      <p class="view__intro">Un primer golpe de vista. Cada lote tiene su vista específica en el menú.</p>
+    </header>
+
+    <div class="stat-grid">${cards}</div>
+
+    <section class="panel">
+      <div class="panel__head"><h2>Los tres lotes</h2><p>Entrá a cada lote para ver su detalle.</p></div>
+      <div class="lot-cards">${LOTS.map(distributionCard).join("")}</div>
+    </section>
+
+    <section class="panel" id="chill-general">
+      <div class="panel__head">
+        <h2>Riesgo ambiental — próximos días</h2>
+        <p>Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.</p>
       </div>
-      <div
-        class="count-progress"
-        role="progressbar"
-        aria-valuemin="0"
-        aria-valuemax="100"
-        aria-valuenow="${safeProgress}"
-        aria-label="${escapeHtml(title)}: ${escapeHtml(formatPercent(progress))}"
-      >
-        <span style="--count-progress: ${safeProgress}%"></span>
-      </div>
-      <div class="count-block__footer">
-        <span>${escapeHtml(dateLabel)}</span>
-        ${freshnessBadge(status)}
-      </div>
-      ${note ? `<p class="count-block__note">${escapeHtml(note)}</p>` : ""}
+      ${chillGeneral()}
     </section>`;
 }
 
-function renderModules(modules, thresholds, generatedAt) {
-  byId("module-grid").innerHTML = modules
-    .map((module) => {
-      const ewes = module.ewe_counts;
-      const lambs = module.lamb_counts;
-      const mortality = module.mortality;
-      const initial = module.initial_values;
-      const eweStatus = freshnessState(ewes.last_count_date, thresholds.counts, generatedAt);
-      const lambStatus = freshnessState(lambs.last_count_date, thresholds.counts, generatedAt);
-      const mortalityStatus = freshnessState(
-        mortality.last_report_date,
-        thresholds.mortality,
-        generatedAt,
-      );
-
-      const breed = LOT_BREEDS[module.code];
-
-      return `
-        <article class="module-card">
-          <header class="module-card__header">
-            <span class="module-card__code">${escapeHtml(module.code)}</span>
-            <h3>${escapeHtml(module.name)}</h3>
-            ${breed ? `<p class="module-card__breed">${escapeHtml(breed)}</p>` : ""}
-          </header>
-          <div class="module-card__body">
-            <section
-              class="initial-baseline"
-              aria-label="Valores iniciales de la base productiva vigente"
-            >
-              <div class="initial-baseline__heading">
-                <div>
-                  <span class="count-block__title">Valores iniciales</span>
-                  <strong>Esperados de la base productiva</strong>
-                </div>
-              </div>
-              <dl>
-                <div><dt>Encarneradas</dt><dd>${escapeHtml(formatInteger(initial.served))}</dd></div>
-                <div><dt>Previstas a parir</dt><dd>${escapeHtml(
-                  formatInteger(initial.expected_to_lamb),
-                )}</dd></div>
-                <div><dt>Corderos esperados</dt><dd>${escapeHtml(
-                  formatInteger(initial.expected_lambs),
-                )}</dd></div>
-                <div><dt>Muertes previas a ECO</dt><dd>${escapeHtml(
-                  formatInteger(initial.deaths_between_served_and_scan),
-                )}</dd></div>
-              </dl>
-            </section>
-            ${progressBlock({
-              title: "Ovejas · último valor observado",
-              valueCopy: `${formatInteger(ewes.counted_lambed)} de ${formatInteger(
-                ewes.expected_to_lamb,
-              )} ovejas paridas`,
-              progress: ewes.progress_percent,
-              dateLabel: `Último recuento: ${formatDate(ewes.last_count_date)} · ${ageCopy(
-                eweStatus.ageDays,
-              )}`,
-              status: eweStatus,
-            })}
-            ${progressBlock({
-              title: "Corderos · último valor observado",
-              valueCopy: `${formatInteger(lambs.counted)} de ${formatInteger(
-                lambs.expected_total,
-              )} corderos esperados contabilizados`,
-              progress: lambs.progress_percent,
-              dateLabel: `Último recuento: ${formatDate(lambs.last_count_date)} · ${ageCopy(
-                lambStatus.ageDays,
-              )}`,
-              status: lambStatus,
-              note: "El recuento no equivale automáticamente a corderos nacidos.",
-            })}
-            <section class="mortality-block">
-              <div class="mortality-block__heading">
-                <div>
-                  <span class="count-block__title">Mortalidad</span>
-                  <strong>Acumulado y últimas 24 horas</strong>
-                </div>
-                ${freshnessBadge(mortalityStatus)}
-              </div>
-              <dl class="mortality-stats">
-                ${mortalityStat("Corderos acumulados", mortality.lamb_deaths_accumulated)}
-                ${mortalityStat("Ovejas acumuladas", mortality.ewe_deaths_accumulated)}
-                ${mortalityStat("Muertes últimas 24 h", mortality.deaths_last_24h)}
-              </dl>
-              <p>Último parte: ${escapeHtml(formatDate(mortality.last_report_date))} · ${escapeHtml(
-                ageCopy(mortalityStatus.ageDays),
-              )}</p>
-            </section>
-          </div>
-        </article>`;
-    })
-    .join("");
+function moduleByCode(code) {
+  return (DASH.modules || []).find((m) => m.code === code) || null;
 }
 
-function mortalityStat(label, value) {
+function dataState(module) {
+  if (!module) return "SIN DATO";
+  return module.ewe_counts?.counted_lambed === null ? "SIN RECUENTO" : "ACTUALIZADO";
+}
+
+function distributionCard(lot) {
+  const module = moduleByCode(lot.code);
+  const previsto = module ? formatInteger(module.ewe_counts.expected_to_lamb) : "—";
+  const observed = module && module.ewe_counts.counted_lambed !== null
+    ? formatInteger(module.ewe_counts.counted_lambed)
+    : "SIN RECUENTO";
+  const progress = module ? formatPercent(module.ewe_counts.progress_percent) : "—";
   return `
-    <div>
-      <dt>${escapeHtml(label)}</dt>
-      <dd>${escapeHtml(formatInteger(value))}</dd>
+    <a class="lot-card" href="#${lot.section}">
+      <span class="lot-card__name">${escapeHtml(lot.name)}</span>
+      ${lot.breed ? `<span class="lot-card__breed">${escapeHtml(lot.breed)}</span>` : ""}
+      <dl class="lot-card__stats">
+        <div><dt>Previstas a parir</dt><dd>${escapeHtml(previsto)}</dd></div>
+        <div><dt>Ovejas paridas</dt><dd>${escapeHtml(observed)}</dd></div>
+        <div><dt>Avance</dt><dd>${escapeHtml(progress)}</dd></div>
+      </dl>
+      <span class="lot-card__state state-${dataState(module) === "ACTUALIZADO" ? "ok" : "pending"}">${escapeHtml(dataState(module))}</span>
+    </a>`;
+}
+
+/* Chill general: exposición diaria (con desglose por lote) y consolidado 72 h. */
+function chillGeneral() {
+  const chill = DASH.chill_public || {};
+  const days = Array.isArray(chill.daily) ? chill.daily : [];
+  const stale = chill.update_status && chill.update_status.stale;
+
+  if (!days.length) {
+    return `<p class="empty-note">SIN DISTRIBUCIÓN DE PARTOS CARGADA — el cálculo se habilita cuando exista curva de partos.</p>`;
+  }
+
+  const rows = days
+    .map((day) => {
+      const cat = day.risk_category;
+      const lots = LOTS.map(
+        (lot) => `${escapeHtml(lot.name)} ${escapeHtml(formatExposure((day.by_lot || {})[lot.code]))}`,
+      ).join(" · ");
+      const complete = day.cohort_72h_complete
+        ? ""
+        : `<span class="tag tag--incompleto">72 H INCOMPLETO</span>`;
+      return `
+        <li class="chill-day">
+          <div class="chill-day__head">
+            <span class="chill-day__date">${escapeHtml(formatDate(day.date, { short: true }))}</span>
+            <span class="risk-pill risk-pill--${escapeHtml(riskClass(cat))}">${escapeHtml(riskLabel(cat))}</span>
+          </div>
+          <strong class="chill-day__value">${escapeHtml(formatExposure(day.total_exposed))} corderos esperados expuestos</strong>
+          <span class="chill-day__lots">${lots}</span>
+          ${complete}
+        </li>`;
+    })
+    .join("");
+
+  return `
+    ${stale ? `<p class="tag tag--incompleto">El Chill Index no está actualizado.</p>` : ""}
+    <p class="chill-mode">Exposición diaria — una cohorte puede aparecer en varios días.</p>
+    <ul class="chill-list">${rows}</ul>
+    ${chill72h(chill.exposure_72h, null)}`;
+}
+
+/* Consolidado 72 h: cada cohorte una vez, por su riesgo máximo. lotCode filtra. */
+function chill72h(exposure, lotCode) {
+  if (!exposure || typeof exposure !== "object") return "";
+  const scope = lotCode ? (exposure.by_module || {})[lotCode] || {} : exposure;
+  const cells = [...RISK_ORDER, "RIESGO_72H_INCOMPLETO"]
+    .map((cat) => {
+      const value = scope[cat];
+      if (value === undefined) return "";
+      return `
+        <div class="expo-cell expo-cell--${escapeHtml(riskClass(cat))}">
+          <span class="expo-cell__label">${escapeHtml(riskLabel(cat))}</span>
+          <strong>${escapeHtml(formatExposure(value))}</strong>
+        </div>`;
+    })
+    .join("");
+  return `
+    <div class="chill-72h">
+      <p class="chill-mode">Consolidado 72 h — cada cohorte contada una sola vez, por su riesgo máximo.</p>
+      <div class="expo-grid">${cells}</div>
     </div>`;
 }
 
-function eventTone(type) {
-  return ["LAMB_DEATH", "EWE_DEATH"].includes(type) ? " event-tag--attention" : "";
-}
+/* ------------------------------------------------------------ por lote --- */
 
-function renderRecords(records) {
-  byId("record-count").textContent = String(records.length);
-  byId("record-count").setAttribute("aria-label", `${records.length} registros recientes`);
-
-  byId("records-body").innerHTML = records
-    .map(
-      (record) => `
-        <tr>
-          <td>${escapeHtml(formatDate(record.date))}</td>
-          <td><span class="module-tag">${escapeHtml(record.module_code)}</span></td>
-          <td><span class="event-tag${eventTone(record.event_type)}">${escapeHtml(
-            record.event_label,
-          )}</span></td>
-          <td><strong>${escapeHtml(formatInteger(record.quantity))}</strong></td>
-          <td>${escapeHtml(record.observation)}</td>
-        </tr>`,
-    )
-    .join("");
-
-  byId("record-cards").innerHTML = records
-    .map(
-      (record) => `
-        <article class="record-card">
-          <div class="record-card__top">
-            <span class="module-tag">${escapeHtml(record.module_code)}</span>
-            <span class="record-card__date">${escapeHtml(formatDate(record.date))}</span>
-          </div>
-          <div class="record-card__event">
-            <strong>${escapeHtml(record.event_label)}</strong>
-            <span class="record-card__quantity">${escapeHtml(formatInteger(record.quantity))}</span>
-          </div>
-          <p>${escapeHtml(record.observation)}</p>
-        </article>`,
-    )
-    .join("");
-}
-
-function riskClass(category) {
-  const accepted = ["SIN_RIESGO", "BAJO", "MEDIO", "ALTO", "CRITICO"];
-  if (category === "RIESGO PENDIENTE DE REVISIÓN") return "pending";
-  return accepted.includes(category) ? category.toLowerCase().replace("_", "-") : "unknown";
-}
-
-function riskLabel(category) {
-  if (category === "SIN_RIESGO") return "SIN RIESGO";
-  return category ? String(category).replaceAll("_", " ") : "NO INFORMADO";
-}
-
-function selectedForecastValues(day) {
-  if (state.selectedModule === "TODOS") return day;
-  return (day.modules || []).find((module) => module.code === state.selectedModule) || {};
-}
-
-function forecastTooltip(day) {
-  const rows = (day.modules || []).map(
-    (module) =>
-      `${module.name || module.code}: ${formatInteger(module.expected_ewes_lambing)} ovejas, ` +
-      `${formatInteger(module.expected_lambs_born)} corderos`,
-  );
-  return [
-    `${riskLabel(day.display_risk_category || day.risk_category)} · CI ${day.ci_interval || "—"}`,
-    ...rows,
-  ].join("\n");
-}
-
-function renderForecast(forecast, timezone) {
-  const source = forecast.source || {};
-  const location = forecast.location || {};
-  const update = forecast.update_status || {};
-  const productCross = forecast.product_cross || {};
-  const days = Array.isArray(forecast.days) ? forecast.days : [];
-  byId("official-link").href =
-    source.official_url ||
-    "https://inia.uy/gras/Aplicaciones_y_recursos/Prevision%20Corderos";
-  byId("forecast-status-banner").textContent =
-    update.state === "ACTUALIZADO"
-      ? "Pronóstico actualizado y validado."
-      : update.message || "Pronóstico desactualizado.";
-  byId("forecast-status-banner").classList.toggle(
-    "is-stale",
-    Boolean(update.stale || update.state === "DESACTUALIZADO"),
-  );
-  byId("module-selector").value = state.selectedModule;
-  byId("product-cross-status").textContent = productCross.status || "—";
-  byId("product-cross-message").textContent =
-    productCross.message ||
-    "El cálculo productivo está pendiente de la distribución diaria de partos.";
-
-  byId("forecast-metadata").innerHTML = `
-    <article>
-      <span>Ubicación</span>
-      <strong>${escapeHtml(location.name || "CICOMA")}</strong>
-      <small>${escapeHtml(source.label || "INIA-GRAS interpretada por Zapia")}</small>
-    </article>
-    <article>
-      <span>Análisis de Zapia</span>
-      <strong>${escapeHtml(formatDateTime(forecast.analyzed_at, timezone))}</strong>
-      <small>Corrida ${escapeHtml(formatDate(forecast.forecast_run_date))}</small>
-    </article>
-    <article>
-      <span>Importación CICOMA</span>
-      <strong>${escapeHtml(formatDateTime(forecast.imported_at, timezone))}</strong>
-      <small>Antigüedad: ${escapeHtml(formatDecimal(forecastAgeHours(forecast.analyzed_at)))} h</small>
-    </article>
-    <article>
-      <span>Estado</span>
-      <strong>${escapeHtml(update.state || "NO DISPONIBLE")}</strong>
-      <small>${escapeHtml(productCross.message || "Cruce productivo no disponible")}</small>
-    </article>`;
-
-  if (!days.length) {
-    byId("forecast-grid").innerHTML = `
-      <article class="forecast-empty">
-        <strong>No hay mapas Chill Index válidos para mostrar.</strong>
-        <span>${escapeHtml(update.message || "Esperando el reporte estructurado de Zapia.")}</span>
-      </article>`;
-    drawForecastChart(days);
+function renderLot(lot) {
+  const view = byId(`view-${lot.section}`);
+  const module = moduleByCode(lot.code);
+  if (!module) {
+    view.innerHTML = `<header class="view__head"><h1 id="title-${lot.section}">${escapeHtml(lot.name)}</h1></header>
+      <p class="empty-note">SIN DATO — este lote todavía no tiene base productiva importada.</p>`;
     return;
   }
+  const curve = (DASH.lambing_curves?.lots || []).find((l) => l.code === lot.code) || null;
+  const first = curve && curve.expected_original?.length ? curve.expected_original[0].date : null;
+  const last = curve && curve.expected_original?.length
+    ? curve.expected_original[curve.expected_original.length - 1].date
+    : null;
 
-  byId("forecast-grid").innerHTML = days
+  view.innerHTML = `
+    <header class="view__head lot-head">
+      <div>
+        <p class="eyebrow">MÓDULO</p>
+        <h1 id="title-${lot.section}">${escapeHtml(lot.name)}</h1>
+        ${lot.breed ? `<p class="lot-head__breed">${escapeHtml(lot.breed)}</p>` : ""}
+      </div>
+      <dl class="lot-head__meta">
+        <div><dt>Estado de datos</dt><dd><span class="tag tag--${dataState(module) === "ACTUALIZADO" ? "ok" : "pending"}">${escapeHtml(dataState(module))}</span></dd></div>
+        <div><dt>Parición prevista</dt><dd>${escapeHtml(first ? `${formatDate(first, { short: true })} → ${formatDate(last, { short: true })}` : "SIN CURVA")}</dd></div>
+      </dl>
+    </header>
+
+    <section class="panel">
+      <div class="panel__head"><h2>Indicadores productivos</h2></div>
+      <div class="stat-grid">${lotIndicators(module)}</div>
+    </section>
+
+    <section class="panel">
+      <div class="panel__head"><h2>Curva de partos</h2><p>Esperada de origen, ajustada por recuento si existe, y evolución real.</p></div>
+      ${lotCurve(lot, curve)}
+    </section>
+
+    <section class="panel">
+      <div class="panel__head">
+        <h2>Riesgo ambiental del lote</h2>
+        <p>Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.</p>
+      </div>
+      ${lotChill(lot.code)}
+    </section>
+
+    <section class="panel">
+      <div class="panel__head"><h2>Mortalidad</h2><p>Tocá una cifra para ver el detalle por evento.</p></div>
+      ${lotMortality(lot, module)}
+    </section>
+
+    <section class="panel">
+      <div class="panel__head"><h2>Control acumulado de campo</h2><p>Ovejas paridas: calculado desde los eventos frente al control informado.</p></div>
+      ${lotControl(module)}
+    </section>`;
+}
+
+function lotIndicators(module) {
+  const iv = module.initial_values;
+  const ec = module.ewe_counts;
+  const lc = module.lamb_counts;
+  const mort = module.mortality;
+  const remainingEwes = ec.counted_lambed !== null ? ec.expected_to_lamb - ec.counted_lambed : null;
+  const remainingLambs = lc.counted !== null ? lc.expected_total - lc.counted : null;
+  return [
+    metricCard("Servidas", formatInteger(iv.served)),
+    metricCard("Preñadas", formatInteger(iv.expected_to_lamb)),
+    metricCard("Corderos esperados", formatInteger(iv.expected_lambs)),
+    metricCard("Ovejas paridas", ec.counted_lambed === null ? "SIN RECUENTO" : formatInteger(ec.counted_lambed)),
+    metricCard("Corderos nacidos", lc.counted === null ? "SIN RECUENTO" : formatInteger(lc.counted)),
+    metricCard("Muertes de cordero", formatInteger(mort.lamb_deaths_accumulated)),
+    metricCard("Muertes de oveja", formatInteger(mort.ewe_deaths_accumulated)),
+    metricCard("Avance de parición", formatPercent(ec.progress_percent), "sobre previstas a parir"),
+    metricCard("Ovejas restantes", remainingEwes === null ? "SIN RECUENTO" : formatInteger(remainingEwes)),
+    metricCard("Corderos restantes", remainingLambs === null ? "SIN RECUENTO" : formatInteger(remainingLambs)),
+  ].join("");
+}
+
+function lotCurve(lot, curve) {
+  if (!curve || !(curve.expected_original || []).length) {
+    return `<p class="empty-note">SIN CURVA CARGADA para este lote.</p>`;
+  }
+  const original = curve.expected_original || [];
+  const adjusted = curve.expected_adjusted || [];
+  const series = (adjusted.length ? adjusted : original).map((point, index) => ({
+    date: point.date,
+    ewes: point.expected_ewes || 0,
+    lambs: point.expected_lambs || 0,
+    cumulative: 0,
+    _i: index,
+  }));
+  const totalEwes = series.reduce((s, p) => s + p.ewes, 0);
+  let acc = 0;
+  series.forEach((p) => {
+    acc += p.ewes;
+    p.cumulative = totalEwes > 0 ? acc / totalEwes : 0;
+  });
+  CURVE_SERIES[lot.code] = series;
+  const kind = adjusted.length ? "Curva ajustada por recuento" : "Curva original";
+  return `
+    <div class="curve-controls">
+      <span class="tag ${adjusted.length ? "tag--ok" : "tag--muted"}">${escapeHtml(kind)}</span>
+      <span class="chart-note">Barras: ovejas y corderos previstos por día. Línea: acumulado.</span>
+    </div>
+    <div class="chart-wrap"><canvas id="curve-${escapeHtml(lot.code)}" role="img" aria-label="Curva de partos de ${escapeHtml(lot.name)}"></canvas></div>`;
+}
+
+function lotChill(code) {
+  const chill = DASH.chill_public || {};
+  const days = Array.isArray(chill.daily) ? chill.daily : [];
+  if (!days.length) return `<p class="empty-note">SIN DISTRIBUCIÓN DE PARTOS CARGADA.</p>`;
+  const rows = days
     .map((day) => {
-      const displayRisk = day.display_risk_category || day.risk_category;
-      const tone = riskClass(displayRisk);
-      const values = selectedForecastValues(day);
-      const cohort = day.cohort_72h || { complete: false, category: "RIESGO_72H_INCOMPLETO" };
-      const moduleRows = (day.modules || [])
-        .map(
-          (module) => `
-            <li>
-              <strong>${escapeHtml(module.name || module.code)}</strong>
-              <span>${escapeHtml(formatInteger(module.expected_ewes_lambing))} ovejas</span>
-              <span>${escapeHtml(formatInteger(module.expected_lambs_born))} corderos</span>
-            </li>`,
-        )
-        .join("");
-      const mapLink = day.image_url
-        ? `<a class="map-link" href="${escapeHtml(
-            day.image_url,
-          )}" target="_blank" rel="noopener noreferrer">Ver mapa utilizado</a>`
-        : '<span class="map-link map-link--disabled">Mapa no disponible</span>';
+      const value = (day.by_lot || {})[code];
       return `
-        <article
-          class="forecast-card forecast-card--${escapeHtml(tone)}"
-          title="${escapeHtml(forecastTooltip(day))}"
-          aria-label="${escapeHtml(
-            `${formatWeekday(day.date)} ${formatDate(day.date)}: ${riskLabel(displayRisk)}`,
-          )}"
-        >
-          <header>
-            <div>
-              <span>${escapeHtml(formatWeekday(day.date))}</span>
-              <small>${escapeHtml(formatDate(day.date, { short: true }))}</small>
-            </div>
-            <span class="risk-badge risk-badge--${escapeHtml(tone)}">${escapeHtml(
-              riskLabel(displayRisk),
-            )}</span>
-          </header>
-          <div class="chill-value">
-            <strong>${escapeHtml(day.ci_interval || "—")}</strong>
-            <span>${escapeHtml(day.ci_unit || "kJ/m²/h")}</span>
+        <li class="chill-day">
+          <div class="chill-day__head">
+            <span class="chill-day__date">${escapeHtml(formatDate(day.date, { short: true }))}</span>
+            <span class="risk-pill risk-pill--${escapeHtml(riskClass(day.risk_category))}">${escapeHtml(riskLabel(day.risk_category))}</span>
           </div>
-          <dl class="forecast-totals">
-            <div>
-              <dt>Ovejas previstas a parir</dt>
-              <dd>${escapeHtml(formatInteger(values.expected_ewes_lambing))}</dd>
-            </div>
-            <div>
-              <dt>Corderos previstos a nacer</dt>
-              <dd>${escapeHtml(formatInteger(values.expected_lambs_born))}</dd>
-            </div>
-            <div>
-              <dt>Corderos en primeras 72 h</dt>
-              <dd>${escapeHtml(formatInteger(values.lambs_in_first_72h_on_date))}</dd>
-            </div>
-            <div>
-              <dt>Categoría de la cohorte (D, D+1, D+2)</dt>
-              <dd class="${cohort.complete ? "" : "is-missing"}">${escapeHtml(
-                cohort.complete ? riskLabel(cohort.category) : "RIESGO 72 H INCOMPLETO",
-              )}</dd>
-            </div>
-            <div>
-              <dt>Confianza de Zapia</dt>
-              <dd>${escapeHtml(formatConfidence(day.confidence))}</dd>
-            </div>
-            <div>
-              <dt>Actualización</dt>
-              <dd class="forecast-state">${escapeHtml(update.state || "—")}</dd>
-            </div>
-          </dl>
-          <details>
-            <summary>Desglose por módulo</summary>
-            <ul>${moduleRows}</ul>
-          </details>
-          ${mapLink}
-        </article>`;
+          <strong class="chill-day__value">${escapeHtml(formatExposure(value))} corderos esperados expuestos</strong>
+          ${day.cohort_72h_complete ? "" : `<span class="tag tag--incompleto">72 H INCOMPLETO</span>`}
+        </li>`;
     })
     .join("");
-  drawForecastChart(days);
+  return `
+    <p class="chill-mode">Exposición diaria del lote.</p>
+    <ul class="chill-list">${rows}</ul>
+    ${chill72h(chill.exposure_72h, code)}`;
 }
 
-function drawForecastChart(days) {
-  const canvas = byId("forecast-chart");
-  const empty = byId("forecast-chart-empty");
-  const context = canvas.getContext("2d");
-  const values = days.map((day) => {
-    const selected = selectedForecastValues(day);
-    return {
-      date: day.date,
-      ewes: selected.expected_ewes_lambing,
-      lambs: selected.expected_lambs_born,
-    };
-  });
-  const hasValues = values.some((item) => item.ewes !== null || item.lambs !== null);
-  if (!hasValues) {
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    canvas.hidden = true;
-    empty.hidden = false;
-    empty.textContent = "SIN DISTRIBUCIÓN DE PARTOS CARGADA";
-    return;
+function lotMortality(lot, module) {
+  const mort = module.mortality;
+  const detail = Array.isArray(mort.detail) ? mort.detail : [];
+  const summary = `
+    <div class="mort-summary">
+      <div class="mort-tile"><span>Muertes de cordero</span><strong>${escapeHtml(formatInteger(mort.lamb_deaths_accumulated))}</strong></div>
+      <div class="mort-tile"><span>Muertes de oveja</span><strong>${escapeHtml(formatInteger(mort.ewe_deaths_accumulated))}</strong></div>
+      <div class="mort-tile"><span>Último parte</span><strong>${escapeHtml(formatDate(mort.last_report_date))}</strong></div>
+    </div>`;
+
+  if (!detail.length) {
+    return `${summary}<p class="empty-note">SIN REGISTROS de mortalidad en este lote.</p>`;
   }
 
-  canvas.hidden = false;
-  empty.hidden = true;
-  const ratio = window.devicePixelRatio || 1;
-  const width = Math.max(520, canvas.clientWidth || 900);
-  const height = 280;
-  canvas.width = width * ratio;
-  canvas.height = height * ratio;
-  context.setTransform(ratio, 0, 0, ratio, 0, 0);
-  context.clearRect(0, 0, width, height);
-  const padding = { top: 35, right: 20, bottom: 48, left: 45 };
-  const chartWidth = width - padding.left - padding.right;
-  const chartHeight = height - padding.top - padding.bottom;
-  const maximum = Math.max(
-    1,
-    ...values.flatMap((item) => [Number(item.ewes) || 0, Number(item.lambs) || 0]),
-  );
-  const groupWidth = chartWidth / Math.max(1, values.length);
-  const barWidth = Math.min(26, groupWidth * 0.28);
-
-  context.strokeStyle = "#d9dfdc";
-  context.lineWidth = 1;
-  context.beginPath();
-  context.moveTo(padding.left, padding.top + chartHeight);
-  context.lineTo(width - padding.right, padding.top + chartHeight);
-  context.stroke();
-  context.font = "12px system-ui, sans-serif";
-  context.textAlign = "center";
-
-  values.forEach((item, index) => {
-    const center = padding.left + groupWidth * index + groupWidth / 2;
-    const eweHeight = ((Number(item.ewes) || 0) / maximum) * chartHeight;
-    const lambHeight = ((Number(item.lambs) || 0) / maximum) * chartHeight;
-    if (item.ewes !== null && item.ewes !== undefined) {
-      context.fillStyle = "#1f6b4f";
-      context.fillRect(
-        center - barWidth - 2,
-        padding.top + chartHeight - eweHeight,
-        barWidth,
-        eweHeight,
-      );
-    }
-    if (item.lambs !== null && item.lambs !== undefined) {
-      context.fillStyle = "#b68a24";
-      context.fillRect(
-        center + 2,
-        padding.top + chartHeight - lambHeight,
-        barWidth,
-        lambHeight,
-      );
-    }
-    context.fillStyle = "#4a5550";
-    context.fillText(formatDate(item.date, { short: true, includeYear: false }), center, height - 20);
-  });
-
-  context.textAlign = "left";
-  context.fillStyle = "#1f6b4f";
-  context.fillRect(padding.left, 10, 12, 12);
-  context.fillStyle = "#26332d";
-  context.fillText("Ovejas", padding.left + 18, 20);
-  context.fillStyle = "#b68a24";
-  context.fillRect(padding.left + 90, 10, 12, 12);
-  context.fillStyle = "#26332d";
-  context.fillText("Corderos", padding.left + 108, 20);
-  canvas.setAttribute(
-    "aria-label",
-    `Gráfico para ${state.selectedModule}: ${values
-      .map(
-        (item) =>
-          `${formatDate(item.date)}: ${formatInteger(item.ewes)} ovejas y ` +
-          `${formatInteger(item.lambs)} corderos`,
-      )
-      .join("; ")}`,
-  );
-}
-
-function friendlyStatus(status) {
-  const labels = {
-    COMPLETADO_DEMO: "Completado · demo",
-    COMPLETADO: "Completado",
-    COMPLETADO_CON_ADVERTENCIAS: "Completado con avisos",
-    YA_PROCESADO: "Ya procesado",
-    COMPLETED: "Completado",
-    COMPLETED_WITH_WARNINGS: "Completado con avisos",
-    FAILED: "Con error",
-    PENDING: "Pendiente",
-  };
-  return labels[status] || status || "—";
-}
-
-function renderUpdateStatus(data) {
-  const update = data.update_status;
-  const zip = update.last_zip || {};
-  byId("last-zip").textContent = zip.name || "—";
-  byId("last-processing").textContent = `${friendlyStatus(zip.status)} · ${formatDateTime(
-    zip.processed_at,
-    data.timezone,
-  )}`;
-  byId("last-sync").textContent = formatDateTime(update.last_sync_at, data.timezone);
-  byId("pending-operations").textContent = formatInteger(update.pending_operations);
-  byId("update-message").textContent = update.public_message || "—";
-  updateFreshness(data);
-}
-
-function updateFreshness(data) {
-  const freshness = byId("freshness");
-  const label = byId("freshness-label");
-  const detail = byId("freshness-detail");
-  const lastSync = data.update_status.last_sync_at;
-  freshness.classList.remove("is-fresh", "is-stale");
-
-  if (!lastSync) {
-    freshness.classList.add("is-stale");
-    label.textContent = "Sin sincronización informada";
-    detail.textContent = "No existe una fecha disponible";
-    return;
-  }
-
-  const elapsedHours = Math.max(0, (Date.now() - new Date(lastSync).getTime()) / 3_600_000);
-  const threshold = Number(data.stale_after_hours) || 12;
-  const rounded = elapsedHours < 1 ? "menos de una hora" : `${Math.floor(elapsedHours)} h`;
-
-  if (elapsedHours <= threshold) {
-    freshness.classList.add("is-fresh");
-    label.textContent = "Datos actualizados";
-    detail.textContent = `Última sincronización hace ${rounded}`;
-  } else {
-    freshness.classList.add("is-stale");
-    label.textContent = "Datos desactualizados";
-    detail.textContent = `Sin novedades hace ${rounded}`;
-  }
-}
-
-function drawEvolutionChart(series) {
-  const canvas = byId("evolution-chart");
-  const wrap = canvas.parentElement;
-  if (!wrap || !series.length) return;
-
-  const width = Math.max(280, Math.floor(wrap.clientWidth));
-  const height = Math.max(240, Math.floor(wrap.clientHeight));
-  const ratio = Math.min(window.devicePixelRatio || 1, 2);
-  canvas.width = Math.floor(width * ratio);
-  canvas.height = Math.floor(height * ratio);
-  canvas.style.width = `${width}px`;
-  canvas.style.height = `${height}px`;
-
-  const context = canvas.getContext("2d");
-  context.setTransform(ratio, 0, 0, ratio, 0, 0);
-  context.clearRect(0, 0, width, height);
-
-  const css = getComputedStyle(document.documentElement);
-  const colors = {
-    green: css.getPropertyValue("--sul-green").trim(),
-    greenLight: css.getPropertyValue("--sul-green-light").trim(),
-    gray: css.getPropertyValue("--institutional-gray").trim(),
-    ink: css.getPropertyValue("--ink-600").trim(),
-    grid: "rgba(38, 56, 49, 0.12)",
-  };
-  const padding = { top: 22, right: 48, bottom: 45, left: 40 };
-  const chartWidth = width - padding.left - padding.right;
-  const chartHeight = height - padding.top - padding.bottom;
-  const dailyMax = Math.max(...series.flatMap((item) => [item.lambed_ewes || 0, item.born_lambs || 0]), 1);
-  const cumulativeMax = Math.max(...series.map((item) => item.cumulative_lambed || 0), 1);
-  const dailyScale = Math.ceil(dailyMax / 10) * 10;
-  const groupWidth = chartWidth / series.length;
-  const barWidth = Math.min(18, Math.max(8, groupWidth * 0.22));
-
-  context.font = '11px "Raleway", "Segoe UI", Arial, sans-serif';
-  context.lineWidth = 1;
-  context.textBaseline = "middle";
-
-  for (let step = 0; step <= 4; step += 1) {
-    const ratioStep = step / 4;
-    const y = padding.top + chartHeight - chartHeight * ratioStep;
-    context.strokeStyle = colors.grid;
-    context.beginPath();
-    context.moveTo(padding.left, y);
-    context.lineTo(width - padding.right, y);
-    context.stroke();
-    context.fillStyle = colors.ink;
-    context.textAlign = "right";
-    context.fillText(String(Math.round(dailyScale * ratioStep)), padding.left - 9, y);
-    context.textAlign = "left";
-    context.fillText(String(Math.round(cumulativeMax * ratioStep)), width - padding.right + 9, y);
-  }
-
-  series.forEach((item, index) => {
-    const centerX = padding.left + groupWidth * index + groupWidth / 2;
-    const eweHeight = ((item.lambed_ewes || 0) / dailyScale) * chartHeight;
-    const lambHeight = ((item.born_lambs || 0) / dailyScale) * chartHeight;
-    roundedBar(
-      context,
-      centerX - barWidth - 2,
-      padding.top + chartHeight - eweHeight,
-      barWidth,
-      eweHeight,
-      4,
-      colors.green,
-    );
-    roundedBar(
-      context,
-      centerX + 2,
-      padding.top + chartHeight - lambHeight,
-      barWidth,
-      lambHeight,
-      4,
-      colors.greenLight,
-    );
-
-    context.fillStyle = colors.ink;
-    context.textAlign = "center";
-    context.textBaseline = "top";
-    context.fillText(formatDate(item.date, { short: true, includeYear: false }), centerX, height - padding.bottom + 14);
-    context.textBaseline = "middle";
-  });
-
-  context.strokeStyle = colors.gray;
-  context.lineWidth = 2.5;
-  context.lineJoin = "round";
-  context.lineCap = "round";
-  context.beginPath();
-  series.forEach((item, index) => {
-    const x = padding.left + groupWidth * index + groupWidth / 2;
-    const y = padding.top + chartHeight - ((item.cumulative_lambed || 0) / cumulativeMax) * chartHeight;
-    if (index === 0) context.moveTo(x, y);
-    else context.lineTo(x, y);
-  });
-  context.stroke();
-
-  series.forEach((item, index) => {
-    const x = padding.left + groupWidth * index + groupWidth / 2;
-    const y = padding.top + chartHeight - ((item.cumulative_lambed || 0) / cumulativeMax) * chartHeight;
-    context.fillStyle = "#ffffff";
-    context.strokeStyle = colors.gray;
-    context.lineWidth = 2;
-    context.beginPath();
-    context.arc(x, y, 4, 0, Math.PI * 2);
-    context.fill();
-    context.stroke();
-  });
-}
-
-function roundedBar(context, x, y, width, height, radius, color) {
-  const safeHeight = Math.max(0, height);
-  const safeRadius = Math.min(radius, width / 2, safeHeight / 2);
-  context.fillStyle = color;
-  context.beginPath();
-  if (typeof context.roundRect === "function") {
-    context.roundRect(x, y, width, safeHeight, [safeRadius, safeRadius, 0, 0]);
-  } else {
-    context.rect(x, y, width, safeHeight);
-  }
-  context.fill();
-}
-
-function initializeNavigation() {
-  const links = [...document.querySelectorAll(".main-nav__link")];
-  const sections = links
-    .map((link) => document.querySelector(link.getAttribute("href")))
-    .filter(Boolean);
-
-  if (!("IntersectionObserver" in window)) return;
-  const observer = new IntersectionObserver(
-    (entries) => {
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (!visible) return;
-      links.forEach((link) => {
-        link.classList.toggle("is-active", link.getAttribute("href") === `#${visible.target.id}`);
-      });
-    },
-    { rootMargin: "-25% 0px -60%", threshold: [0.05, 0.2, 0.5] },
-  );
-  sections.forEach((section) => observer.observe(section));
-}
-
-function renderUltrasound(modules, curves) {
-  const body = byId("ultrasound-body");
-  const rows = Array.isArray(modules) ? modules : [];
-  if (!rows.length) {
-    body.innerHTML =
-      '<tr><td colspan="9" class="is-empty">SIN DATO — todavía no se importó la base productiva.</td></tr>';
-    byId("ultrasound-note").textContent = "SIN DATO";
-    return;
-  }
-
-  const totals = {
-    served: 0,
-    scanned: 0,
-    empty: 0,
-    single: 0,
-    double: 0,
-    triple: 0,
-    pregnant: 0,
-    lambs: 0,
-  };
-  let scannedReported = false;
-  let tripleReported = false;
-
-  const cells = rows
-    .map((module) => {
-      const values = module.initial_values || {};
-      totals.served += values.served || 0;
-      totals.empty += values.empty || 0;
-      totals.single += values.single || 0;
-      totals.double += values.double || 0;
-      totals.pregnant += values.expected_to_lamb || 0;
-      totals.lambs += values.expected_lambs || 0;
-      if (values.scanned !== null && values.scanned !== undefined) {
-        totals.scanned += values.scanned;
-        scannedReported = true;
-      }
-      if (values.triple !== null && values.triple !== undefined) {
-        totals.triple += values.triple;
-        tripleReported = true;
-      }
-      const tripleCell =
-        values.triple === null || values.triple === undefined
-          ? `<td class="is-missing" title="${escapeHtml(
-              values.triple_state || "NOT_REPORTED",
-            )}">NO INFORMADO</td>`
-          : `<td>${escapeHtml(formatInteger(values.triple))}</td>`;
-      const scannedCell =
-        values.scanned === null || values.scanned === undefined
-          ? '<td class="is-missing">NO INFORMADO</td>'
-          : `<td>${escapeHtml(formatInteger(values.scanned))}</td>`;
+  const rows = detail
+    .map((event) => {
+      const auto = event.provenance === "AUTOMATICO_SIN_VALIDAR"
+        ? `<span class="tag tag--auto">incorporado automáticamente</span>`
+        : "";
       return `
         <tr>
-          <th scope="row">${escapeHtml(module.name || module.code)}</th>
-          <td>${escapeHtml(formatInteger(values.served))}</td>
-          ${scannedCell}
-          <td>${escapeHtml(formatInteger(values.empty))}</td>
-          <td>${escapeHtml(formatInteger(values.single))}</td>
-          <td>${escapeHtml(formatInteger(values.double))}</td>
-          ${tripleCell}
-          <td class="is-strong">${escapeHtml(formatInteger(values.expected_to_lamb))}</td>
-          <td class="is-strong">${escapeHtml(formatInteger(values.expected_lambs))}</td>
+          <td>${escapeHtml(formatDate(event.date))}</td>
+          <td>${escapeHtml(event.animal === "OVEJA" ? "Oveja" : "Cordero")}</td>
+          <td class="num">${escapeHtml(formatInteger(event.count))}</td>
+          <td>${escapeHtml(event.cause_label)}</td>
+          <td>${event.comment ? escapeHtml(event.comment) : "<span class='muted'>—</span>"} ${auto}</td>
         </tr>`;
     })
     .join("");
 
-  body.innerHTML = `${cells}
-    <tr class="is-total">
-      <th scope="row">ESTABLECIMIENTO</th>
-      <td>${escapeHtml(formatInteger(totals.served))}</td>
-      <td>${escapeHtml(scannedReported ? formatInteger(totals.scanned) : "NO INFORMADO")}</td>
-      <td>${escapeHtml(formatInteger(totals.empty))}</td>
-      <td>${escapeHtml(formatInteger(totals.single))}</td>
-      <td>${escapeHtml(formatInteger(totals.double))}</td>
-      <td>${escapeHtml(tripleReported ? formatInteger(totals.triple) : "NO INFORMADO")}</td>
-      <td class="is-strong">${escapeHtml(formatInteger(totals.pregnant))}</td>
-      <td class="is-strong">${escapeHtml(formatInteger(totals.lambs))}</td>
-    </tr>`;
-
-  const base = curves?.base_source;
-  byId("ultrasound-note").textContent = base
-    ? `Preñadas = únicas + dobles + triples · Corderos esperados = únicas + 2×dobles + 3×triples. ` +
-      `Base productiva versión ${base.version_number}.`
-    : "Preñadas = únicas + dobles + triples · Corderos esperados = únicas + 2×dobles + 3×triples.";
+  return `
+    ${summary}
+    <details class="mort-drawer">
+      <summary>Ver detalle de mortalidad (${detail.length})</summary>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Fecha</th><th>Animal</th><th class="num">Cant.</th><th>Causa</th><th>Comentario</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      <p class="chart-note">Causas normalizadas. Sin causa informada: “Causa no determinada”; nunca se infiere por contexto.</p>
+    </details>`;
 }
 
-function curveSeriesFor(lot, kind) {
-  if (!lot) return [];
-  const adjusted = lot.expected_adjusted || [];
-  if (kind === "ADJUSTED") return adjusted;
-  return lot.expected_original || [];
+function lotControl(module) {
+  const control = module.field_control;
+  if (!control) return `<p class="empty-note">SIN CONTROL DISPONIBLE.</p>`;
+  const statusLabels = {
+    COINCIDE: "Coincide",
+    DIFERENCIA: "Diferencia",
+    SIN_CONTROL_RECIENTE: "Sin control reciente",
+    CONCILIADO: "Conciliado",
+  };
+  const tone = control.status === "DIFERENCIA" ? "ojo" : control.status === "COINCIDE" || control.status === "CONCILIADO" ? "ok" : "pending";
+  return `
+    <div class="control-grid">
+      <div><dt>Calculado desde eventos</dt><dd>${escapeHtml(control.calculated === null ? "SIN RECUENTO" : formatInteger(control.calculated))}</dd></div>
+      <div><dt>Control informado</dt><dd>${escapeHtml(control.reported_accumulated === null ? "SIN CONTROL" : formatInteger(control.reported_accumulated))}</dd></div>
+      <div><dt>Diferencia</dt><dd>${escapeHtml(control.difference === null ? "—" : formatInteger(control.difference))}</dd></div>
+      <div><dt>Último control</dt><dd>${escapeHtml(formatDate(control.reported_date))}</dd></div>
+    </div>
+    <p class="control-status"><span class="tag tag--${tone}">${escapeHtml(statusLabels[control.status] || control.status)}</span>
+    El acumulado informado es un control, no un incremento diario.</p>`;
 }
 
-function aggregateCurve(lots, kind) {
-  const byDate = new Map();
-  lots.forEach((lot) => {
-    curveSeriesFor(lot, kind).forEach((point) => {
-      const bucket = byDate.get(point.date) || { date: point.date, ewes: 0, lambs: 0 };
-      bucket.ewes += point.expected_ewes || 0;
-      bucket.lambs += point.expected_lambs || 0;
-      byDate.set(point.date, bucket);
-    });
+/* --------------------------------------------------------- navegación --- */
+
+function currentSection() {
+  const hash = (location.hash || "").replace("#", "");
+  return SECTIONS.includes(hash) ? hash : "resumen";
+}
+
+function showSection(name) {
+  SECTIONS.forEach((section) => {
+    byId(`view-${section}`).hidden = section !== name;
   });
-  const rows = [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date));
-  const total = rows.reduce((sum, row) => sum + row.ewes, 0);
-  let cumulative = 0;
-  return rows.map((row) => {
-    cumulative += row.ewes;
-    return { ...row, cumulative: total > 0 ? cumulative / total : 0 };
+  document.querySelectorAll(".side-nav__link").forEach((link) => {
+    const active = link.dataset.section === name;
+    link.classList.toggle("is-active", active);
+    if (active) link.setAttribute("aria-current", "page");
+    else link.removeAttribute("aria-current");
   });
+  closeDrawer();
+  window.scrollTo({ top: 0, behavior: "auto" });
+  requestAnimationFrame(() => drawSectionCharts(name));
 }
 
-function renderCurves(curves) {
-  const status = byId("curve-status");
-  const note = byId("curve-note");
-  const summary = byId("curve-summary");
-  const lots = Array.isArray(curves?.lots) ? curves.lots : [];
-
-  if (!lots.length) {
-    status.textContent = "SIN CURVA CARGADA";
-    status.className = "pill pill--missing";
-    note.textContent =
-      curves?.message || "Todavía no se importó una base productiva con curva de partos.";
-    summary.innerHTML = "";
-    drawCurveChart([]);
-    return;
-  }
-
-  const selector = byId("curve-module-selector");
-  if (selector.options.length <= 1) {
-    lots.forEach((lot) => {
-      const option = document.createElement("option");
-      option.value = lot.code;
-      option.textContent = lot.name || lot.code;
-      selector.append(option);
-    });
-  }
-  selector.value = state.curveModule;
-  byId("curve-series-selector").value = state.curveSeries;
-
-  const scope = state.curveModule === "TODOS" ? lots : lots.filter((lot) => lot.code === state.curveModule);
-  const hasAdjusted = scope.some((lot) => (lot.expected_adjusted || []).length > 0);
-
-  if (state.curveSeries === "ADJUSTED" && !hasAdjusted) {
-    status.textContent = "SIN RECUENTO — se muestra la curva original";
-    status.className = "pill pill--missing";
-  } else {
-    status.textContent =
-      state.curveSeries === "ADJUSTED" ? "CURVA AJUSTADA POR RECUENTO" : "CURVA ORIGINAL";
-    status.className = "pill";
-  }
-
-  const effectiveKind = state.curveSeries === "ADJUSTED" && hasAdjusted ? "ADJUSTED" : "ORIGINAL";
-  const series = aggregateCurve(scope, effectiveKind);
-
-  const totalEwes = scope.reduce((sum, lot) => sum + (lot.expected_to_lamb || 0), 0);
-  const totalLambs = scope.reduce((sum, lot) => sum + (lot.expected_lambs || 0), 0);
-  const first = series.length ? series[0].date : null;
-  const last = series.length ? series[series.length - 1].date : null;
-  const method = scope.length === 1 ? scope[0].curve_method : "Método propio de cada lote";
-  const adjustment = scope.length === 1 ? scope[0].adjustment : null;
-
-  summary.innerHTML = `
-    <div><dt>Ovejas previstas a parir</dt><dd>${escapeHtml(formatInteger(totalEwes))}</dd></div>
-    <div><dt>Corderos previstos a nacer</dt><dd>${escapeHtml(formatInteger(totalLambs))}</dd></div>
-    <div><dt>Primer parto probable</dt><dd>${escapeHtml(formatDate(first))}</dd></div>
-    <div><dt>Último parto probable</dt><dd>${escapeHtml(formatDate(last))}</dd></div>
-    <div><dt>Días de parición</dt><dd>${escapeHtml(formatInteger(series.length))}</dd></div>
-    <div>
-      <dt>Último recuento aplicado</dt>
-      <dd>${escapeHtml(
-        adjustment ? `${formatDate(adjustment.count_date)} · ${adjustment.age_days} d` : "SIN RECUENTO",
-      )}</dd>
-    </div>`;
-
-  note.textContent = `Método: ${method}. Los totales presentados cierran exactamente contra el total del lote; el remanente del redondeo se reparte por resto mayor.`;
-  drawCurveChart(series);
+function drawSectionCharts(name) {
+  const code = CODE_BY_SECTION[name];
+  if (!code) return;
+  const series = CURVE_SERIES[code];
+  const canvas = byId(`curve-${code}`);
+  if (series && canvas) drawCurveChart(canvas, series);
 }
 
-function drawCurveChart(series) {
-  const canvas = byId("curve-chart");
-  const empty = byId("curve-chart-empty");
+function initRouter() {
+  window.addEventListener("hashchange", () => showSection(currentSection()));
+  byId("nav-toggle").addEventListener("click", toggleDrawer);
+  byId("scrim").addEventListener("click", closeDrawer);
+  document.querySelectorAll(".side-nav__link").forEach((link) =>
+    link.addEventListener("click", () => {
+      // El hashchange hará el resto; cerrar el panel en móvil.
+      window.setTimeout(closeDrawer, 0);
+    }),
+  );
+  let resizeFrame = null;
+  window.addEventListener("resize", () => {
+    if (resizeFrame) cancelAnimationFrame(resizeFrame);
+    resizeFrame = requestAnimationFrame(() => drawSectionCharts(currentSection()));
+  });
+  showSection(currentSection());
+}
+
+function toggleDrawer() {
+  const open = document.body.classList.toggle("drawer-open");
+  byId("nav-toggle").setAttribute("aria-expanded", String(open));
+  byId("scrim").hidden = !open;
+}
+
+function closeDrawer() {
+  if (!document.body.classList.contains("drawer-open")) return;
+  document.body.classList.remove("drawer-open");
+  byId("nav-toggle").setAttribute("aria-expanded", "false");
+  byId("scrim").hidden = true;
+}
+
+/* ------------------------------------------------------------- gráfico --- */
+
+function drawCurveChart(canvas, series) {
   const wrap = canvas.parentElement;
-  if (!wrap) return;
-
-  if (!series.length) {
-    canvas.hidden = true;
-    empty.hidden = false;
-    empty.textContent = "SIN CURVA CARGADA";
-    return;
-  }
-  canvas.hidden = false;
-  empty.hidden = true;
-
+  if (!wrap || !series.length) return;
   const context = canvas.getContext("2d");
   const width = Math.max(280, Math.floor(wrap.clientWidth));
-  const height = Math.max(260, Math.floor(wrap.clientHeight || 300));
+  const height = 300;
   const ratio = Math.min(window.devicePixelRatio || 1, 2);
   canvas.width = Math.floor(width * ratio);
   canvas.height = Math.floor(height * ratio);
@@ -1127,24 +633,10 @@ function drawCurveChart(series) {
     const centre = padding.left + slot * index + slot / 2;
     const eweHeight = (item.ewes / maxValue) * plotHeight;
     const lambHeight = (item.lambs / maxValue) * plotHeight;
-    roundedBar(
-      context,
-      centre - barWidth - 1,
-      padding.top + plotHeight - eweHeight,
-      barWidth,
-      eweHeight,
-      2,
-      "#006937",
-    );
-    roundedBar(
-      context,
-      centre + 1,
-      padding.top + plotHeight - lambHeight,
-      barWidth,
-      lambHeight,
-      2,
-      "#7fb69a",
-    );
+    context.fillStyle = "#006937";
+    context.fillRect(centre - barWidth - 1, padding.top + plotHeight - eweHeight, barWidth, eweHeight);
+    context.fillStyle = "#7fb69a";
+    context.fillRect(centre + 1, padding.top + plotHeight - lambHeight, barWidth, lambHeight);
   });
 
   context.beginPath();
@@ -1164,108 +656,8 @@ function drawCurveChart(series) {
   series.forEach((item, index) => {
     if (index % labelEvery !== 0 && index !== series.length - 1) return;
     const centre = padding.left + slot * index + slot / 2;
-    context.fillText(formatDate(item.date, { short: true }), centre, height - 14);
+    context.fillText(formatDate(item.date, { short: true, includeYear: false }), centre, height - 14);
   });
 }
 
-function renderExposure(forecast) {
-  const exposure = forecast?.unique_72h_exposure || {};
-  const grid = byId("exposure-grid");
-  const statusEl = byId("exposure-status");
-  const ruleEl = byId("exposure-rule");
-  const categories = ["SIN_RIESGO", "BAJO", "MEDIO", "ALTO", "CRITICO", "RIESGO_72H_INCOMPLETO"];
-
-  statusEl.textContent = exposure.status || "—";
-  statusEl.className =
-    exposure.status === "OK" ? "pill" : "pill pill--missing";
-  ruleEl.textContent =
-    exposure.rule ||
-    "Cada cohorte se evalúa en D, D+1 y D+2 y se cuenta una sola vez bajo su categoría máxima.";
-
-  const scoped =
-    state.selectedModule === "TODOS"
-      ? exposure
-      : (exposure.by_module || {})[state.selectedModule] || {};
-
-  grid.innerHTML = categories
-    .map((category) => {
-      const value = scoped[category];
-      const tone = category === "RIESGO_72H_INCOMPLETO" ? "pending" : riskClass(category);
-      const label =
-        category === "RIESGO_72H_INCOMPLETO" ? "RIESGO 72 H INCOMPLETO" : riskLabel(category);
-      return `
-        <article class="exposure-card exposure-card--${escapeHtml(tone)}">
-          <span class="exposure-card__label">${escapeHtml(label)}</span>
-          <strong class="exposure-card__value">${escapeHtml(
-            value === null || value === undefined ? "SIN DATO" : formatInteger(Math.round(value)),
-          )}</strong>
-          <small>corderos esperados</small>
-        </article>`;
-    })
-    .join("");
-}
-
-// La portada pública sólo informa cuándo se actualizó la base. Los nombres de
-// archivo, los hashes y las advertencias de importación quedan en la gestión
-// interna, bajo «Notas técnicas de la fuente».
-function renderBaseSource(data) {
-  const base = data.base_source;
-  byId("base-source-date").textContent = base
-    ? formatDateTime(base.imported_at, data.timezone)
-    : "SIN BASE IMPORTADA";
-}
-
-function renderDashboard(data) {
-  renderHeader(data);
-  renderMetrics(data.overview);
-  renderModules(data.modules, data.freshness_thresholds, data.generated_at);
-  renderUltrasound(data.modules, data.lambing_curves);
-  renderCurves(data.lambing_curves);
-  renderForecast(data.environmental_forecast, data.timezone);
-  renderExposure(data.environmental_forecast);
-  renderRecords(data.recent_records);
-  renderUpdateStatus(data);
-  renderBaseSource(data);
-  drawEvolutionChart(data.daily_evolution);
-
-  byId("module-selector").addEventListener("change", (event) => {
-    state.selectedModule = event.target.value;
-    renderForecast(data.environmental_forecast, data.timezone);
-    renderExposure(data.environmental_forecast);
-  });
-  byId("curve-module-selector").addEventListener("change", (event) => {
-    state.curveModule = event.target.value;
-    renderCurves(data.lambing_curves);
-  });
-  byId("curve-series-selector").addEventListener("change", (event) => {
-    state.curveSeries = event.target.value;
-    renderCurves(data.lambing_curves);
-  });
-  let resizeFrame = null;
-  window.addEventListener("resize", () => {
-    if (resizeFrame) cancelAnimationFrame(resizeFrame);
-    resizeFrame = requestAnimationFrame(() => {
-      drawEvolutionChart(data.daily_evolution);
-      drawForecastChart(data.environmental_forecast.days);
-      renderCurves(data.lambing_curves);
-    });
-  });
-  window.setInterval(() => updateFreshness(data), 60_000);
-}
-
-async function loadDashboard() {
-  try {
-    const response = await fetch(DATA_URL, { cache: "no-store" });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data = await response.json();
-    assertDashboard(data);
-    state.data = data;
-    renderDashboard(data);
-    initializeNavigation();
-  } catch (error) {
-    console.error("No se pudo cargar el dashboard operativo", error);
-    byId("load-error").hidden = false;
-  }
-}
-
-loadDashboard();
+boot();

@@ -1,8 +1,22 @@
 {
-  "schema_version": "3.0.0",
+  "schema_version": "3.1.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-07-24T15:00:53.290745-03:00",
+  "generated_at": "2026-07-25T02:21:22.107206-03:00",
+  "max_age_minutes": 60,
+  "system_health": {
+    "state": "OJO",
+    "headline": "Hay un reporte sin procesar.",
+    "reasons": [
+      {
+        "code": "PACKAGE_ERROR",
+        "message": "Hay un reporte sin procesar.",
+        "severity": "OJO"
+      }
+    ],
+    "generated_at": "2026-07-25T02:21:22.107206-03:00",
+    "max_age_minutes": 60
+  },
   "timezone": "America/Montevideo",
   "stale_after_hours": 12,
   "freshness_thresholds": {
@@ -82,7 +96,47 @@
         "lamb_deaths_accumulated": 2,
         "ewe_deaths_accumulated": 1,
         "deaths_last_24h": null,
-        "last_report_date": "2026-07-23"
+        "last_report_date": "2026-07-23",
+        "detail": [
+          {
+            "date": "2026-07-23",
+            "animal": "CORDERO",
+            "count": 1,
+            "cause_code": "CAUSA_NO_DETERMINADA",
+            "cause_label": "Causa no determinada",
+            "comment": null,
+            "provenance": "AUTOMATICO_SIN_VALIDAR",
+            "status": "CANDIDATE"
+          },
+          {
+            "date": "2026-07-19",
+            "animal": "OVEJA",
+            "count": 1,
+            "cause_code": "CAUSA_NO_DETERMINADA",
+            "cause_label": "Causa no determinada",
+            "comment": "Muerte de oveja; causa final no confirmada.",
+            "provenance": "CONFIRMADO",
+            "status": "CONFIRMED"
+          },
+          {
+            "date": "2026-07-19",
+            "animal": "CORDERO",
+            "count": 1,
+            "cause_code": "MALFORMACION_CONGENITA",
+            "cause_label": "Malformación congénita",
+            "comment": "Malformación congénita informada: no tenía boca",
+            "provenance": "CONFIRMADO",
+            "status": "CONFIRMED"
+          }
+        ]
+      },
+      "field_control": {
+        "variable": "ovejas_paridas",
+        "calculated": null,
+        "reported_accumulated": null,
+        "reported_date": null,
+        "difference": null,
+        "status": "SIN_CONTROL_RECIENTE"
       }
     },
     {
@@ -122,7 +176,16 @@
         "lamb_deaths_accumulated": null,
         "ewe_deaths_accumulated": null,
         "deaths_last_24h": null,
-        "last_report_date": null
+        "last_report_date": null,
+        "detail": []
+      },
+      "field_control": {
+        "variable": "ovejas_paridas",
+        "calculated": null,
+        "reported_accumulated": null,
+        "reported_date": null,
+        "difference": null,
+        "status": "SIN_CONTROL_RECIENTE"
       }
     },
     {
@@ -159,7 +222,16 @@
         "lamb_deaths_accumulated": null,
         "ewe_deaths_accumulated": null,
         "deaths_last_24h": null,
-        "last_report_date": null
+        "last_report_date": null,
+        "detail": []
+      },
+      "field_control": {
+        "variable": "ovejas_paridas",
+        "calculated": null,
+        "reported_accumulated": null,
+        "reported_date": null,
+        "difference": null,
+        "status": "SIN_CONTROL_RECIENTE"
       }
     }
   ],
@@ -2553,7 +2625,7 @@
           "label": "Cumplimiento de la curva (ovejas paridas vs esperadas a la fecha)",
           "value": null,
           "numerator": null,
-          "denominator": 29.4841,
+          "denominator": 33.4153,
           "denominator_label": "ovejas esperadas a parir acumuladas a la fecha",
           "status": "SIN_RECUENTO",
           "unit": "%"
@@ -2563,7 +2635,7 @@
           "label": "Diferencia esperado vs observado (ovejas)",
           "value": null,
           "numerator": null,
-          "denominator": 29.4841,
+          "denominator": 33.4153,
           "denominator_label": "ovejas esperadas a parir acumuladas a la fecha",
           "status": "SIN_RECUENTO",
           "unit": "ovejas"
@@ -2573,7 +2645,7 @@
           "label": "Diferencia esperado vs observado (corderos)",
           "value": null,
           "numerator": null,
-          "denominator": 39.6191,
+          "denominator": 44.9017,
           "denominator_label": "corderos esperados a nacer acumulados a la fecha",
           "status": "SIN_RECUENTO",
           "unit": "corderos"
@@ -3220,7 +3292,7 @@
         "label": "Cumplimiento de la curva (ovejas paridas vs esperadas a la fecha)",
         "value": null,
         "numerator": null,
-        "denominator": 29.4841,
+        "denominator": 33.4153,
         "denominator_label": "ovejas esperadas a parir acumuladas a la fecha",
         "status": "SIN_RECUENTO",
         "unit": "%"
@@ -3230,7 +3302,7 @@
         "label": "Diferencia esperado vs observado (ovejas)",
         "value": null,
         "numerator": null,
-        "denominator": 29.4841,
+        "denominator": 33.4153,
         "denominator_label": "ovejas esperadas a parir acumuladas a la fecha",
         "status": "SIN_RECUENTO",
         "unit": "ovejas"
@@ -3240,7 +3312,7 @@
         "label": "Diferencia esperado vs observado (corderos)",
         "value": null,
         "numerator": null,
-        "denominator": 39.6191,
+        "denominator": 44.9017,
         "denominator_label": "corderos esperados a nacer acumulados a la fecha",
         "status": "SIN_RECUENTO",
         "unit": "corderos"
@@ -3248,6 +3320,196 @@
     ]
   },
   "daily_evolution": [],
+  "chill_public": {
+    "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
+    "horizon_days": 5,
+    "risk_order": [
+      "SIN_RIESGO",
+      "BAJO",
+      "MEDIO",
+      "ALTO",
+      "CRITICO"
+    ],
+    "status": "OK",
+    "update_status": {
+      "state": "ACTUALIZADO",
+      "stale": false,
+      "message": "Pronóstico válido importado desde Zapia."
+    },
+    "daily": [
+      {
+        "date": "2026-07-24",
+        "risk_category": "BAJO",
+        "display_risk_category": "BAJO",
+        "total_exposed": 15.795,
+        "by_lot": {
+          "INTENSIVO": 15.7946,
+          "DOHNE": 0.0,
+          "MA": 0.0
+        },
+        "cohort_72h_complete": true,
+        "cohort_72h_category": "BAJO"
+      },
+      {
+        "date": "2026-07-25",
+        "risk_category": "BAJO",
+        "display_risk_category": "BAJO",
+        "total_exposed": 15.848,
+        "by_lot": {
+          "INTENSIVO": 15.8475,
+          "DOHNE": 0.0,
+          "MA": 0.0
+        },
+        "cohort_72h_complete": true,
+        "cohort_72h_category": "BAJO"
+      },
+      {
+        "date": "2026-07-26",
+        "risk_category": "SIN_RIESGO",
+        "display_risk_category": "SIN_RIESGO",
+        "total_exposed": 15.848,
+        "by_lot": {
+          "INTENSIVO": 15.8478,
+          "DOHNE": 0.0,
+          "MA": 0.0
+        },
+        "cohort_72h_complete": false,
+        "cohort_72h_category": "RIESGO_72H_INCOMPLETO"
+      },
+      {
+        "date": "2026-07-27",
+        "risk_category": "BAJO",
+        "display_risk_category": "BAJO",
+        "total_exposed": 15.848,
+        "by_lot": {
+          "INTENSIVO": 15.8478,
+          "DOHNE": 0.0,
+          "MA": 0.0
+        },
+        "cohort_72h_complete": false,
+        "cohort_72h_category": "RIESGO_72H_INCOMPLETO"
+      },
+      {
+        "date": "2026-07-28",
+        "risk_category": "NO_DETERMINADO",
+        "display_risk_category": "RIESGO PENDIENTE DE REVISIÓN",
+        "total_exposed": 15.848,
+        "by_lot": {
+          "INTENSIVO": 15.8478,
+          "DOHNE": 0.0,
+          "MA": 0.0
+        },
+        "cohort_72h_complete": false,
+        "cohort_72h_category": "RIESGO_72H_INCOMPLETO"
+      }
+    ],
+    "exposure_72h": {
+      "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
+      "status": "OK",
+      "cohorts_counted": 5,
+      "rule": "Cada cohorte prevista para el día D se evalúa en D, D+1 y D+2 y se cuenta una sola vez bajo su categoría máxima.",
+      "SIN_RIESGO": 0.0,
+      "BAJO": 10.5652,
+      "MEDIO": 0.0,
+      "ALTO": 0.0,
+      "CRITICO": 0.0,
+      "RIESGO_72H_INCOMPLETO": 15.8478,
+      "by_module": {
+        "INTENSIVO": {
+          "SIN_RIESGO": 0.0,
+          "BAJO": 10.5652,
+          "MEDIO": 0.0,
+          "ALTO": 0.0,
+          "CRITICO": 0.0,
+          "RIESGO_72H_INCOMPLETO": 15.8478
+        },
+        "DOHNE": {
+          "SIN_RIESGO": 0.0,
+          "BAJO": 0.0,
+          "MEDIO": 0.0,
+          "ALTO": 0.0,
+          "CRITICO": 0.0,
+          "RIESGO_72H_INCOMPLETO": 0.0
+        },
+        "MA": {
+          "SIN_RIESGO": 0.0,
+          "BAJO": 0.0,
+          "MEDIO": 0.0,
+          "ALTO": 0.0,
+          "CRITICO": 0.0,
+          "RIESGO_72H_INCOMPLETO": 0.0
+        }
+      }
+    }
+  },
+  "field_controls": {
+    "INTENSIVO": {
+      "variable": "ovejas_paridas",
+      "calculated": null,
+      "reported_accumulated": null,
+      "reported_date": null,
+      "difference": null,
+      "status": "SIN_CONTROL_RECIENTE"
+    },
+    "DOHNE": {
+      "variable": "ovejas_paridas",
+      "calculated": null,
+      "reported_accumulated": null,
+      "reported_date": null,
+      "difference": null,
+      "status": "SIN_CONTROL_RECIENTE"
+    },
+    "MA": {
+      "variable": "ovejas_paridas",
+      "calculated": null,
+      "reported_accumulated": null,
+      "reported_date": null,
+      "difference": null,
+      "status": "SIN_CONTROL_RECIENTE"
+    }
+  },
+  "mortality_summary": {
+    "total_deaths": 3,
+    "lamb_deaths": 2,
+    "ewe_deaths": 1,
+    "by_date": [
+      {
+        "date": "2026-07-19",
+        "lamb": 1,
+        "ewe": 1
+      },
+      {
+        "date": "2026-07-23",
+        "lamb": 1,
+        "ewe": 0
+      }
+    ],
+    "by_lot": {
+      "INTENSIVO": {
+        "CORDERO": 2,
+        "OVEJA": 1
+      }
+    },
+    "by_animal": {
+      "CORDERO": 2,
+      "OVEJA": 1
+    },
+    "by_cause": [
+      {
+        "cause_code": "CAUSA_NO_DETERMINADA",
+        "cause_label": "Causa no determinada",
+        "count": 2,
+        "pct": 66.7
+      },
+      {
+        "cause_code": "MALFORMACION_CONGENITA",
+        "cause_label": "Malformación congénita",
+        "count": 1,
+        "pct": 33.3
+      }
+    ],
+    "undetermined": 2
+  },
   "environmental_forecast": {
     "schema_version": "1.0.0",
     "status": "OK",
@@ -3747,10 +4009,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-07-24T17:11:41.001351Z",
-      "status": "YA_PROCESADO"
+      "processed_at": "2026-07-25T03:40:36.498067Z",
+      "status": "ERROR"
     },
-    "last_sync_at": "2026-07-24T15:00:53.290745-03:00",
+    "last_sync_at": "2026-07-25T02:21:22.107206-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
