@@ -1194,49 +1194,6 @@ h3 {
   font-size: 0.82rem;
 }
 
-/* --------------------------------------------------------------- ecos --- */
-
-.eco-table {
-  width: 100%;
-  min-width: 560px;
-  border-collapse: collapse;
-  font-size: 0.86rem;
-}
-
-.eco-table th,
-.eco-table td {
-  padding: 9px 12px;
-  text-align: right;
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
-
-.eco-table th:first-child,
-.eco-table td:first-child {
-  text-align: left;
-}
-
-.eco-table thead th {
-  position: sticky;
-  top: 0;
-  background: var(--green);
-  color: #fff;
-  font-size: 0.66rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-}
-
-.eco-table tbody tr:nth-child(even) {
-  background: var(--surface-2);
-}
-
-.eco-table .is-total {
-  font-weight: 780;
-  border-top: 2px solid var(--border-strong);
-}
-
 /* --------------------------------------------------------------- footer --- */
 
 .site-footer {
