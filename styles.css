@@ -1169,6 +1169,27 @@ h3 {
   color: var(--ink-400);
 }
 
+.data-table tr.mort-case > td {
+  background: var(--surface-2);
+  color: var(--ink-600);
+  font-size: 0.84rem;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.mort-case__mark {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 0 6px;
+  border-radius: var(--r-pill);
+  background: var(--green-pale);
+  color: var(--green-dark);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 /* ----------------------------------------------------------- controles --- */
 
 .control-grid {

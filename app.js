@@ -648,24 +648,45 @@ function lotMortality(lot, module) {
     return `${summary}<p class="empty-note">SIN REGISTROS de mortalidad en este lote.</p>`;
   }
 
-  const anyMedia = detail.some((event) => event.has_private_media);
+  const hasMedia = (item) => item && item.has_private_media;
+  const anyMedia = detail.some(
+    (event) => hasMedia(event) || (Array.isArray(event.cases) && event.cases.some(hasMedia)),
+  );
+  const mediaChip = (item) =>
+    hasMedia(item)
+      ? `<span class="mort-media" title="Evidencia multimedia disponible en gestión interna" aria-label="Evidencia multimedia disponible en gestión interna">${MEDIA_ICON}${item.private_media_count > 1 ? `<span class="mort-media__count">${escapeHtml(String(item.private_media_count))}</span>` : ""}</span>`
+      : "";
+  const observedCell = (item) =>
+    `${item.observed_condition_summary ? escapeHtml(item.observed_condition_summary) : "<span class='muted'>—</span>"} ${mediaChip(item)}`;
+
   const rows = detail
     .map((event) => {
       const animal = event.animal_type === "OVEJA" ? "Oveja" : "Cordero";
-      const media = event.has_private_media
-        ? `<span class="mort-media" title="Evidencia multimedia disponible en gestión interna" aria-label="Evidencia multimedia disponible en gestión interna">${MEDIA_ICON}${event.private_media_count > 1 ? `<span class="mort-media__count">${escapeHtml(String(event.private_media_count))}</span>` : ""}</span>`
-        : "";
-      const comment = event.public_comment
-        ? escapeHtml(event.public_comment)
-        : "<span class='muted'>—</span>";
-      return `
+      const cases = Array.isArray(event.cases) ? event.cases : [];
+      const parent = `
         <tr>
           <td>${escapeHtml(formatDate(event.date))}</td>
           <td>${animal}</td>
           <td class="num">${escapeHtml(formatInteger(event.quantity))}</td>
           <td>${escapeHtml(event.cause_label)}</td>
-          <td>${comment} ${media}</td>
+          <td>${observedCell(event)}</td>
         </tr>`;
+      const caseRows = cases
+        .map((detailCase) => {
+          const a = detailCase.animal_type === "OVEJA" ? "oveja" : "cordero";
+          return `
+        <tr class="mort-case">
+          <td aria-hidden="true"></td>
+          <td colspan="4"><span class="mort-case__mark">detalle</span> ${escapeHtml(formatInteger(detailCase.quantity))} ${a} · ${escapeHtml(detailCase.cause_label)} · ${observedCell(detailCase)}</td>
+        </tr>`;
+        })
+        .join("");
+      const undescribed = Number(event.undescribed_quantity) || 0;
+      const undescribedRow =
+        cases.length && undescribed > 0
+          ? `<tr class="mort-case"><td aria-hidden="true"></td><td colspan="4"><span class="mort-case__mark">detalle</span> ${escapeHtml(formatInteger(undescribed))} sin descripción individual.</td></tr>`
+          : "";
+      return parent + caseRows + undescribedRow;
     })
     .join("");
 
@@ -679,11 +700,11 @@ function lotMortality(lot, module) {
       <summary>Ver detalle de mortalidad (${detail.length})</summary>
       <div class="table-wrap">
         <table class="data-table">
-          <thead><tr><th>Fecha</th><th>Animal</th><th class="num">Cant.</th><th>Causa</th><th>Comentario</th></tr></thead>
+          <thead><tr><th>Fecha</th><th>Animal</th><th class="num">Cant.</th><th>Causa</th><th>Estado observado</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>
-      <p class="chart-note">Causas normalizadas. Sin causa informada: “Causa no determinada”; nunca se infiere por contexto.${mediaNote}</p>
+      <p class="chart-note">El estado observado describe cómo se encontró al animal; no es la causa. Sin causa informada: “Causa no determinada”; nunca se infiere por contexto.${mediaNote}</p>
     </details>`;
 }
 
