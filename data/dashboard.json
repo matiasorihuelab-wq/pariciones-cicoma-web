@@ -2,7 +2,7 @@
   "schema_version": "3.1.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-07-25T19:04:14.692231-03:00",
+  "generated_at": "2026-07-25T20:51:45.873199-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -14,7 +14,7 @@
         "severity": "OJO"
       }
     ],
-    "generated_at": "2026-07-25T19:04:14.692231-03:00",
+    "generated_at": "2026-07-25T20:51:45.873199-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -107,19 +107,8 @@
             "observed_condition_summary": null,
             "has_private_media": false,
             "private_media_count": 0,
-            "cases": [
-              {
-                "case_number": 1,
-                "animal_type": "CORDERO",
-                "quantity": 1,
-                "cause_code": "PREDACION_CARANCHO",
-                "cause_label": "Predación por carancho",
-                "observed_condition_summary": "Cordero atracado durante el parto y matado por un carancho.",
-                "has_private_media": false,
-                "private_media_count": 0
-              }
-            ],
-            "undescribed_quantity": 1
+            "cases": [],
+            "undescribed_quantity": 2
           },
           {
             "date": "2026-07-23",
@@ -4049,10 +4038,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-07-25T19:27:03.600722Z",
+      "processed_at": "2026-07-25T22:04:55.168345Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-07-25T19:04:14.692231-03:00",
+    "last_sync_at": "2026-07-25T20:51:45.873199-03:00",
     "pending_operations": 1,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
