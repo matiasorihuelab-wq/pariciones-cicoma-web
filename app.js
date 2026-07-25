@@ -748,10 +748,23 @@ function initRouter() {
   showSection(currentSection());
 }
 
+function onDrawerKey(event) {
+  if (event.key === "Escape") {
+    closeDrawer();
+    byId("nav-toggle").focus();
+  }
+}
+
 function toggleDrawer() {
-  const open = document.body.classList.toggle("drawer-open");
-  byId("nav-toggle").setAttribute("aria-expanded", String(open));
-  byId("scrim").hidden = !open;
+  if (document.body.classList.contains("drawer-open")) closeDrawer();
+  else openDrawer();
+}
+
+function openDrawer() {
+  document.body.classList.add("drawer-open");
+  byId("nav-toggle").setAttribute("aria-expanded", "true");
+  byId("scrim").hidden = false;
+  document.addEventListener("keydown", onDrawerKey);
 }
 
 function closeDrawer() {
@@ -759,6 +772,7 @@ function closeDrawer() {
   document.body.classList.remove("drawer-open");
   byId("nav-toggle").setAttribute("aria-expanded", "false");
   byId("scrim").hidden = true;
+  document.removeEventListener("keydown", onDrawerKey);
 }
 
 /* ------------------------------------------------------------- gráfico --- */

@@ -2,7 +2,7 @@
   "schema_version": "3.1.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-07-25T14:17:45.609302-03:00",
+  "generated_at": "2026-07-25T14:20:16.799856-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -14,7 +14,7 @@
         "severity": "OJO"
       }
     ],
-    "generated_at": "2026-07-25T14:17:45.609302-03:00",
+    "generated_at": "2026-07-25T14:20:16.799856-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -3349,7 +3349,7 @@
     "daily": [
       {
         "date": "2026-07-25",
-        "risk_category": "NO_DETERMINADO",
+        "risk_category": "BAJO",
         "display_risk_category": "RIESGO PENDIENTE DE REVISIÓN",
         "total_exposed": 15.848,
         "by_lot": {
@@ -3357,8 +3357,8 @@
           "DOHNE": 0.0,
           "MA": 0.0
         },
-        "cohort_72h_complete": false,
-        "cohort_72h_category": "RIESGO_72H_INCOMPLETO"
+        "cohort_72h_complete": true,
+        "cohort_72h_category": "BAJO"
       },
       {
         "date": "2026-07-26",
@@ -3419,19 +3419,19 @@
       "cohorts_counted": 5,
       "rule": "Cada cohorte prevista para el día D se evalúa en D, D+1 y D+2 y se cuenta una sola vez bajo su categoría máxima.",
       "SIN_RIESGO": 10.5652,
-      "BAJO": 0.0,
+      "BAJO": 5.2826,
       "MEDIO": 0.0,
       "ALTO": 0.0,
       "CRITICO": 0.0,
-      "RIESGO_72H_INCOMPLETO": 15.8134,
+      "RIESGO_72H_INCOMPLETO": 10.5308,
       "by_module": {
         "INTENSIVO": {
           "SIN_RIESGO": 10.5652,
-          "BAJO": 0.0,
+          "BAJO": 5.2826,
           "MEDIO": 0.0,
           "ALTO": 0.0,
           "CRITICO": 0.0,
-          "RIESGO_72H_INCOMPLETO": 15.8134
+          "RIESGO_72H_INCOMPLETO": 10.5308
         },
         "DOHNE": {
           "SIN_RIESGO": 0.0,
@@ -3541,8 +3541,8 @@
     },
     "analyzed_at": "2026-07-25T14:10:00-03:00",
     "forecast_run_date": "2026-07-25",
-    "imported_at": "2026-07-25T14:17:44.497979-03:00",
-    "forecast_age_hours": 0.13,
+    "imported_at": "2026-07-25T14:20:15.778309-03:00",
+    "forecast_age_hours": 0.17,
     "update_status": {
       "state": "ACTUALIZADO",
       "stale": false,
@@ -3613,11 +3613,11 @@
     "days": [
       {
         "date": "2026-07-25",
-        "risk_category": "NO_DETERMINADO",
+        "risk_category": "BAJO",
         "display_risk_category": "RIESGO PENDIENTE DE REVISIÓN",
-        "ci_min": null,
-        "ci_max": null,
-        "ci_interval": "NO DETERMINADO",
+        "ci_min": 900.0,
+        "ci_max": 1000.0,
+        "ci_interval": "900–1000",
         "ci_unit": "kJ/m2/h",
         "confidence": 0.58,
         "requires_review": true,
@@ -3659,11 +3659,9 @@
             "2026-07-26",
             "2026-07-27"
           ],
-          "category": "RIESGO_72H_INCOMPLETO",
-          "complete": false,
-          "missing_dates": [
-            "2026-07-25"
-          ],
+          "category": "BAJO",
+          "complete": true,
+          "missing_dates": [],
           "lambs": 5.2826
         },
         "cross_status": "OK"
@@ -3900,19 +3898,19 @@
       "cohorts_counted": 5,
       "rule": "Cada cohorte prevista para el día D se evalúa en D, D+1 y D+2 y se cuenta una sola vez bajo su categoría máxima.",
       "SIN_RIESGO": 10.5652,
-      "BAJO": 0.0,
+      "BAJO": 5.2826,
       "MEDIO": 0.0,
       "ALTO": 0.0,
       "CRITICO": 0.0,
-      "RIESGO_72H_INCOMPLETO": 15.8134,
+      "RIESGO_72H_INCOMPLETO": 10.5308,
       "by_module": {
         "INTENSIVO": {
           "SIN_RIESGO": 10.5652,
-          "BAJO": 0.0,
+          "BAJO": 5.2826,
           "MEDIO": 0.0,
           "ALTO": 0.0,
           "CRITICO": 0.0,
-          "RIESGO_72H_INCOMPLETO": 15.8134
+          "RIESGO_72H_INCOMPLETO": 10.5308
         },
         "DOHNE": {
           "SIN_RIESGO": 0.0,
@@ -3941,13 +3939,13 @@
   "chill_pariciones_summary": {
     "source": "INIA-GRAS interpretada por Zapia",
     "analyzed_at": "2026-07-25T14:10:00-03:00",
-    "imported_at": "2026-07-25T14:17:44.497979-03:00",
+    "imported_at": "2026-07-25T14:20:15.778309-03:00",
     "update_status": "ACTUALIZADO",
     "product_cross_status": "OK",
     "dates": [
       {
         "date": "2026-07-25",
-        "risk_category": "NO_DETERMINADO",
+        "risk_category": "BAJO",
         "confidence": 0.58
       },
       {
@@ -4035,7 +4033,7 @@
       "processed_at": "2026-07-25T15:33:18.467411Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-07-25T14:17:45.609302-03:00",
+    "last_sync_at": "2026-07-25T14:20:16.799856-03:00",
     "pending_operations": 1,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
