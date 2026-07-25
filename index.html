@@ -22,7 +22,7 @@
         <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
       </button>
 
-      <a class="brand" href="#resumen" aria-label="CICOMA · Monitoreo · ir al resumen">
+      <a class="brand" href="#resumen" aria-label="CICOMA · Monitoreo de pariciones 2026 · ir al resumen">
         <img
           class="brand__logo"
           src="assets/logo-sul-60.png"
@@ -32,10 +32,17 @@
           decoding="async"
         />
         <span class="brand__copy">
-          <span class="brand__eyebrow">CICOMA . MONITOREO</span>
-          <span class="brand__name">Control de Pariciones</span>
+          <span class="brand__eyebrow">CICOMA · SUL</span>
+          <span class="brand__name">Monitoreo de pariciones 2026</span>
         </span>
       </a>
+
+      <!-- Meta compacta: campaña, última actualización y antigüedad (desktop). -->
+      <dl class="topbar__meta" id="topbar-meta" aria-label="Estado de actualización">
+        <div><dt>Campaña</dt><dd id="topbar-campaign">—</dd></div>
+        <div><dt>Actualizado</dt><dd id="topbar-updated">—</dd></div>
+        <div><dt>Antigüedad</dt><dd id="topbar-age">—</dd></div>
+      </dl>
 
       <!-- Único indicador OK/OJO: pequeño, arriba a la derecha, con popover. -->
       <div class="health" id="health">
@@ -76,10 +83,22 @@
     <div class="layout">
       <aside class="sidebar" id="sidebar" aria-label="Secciones">
         <nav class="side-nav" aria-label="Navegación principal">
-          <a class="side-nav__link" data-section="resumen" href="#resumen">Resumen</a>
-          <a class="side-nav__link" data-section="intensivo" href="#intensivo">Intensivo</a>
-          <a class="side-nav__link" data-section="dohne" href="#dohne">Merino Dohne</a>
-          <a class="side-nav__link" data-section="ma" href="#ma">Merino Australiano</a>
+          <a class="side-nav__link" data-section="resumen" href="#resumen">
+            <svg class="side-nav__icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+            <span>Resumen</span>
+          </a>
+          <a class="side-nav__link" data-section="intensivo" href="#intensivo">
+            <svg class="side-nav__icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="2.6"/></svg>
+            <span>Intensivo</span>
+          </a>
+          <a class="side-nav__link" data-section="dohne" href="#dohne">
+            <svg class="side-nav__icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="2.6"/></svg>
+            <span>Merino Dohne</span>
+          </a>
+          <a class="side-nav__link" data-section="ma" href="#ma">
+            <svg class="side-nav__icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="2.6"/></svg>
+            <span>Merino Australiano</span>
+          </a>
         </nav>
       </aside>
 

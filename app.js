@@ -184,8 +184,21 @@ function renderHealth() {
     ? health.reasons.map((r) => `<li>${escapeHtml(r.message)}</li>`).join("")
     : "";
   reasons.hidden = !isOjo;
-  byId("health-pop-updated").textContent = formatDateTime(DASH.generated_at, DASH.timezone);
-  byId("health-pop-age").textContent = ageText(health.minutes);
+  const updated = formatDateTime(DASH.generated_at, DASH.timezone);
+  const age = ageText(health.minutes);
+  byId("health-pop-updated").textContent = updated;
+  byId("health-pop-age").textContent = age;
+
+  // Meta compacta de la topbar (se refresca con el reloj de antigüedad).
+  const campaign = String(DASH.campaign?.operational_start || DASH.campaign?.code || "2026").slice(0, 4);
+  setText("topbar-campaign", campaign);
+  setText("topbar-updated", updated);
+  setText("topbar-age", age);
+}
+
+function setText(id, value) {
+  const node = byId(id);
+  if (node) node.textContent = value;
 }
 
 function openHealthPopover() {
@@ -275,46 +288,70 @@ function iniaLink() {
   );
 }
 
-function metricCard(label, value, note) {
+function metricCard(label, value, note, opts = {}) {
+  const cls = ["stat"];
+  if (opts.kpi) cls.push("stat--kpi");
+  if (opts.accent) cls.push("stat--accent");
   return `
-    <article class="stat">
+    <article class="${cls.join(" ")}">
       <span class="stat__label">${escapeHtml(label)}</span>
       <strong class="${valueClass("stat__value", value)}">${escapeHtml(value)}</strong>
       ${note ? `<span class="stat__note">${escapeHtml(note)}</span>` : ""}
     </article>`;
 }
 
+function absentOr(value, formatter) {
+  return value === null || value === undefined ? "SIN RECUENTO" : formatter(value);
+}
+
 function renderResumen() {
   const view = byId("view-resumen");
   const ov = DASH.overview;
-  const cards = [
-    metricCard("Ovejas previstas a parir", formatInteger(ov.expected_to_lamb)),
+  const deaths =
+    ov.lamb_deaths === null && ov.ewe_deaths === null
+      ? "SIN RECUENTO"
+      : formatInteger((ov.lamb_deaths || 0) + (ov.ewe_deaths || 0));
+  const deathsNote =
+    ov.lamb_deaths === null && ov.ewe_deaths === null
+      ? null
+      : `${formatInteger(ov.lamb_deaths || 0)} corderos · ${formatInteger(ov.ewe_deaths || 0)} oveja(s)`;
+
+  // Jerarquía ejecutiva: lo que se mira primero, más grande.
+  const kpis = [
+    metricCard("Ovejas paridas", absentOr(ov.lambed_ewes, formatInteger), null, { kpi: true, accent: true }),
+    metricCard("Corderos nacidos", absentOr(ov.born_lambs, formatInteger), null, { kpi: true, accent: true }),
+    metricCard("Avance de parición", formatPercent(ov.progress_percent), "sobre previstas a parir", { kpi: true }),
+    metricCard("Muertes registradas", deaths, deathsNote, { kpi: true }),
+  ].join("");
+
+  // Contexto secundario, tamaño reducido.
+  const secondary = [
+    metricCard("Previstas a parir", formatInteger(ov.expected_to_lamb)),
     metricCard("Corderos esperados", formatInteger(ov.expected_lambs)),
-    metricCard("Ovejas paridas", ov.lambed_ewes === null ? "SIN RECUENTO" : formatInteger(ov.lambed_ewes)),
-    metricCard("Corderos nacidos", ov.born_lambs === null ? "SIN RECUENTO" : formatInteger(ov.born_lambs)),
-    metricCard("Nacidos vivos", ov.born_alive === null ? "SIN RECUENTO" : formatInteger(ov.born_alive)),
-    metricCard("Muertos", ov.stillborn === null ? "SIN RECUENTO" : formatInteger(ov.stillborn)),
-    metricCard("Avance de parición", formatPercent(ov.progress_percent), "sobre previstas a parir"),
-    metricCard("Última actualización", formatDateTime(DASH.generated_at, DASH.timezone)),
+    metricCard("Nacidos vivos", absentOr(ov.born_alive, formatInteger)),
   ].join("");
 
   view.innerHTML = `
     <header class="view__head">
-      <p class="eyebrow">PANORAMA GENERAL</p>
+      <p class="eyebrow">Panorama general</p>
       <h1 id="title-resumen">Resumen de la campaña</h1>
-      <p class="view__intro">Un primer golpe de vista. Cada lote tiene su vista específica en el menú.</p>
+      <p class="view__intro">Lo esencial de un vistazo. Cada lote tiene su vista específica en el menú.</p>
     </header>
 
-    <div class="stat-grid">${cards}</div>
+    <div class="kpi-row">${kpis}</div>
+    <div class="stat-grid">${secondary}</div>
 
     <section class="panel">
-      <div class="panel__head"><h2>Los tres lotes</h2><p>Entrá a cada lote para ver su detalle.</p></div>
+      <div class="panel__head">
+        <div><p class="eyebrow">Por lote</p><h2>Los tres módulos</h2></div>
+        <p>Tocá un lote para ver su detalle.</p>
+      </div>
       <div class="lot-cards">${LOTS.map(distributionCard).join("")}</div>
     </section>
 
     <section class="panel" id="chill-general">
       <div class="panel__head">
-        <h2>Riesgo ambiental — próximos días</h2>
+        <div><p class="eyebrow">Chill Index</p><h2>Riesgo ambiental — próximos días</h2></div>
         <p>Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.</p>
       </div>
       ${chillGeneral()}
@@ -333,21 +370,68 @@ function dataState(module) {
 function distributionCard(lot) {
   const module = moduleByCode(lot.code);
   const previsto = module ? formatInteger(module.ewe_counts.expected_to_lamb) : "—";
-  const observed = module && module.ewe_counts.counted_lambed !== null
-    ? formatInteger(module.ewe_counts.counted_lambed)
-    : "SIN RECUENTO";
+  const paridas = module ? absentOr(module.ewe_counts.counted_lambed, formatInteger) : "—";
+  const nacidos = module ? absentOr(module.lamb_counts.counted, formatInteger) : "—";
+  const muertos = module ? formatInteger(module.mortality.lamb_deaths_accumulated) : "—";
   const progress = module ? formatPercent(module.ewe_counts.progress_percent) : "—";
+  const state = dataState(module);
+  const cell = (label, value) =>
+    `<div><dt>${escapeHtml(label)}</dt><dd class="${absentClass(value)}">${escapeHtml(value)}</dd></div>`;
   return `
     <a class="lot-card" href="#${lot.section}">
       <span class="lot-card__name">${escapeHtml(lot.name)}</span>
       ${lot.breed ? `<span class="lot-card__breed">${escapeHtml(lot.breed)}</span>` : ""}
       <dl class="lot-card__stats">
-        <div><dt>Previstas a parir</dt><dd class="${absentClass(previsto)}">${escapeHtml(previsto)}</dd></div>
-        <div><dt>Ovejas paridas</dt><dd class="${absentClass(observed)}">${escapeHtml(observed)}</dd></div>
-        <div><dt>Avance</dt><dd class="${absentClass(progress)}">${escapeHtml(progress)}</dd></div>
+        ${cell("Previstas", previsto)}
+        ${cell("Paridas", paridas)}
+        ${cell("Nacidos", nacidos)}
+        ${cell("Muertes cordero", muertos)}
+        ${cell("Avance", progress)}
       </dl>
-      <span class="lot-card__state state-${dataState(module) === "ACTUALIZADO" ? "ok" : "pending"}">${escapeHtml(dataState(module))}</span>
+      <span class="lot-card__state tag tag--${state === "ACTUALIZADO" ? "ok" : "pending"}">${escapeHtml(state)}</span>
     </a>`;
+}
+
+// Etiqueta relativa del día: HOY / MAÑANA / AYER o el día de la semana.
+function dayRelative(dateString) {
+  const [y, m, d] = (dateString || "").slice(0, 10).split("-").map(Number);
+  if (!y || !m || !d) return "";
+  const target = new Date(y, m - 1, d);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const diff = Math.round((target - today) / 86400000);
+  if (diff === 0) return "HOY";
+  if (diff === 1) return "MAÑANA";
+  if (diff === -1) return "AYER";
+  return new Intl.DateTimeFormat("es-UY", { weekday: "short" })
+    .format(target)
+    .replace(".", "")
+    .toUpperCase();
+}
+
+const LOT_SHORT = { INTENSIVO: "Int", DOHNE: "Dohne", MA: "MA" };
+
+// Tarjeta de un día de Chill. `exposure` es la cifra a mostrar; `lots` es el
+// desglose por lote (sólo en la vista general).
+function chillDay(day, exposure, lots) {
+  const cat = day.risk_category;
+  const rel = dayRelative(day.date);
+  const complete = day.cohort_72h_complete
+    ? ""
+    : `<span class="tag tag--incompleto">72 H INCOMPLETO</span>`;
+  return `
+    <li class="chill-day risk-${escapeHtml(riskClass(cat))}">
+      <div class="chill-day__head">
+        <span class="chill-day__date">
+          ${rel ? `<span class="chill-day__rel">${escapeHtml(rel)}</span>` : ""}
+          <span class="chill-day__day">${escapeHtml(formatDate(day.date, { short: true }))}</span>
+        </span>
+        <span class="risk-pill risk-pill--${escapeHtml(riskClass(cat))}">${escapeHtml(riskLabel(cat))}</span>
+      </div>
+      <span class="chill-day__value"><strong>${escapeHtml(formatExposure(exposure))}</strong> <span>corderos expuestos</span></span>
+      ${lots ? `<span class="chill-day__lots">${lots}</span>` : ""}
+      ${complete}
+    </li>`;
 }
 
 /* Chill general: exposición diaria (con desglose por lote) y consolidado 72 h. */
@@ -362,23 +446,10 @@ function chillGeneral() {
 
   const rows = days
     .map((day) => {
-      const cat = day.risk_category;
       const lots = LOTS.map(
-        (lot) => `${escapeHtml(lot.name)} ${escapeHtml(formatExposure((day.by_lot || {})[lot.code]))}`,
+        (lot) => `${LOT_SHORT[lot.code]} ${escapeHtml(formatExposure((day.by_lot || {})[lot.code]))}`,
       ).join(" · ");
-      const complete = day.cohort_72h_complete
-        ? ""
-        : `<span class="tag tag--incompleto">72 H INCOMPLETO</span>`;
-      return `
-        <li class="chill-day">
-          <div class="chill-day__head">
-            <span class="chill-day__date">${escapeHtml(formatDate(day.date, { short: true }))}</span>
-            <span class="risk-pill risk-pill--${escapeHtml(riskClass(cat))}">${escapeHtml(riskLabel(cat))}</span>
-          </div>
-          <strong class="chill-day__value">${escapeHtml(formatExposure(day.total_exposed))} corderos esperados expuestos</strong>
-          <span class="chill-day__lots">${lots}</span>
-          ${complete}
-        </li>`;
+      return chillDay(day, day.total_exposed, lots);
     })
     .join("");
 
@@ -467,7 +538,34 @@ function renderLot(lot) {
     <section class="panel">
       <div class="panel__head"><h2>Control acumulado de campo</h2><p>Ovejas paridas: calculado desde los eventos frente al control informado.</p></div>
       ${lotControl(module)}
+    </section>
+
+    <section class="panel panel--flat">
+      <div class="panel__head">
+        <div><p class="eyebrow">Ecografía</p><h2>Composición reproductiva</h2></div>
+        <p>Carga fetal confirmada de la base productiva vigente.</p>
+      </div>
+      ${lotEcografia(module)}
     </section>`;
+}
+
+// Composición ecográfica del lote (cifras de la base productiva, sin modificar).
+function lotEcografia(module) {
+  const iv = module.initial_values;
+  const val = (v) => (v === null || v === undefined ? "NO INFORMADO" : formatInteger(v));
+  const items = [
+    ["Servidas", iv.served],
+    ["Ecografiadas", iv.scanned],
+    ["Vacías", iv.empty],
+    ["Únicas", iv.single],
+    ["Dobles", iv.double],
+    ["Triples", iv.triple],
+    ["Preñadas", iv.expected_to_lamb],
+    ["Corderos esp.", iv.expected_lambs],
+  ];
+  return `
+    <div class="stat-grid">${items.map(([label, v]) => metricCard(label, val(v))).join("")}</div>
+    <p class="chart-note">Preñadas = únicas + dobles + triples · Corderos esperados = únicas + 2×dobles + 3×triples.</p>`;
 }
 
 function lotIndicators(module) {
@@ -524,20 +622,7 @@ function lotChill(code) {
   const chill = DASH.chill_public || {};
   const days = Array.isArray(chill.daily) ? chill.daily : [];
   if (!days.length) return `<p class="empty-note">SIN DISTRIBUCIÓN DE PARTOS CARGADA.</p>`;
-  const rows = days
-    .map((day) => {
-      const value = (day.by_lot || {})[code];
-      return `
-        <li class="chill-day">
-          <div class="chill-day__head">
-            <span class="chill-day__date">${escapeHtml(formatDate(day.date, { short: true }))}</span>
-            <span class="risk-pill risk-pill--${escapeHtml(riskClass(day.risk_category))}">${escapeHtml(riskLabel(day.risk_category))}</span>
-          </div>
-          <strong class="chill-day__value">${escapeHtml(formatExposure(value))} corderos esperados expuestos</strong>
-          ${day.cohort_72h_complete ? "" : `<span class="tag tag--incompleto">72 H INCOMPLETO</span>`}
-        </li>`;
-    })
-    .join("");
+  const rows = days.map((day) => chillDay(day, (day.by_lot || {})[code])).join("");
   return `
     <p class="chill-mode">Exposición diaria del lote.</p>
     <ul class="chill-list">${rows}</ul>
