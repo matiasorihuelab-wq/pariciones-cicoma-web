@@ -14,6 +14,10 @@ const LOTS = [
 ];
 const CODE_BY_SECTION = Object.fromEntries(LOTS.map((lot) => [lot.section, lot.code]));
 const RISK_ORDER = ["SIN_RIESGO", "BAJO", "MEDIO", "ALTO", "CRITICO"];
+// Icono discreto de evidencia multimedia. El contenido (foto/video) nunca se
+// publica: sólo señala que existe y se consulta en la gestión interna.
+const MEDIA_ICON =
+  '<svg class="mort-media__icon" viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L18 8h2a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.2"/></svg>';
 
 let DASH = null;
 let AGE_TIMER = null;
@@ -644,21 +648,30 @@ function lotMortality(lot, module) {
     return `${summary}<p class="empty-note">SIN REGISTROS de mortalidad en este lote.</p>`;
   }
 
+  const anyMedia = detail.some((event) => event.has_private_media);
   const rows = detail
     .map((event) => {
-      const auto = event.provenance === "AUTOMATICO_SIN_VALIDAR"
-        ? `<span class="tag tag--auto">incorporado automáticamente</span>`
+      const animal = event.animal_type === "OVEJA" ? "Oveja" : "Cordero";
+      const media = event.has_private_media
+        ? `<span class="mort-media" title="Evidencia multimedia disponible en gestión interna" aria-label="Evidencia multimedia disponible en gestión interna">${MEDIA_ICON}${event.private_media_count > 1 ? `<span class="mort-media__count">${escapeHtml(String(event.private_media_count))}</span>` : ""}</span>`
         : "";
+      const comment = event.public_comment
+        ? escapeHtml(event.public_comment)
+        : "<span class='muted'>—</span>";
       return `
         <tr>
           <td>${escapeHtml(formatDate(event.date))}</td>
-          <td>${escapeHtml(event.animal === "OVEJA" ? "Oveja" : "Cordero")}</td>
-          <td class="num">${escapeHtml(formatInteger(event.count))}</td>
+          <td>${animal}</td>
+          <td class="num">${escapeHtml(formatInteger(event.quantity))}</td>
           <td>${escapeHtml(event.cause_label)}</td>
-          <td>${event.comment ? escapeHtml(event.comment) : "<span class='muted'>—</span>"} ${auto}</td>
+          <td>${comment} ${media}</td>
         </tr>`;
     })
     .join("");
+
+  const mediaNote = anyMedia
+    ? " La evidencia multimedia (foto o video) se consulta únicamente en la gestión interna."
+    : "";
 
   return `
     ${summary}
@@ -670,7 +683,7 @@ function lotMortality(lot, module) {
           <tbody>${rows}</tbody>
         </table>
       </div>
-      <p class="chart-note">Causas normalizadas. Sin causa informada: “Causa no determinada”; nunca se infiere por contexto.</p>
+      <p class="chart-note">Causas normalizadas. Sin causa informada: “Causa no determinada”; nunca se infiere por contexto.${mediaNote}</p>
     </details>`;
 }
 

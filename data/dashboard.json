@@ -2,7 +2,7 @@
   "schema_version": "3.1.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-07-25T14:40:40.841206-03:00",
+  "generated_at": "2026-07-25T16:15:45.203668-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -14,7 +14,7 @@
         "severity": "OJO"
       }
     ],
-    "generated_at": "2026-07-25T14:40:40.841206-03:00",
+    "generated_at": "2026-07-25T16:15:45.203668-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -100,43 +100,43 @@
         "detail": [
           {
             "date": "2026-07-24",
-            "animal": "CORDERO",
-            "count": 2,
+            "animal_type": "CORDERO",
+            "quantity": 2,
             "cause_code": "CAUSA_NO_DETERMINADA",
             "cause_label": "Causa no determinada",
-            "comment": null,
-            "provenance": "AUTOMATICO_SIN_VALIDAR",
-            "status": "CANDIDATE"
+            "public_comment": null,
+            "has_private_media": false,
+            "private_media_count": 0
           },
           {
             "date": "2026-07-23",
-            "animal": "CORDERO",
-            "count": 1,
+            "animal_type": "CORDERO",
+            "quantity": 1,
             "cause_code": "CAUSA_NO_DETERMINADA",
             "cause_label": "Causa no determinada",
-            "comment": null,
-            "provenance": "AUTOMATICO_SIN_VALIDAR",
-            "status": "CANDIDATE"
+            "public_comment": null,
+            "has_private_media": false,
+            "private_media_count": 0
           },
           {
             "date": "2026-07-19",
-            "animal": "OVEJA",
-            "count": 1,
+            "animal_type": "OVEJA",
+            "quantity": 1,
             "cause_code": "CAUSA_NO_DETERMINADA",
             "cause_label": "Causa no determinada",
-            "comment": "Muerte de oveja; causa final no confirmada.",
-            "provenance": "CONFIRMADO",
-            "status": "CONFIRMED"
+            "public_comment": "Oveja con problema en una pata y baja condición corporal, encontrada muerta a la mañana siguiente.",
+            "has_private_media": false,
+            "private_media_count": 0
           },
           {
             "date": "2026-07-19",
-            "animal": "CORDERO",
-            "count": 1,
+            "animal_type": "CORDERO",
+            "quantity": 1,
             "cause_code": "MALFORMACION_CONGENITA",
             "cause_label": "Malformación congénita",
-            "comment": "Malformación congénita informada: no tenía boca",
-            "provenance": "CONFIRMADO",
-            "status": "CONFIRMED"
+            "public_comment": "Malformación congénita informada: no tenía boca",
+            "has_private_media": false,
+            "private_media_count": 0
           }
         ]
       },
@@ -4033,7 +4033,7 @@
       "processed_at": "2026-07-25T15:33:18.467411Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-07-25T14:40:40.841206-03:00",
+    "last_sync_at": "2026-07-25T16:15:45.203668-03:00",
     "pending_operations": 1,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }

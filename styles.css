@@ -769,9 +769,27 @@ h3 {
   background: var(--surface-3);
 }
 
-.tag--auto {
-  color: var(--green-dark);
-  background: var(--green-pale);
+.mort-media {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 6px;
+  padding: 1px 5px;
+  border-radius: var(--r-pill);
+  color: var(--ink-500);
+  background: var(--surface-3);
+  vertical-align: middle;
+  cursor: help;
+}
+
+.mort-media__icon {
+  display: block;
+}
+
+.mort-media__count {
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .tag--ojo {
