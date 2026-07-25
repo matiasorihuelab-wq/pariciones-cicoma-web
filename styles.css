@@ -149,22 +149,29 @@ h3 {
   font-weight: 800;
 }
 
-/* Indicador OK/OJO compacto del encabezado. */
+/* Único indicador OK/OJO: pequeño y discreto, arriba a la derecha. */
+.health {
+  position: relative;
+  flex: 0 0 auto;
+}
+
 .health-chip {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  flex: 0 0 auto;
-  padding: 8px 14px;
+  gap: 6px;
+  padding: 4px 10px;
   border-radius: 999px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
   border: 1px solid transparent;
+  background: transparent;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  cursor: pointer;
 }
 
 .health-chip__dot {
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   background: currentColor;
 }
@@ -172,13 +179,136 @@ h3 {
 .health-chip--ok {
   color: var(--ok-green);
   background: var(--ok-green-soft);
-  border-color: rgba(28, 138, 78, 0.3);
+  border-color: rgba(28, 138, 78, 0.28);
 }
 
 .health-chip--ojo {
   color: var(--alert-red-dark);
   background: var(--alert-red-soft);
-  border-color: rgba(198, 63, 55, 0.35);
+  border-color: rgba(198, 63, 55, 0.32);
+}
+
+.health-chip:focus-visible {
+  outline: 3px solid rgba(0, 105, 55, 0.28);
+  outline-offset: 2px;
+}
+
+/* Popover de detalle: sólo visible al abrirlo. */
+.health-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 60;
+  width: min(88vw, 320px);
+  padding: 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gray-200);
+  background: var(--surface);
+  box-shadow: var(--shadow-md);
+}
+
+.health-popover[hidden] {
+  display: none;
+}
+
+.health-popover__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.health-popover__badge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.health-popover__badge--ok {
+  color: #fff;
+  background: var(--ok-green);
+}
+
+.health-popover__badge--ojo {
+  color: #fff;
+  background: var(--alert-red);
+}
+
+.health-popover__reasons {
+  margin: 0 0 10px;
+  padding-left: 18px;
+  font-size: 0.82rem;
+  color: var(--alert-red-dark);
+}
+
+.health-popover__reasons[hidden] {
+  display: none;
+}
+
+.health-popover__reasons li + li {
+  margin-top: 3px;
+}
+
+.health-popover__meta {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 10px;
+}
+
+.health-popover__meta div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.health-popover__meta dt {
+  color: var(--ink-600);
+  font-size: 0.74rem;
+}
+
+.health-popover__meta dd {
+  margin: 0;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.health-popover__note {
+  margin: 0;
+  color: var(--ink-600);
+  font-size: 0.7rem;
+}
+
+/* Estados de ausencia de información: notablemente menores que los números.
+   Los selectores compuestos ganan a las bases de mayor tamaño. */
+.is-absent,
+.stat__value.is-absent,
+.lot-card__stats dd.is-absent,
+.control-grid dd.is-absent {
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  color: var(--ink-600);
+}
+
+/* Enlace discreto al reporte oficial de INIA-GRAS. */
+.chill-source {
+  margin: 12px 0 0;
+  color: var(--ink-600);
+  font-size: 0.76rem;
+}
+
+.inia-link {
+  color: var(--sul-green);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.inia-link:hover {
+  color: var(--sul-green-dark);
 }
 
 /* -------------------------------------------------------------- layout --- */
@@ -224,84 +354,6 @@ h3 {
   color: #fff;
   background: var(--sul-green);
   border-color: var(--sul-green-dark);
-}
-
-/* Estado del sistema OK/OJO en el menú. */
-.sys-health {
-  padding: 15px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--gray-200);
-  background: var(--gray-100);
-}
-
-.sys-health__head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-
-.sys-health__badge {
-  padding: 5px 12px;
-  border-radius: 999px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-}
-
-.sys-health__badge--ok {
-  color: #fff;
-  background: var(--ok-green);
-}
-
-.sys-health__badge--ojo {
-  color: #fff;
-  background: var(--alert-red);
-}
-
-.sys-health__headline {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--ink-900);
-}
-
-.sys-health__reasons {
-  margin: 6px 0 10px;
-  padding-left: 18px;
-  font-size: 0.8rem;
-  color: var(--alert-red-dark);
-}
-
-.sys-health__reasons li + li {
-  margin-top: 3px;
-}
-
-.sys-health__meta {
-  display: grid;
-  gap: 7px;
-  margin: 0;
-}
-
-.sys-health__meta div {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.sys-health__meta dt {
-  color: var(--ink-600);
-  font-size: 0.72rem;
-}
-
-.sys-health__meta dd {
-  margin: 0;
-  font-size: 0.72rem;
-  font-weight: 700;
-}
-
-.sys-health__note {
-  margin: 10px 0 0;
-  color: var(--ink-600);
-  font-size: 0.68rem;
 }
 
 .scrim {

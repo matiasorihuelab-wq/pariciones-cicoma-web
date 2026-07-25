@@ -2,19 +2,19 @@
   "schema_version": "3.1.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-07-25T02:21:22.107206-03:00",
+  "generated_at": "2026-07-25T11:55:32.658139-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
-    "headline": "Hay un reporte sin procesar.",
+    "headline": "Hay un reporte pendiente de contabilizar.",
     "reasons": [
       {
-        "code": "PACKAGE_ERROR",
-        "message": "Hay un reporte sin procesar.",
+        "code": "PENDING_EVENT",
+        "message": "Hay un reporte pendiente de contabilizar.",
         "severity": "OJO"
       }
     ],
-    "generated_at": "2026-07-25T02:21:22.107206-03:00",
+    "generated_at": "2026-07-25T11:55:32.658139-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -56,7 +56,7 @@
     "born_lambs": null,
     "born_alive": null,
     "stillborn": null,
-    "lamb_deaths": 2,
+    "lamb_deaths": 4,
     "ewe_deaths": 1,
     "deaths_last_24h": null
   },
@@ -93,11 +93,21 @@
         "last_count_date": null
       },
       "mortality": {
-        "lamb_deaths_accumulated": 2,
+        "lamb_deaths_accumulated": 4,
         "ewe_deaths_accumulated": 1,
         "deaths_last_24h": null,
-        "last_report_date": "2026-07-23",
+        "last_report_date": "2026-07-24",
         "detail": [
+          {
+            "date": "2026-07-24",
+            "animal": "CORDERO",
+            "count": 2,
+            "cause_code": "CAUSA_NO_DETERMINADA",
+            "cause_label": "Causa no determinada",
+            "comment": null,
+            "provenance": "AUTOMATICO_SIN_VALIDAR",
+            "status": "CANDIDATE"
+          },
           {
             "date": "2026-07-23",
             "animal": "CORDERO",
@@ -774,10 +784,10 @@
           "counted_lambs": null,
           "born_alive": null,
           "stillborn": null,
-          "lamb_deaths": 2,
+          "lamb_deaths": 4,
           "ewe_deaths": 1,
           "last_count_date": null,
-          "last_event_date": "2026-07-23"
+          "last_event_date": "2026-07-24"
         }
       },
       {
@@ -2574,7 +2584,7 @@
           "key": "lamb_mortality_pct",
           "label": "Mortalidad de corderos (sobre nacidos)",
           "value": null,
-          "numerator": 2,
+          "numerator": 4,
           "denominator": null,
           "denominator_label": "corderos nacidos",
           "status": "NO_INFORMADO",
@@ -3469,8 +3479,8 @@
     }
   },
   "mortality_summary": {
-    "total_deaths": 3,
-    "lamb_deaths": 2,
+    "total_deaths": 5,
+    "lamb_deaths": 4,
     "ewe_deaths": 1,
     "by_date": [
       {
@@ -3482,33 +3492,38 @@
         "date": "2026-07-23",
         "lamb": 1,
         "ewe": 0
+      },
+      {
+        "date": "2026-07-24",
+        "lamb": 2,
+        "ewe": 0
       }
     ],
     "by_lot": {
       "INTENSIVO": {
-        "CORDERO": 2,
+        "CORDERO": 4,
         "OVEJA": 1
       }
     },
     "by_animal": {
-      "CORDERO": 2,
+      "CORDERO": 4,
       "OVEJA": 1
     },
     "by_cause": [
       {
         "cause_code": "CAUSA_NO_DETERMINADA",
         "cause_label": "Causa no determinada",
-        "count": 2,
-        "pct": 66.7
+        "count": 4,
+        "pct": 80.0
       },
       {
         "cause_code": "MALFORMACION_CONGENITA",
         "cause_label": "Malformación congénita",
         "count": 1,
-        "pct": 33.3
+        "pct": 20.0
       }
     ],
-    "undetermined": 2
+    "undetermined": 4
   },
   "environmental_forecast": {
     "schema_version": "1.0.0",
@@ -3961,6 +3976,16 @@
   },
   "recent_records": [
     {
+      "date": "2026-07-24",
+      "module_code": "INTENSIVO",
+      "event_type": "LAMB_DEATH",
+      "event_label": "Muerte de cordero",
+      "quantity": 2,
+      "observation": "Evento incorporado automáticamente desde el reporte operativo (LAMB_DEATH).",
+      "validation_status": "CANDIDATE",
+      "source": "ZAPIA_VALIDADO"
+    },
+    {
       "date": "2026-07-23",
       "module_code": "INTENSIVO",
       "event_type": "LAMB_DEATH",
@@ -4003,17 +4028,17 @@
   ],
   "automatic_provisional": {
     "notice": "Los datos pueden ajustarse si se recibe una corrección posterior.",
-    "pending_count": 0,
+    "pending_count": 5,
     "records": []
   },
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-07-25T03:40:36.498067Z",
-      "status": "ERROR"
+      "processed_at": "2026-07-25T13:32:15.962616Z",
+      "status": "COMPLETADO"
     },
-    "last_sync_at": "2026-07-25T02:21:22.107206-03:00",
-    "pending_operations": 0,
+    "last_sync_at": "2026-07-25T11:55:32.658139-03:00",
+    "pending_operations": 5,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
 }

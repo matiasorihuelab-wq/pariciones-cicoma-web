@@ -112,6 +112,7 @@ async function boot() {
     DASH = data;
     renderAll();
     initRouter();
+    initHealth();
     startAgeClock();
   } catch (error) {
     const box = byId("load-error");
@@ -169,23 +170,58 @@ function renderHealth() {
   chip.classList.toggle("health-chip--ok", !isOjo);
   chip.classList.toggle("health-chip--ojo", isOjo);
   byId("health-chip-state").textContent = health.state;
-  chip.title = isOjo ? health.reasons.map((r) => r.message).join(" · ") : "Todo actualizado";
 
-  const badge = byId("sys-health-badge");
+  // Popover: sólo se ve al abrirlo; el chip nunca muestra el texto completo.
+  const badge = byId("health-pop-badge");
   badge.textContent = health.state;
-  badge.className = `sys-health__badge sys-health__badge--${isOjo ? "ojo" : "ok"}`;
-  byId("sys-health-headline").textContent = isOjo
-    ? health.reasons[0]?.message || "Requiere atención"
+  badge.className = `health-popover__badge health-popover__badge--${isOjo ? "ojo" : "ok"}`;
+  const count = health.reasons.length;
+  byId("health-pop-count").textContent = isOjo
+    ? `${count} ${count === 1 ? "incidencia" : "incidencias"}`
     : "Todo actualizado";
-
-  const reasons = byId("sys-health-reasons");
+  const reasons = byId("health-pop-reasons");
   reasons.innerHTML = isOjo
     ? health.reasons.map((r) => `<li>${escapeHtml(r.message)}</li>`).join("")
     : "";
   reasons.hidden = !isOjo;
+  byId("health-pop-updated").textContent = formatDateTime(DASH.generated_at, DASH.timezone);
+  byId("health-pop-age").textContent = ageText(health.minutes);
+}
 
-  byId("sys-health-updated").textContent = formatDateTime(DASH.generated_at, DASH.timezone);
-  byId("sys-health-age").textContent = ageText(health.minutes);
+function openHealthPopover() {
+  byId("health-popover").hidden = false;
+  byId("health-chip").setAttribute("aria-expanded", "true");
+  document.addEventListener("pointerdown", onHealthOutside, true);
+  document.addEventListener("keydown", onHealthKey);
+}
+
+function closeHealthPopover() {
+  const pop = byId("health-popover");
+  if (pop.hidden) return;
+  pop.hidden = true;
+  byId("health-chip").setAttribute("aria-expanded", "false");
+  document.removeEventListener("pointerdown", onHealthOutside, true);
+  document.removeEventListener("keydown", onHealthKey);
+}
+
+function toggleHealthPopover() {
+  if (byId("health-popover").hidden) openHealthPopover();
+  else closeHealthPopover();
+}
+
+function onHealthOutside(event) {
+  if (!byId("health").contains(event.target)) closeHealthPopover();
+}
+
+function onHealthKey(event) {
+  if (event.key === "Escape") {
+    closeHealthPopover();
+    byId("health-chip").focus();
+  }
+}
+
+function initHealth() {
+  byId("health-chip").addEventListener("click", toggleHealthPopover);
 }
 
 function startAgeClock() {
@@ -195,11 +231,55 @@ function startAgeClock() {
 
 /* ------------------------------------------------------------- resumen --- */
 
+// Estados de ausencia de información: se muestran como estado secundario,
+// notablemente más chicos que los números, sin sustituirse por cero.
+const ABSENCE_STATES = new Set([
+  "—",
+  "SIN RECUENTO",
+  "SIN DATO",
+  "SIN CONTROL",
+  "SIN CONTROL RECIENTE",
+  "SIN CURVA",
+  "SIN CURVA CARGADA",
+  "SIN BASE IMPORTADA",
+  "NO INFORMADO",
+  "NO REPORTADO",
+  "NO DETERMINADO",
+  "RIESGO NO DETERMINADO",
+  "PENDIENTE",
+]);
+
+function isAbsenceState(value) {
+  if (typeof value !== "string") return false;
+  const text = value.trim().toUpperCase();
+  return ABSENCE_STATES.has(text) || text.startsWith("SIN ");
+}
+
+function valueClass(base, value) {
+  return isAbsenceState(value) ? `${base} is-absent` : base;
+}
+
+// Clase para elementos sin clase base (celdas de tabla, dd) cuando su valor es
+// un estado de ausencia: se muestran notablemente más chicos que los números.
+function absentClass(value) {
+  return isAbsenceState(value) ? "is-absent" : "";
+}
+
+// Enlace estable al reporte oficial de INIA-GRAS (nunca la imagen diaria).
+const INIA_CHILL_URL = "https://inia.uy/gras/Aplicaciones_y_recursos/Prevision%20Corderos";
+
+function iniaLink() {
+  return (
+    `<a class="inia-link" href="${INIA_CHILL_URL}" target="_blank" rel="noopener noreferrer">` +
+    `Ver reporte oficial del Chill Index de INIA</a>`
+  );
+}
+
 function metricCard(label, value, note) {
   return `
     <article class="stat">
       <span class="stat__label">${escapeHtml(label)}</span>
-      <strong class="stat__value">${escapeHtml(value)}</strong>
+      <strong class="${valueClass("stat__value", value)}">${escapeHtml(value)}</strong>
       ${note ? `<span class="stat__note">${escapeHtml(note)}</span>` : ""}
     </article>`;
 }
@@ -262,9 +342,9 @@ function distributionCard(lot) {
       <span class="lot-card__name">${escapeHtml(lot.name)}</span>
       ${lot.breed ? `<span class="lot-card__breed">${escapeHtml(lot.breed)}</span>` : ""}
       <dl class="lot-card__stats">
-        <div><dt>Previstas a parir</dt><dd>${escapeHtml(previsto)}</dd></div>
-        <div><dt>Ovejas paridas</dt><dd>${escapeHtml(observed)}</dd></div>
-        <div><dt>Avance</dt><dd>${escapeHtml(progress)}</dd></div>
+        <div><dt>Previstas a parir</dt><dd class="${absentClass(previsto)}">${escapeHtml(previsto)}</dd></div>
+        <div><dt>Ovejas paridas</dt><dd class="${absentClass(observed)}">${escapeHtml(observed)}</dd></div>
+        <div><dt>Avance</dt><dd class="${absentClass(progress)}">${escapeHtml(progress)}</dd></div>
       </dl>
       <span class="lot-card__state state-${dataState(module) === "ACTUALIZADO" ? "ok" : "pending"}">${escapeHtml(dataState(module))}</span>
     </a>`;
@@ -306,7 +386,8 @@ function chillGeneral() {
     ${stale ? `<p class="tag tag--incompleto">El Chill Index no está actualizado.</p>` : ""}
     <p class="chill-mode">Exposición diaria — una cohorte puede aparecer en varios días.</p>
     <ul class="chill-list">${rows}</ul>
-    ${chill72h(chill.exposure_72h, null)}`;
+    ${chill72h(chill.exposure_72h, null)}
+    <p class="chill-source">Fuente: INIA-GRAS · ${iniaLink()}</p>`;
 }
 
 /* Consolidado 72 h: cada cohorte una vez, por su riesgo máximo. lotCode filtra. */
@@ -460,7 +541,8 @@ function lotChill(code) {
   return `
     <p class="chill-mode">Exposición diaria del lote.</p>
     <ul class="chill-list">${rows}</ul>
-    ${chill72h(chill.exposure_72h, code)}`;
+    ${chill72h(chill.exposure_72h, code)}
+    <p class="chill-source">Fuente: INIA-GRAS · ${iniaLink()}</p>`;
 }
 
 function lotMortality(lot, module) {
@@ -517,12 +599,17 @@ function lotControl(module) {
     CONCILIADO: "Conciliado",
   };
   const tone = control.status === "DIFERENCIA" ? "ojo" : control.status === "COINCIDE" || control.status === "CONCILIADO" ? "ok" : "pending";
+  const calculated = control.calculated === null ? "SIN RECUENTO" : formatInteger(control.calculated);
+  const reported =
+    control.reported_accumulated === null ? "SIN CONTROL" : formatInteger(control.reported_accumulated);
+  const difference = control.difference === null ? "—" : formatInteger(control.difference);
+  const lastControl = formatDate(control.reported_date);
   return `
     <div class="control-grid">
-      <div><dt>Calculado desde eventos</dt><dd>${escapeHtml(control.calculated === null ? "SIN RECUENTO" : formatInteger(control.calculated))}</dd></div>
-      <div><dt>Control informado</dt><dd>${escapeHtml(control.reported_accumulated === null ? "SIN CONTROL" : formatInteger(control.reported_accumulated))}</dd></div>
-      <div><dt>Diferencia</dt><dd>${escapeHtml(control.difference === null ? "—" : formatInteger(control.difference))}</dd></div>
-      <div><dt>Último control</dt><dd>${escapeHtml(formatDate(control.reported_date))}</dd></div>
+      <div><dt>Calculado desde eventos</dt><dd class="${absentClass(calculated)}">${escapeHtml(calculated)}</dd></div>
+      <div><dt>Control informado</dt><dd class="${absentClass(reported)}">${escapeHtml(reported)}</dd></div>
+      <div><dt>Diferencia</dt><dd class="${absentClass(difference)}">${escapeHtml(difference)}</dd></div>
+      <div><dt>Último control</dt><dd class="${absentClass(lastControl)}">${escapeHtml(lastControl)}</dd></div>
     </div>
     <p class="control-status"><span class="tag tag--${tone}">${escapeHtml(statusLabels[control.status] || control.status)}</span>
     El acumulado informado es un control, no un incremento diario.</p>`;

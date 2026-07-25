@@ -37,10 +37,39 @@
         </span>
       </a>
 
-      <!-- Indicador OK/OJO compacto, siempre visible (también en móvil). -->
-      <div class="health-chip" id="health-chip" role="status" aria-live="polite">
-        <span class="health-chip__dot" aria-hidden="true"></span>
-        <span class="health-chip__state" id="health-chip-state">—</span>
+      <!-- Único indicador OK/OJO: pequeño, arriba a la derecha, con popover. -->
+      <div class="health" id="health">
+        <button
+          class="health-chip"
+          id="health-chip"
+          type="button"
+          aria-haspopup="dialog"
+          aria-expanded="false"
+          aria-controls="health-popover"
+          aria-label="Estado del sistema"
+        >
+          <span class="health-chip__dot" aria-hidden="true"></span>
+          <span class="health-chip__state" id="health-chip-state">—</span>
+        </button>
+
+        <div
+          class="health-popover"
+          id="health-popover"
+          role="dialog"
+          aria-label="Estado del sistema"
+          hidden
+        >
+          <div class="health-popover__head">
+            <span class="health-popover__badge" id="health-pop-badge">—</span>
+            <strong id="health-pop-count">—</strong>
+          </div>
+          <ul class="health-popover__reasons" id="health-pop-reasons"></ul>
+          <dl class="health-popover__meta">
+            <div><dt>Última actualización</dt><dd id="health-pop-updated">—</dd></div>
+            <div><dt>Antigüedad</dt><dd id="health-pop-age">—</dd></div>
+          </dl>
+          <p class="health-popover__note">El detalle técnico está disponible en la gestión interna.</p>
+        </div>
       </div>
     </header>
 
@@ -52,22 +81,6 @@
           <a class="side-nav__link" data-section="dohne" href="#dohne">Merino Dohne</a>
           <a class="side-nav__link" data-section="ma" href="#ma">Merino Australiano</a>
         </nav>
-
-        <!-- Estado del sistema: OK / OJO, integrado en la parte superior del menú. -->
-        <div class="sys-health" id="sys-health" role="status" aria-live="polite">
-          <div class="sys-health__head">
-            <span class="sys-health__badge" id="sys-health-badge">—</span>
-            <span class="sys-health__headline" id="sys-health-headline">Comprobando estado…</span>
-          </div>
-          <ul class="sys-health__reasons" id="sys-health-reasons"></ul>
-          <dl class="sys-health__meta">
-            <div><dt>Última actualización</dt><dd id="sys-health-updated">—</dd></div>
-            <div><dt>Antigüedad</dt><dd id="sys-health-age">—</dd></div>
-          </dl>
-          <p class="sys-health__note">
-            El detalle técnico está disponible en la gestión interna.
-          </p>
-        </div>
       </aside>
 
       <div class="scrim" id="scrim" hidden></div>
