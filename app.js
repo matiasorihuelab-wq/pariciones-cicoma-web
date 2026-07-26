@@ -179,14 +179,35 @@ function renderHealth() {
   const badge = byId("health-pop-badge");
   badge.textContent = health.state;
   badge.className = `health-popover__badge health-popover__badge--${isOjo ? "ojo" : "ok"}`;
-  const count = health.reasons.length;
-  byId("health-pop-count").textContent = isOjo
-    ? `${count} ${count === 1 ? "incidencia" : "incidencias"}`
-    : "Todo actualizado";
+  // Contador agregado de acciones pendientes (sin contenido): sólo totales.
+  const actions = (DASH.system_health && DASH.system_health.pending_actions) || null;
+  const totalActions = actions ? actions.total || 0 : 0;
+  const countReasons = health.reasons.length;
+  byId("health-pop-count").textContent = !isOjo
+    ? "Todo actualizado"
+    : totalActions > 0
+      ? `${totalActions} ${totalActions === 1 ? "acción pendiente" : "acciones pendientes"}`
+      : `${countReasons} ${countReasons === 1 ? "incidencia" : "incidencias"}`;
   const reasons = byId("health-pop-reasons");
-  reasons.innerHTML = isOjo
-    ? health.reasons.map((r) => `<li>${escapeHtml(r.message)}</li>`).join("")
-    : "";
+  const pendingCodes = ["PENDING_EVENT", "PENDING_LINK", "PENDING_MEDIA"];
+  const lines = [];
+  if (isOjo && actions && totalActions > 0) {
+    const parts = [];
+    if (actions.reports) parts.push(`${actions.reports} reporte${actions.reports === 1 ? "" : "s"}`);
+    if (actions.links)
+      parts.push(`${actions.links} vinculación${actions.links === 1 ? "" : "es"}`);
+    if (actions.media)
+      parts.push(`${actions.media} archivo${actions.media === 1 ? "" : "s"} multimedia`);
+    if (actions.technical)
+      parts.push(`${actions.technical} problema${actions.technical === 1 ? "" : "s"} técnico`);
+    lines.push(`<li>${escapeHtml(parts.join(" · "))}</li>`);
+  }
+  if (isOjo) {
+    for (const reason of health.reasons) {
+      if (!pendingCodes.includes(reason.code)) lines.push(`<li>${escapeHtml(reason.message)}</li>`);
+    }
+  }
+  reasons.innerHTML = lines.join("");
   reasons.hidden = !isOjo;
   const updated = formatDateTime(DASH.generated_at, DASH.timezone);
   const age = ageText(health.minutes);

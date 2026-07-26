@@ -2,7 +2,7 @@
   "schema_version": "3.1.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-07-25T20:52:54.906246-03:00",
+  "generated_at": "2026-07-25T22:48:02.082909-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -12,9 +12,26 @@
         "code": "PENDING_EVENT",
         "message": "Hay un reporte pendiente de contabilizar.",
         "severity": "OJO"
+      },
+      {
+        "code": "PENDING_LINK",
+        "message": "Hay una vinculación de mortalidad pendiente de confirmar.",
+        "severity": "OJO"
+      },
+      {
+        "code": "PENDING_MEDIA",
+        "message": "Hay archivos multimedia pendientes de revisión.",
+        "severity": "OJO"
       }
     ],
-    "generated_at": "2026-07-25T20:52:54.906246-03:00",
+    "pending_actions": {
+      "reports": 1,
+      "links": 1,
+      "media": 5,
+      "technical": 0,
+      "total": 7
+    },
+    "generated_at": "2026-07-25T22:48:02.082909-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -4038,10 +4055,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-07-25T22:04:55.168345Z",
+      "processed_at": "2026-07-25T23:53:35.162372Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-07-25T20:52:54.906246-03:00",
+    "last_sync_at": "2026-07-25T22:48:02.082909-03:00",
     "pending_operations": 1,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
