@@ -2,36 +2,20 @@
   "schema_version": "3.1.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-07-25T23:03:55.048822-03:00",
+  "generated_at": "2026-07-25T23:07:40.978117-03:00",
   "max_age_minutes": 60,
   "system_health": {
-    "state": "OJO",
-    "headline": "Hay un reporte pendiente de contabilizar.",
-    "reasons": [
-      {
-        "code": "PENDING_EVENT",
-        "message": "Hay un reporte pendiente de contabilizar.",
-        "severity": "OJO"
-      },
-      {
-        "code": "PENDING_LINK",
-        "message": "Hay una vinculación de mortalidad pendiente de confirmar.",
-        "severity": "OJO"
-      },
-      {
-        "code": "PENDING_MEDIA",
-        "message": "Hay archivos multimedia pendientes de revisión.",
-        "severity": "OJO"
-      }
-    ],
+    "state": "OK",
+    "headline": "Todo actualizado",
+    "reasons": [],
     "pending_actions": {
-      "reports": 1,
-      "links": 1,
-      "media": 5,
+      "reports": 0,
+      "links": 0,
+      "media": 0,
       "technical": 0,
-      "total": 7
+      "total": 0
     },
-    "generated_at": "2026-07-25T23:03:55.048822-03:00",
+    "generated_at": "2026-07-25T23:07:40.978117-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -122,10 +106,21 @@
             "cause_code": "CAUSA_NO_DETERMINADA",
             "cause_label": "Causa no determinada",
             "observed_condition_summary": null,
-            "has_private_media": false,
-            "private_media_count": 0,
-            "cases": [],
-            "undescribed_quantity": 2
+            "has_private_media": true,
+            "private_media_count": 2,
+            "cases": [
+              {
+                "case_number": 1,
+                "animal_type": "CORDERO",
+                "quantity": 1,
+                "cause_code": "PREDACION_CARANCHO",
+                "cause_label": "Predación por carancho",
+                "observed_condition_summary": "El reporte atribuye la muerte del cordero a un carancho.",
+                "has_private_media": false,
+                "private_media_count": 0
+              }
+            ],
+            "undescribed_quantity": 1
           },
           {
             "date": "2026-07-23",
@@ -4049,17 +4044,17 @@
   ],
   "automatic_provisional": {
     "notice": "Los datos pueden ajustarse si se recibe una corrección posterior.",
-    "pending_count": 1,
+    "pending_count": 0,
     "records": []
   },
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-07-26T01:51:49.320017Z",
+      "processed_at": "2026-07-26T02:04:34.786076Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-07-25T23:03:55.048822-03:00",
-    "pending_operations": 1,
+    "last_sync_at": "2026-07-25T23:07:40.978117-03:00",
+    "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
 }
