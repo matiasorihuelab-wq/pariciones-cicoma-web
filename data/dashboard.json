@@ -2,7 +2,7 @@
   "schema_version": "3.2.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-07-27T09:09:21.809779-03:00",
+  "generated_at": "2026-07-27T11:33:18.172839-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OK",
@@ -15,7 +15,7 @@
       "technical": 0,
       "total": 0
     },
-    "generated_at": "2026-07-27T09:09:21.809779-03:00",
+    "generated_at": "2026-07-27T11:33:18.172839-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -2701,12 +2701,22 @@
         },
         {
           "key": "lamb_mortality_pct",
-          "label": "Mortalidad de corderos (sobre nacidos)",
+          "label": "Mortalidad de corderos (muertes registradas sobre nacidos)",
           "value": null,
           "numerator": 5,
           "denominator": null,
           "denominator_label": "corderos nacidos",
           "status": "NO_INFORMADO",
+          "unit": "%"
+        },
+        {
+          "key": "stillborn_pct",
+          "label": "Nacidos muertos al parto (sobre nacidos)",
+          "value": null,
+          "numerator": null,
+          "denominator": null,
+          "denominator_label": "corderos nacidos",
+          "status": "SIN_RECUENTO",
           "unit": "%"
         },
         {
@@ -2923,7 +2933,17 @@
         },
         {
           "key": "lamb_mortality_pct",
-          "label": "Mortalidad de corderos (sobre nacidos)",
+          "label": "Mortalidad de corderos (muertes registradas sobre nacidos)",
+          "value": null,
+          "numerator": null,
+          "denominator": null,
+          "denominator_label": "corderos nacidos",
+          "status": "SIN_RECUENTO",
+          "unit": "%"
+        },
+        {
+          "key": "stillborn_pct",
+          "label": "Nacidos muertos al parto (sobre nacidos)",
           "value": null,
           "numerator": null,
           "denominator": null,
@@ -3145,7 +3165,17 @@
         },
         {
           "key": "lamb_mortality_pct",
-          "label": "Mortalidad de corderos (sobre nacidos)",
+          "label": "Mortalidad de corderos (muertes registradas sobre nacidos)",
+          "value": null,
+          "numerator": null,
+          "denominator": null,
+          "denominator_label": "corderos nacidos",
+          "status": "SIN_RECUENTO",
+          "unit": "%"
+        },
+        {
+          "key": "stillborn_pct",
+          "label": "Nacidos muertos al parto (sobre nacidos)",
           "value": null,
           "numerator": null,
           "denominator": null,
@@ -3368,7 +3398,17 @@
       },
       {
         "key": "lamb_mortality_pct",
-        "label": "Mortalidad de corderos (sobre nacidos)",
+        "label": "Mortalidad de corderos (muertes registradas sobre nacidos)",
+        "value": null,
+        "numerator": 5,
+        "denominator": null,
+        "denominator_label": "corderos nacidos",
+        "status": "NO_INFORMADO",
+        "unit": "%"
+      },
+      {
+        "key": "stillborn_pct",
+        "label": "Nacidos muertos al parto (sobre nacidos)",
         "value": null,
         "numerator": null,
         "denominator": null,
@@ -3379,11 +3419,11 @@
       {
         "key": "ewe_mortality_pct",
         "label": "Mortalidad de ovejas (sobre servidas)",
-        "value": null,
-        "numerator": null,
+        "value": 0.1126,
+        "numerator": 1,
         "denominator": 888,
         "denominator_label": "ovejas servidas",
-        "status": "SIN_RECUENTO",
+        "status": "OK",
         "unit": "%"
       },
       {
@@ -4170,10 +4210,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-07-27T12:09:19.161596Z",
+      "processed_at": "2026-07-27T12:09:43.761160Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-07-27T09:09:21.809779-03:00",
+    "last_sync_at": "2026-07-27T11:33:18.172839-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }

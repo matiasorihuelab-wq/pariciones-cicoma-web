@@ -1,8 +1,22 @@
+# Este archivo se publica tal cual en el repositorio público (artefacto de
+# despliegue), donde ignora lo que no forma parte del sitio estático.
+#
+# La fuente canónica APP/web_source SÍ versiona package.json, ESQUEMA_JSON.md,
+# la documentación técnica, las pruebas y los assets: las excepciones
+# explícitas de abajo garantizan que un clon limpio de APP contenga todos los
+# insumos necesarios para publicar.
 dist/
 data/dashboard.demo.json
 data/chill.demo.json
 .openai/
-package.json
 scripts/
 probar_web.bat
-ESQUEMA_JSON.md
+
+# Insumos obligatorios de la fuente canónica: nunca ignorados.
+!package.json
+!ESQUEMA_JSON.md
+!DOCUMENTACION_TECNICA.md
+!assets/
+!assets/**
+!tests/
+!tests/**

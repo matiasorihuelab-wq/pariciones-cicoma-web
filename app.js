@@ -1,8 +1,10 @@
 "use strict";
 
 /* Tablero público CICOMA — monitoreo de pariciones 2026.
- * Lee exclusivamente data/dashboard.json (esquema 3.1.0). Navegación por menú
- * lateral con secciones por lote. Nunca convierte un faltante en cero. */
+ * Fuente canónica versionada: APP/web_source (WEB es staging generado).
+ * Lee exclusivamente data/dashboard.json (esquema 3.2.0), validando el
+ * contrato antes de renderizar. Navegación por menú lateral con secciones por
+ * lote. Nunca convierte un faltante en cero ni un total parcial en completo. */
 
 const DATA_URL = "./data/dashboard.json";
 const SUPPORTED_SCHEMA = "3.2.0";
@@ -112,26 +114,9 @@ function assertDashboard(data) {
   }
   if (!Array.isArray(data.modules)) throw new Error("Falta la lista de módulos");
 
-  const health = data.system_health;
-  if (health.state !== "OK" && health.state !== "OJO") {
-    throw new Error(`Estado del sistema inválido: ${JSON.stringify(health.state)}`);
-  }
-  if (!Array.isArray(health.reasons)) throw new Error("system_health.reasons debe ser una lista");
-  const validReasons = health.reasons.filter(
-    (r) =>
-      r &&
-      typeof r === "object" &&
-      typeof r.code === "string" &&
-      r.code.trim() !== "" &&
-      typeof r.message === "string" &&
-      r.message.trim() !== "",
-  );
-  if (validReasons.length !== health.reasons.length) {
-    throw new Error("system_health.reasons contiene motivos malformados");
-  }
-  if (health.state === "OJO" && validReasons.length === 0) {
-    throw new Error("OJO sin motivos: contrato inválido");
-  }
+  // Misma validación que aplica effectiveHealth: una sola fuente de verdad.
+  // Si el estado es inválido, esto lanza y la carga se corta con error visible.
+  effectiveHealth(data.system_health, data.generated_at, data.max_age_minutes, Date.now());
 
   for (const key of ["lambed_ewes", "born_lambs", "born_alive", "stillborn"]) {
     const total = data.overview[key];
@@ -198,17 +183,47 @@ function ageText(minutes) {
   return `hace ${Math.round(hours / 24)} d`;
 }
 
+// Motivo válido: objeto con código y mensaje no vacíos.
+function isValidReason(reason) {
+  return (
+    !!reason &&
+    typeof reason === "object" &&
+    typeof reason.code === "string" &&
+    reason.code.trim() !== "" &&
+    typeof reason.message === "string" &&
+    reason.message.trim() !== ""
+  );
+}
+
 // El backend (build_system_status) es la ÚNICA autoridad para decidir OK/OJO.
 // La antigüedad de la publicación se muestra sólo como dato informativo y NUNCA
 // convierte un OK del backend en OJO: Zapia no tiene una cadencia fija y pueden
 // pasar horas entre reportes sin que exista ninguna incidencia real. Cuando el
 // backend informa OJO, se muestran sus motivos tal cual llegan (sin inventar).
+//
+// La función es segura POR SÍ MISMA: no depende de que assertDashboard se haya
+// ejecutado antes. Un estado ausente, "ERROR", null o desconocido lanza; jamás
+// se coacciona a OK.
 function effectiveHealth(systemHealth, generatedAtIso, maxAgeMinutes, nowMs) {
-  const base = systemHealth || { state: "OK", reasons: [] };
-  const reasons = Array.isArray(base.reasons) ? base.reasons.slice() : [];
-  const state = base.state === "OJO" ? "OJO" : "OK";
+  if (!systemHealth || typeof systemHealth !== "object") {
+    throw new Error("system_health ausente o malformado");
+  }
+  const state = systemHealth.state;
+  if (state !== "OK" && state !== "OJO") {
+    throw new Error(`Estado del sistema inválido: ${JSON.stringify(state)}`);
+  }
+  if (!Array.isArray(systemHealth.reasons)) {
+    throw new Error("system_health.reasons debe ser una lista");
+  }
+  const reasons = systemHealth.reasons.slice();
+  if (!reasons.every(isValidReason)) {
+    throw new Error("system_health.reasons contiene motivos malformados");
+  }
+  if (state === "OJO" && reasons.length === 0) {
+    throw new Error("OJO sin motivos: contrato inválido");
+  }
   const minutes = computeAgeMinutes(generatedAtIso, nowMs);
-  const maxAge = Number(maxAgeMinutes || (base && base.max_age_minutes) || 60);
+  const maxAge = Number(maxAgeMinutes || systemHealth.max_age_minutes || 60);
   return { state, reasons, minutes, maxAge };
 }
 
