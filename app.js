@@ -135,12 +135,16 @@ function renderAll() {
 
 /* --------------------------------------------------------------- salud --- */
 
+function computeAgeMinutes(generatedAtIso, nowMs) {
+  if (!generatedAtIso) return null;
+  const stamp = new Date(generatedAtIso);
+  if (Number.isNaN(stamp.getTime())) return null;
+  return Math.max(0, (nowMs - stamp.getTime()) / 60000);
+}
+
 function ageMinutes() {
   const generated = DASH.generated_at || DASH.system_health?.generated_at;
-  if (!generated) return null;
-  const stamp = new Date(generated);
-  if (Number.isNaN(stamp.getTime())) return null;
-  return Math.max(0, (Date.now() - stamp.getTime()) / 60000);
+  return computeAgeMinutes(generated, Date.now());
 }
 
 function ageText(minutes) {
@@ -151,19 +155,24 @@ function ageText(minutes) {
   return `hace ${Math.round(hours / 24)} d`;
 }
 
-// Estado efectivo: el del servidor más la antigüedad evaluada en el cliente.
-// Aunque la PC deje de publicar, el navegador detecta la web atrasada (§3.5).
-function currentHealth() {
-  const base = DASH.system_health || { state: "OK", reasons: [] };
+// El backend (build_system_status) es la ÚNICA autoridad para decidir OK/OJO.
+// La antigüedad de la publicación se muestra sólo como dato informativo y NUNCA
+// convierte un OK del backend en OJO: Zapia no tiene una cadencia fija y pueden
+// pasar horas entre reportes sin que exista ninguna incidencia real. Cuando el
+// backend informa OJO, se muestran sus motivos tal cual llegan (sin inventar).
+function effectiveHealth(systemHealth, generatedAtIso, maxAgeMinutes, nowMs) {
+  const base = systemHealth || { state: "OK", reasons: [] };
   const reasons = Array.isArray(base.reasons) ? base.reasons.slice() : [];
-  let state = base.state === "OJO" ? "OJO" : "OK";
-  const minutes = ageMinutes();
-  const maxAge = Number(DASH.max_age_minutes || base.max_age_minutes || 60);
-  if (minutes !== null && minutes > maxAge) {
-    state = "OJO";
-    reasons.push({ code: "STALE_CLIENT", message: "La información publicada está atrasada." });
-  }
+  const state = base.state === "OJO" ? "OJO" : "OK";
+  const minutes = computeAgeMinutes(generatedAtIso, nowMs);
+  const maxAge = Number(maxAgeMinutes || (base && base.max_age_minutes) || 60);
   return { state, reasons, minutes, maxAge };
+}
+
+function currentHealth() {
+  const generated = DASH.generated_at || DASH.system_health?.generated_at;
+  const maxAge = DASH.max_age_minutes || DASH.system_health?.max_age_minutes;
+  return effectiveHealth(DASH.system_health, generated, maxAge, Date.now());
 }
 
 function renderHealth() {
