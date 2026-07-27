@@ -2,7 +2,7 @@
   "schema_version": "3.1.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-07-27T01:45:09.192497-03:00",
+  "generated_at": "2026-07-27T01:47:01.201360-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -21,7 +21,7 @@
       "technical": 0,
       "total": 1
     },
-    "generated_at": "2026-07-27T01:45:09.192497-03:00",
+    "generated_at": "2026-07-27T01:47:01.201360-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -63,7 +63,7 @@
     "born_lambs": null,
     "born_alive": null,
     "stillborn": null,
-    "lamb_deaths": 4,
+    "lamb_deaths": 5,
     "ewe_deaths": 1,
     "deaths_last_24h": null
   },
@@ -100,11 +100,23 @@
         "last_count_date": null
       },
       "mortality": {
-        "lamb_deaths_accumulated": 4,
+        "lamb_deaths_accumulated": 5,
         "ewe_deaths_accumulated": 1,
         "deaths_last_24h": null,
-        "last_report_date": "2026-07-24",
+        "last_report_date": "2026-07-27",
         "detail": [
+          {
+            "date": "2026-07-27",
+            "animal_type": "CORDERO",
+            "quantity": 1,
+            "cause_code": "CAUSA_NO_DETERMINADA",
+            "cause_label": "Causa no determinada",
+            "observed_condition_summary": "Murió uno de los trilliceros",
+            "has_private_media": false,
+            "private_media_count": 0,
+            "cases": [],
+            "undescribed_quantity": 1
+          },
           {
             "date": "2026-07-24",
             "animal_type": "CORDERO",
@@ -810,10 +822,10 @@
           "counted_lambs": null,
           "born_alive": null,
           "stillborn": null,
-          "lamb_deaths": 4,
+          "lamb_deaths": 5,
           "ewe_deaths": 1,
           "last_count_date": null,
-          "last_event_date": "2026-07-24"
+          "last_event_date": "2026-07-27"
         }
       },
       {
@@ -2610,7 +2622,7 @@
           "key": "lamb_mortality_pct",
           "label": "Mortalidad de corderos (sobre nacidos)",
           "value": null,
-          "numerator": 4,
+          "numerator": 5,
           "denominator": null,
           "denominator_label": "corderos nacidos",
           "status": "NO_INFORMADO",
@@ -3505,8 +3517,8 @@
     }
   },
   "mortality_summary": {
-    "total_deaths": 5,
-    "lamb_deaths": 4,
+    "total_deaths": 6,
+    "lamb_deaths": 5,
     "ewe_deaths": 1,
     "by_date": [
       {
@@ -3523,33 +3535,38 @@
         "date": "2026-07-24",
         "lamb": 2,
         "ewe": 0
+      },
+      {
+        "date": "2026-07-27",
+        "lamb": 1,
+        "ewe": 0
       }
     ],
     "by_lot": {
       "INTENSIVO": {
-        "CORDERO": 4,
+        "CORDERO": 5,
         "OVEJA": 1
       }
     },
     "by_animal": {
-      "CORDERO": 4,
+      "CORDERO": 5,
       "OVEJA": 1
     },
     "by_cause": [
       {
         "cause_code": "CAUSA_NO_DETERMINADA",
         "cause_label": "Causa no determinada",
-        "count": 4,
-        "pct": 80.0
+        "count": 5,
+        "pct": 83.3
       },
       {
         "cause_code": "MALFORMACION_CONGENITA",
         "cause_label": "Malformación congénita",
         "count": 1,
-        "pct": 20.0
+        "pct": 16.7
       }
     ],
-    "undetermined": 4
+    "undetermined": 5
   },
   "environmental_forecast": {
     "schema_version": "1.0.0",
@@ -3998,6 +4015,16 @@
   },
   "recent_records": [
     {
+      "date": "2026-07-27",
+      "module_code": "INTENSIVO",
+      "event_type": "LAMB_DEATH",
+      "event_label": "Muerte de cordero",
+      "quantity": 1,
+      "observation": "Muerte de cordero registrada manualmente en gestión.",
+      "validation_status": "CONFIRMED",
+      "source": "CONFIRMADO_LOCAL"
+    },
+    {
       "date": "2026-07-24",
       "module_code": "INTENSIVO",
       "event_type": "LAMB_DEATH",
@@ -4059,7 +4086,7 @@
       "processed_at": "2026-07-27T04:26:23.834753Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-07-27T01:45:09.192497-03:00",
+    "last_sync_at": "2026-07-27T01:47:01.201360-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
