@@ -1373,6 +1373,58 @@ h3 {
   }
 }
 
+/* ------------------------------------- indicadores productivos (tabla) --- */
+
+.ind-table .ind-label {
+  min-width: 220px;
+}
+
+.ind-table .ind-fraction {
+  white-space: nowrap;
+}
+
+.ind-table .ind-den {
+  display: block;
+  font-size: 0.68rem;
+  color: var(--ink-500);
+  white-space: normal;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --------------------------------------------- leyenda de las 3 curvas --- */
+
+.curve-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.74rem;
+  font-weight: 650;
+  color: var(--ink-900);
+}
+
+.curve-key i {
+  display: inline-block;
+  width: 14px;
+  height: 4px;
+  border-radius: 2px;
+}
+
+.curve-key--off {
+  color: var(--ink-500);
+  font-weight: 500;
+}
+
 /* ------------------------------------------------------ reduced motion --- */
 
 @media (prefers-reduced-motion: reduce) {

@@ -9,10 +9,16 @@ indicadores. Pueden ajustarse si se recibe una corrección posterior, que queda 
 
 ## Contenido publicado
 
-- `index.html`: estructura accesible y responsive.
+- `index.html`: estructura accesible y responsive (referencia `app.js` y
+  `styles.css` versionados por hash de contenido).
 - `styles.css`: presentación para celular y escritorio.
-- `app.js`: validación, gráficos y visualización del JSON.
+- `app.js`: validación estricta del contrato, gráficos y visualización del JSON.
 - `assets/logo-sul-60.png`: logotipo institucional del SUL.
-- `data/dashboard.json`: proyección pública saneada y agregada.
+- `data/dashboard.json`: proyección pública saneada y agregada (esquema 3.2.0).
+- `data/chill_pariciones.json`: proyección pública del Chill Index.
 
-Los valores no informados permanecen en `null`; nunca se completan silenciosamente con cero.
+Los valores no informados permanecen en `null`; nunca se completan
+silenciosamente con cero. Los totales con lotes sin recuento se publican
+identificados como parciales. Tras un despliegue, una recarga de la página
+obtiene la versión nueva; una pestaña ya abierta sigue con la versión anterior
+hasta recargar.

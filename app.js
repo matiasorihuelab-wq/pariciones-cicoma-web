@@ -5,7 +5,7 @@
  * lateral con secciones por lote. Nunca convierte un faltante en cero. */
 
 const DATA_URL = "./data/dashboard.json";
-const SUPPORTED_SCHEMA = "3.1.0";
+const SUPPORTED_SCHEMA = "3.2.0";
 const SECTIONS = ["resumen", "intensivo", "dohne", "ma"];
 const LOTS = [
   { code: "INTENSIVO", section: "intensivo", name: "Intensivo", breed: "Merino Australiano X Hampshire Down" },
@@ -96,6 +96,12 @@ function riskLabel(category) {
 
 /* ---------------------------------------------------------------- carga --- */
 
+const TOTAL_STATUSES = new Set(["COMPLETE", "PARTIAL", "NOT_REPORTED"]);
+const REMAINING_STATUSES = new Set(["OK", "SIN_RECUENTO", "PARCIAL", "NO_INFORMADO", "ERROR"]);
+
+// Contrato estricto del lado del cliente. Un contrato inválido corta la carga
+// con un error visible (caja de error), sin aplicar valores por defecto
+// engañosos: un estado ausente o desconocido NUNCA se convierte en OK.
 function assertDashboard(data) {
   if (!data || typeof data !== "object") throw new Error("JSON inválido");
   if (data.schema_version !== SUPPORTED_SCHEMA) {
@@ -105,6 +111,43 @@ function assertDashboard(data) {
     if (!data[field] || typeof data[field] !== "object") throw new Error(`Falta ${field}`);
   }
   if (!Array.isArray(data.modules)) throw new Error("Falta la lista de módulos");
+
+  const health = data.system_health;
+  if (health.state !== "OK" && health.state !== "OJO") {
+    throw new Error(`Estado del sistema inválido: ${JSON.stringify(health.state)}`);
+  }
+  if (!Array.isArray(health.reasons)) throw new Error("system_health.reasons debe ser una lista");
+  const validReasons = health.reasons.filter(
+    (r) =>
+      r &&
+      typeof r === "object" &&
+      typeof r.code === "string" &&
+      r.code.trim() !== "" &&
+      typeof r.message === "string" &&
+      r.message.trim() !== "",
+  );
+  if (validReasons.length !== health.reasons.length) {
+    throw new Error("system_health.reasons contiene motivos malformados");
+  }
+  if (health.state === "OJO" && validReasons.length === 0) {
+    throw new Error("OJO sin motivos: contrato inválido");
+  }
+
+  for (const key of ["lambed_ewes", "born_lambs", "born_alive", "stillborn"]) {
+    const total = data.overview[key];
+    if (!total || typeof total !== "object" || !TOTAL_STATUSES.has(total.status)) {
+      throw new Error(`Total observado inválido: overview.${key}`);
+    }
+  }
+  for (const key of ["remaining_ewes", "remaining_lambs"]) {
+    const block = data.overview[key];
+    if (!block || typeof block !== "object" || !REMAINING_STATUSES.has(block.status)) {
+      throw new Error(`Cantidad restante inválida: overview.${key}`);
+    }
+    if (typeof block.value === "number" && block.value < 0) {
+      throw new Error(`Cantidad restante negativa: overview.${key}`);
+    }
+  }
 }
 
 async function boot() {
@@ -338,22 +381,120 @@ function absentOr(value, formatter) {
   return value === null || value === undefined ? "SIN RECUENTO" : formatter(value);
 }
 
+const LOT_LABEL = { INTENSIVO: "Intensivo", DOHNE: "Dohne", MA: "MA" };
+
+function lotNames(codes) {
+  return (codes || []).map((code) => LOT_LABEL[code] || code).join(", ");
+}
+
+// Presentación de un total observado estructurado (COMPLETE/PARTIAL/NOT_REPORTED).
+// Un total parcial SIEMPRE se identifica como parcial, con los lotes incluidos
+// y los que faltan; los lotes sin recuento nunca se muestran como cero.
+function totalDisplay(total) {
+  if (!total || total.status === "NOT_REPORTED" || total.value === null) {
+    return { value: "SIN RECUENTO", note: null, partial: false };
+  }
+  if (total.status === "PARTIAL") {
+    return {
+      value: formatInteger(total.value),
+      note: `PARCIAL: ${lotNames(total.lots_included)} · falta ${lotNames(total.lots_missing)}`,
+      partial: true,
+    };
+  }
+  return { value: formatInteger(total.value), note: "los tres lotes informados", partial: false };
+}
+
+function totalCard(label, total, opts = {}) {
+  const shown = totalDisplay(total);
+  const cls = ["stat"];
+  if (opts.kpi) cls.push("stat--kpi");
+  if (opts.accent) cls.push("stat--accent");
+  const tag = shown.partial ? `<span class="tag tag--incompleto">PARCIAL</span>` : "";
+  return `
+    <article class="${cls.join(" ")}">
+      <span class="stat__label">${escapeHtml(label)} ${tag}</span>
+      <strong class="${valueClass("stat__value", shown.value)}">${escapeHtml(shown.value)}</strong>
+      ${shown.note ? `<span class="stat__note">${escapeHtml(shown.note)}</span>` : ""}
+    </article>`;
+}
+
+// Cantidad restante validada por el backend: el frontend nunca hace la resta.
+function remainingCard(label, remaining) {
+  if (!remaining) return metricCard(label, "SIN RECUENTO");
+  if (remaining.status === "OK") {
+    return metricCard(label, formatInteger(remaining.value));
+  }
+  const stateText =
+    remaining.status === "ERROR"
+      ? "ERROR"
+      : remaining.status === "PARCIAL"
+        ? "PARCIAL"
+        : remaining.status === "NO_INFORMADO"
+          ? "NO INFORMADO"
+          : "SIN RECUENTO";
+  return metricCard(label, stateText, remaining.reason || null);
+}
+
+// Tabla de indicadores productivos generados por el backend: nombre, valor,
+// numerador/denominador y estado. Nada se recalcula en JavaScript; un
+// indicador no calculable muestra su estado real, nunca cero.
+function indicatorTable(items, caption) {
+  const list = Array.isArray(items) ? items : [];
+  if (!list.length) return `<p class="empty-note">SIN INDICADORES DISPONIBLES.</p>`;
+  const fmtValue = (item) => {
+    if (item.status !== "OK" || item.value === null || item.value === undefined) {
+      return item.status === "NO_INFORMADO" ? "NO INFORMADO" : "SIN RECUENTO";
+    }
+    const value = decimalFormatter.format(item.value);
+    return item.unit === "%" ? `${value} %` : `${value} ${item.unit}`;
+  };
+  const fmtFraction = (item) => {
+    const num = item.numerator === null || item.numerator === undefined ? "—" : formatNumberShort(item.numerator);
+    const den = item.denominator === null || item.denominator === undefined ? "—" : formatNumberShort(item.denominator);
+    return `${num} / ${den}`;
+  };
+  const rows = list
+    .map((item) => {
+      const state = item.status === "OK" ? "OK" : item.status === "NO_INFORMADO" ? "NO INFORMADO" : "SIN RECUENTO";
+      const stateTone = item.status === "OK" ? "ok" : "pending";
+      return `
+      <tr>
+        <td class="ind-label">${escapeHtml(item.label)}</td>
+        <td class="num ${item.status === "OK" ? "" : "is-absent"}">${escapeHtml(fmtValue(item))}</td>
+        <td class="num ind-fraction">${escapeHtml(fmtFraction(item))}<span class="ind-den">${escapeHtml(item.denominator_label || "")}</span></td>
+        <td><span class="tag tag--${stateTone}">${escapeHtml(state)}</span></td>
+      </tr>`;
+    })
+    .join("");
+  return `
+    <div class="table-wrap">
+      <table class="data-table ind-table">
+        ${caption ? `<caption class="sr-only">${escapeHtml(caption)}</caption>` : ""}
+        <thead><tr><th>Indicador</th><th class="num">Valor</th><th class="num">Numerador / Denominador</th><th>Estado</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+function formatNumberShort(value) {
+  return Number.isInteger(value) ? integerFormatter.format(value) : decimalFormatter.format(value);
+}
+
 function renderResumen() {
   const view = byId("view-resumen");
   const ov = DASH.overview;
-  const deaths =
-    ov.lamb_deaths === null && ov.ewe_deaths === null
-      ? "SIN RECUENTO"
-      : formatInteger((ov.lamb_deaths || 0) + (ov.ewe_deaths || 0));
+  const mortality = DASH.mortality_summary || {};
+  const totalDeaths = mortality.total_deaths;
+  const deaths = totalDeaths === null || totalDeaths === undefined ? "SIN RECUENTO" : formatInteger(totalDeaths);
   const deathsNote =
-    ov.lamb_deaths === null && ov.ewe_deaths === null
+    totalDeaths === null || totalDeaths === undefined
       ? null
-      : `${formatInteger(ov.lamb_deaths || 0)} corderos · ${formatInteger(ov.ewe_deaths || 0)} oveja(s)`;
+      : `${formatInteger(mortality.lamb_deaths || 0)} corderos · ${formatInteger(mortality.ewe_deaths || 0)} oveja(s)`;
 
   // Jerarquía ejecutiva: lo que se mira primero, más grande.
   const kpis = [
-    metricCard("Ovejas paridas", absentOr(ov.lambed_ewes, formatInteger), null, { kpi: true, accent: true }),
-    metricCard("Corderos nacidos", absentOr(ov.born_lambs, formatInteger), null, { kpi: true, accent: true }),
+    totalCard("Ovejas paridas", ov.lambed_ewes, { kpi: true, accent: true }),
+    totalCard("Corderos nacidos", ov.born_lambs, { kpi: true, accent: true }),
     metricCard("Avance de parición", formatPercent(ov.progress_percent), "sobre previstas a parir", { kpi: true }),
     metricCard("Muertes registradas", deaths, deathsNote, { kpi: true }),
   ].join("");
@@ -362,7 +503,9 @@ function renderResumen() {
   const secondary = [
     metricCard("Previstas a parir", formatInteger(ov.expected_to_lamb)),
     metricCard("Corderos esperados", formatInteger(ov.expected_lambs)),
-    metricCard("Nacidos vivos", absentOr(ov.born_alive, formatInteger)),
+    totalCard("Nacidos vivos", ov.born_alive),
+    remainingCard("Ovejas restantes", ov.remaining_ewes),
+    remainingCard("Corderos restantes", ov.remaining_lambs),
   ].join("");
 
   view.innerHTML = `
@@ -381,6 +524,14 @@ function renderResumen() {
         <p>Tocá un lote para ver su detalle.</p>
       </div>
       <div class="lot-cards">${LOTS.map(distributionCard).join("")}</div>
+    </section>
+
+    <section class="panel">
+      <div class="panel__head">
+        <div><p class="eyebrow">Total campaña</p><h2>Indicadores productivos</h2></div>
+        <p>Generados por el sistema con numerador y denominador explícitos.</p>
+      </div>
+      ${indicatorTable((DASH.productive_indicators || {}).total, "Indicadores productivos totales")}
     </section>
 
     <section class="panel" id="chill-general">
@@ -547,12 +698,17 @@ function renderLot(lot) {
     </header>
 
     <section class="panel">
-      <div class="panel__head"><h2>Indicadores productivos</h2></div>
-      <div class="stat-grid">${lotIndicators(module)}</div>
+      <div class="panel__head"><h2>Recuentos del lote</h2></div>
+      <div class="stat-grid">${lotCounts(module)}</div>
     </section>
 
     <section class="panel">
-      <div class="panel__head"><h2>Curva de partos</h2><p>Esperada de origen, ajustada por recuento si existe, y evolución real.</p></div>
+      <div class="panel__head"><h2>Indicadores productivos</h2><p>Generados por el sistema con numerador y denominador explícitos.</p></div>
+      ${indicatorTable(((DASH.productive_indicators || {}).by_module || {})[lot.code], `Indicadores de ${lot.name}`)}
+    </section>
+
+    <section class="panel">
+      <div class="panel__head"><h2>Curva de partos</h2><p>Las tres series se muestran por separado: esperada original, esperada ajustada y observada.</p></div>
       ${lotCurve(lot, curve)}
     </section>
 
@@ -602,52 +758,67 @@ function lotEcografia(module) {
     <p class="chart-note">Preñadas = únicas + dobles + triples · Corderos esperados = únicas + 2×dobles + 3×triples.</p>`;
 }
 
-function lotIndicators(module) {
+function lotCounts(module) {
   const iv = module.initial_values;
   const ec = module.ewe_counts;
   const lc = module.lamb_counts;
   const mort = module.mortality;
-  const remainingEwes = ec.counted_lambed !== null ? ec.expected_to_lamb - ec.counted_lambed : null;
-  const remainingLambs = lc.counted !== null ? lc.expected_total - lc.counted : null;
+  // Los restantes vienen validados por el backend (valor/estado/motivo):
+  // el frontend no resta y jamás muestra un restante negativo.
   return [
     metricCard("Servidas", formatInteger(iv.served)),
     metricCard("Preñadas", formatInteger(iv.expected_to_lamb)),
     metricCard("Corderos esperados", formatInteger(iv.expected_lambs)),
     metricCard("Ovejas paridas", ec.counted_lambed === null ? "SIN RECUENTO" : formatInteger(ec.counted_lambed)),
     metricCard("Corderos nacidos", lc.counted === null ? "SIN RECUENTO" : formatInteger(lc.counted)),
+    metricCard("Nacidos vivos", lc.born_alive === null || lc.born_alive === undefined ? "SIN RECUENTO" : formatInteger(lc.born_alive)),
     metricCard("Muertes de cordero", formatInteger(mort.lamb_deaths_accumulated)),
     metricCard("Muertes de oveja", formatInteger(mort.ewe_deaths_accumulated)),
     metricCard("Avance de parición", formatPercent(ec.progress_percent), "sobre previstas a parir"),
-    metricCard("Ovejas restantes", remainingEwes === null ? "SIN RECUENTO" : formatInteger(remainingEwes)),
-    metricCard("Corderos restantes", remainingLambs === null ? "SIN RECUENTO" : formatInteger(remainingLambs)),
+    remainingCard("Ovejas restantes", ec.remaining),
+    remainingCard("Corderos restantes", lc.remaining),
   ].join("");
 }
 
+// Colores fijos de las tres series. La curva original NUNCA desaparece cuando
+// existe una ajustada: se dibujan juntas, cada una identificada en la leyenda.
+const CURVE_COLORS = { original: "#7fb69a", adjusted: "#006937", observed: "#c8102e" };
+
 function lotCurve(lot, curve) {
   if (!curve || !(curve.expected_original || []).length) {
-    return `<p class="empty-note">SIN CURVA CARGADA para este lote.</p>`;
+    const observedOnly = curve && (curve.observed_series || []).length;
+    return `<p class="empty-note">SIN CURVA CARGADA para este lote.${
+      observedOnly ? " Hay recuentos observados, pero sin curva esperada no se grafican." : ""
+    }</p>`;
   }
   const original = curve.expected_original || [];
   const adjusted = curve.expected_adjusted || [];
-  const series = (adjusted.length ? adjusted : original).map((point, index) => ({
-    date: point.date,
-    ewes: point.expected_ewes || 0,
-    lambs: point.expected_lambs || 0,
-    cumulative: 0,
-    _i: index,
-  }));
-  const totalEwes = series.reduce((s, p) => s + p.ewes, 0);
-  let acc = 0;
-  series.forEach((p) => {
-    acc += p.ewes;
-    p.cumulative = totalEwes > 0 ? acc / totalEwes : 0;
-  });
-  CURVE_SERIES[lot.code] = series;
-  const kind = adjusted.length ? "Curva ajustada por recuento" : "Curva original";
+  const observed = curve.observed_series || [];
+  // El acumulado de cada serie viene calculado por el backend (cumulative_pct):
+  // acá no se recalcula nada, sólo se dibuja.
+  CURVE_SERIES[lot.code] = {
+    original: original.map((p) => ({
+      date: p.date,
+      ewes: p.expected_ewes || 0,
+      lambs: p.expected_lambs || 0,
+      cumulative: p.cumulative_pct,
+    })),
+    adjusted: adjusted.map((p) => ({ date: p.date, cumulative: p.cumulative_pct })),
+    observed: observed.map((p) => ({ date: p.date, cumulative: p.cumulative_pct })),
+  };
+  const legend = [
+    `<span class="curve-key"><i style="background:${CURVE_COLORS.original}"></i>Esperada original</span>`,
+    adjusted.length
+      ? `<span class="curve-key"><i style="background:${CURVE_COLORS.adjusted}"></i>Esperada ajustada</span>`
+      : `<span class="curve-key curve-key--off">Esperada ajustada: sin ajuste</span>`,
+    observed.length
+      ? `<span class="curve-key"><i style="background:${CURVE_COLORS.observed}"></i>Observada (confirmada)</span>`
+      : `<span class="curve-key curve-key--off">Observada: sin recuento</span>`,
+  ].join("");
   return `
     <div class="curve-controls">
-      <span class="tag ${adjusted.length ? "tag--ok" : "tag--muted"}">${escapeHtml(kind)}</span>
-      <span class="chart-note">Barras: ovejas y corderos previstos por día. Línea: acumulado.</span>
+      ${legend}
+      <span class="chart-note">Barras: ovejas y corderos previstos por día (curva original). Líneas: acumulado de cada serie.</span>
     </div>
     <div class="chart-wrap"><canvas id="curve-${escapeHtml(lot.code)}" role="img" aria-label="Curva de partos de ${escapeHtml(lot.name)}"></canvas></div>`;
 }
@@ -686,9 +857,10 @@ function lotMortality(lot, module) {
     hasMedia(item)
       ? `<span class="mort-media" title="Evidencia multimedia disponible en gestión interna" aria-label="Evidencia multimedia disponible en gestión interna">${MEDIA_ICON}${item.private_media_count > 1 ? `<span class="mort-media__count">${escapeHtml(String(item.private_media_count))}</span>` : ""}</span>`
       : "";
-  const observedCell = (item) =>
-    `${item.observed_condition_summary ? escapeHtml(item.observed_condition_summary) : "<span class='muted'>—</span>"} ${mediaChip(item)}`;
 
+  // El tablero público muestra sólo campos estructurados: fecha, animal,
+  // cantidad y causa normalizada. Las descripciones del estado observado son
+  // texto libre y quedan en la gestión interna y el informe privado.
   const rows = detail
     .map((event) => {
       const animal = event.animal_type === "OVEJA" ? "Oveja" : "Cordero";
@@ -698,8 +870,7 @@ function lotMortality(lot, module) {
           <td>${escapeHtml(formatDate(event.date))}</td>
           <td>${animal}</td>
           <td class="num">${escapeHtml(formatInteger(event.quantity))}</td>
-          <td>${escapeHtml(event.cause_label)}</td>
-          <td>${observedCell(event)}</td>
+          <td>${escapeHtml(event.cause_label)} ${mediaChip(event)}</td>
         </tr>`;
       const caseRows = cases
         .map((detailCase) => {
@@ -707,14 +878,14 @@ function lotMortality(lot, module) {
           return `
         <tr class="mort-case">
           <td aria-hidden="true"></td>
-          <td colspan="4"><span class="mort-case__mark">detalle</span> ${escapeHtml(formatInteger(detailCase.quantity))} ${a} · ${escapeHtml(detailCase.cause_label)} · ${observedCell(detailCase)}</td>
+          <td colspan="3"><span class="mort-case__mark">detalle</span> ${escapeHtml(formatInteger(detailCase.quantity))} ${a} · ${escapeHtml(detailCase.cause_label)} ${mediaChip(detailCase)}</td>
         </tr>`;
         })
         .join("");
       const undescribed = Number(event.undescribed_quantity) || 0;
       const undescribedRow =
         cases.length && undescribed > 0
-          ? `<tr class="mort-case"><td aria-hidden="true"></td><td colspan="4"><span class="mort-case__mark">detalle</span> ${escapeHtml(formatInteger(undescribed))} sin descripción individual.</td></tr>`
+          ? `<tr class="mort-case"><td aria-hidden="true"></td><td colspan="3"><span class="mort-case__mark">detalle</span> ${escapeHtml(formatInteger(undescribed))} sin detalle individual de causa.</td></tr>`
           : "";
       return parent + caseRows + undescribedRow;
     })
@@ -730,11 +901,11 @@ function lotMortality(lot, module) {
       <summary>Ver detalle de mortalidad (${detail.length})</summary>
       <div class="table-wrap">
         <table class="data-table">
-          <thead><tr><th>Fecha</th><th>Animal</th><th class="num">Cant.</th><th>Causa</th><th>Estado observado</th></tr></thead>
+          <thead><tr><th>Fecha</th><th>Animal</th><th class="num">Cant.</th><th>Causa</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>
-      <p class="chart-note">El estado observado describe cómo se encontró al animal; no es la causa. Sin causa informada: “Causa no determinada”; nunca se infiere por contexto.${mediaNote}</p>
+      <p class="chart-note">Sin causa informada: “Causa no determinada”; nunca se infiere por contexto. Las descripciones del estado observado se consultan en la gestión interna.${mediaNote}</p>
     </details>`;
 }
 
@@ -841,9 +1012,10 @@ function closeDrawer() {
 
 /* ------------------------------------------------------------- gráfico --- */
 
-function drawCurveChart(canvas, series) {
+function drawCurveChart(canvas, seriesSet) {
   const wrap = canvas.parentElement;
-  if (!wrap || !series.length) return;
+  const base = (seriesSet && seriesSet.original) || [];
+  if (!wrap || !base.length) return;
   const context = canvas.getContext("2d");
   const width = Math.max(280, Math.floor(wrap.clientWidth));
   const height = 300;
@@ -858,9 +1030,12 @@ function drawCurveChart(canvas, series) {
   const padding = { top: 18, right: 46, bottom: 42, left: 46 };
   const plotWidth = width - padding.left - padding.right;
   const plotHeight = height - padding.top - padding.bottom;
-  const maxValue = Math.max(...series.map((item) => Math.max(item.ewes, item.lambs)), 1);
-  const slot = plotWidth / series.length;
+  const maxValue = Math.max(...base.map((item) => Math.max(item.ewes, item.lambs)), 1);
+  const slot = plotWidth / base.length;
   const barWidth = Math.max(1.5, Math.min(10, slot * 0.38));
+  // Eje temporal compartido: cada fecha de la curva original tiene su columna.
+  const columnByDate = new Map(base.map((item, index) => [item.date, index]));
+  const centreOf = (index) => padding.left + slot * index + slot / 2;
 
   context.strokeStyle = "rgba(135, 135, 134, 0.28)";
   context.lineWidth = 1;
@@ -879,34 +1054,49 @@ function drawCurveChart(canvas, series) {
     context.fillText(`${Math.round(((4 - step) / 4) * 100)}%`, padding.left + plotWidth + 8, y + 4);
   }
 
-  series.forEach((item, index) => {
-    const centre = padding.left + slot * index + slot / 2;
+  // Barras diarias de la curva ESPERADA ORIGINAL (referencia, nunca se oculta).
+  base.forEach((item, index) => {
+    const centre = centreOf(index);
     const eweHeight = (item.ewes / maxValue) * plotHeight;
     const lambHeight = (item.lambs / maxValue) * plotHeight;
-    context.fillStyle = "#006937";
+    context.fillStyle = "rgba(0, 105, 55, 0.55)";
     context.fillRect(centre - barWidth - 1, padding.top + plotHeight - eweHeight, barWidth, eweHeight);
-    context.fillStyle = "#7fb69a";
+    context.fillStyle = "rgba(127, 182, 154, 0.55)";
     context.fillRect(centre + 1, padding.top + plotHeight - lambHeight, barWidth, lambHeight);
   });
 
-  context.beginPath();
-  context.strokeStyle = "#c8102e";
-  context.lineWidth = 2;
-  series.forEach((item, index) => {
-    const centre = padding.left + slot * index + slot / 2;
-    const y = padding.top + plotHeight - item.cumulative * plotHeight;
-    if (index === 0) context.moveTo(centre, y);
-    else context.lineTo(centre, y);
-  });
-  context.stroke();
+  // Líneas de acumulado por serie, con el cumulative_pct que entrega el
+  // backend (el cliente no acumula ni recalcula). El acumulado observado puede
+  // superar 100 %: se recorta sólo el trazo al área visible.
+  const drawCumulative = (points, colour, dashed) => {
+    const usable = (points || []).filter(
+      (item) => item.cumulative !== null && item.cumulative !== undefined && columnByDate.has(item.date),
+    );
+    if (!usable.length) return;
+    context.beginPath();
+    context.strokeStyle = colour;
+    context.lineWidth = 2;
+    context.setLineDash(dashed ? [6, 4] : []);
+    usable.forEach((item, order) => {
+      const centre = centreOf(columnByDate.get(item.date));
+      const clamped = Math.min(Number(item.cumulative), 1);
+      const y = padding.top + plotHeight - clamped * plotHeight;
+      if (order === 0) context.moveTo(centre, y);
+      else context.lineTo(centre, y);
+    });
+    context.stroke();
+    context.setLineDash([]);
+  };
+  drawCumulative(seriesSet.original, CURVE_COLORS.original, true);
+  drawCumulative(seriesSet.adjusted, CURVE_COLORS.adjusted, false);
+  drawCumulative(seriesSet.observed, CURVE_COLORS.observed, false);
 
   context.fillStyle = "#878786";
   context.textAlign = "center";
-  const labelEvery = Math.max(1, Math.ceil(series.length / 8));
-  series.forEach((item, index) => {
-    if (index % labelEvery !== 0 && index !== series.length - 1) return;
-    const centre = padding.left + slot * index + slot / 2;
-    context.fillText(formatDate(item.date, { short: true, includeYear: false }), centre, height - 14);
+  const labelEvery = Math.max(1, Math.ceil(base.length / 8));
+  base.forEach((item, index) => {
+    if (index % labelEvery !== 0 && index !== base.length - 1) return;
+    context.fillText(formatDate(item.date, { short: true, includeYear: false }), centreOf(index), height - 14);
   });
 }
 

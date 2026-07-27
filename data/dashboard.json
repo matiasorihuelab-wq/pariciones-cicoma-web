@@ -1,8 +1,8 @@
 {
-  "schema_version": "3.1.0",
+  "schema_version": "3.2.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-07-27T02:56:50.322341-03:00",
+  "generated_at": "2026-07-27T09:08:57.360646-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OK",
@@ -15,7 +15,7 @@
       "technical": 0,
       "total": 0
     },
-    "generated_at": "2026-07-27T02:56:50.322341-03:00",
+    "generated_at": "2026-07-27T09:08:57.360646-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -51,15 +51,63 @@
   "overview": {
     "served_ewes": 888,
     "expected_to_lamb": 832,
-    "lambed_ewes": null,
+    "lambed_ewes": {
+      "value": null,
+      "status": "NOT_REPORTED",
+      "lots_included": [],
+      "lots_missing": [
+        "DOHNE",
+        "INTENSIVO",
+        "MA"
+      ]
+    },
     "progress_percent": null,
     "expected_lambs": 979,
-    "born_lambs": null,
-    "born_alive": null,
-    "stillborn": null,
+    "born_lambs": {
+      "value": null,
+      "status": "NOT_REPORTED",
+      "lots_included": [],
+      "lots_missing": [
+        "DOHNE",
+        "INTENSIVO",
+        "MA"
+      ]
+    },
+    "born_alive": {
+      "value": null,
+      "status": "NOT_REPORTED",
+      "lots_included": [],
+      "lots_missing": [
+        "DOHNE",
+        "INTENSIVO",
+        "MA"
+      ]
+    },
+    "stillborn": {
+      "value": null,
+      "status": "NOT_REPORTED",
+      "lots_included": [],
+      "lots_missing": [
+        "DOHNE",
+        "INTENSIVO",
+        "MA"
+      ]
+    },
     "lamb_deaths": 5,
     "ewe_deaths": 1,
-    "deaths_last_24h": null
+    "deaths_last_24h": null,
+    "remaining_ewes": {
+      "value": null,
+      "status": "SIN_RECUENTO",
+      "reason": "Sin recuento confirmado de ovejas paridas.",
+      "compatible": null
+    },
+    "remaining_lambs": {
+      "value": null,
+      "status": "SIN_RECUENTO",
+      "reason": "Sin recuento confirmado de corderos nacidos.",
+      "compatible": null
+    }
   },
   "modules": [
     {
@@ -85,13 +133,27 @@
         "expected_to_lamb": 96,
         "counted_lambed": null,
         "progress_percent": null,
-        "last_count_date": null
+        "last_count_date": null,
+        "remaining": {
+          "value": null,
+          "status": "SIN_RECUENTO",
+          "reason": "Sin recuento confirmado de ovejas paridas de INTENSIVO.",
+          "compatible": null
+        }
       },
       "lamb_counts": {
         "expected_total": 129,
         "counted": null,
+        "born_alive": null,
+        "stillborn": null,
         "progress_percent": null,
-        "last_count_date": null
+        "last_count_date": null,
+        "remaining": {
+          "value": null,
+          "status": "SIN_RECUENTO",
+          "reason": "Sin recuento confirmado de corderos nacidos de INTENSIVO.",
+          "compatible": null
+        }
       },
       "mortality": {
         "lamb_deaths_accumulated": 5,
@@ -105,7 +167,6 @@
             "quantity": 1,
             "cause_code": "CAUSA_NO_DETERMINADA",
             "cause_label": "Causa no determinada",
-            "observed_condition_summary": "Murió uno de los trilliceros",
             "has_private_media": true,
             "private_media_count": 1,
             "cases": [],
@@ -117,7 +178,6 @@
             "quantity": 2,
             "cause_code": "CAUSA_NO_DETERMINADA",
             "cause_label": "Causa no determinada",
-            "observed_condition_summary": null,
             "has_private_media": true,
             "private_media_count": 2,
             "cases": [
@@ -127,7 +187,6 @@
                 "quantity": 1,
                 "cause_code": "PREDACION_CARANCHO",
                 "cause_label": "Predación por carancho",
-                "observed_condition_summary": "El reporte atribuye la muerte del cordero a un carancho.",
                 "has_private_media": false,
                 "private_media_count": 0
               }
@@ -140,7 +199,6 @@
             "quantity": 1,
             "cause_code": "CAUSA_NO_DETERMINADA",
             "cause_label": "Causa no determinada",
-            "observed_condition_summary": "Cordero nacido muerto; no se identificó la madre.",
             "has_private_media": false,
             "private_media_count": 0,
             "cases": [],
@@ -152,7 +210,6 @@
             "quantity": 1,
             "cause_code": "CAUSA_NO_DETERMINADA",
             "cause_label": "Causa no determinada",
-            "observed_condition_summary": "Oveja con problema en una pata y baja condición corporal, encontrada muerta a la mañana siguiente.",
             "has_private_media": false,
             "private_media_count": 0,
             "cases": [],
@@ -164,7 +221,6 @@
             "quantity": 1,
             "cause_code": "MALFORMACION_CONGENITA",
             "cause_label": "Malformación congénita",
-            "observed_condition_summary": "Malformación congénita informada: no tenía boca",
             "has_private_media": false,
             "private_media_count": 0,
             "cases": [],
@@ -206,13 +262,27 @@
         "expected_to_lamb": 144,
         "counted_lambed": null,
         "progress_percent": null,
-        "last_count_date": null
+        "last_count_date": null,
+        "remaining": {
+          "value": null,
+          "status": "SIN_RECUENTO",
+          "reason": "Sin recuento confirmado de ovejas paridas de DOHNE.",
+          "compatible": null
+        }
       },
       "lamb_counts": {
         "expected_total": 180,
         "counted": null,
+        "born_alive": null,
+        "stillborn": null,
         "progress_percent": null,
-        "last_count_date": null
+        "last_count_date": null,
+        "remaining": {
+          "value": null,
+          "status": "SIN_RECUENTO",
+          "reason": "Sin recuento confirmado de corderos nacidos de DOHNE.",
+          "compatible": null
+        }
       },
       "mortality": {
         "lamb_deaths_accumulated": null,
@@ -252,13 +322,27 @@
         "expected_to_lamb": 592,
         "counted_lambed": null,
         "progress_percent": null,
-        "last_count_date": null
+        "last_count_date": null,
+        "remaining": {
+          "value": null,
+          "status": "SIN_RECUENTO",
+          "reason": "Sin recuento confirmado de ovejas paridas de MA.",
+          "compatible": null
+        }
       },
       "lamb_counts": {
         "expected_total": 670,
         "counted": null,
+        "born_alive": null,
+        "stillborn": null,
         "progress_percent": null,
-        "last_count_date": null
+        "last_count_date": null,
+        "remaining": {
+          "value": null,
+          "status": "SIN_RECUENTO",
+          "reason": "Sin recuento confirmado de corderos nacidos de MA.",
+          "compatible": null
+        }
       },
       "mortality": {
         "lamb_deaths_accumulated": null,
@@ -820,7 +904,8 @@
           "ewe_deaths": 1,
           "last_count_date": null,
           "last_event_date": "2026-07-27"
-        }
+        },
+        "observed_series": []
       },
       {
         "code": "DOHNE",
@@ -1367,7 +1452,8 @@
           "ewe_deaths": null,
           "last_count_date": null,
           "last_event_date": null
-        }
+        },
+        "observed_series": []
       },
       {
         "code": "MA",
@@ -1923,7 +2009,8 @@
           "ewe_deaths": null,
           "last_count_date": null,
           "last_event_date": null
-        }
+        },
+        "observed_series": []
       }
     ],
     "consolidated": [
@@ -4014,7 +4101,8 @@
       "event_type": "LAMB_DEATH",
       "event_label": "Muerte de cordero",
       "quantity": 1,
-      "observation": "Muerte de cordero registrada manualmente en gestión.",
+      "cause_code": "CAUSA_NO_DETERMINADA",
+      "cause_label": "Causa no determinada",
       "validation_status": "CONFIRMED",
       "source": "CONFIRMADO_LOCAL"
     },
@@ -4024,7 +4112,8 @@
       "event_type": "LAMB_DEATH",
       "event_label": "Muerte de cordero",
       "quantity": 2,
-      "observation": "Evento incorporado automáticamente desde el reporte operativo (LAMB_DEATH).",
+      "cause_code": "CAUSA_NO_DETERMINADA",
+      "cause_label": "Causa no determinada",
       "validation_status": "CANDIDATE",
       "source": "ZAPIA_VALIDADO"
     },
@@ -4034,7 +4123,8 @@
       "event_type": "LAMB_DEATH",
       "event_label": "Muerte de cordero",
       "quantity": 1,
-      "observation": "Evento incorporado automáticamente desde el reporte operativo (LAMB_DEATH).",
+      "cause_code": "CAUSA_NO_DETERMINADA",
+      "cause_label": "Causa no determinada",
       "validation_status": "CANDIDATE",
       "source": "ZAPIA_VALIDADO"
     },
@@ -4044,7 +4134,8 @@
       "event_type": "EWE_DEATH",
       "event_label": "Muerte de oveja",
       "quantity": 1,
-      "observation": "Oveja con problema en una pata y baja condición corporal, encontrada muerta a la mañana siguiente.",
+      "cause_code": "CAUSA_NO_DETERMINADA",
+      "cause_label": "Causa no determinada",
       "validation_status": "CONFIRMED",
       "source": "ZAPIA_VALIDADO"
     },
@@ -4054,7 +4145,8 @@
       "event_type": "LAMB_DEATH",
       "event_label": "Muerte de cordero",
       "quantity": 1,
-      "observation": "Muerte de un cordero con malformación congénita informada.",
+      "cause_code": "MALFORMACION_CONGENITA",
+      "cause_label": "Malformación congénita",
       "validation_status": "CONFIRMED",
       "source": "ZAPIA_VALIDADO"
     },
@@ -4064,7 +4156,8 @@
       "event_type": "CAMPAIGN_MILESTONE",
       "event_label": "Hito de campaña",
       "quantity": null,
-      "observation": "Inicio de parición del módulo servido con Cara Mora.",
+      "cause_code": null,
+      "cause_label": null,
       "validation_status": "CONFIRMED",
       "source": "ZAPIA_VALIDADO"
     }
@@ -4080,7 +4173,7 @@
       "processed_at": "2026-07-27T05:55:07.953166Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-07-27T02:56:50.322341-03:00",
+    "last_sync_at": "2026-07-27T09:08:57.360646-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
