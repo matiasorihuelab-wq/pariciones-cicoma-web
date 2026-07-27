@@ -23,7 +23,7 @@
     "status": "OK",
     "message": "Curva de partos cruzada con el pronóstico ambiental.",
     "original_forecast_available": true,
-    "adjusted_forecast_available": false
+    "adjusted_forecast_available": true
   },
   "product_context": {
     "campaign": "2026-2027",
@@ -149,14 +149,14 @@
       "requires_review": false,
       "automatic_use": true,
       "image_url": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF_mini/Min_1.png",
-      "expected_ewes_lambing": 3.9312,
+      "expected_ewes_lambing": 3.7356,
       "expected_lambs_born": 5.2826,
       "lambs_in_first_72h_on_date": 15.8478,
       "modules": [
         {
           "code": "INTENSIVO",
           "name": "INTENSIVO",
-          "expected_ewes_lambing": 3.9312,
+          "expected_ewes_lambing": 3.7356,
           "expected_lambs_born": 5.2826,
           "lambs_in_first_72h_on_date": 15.8478,
           "in_lambing_window": true
@@ -204,14 +204,14 @@
       "requires_review": false,
       "automatic_use": true,
       "image_url": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF_mini/Min_2.png",
-      "expected_ewes_lambing": 3.9057,
+      "expected_ewes_lambing": 3.7114,
       "expected_lambs_born": 5.2482,
       "lambs_in_first_72h_on_date": 15.8134,
       "modules": [
         {
           "code": "INTENSIVO",
           "name": "INTENSIVO",
-          "expected_ewes_lambing": 3.9057,
+          "expected_ewes_lambing": 3.7114,
           "expected_lambs_born": 5.2482,
           "lambs_in_first_72h_on_date": 15.8134,
           "in_lambing_window": true
@@ -259,14 +259,14 @@
       "requires_review": false,
       "automatic_use": true,
       "image_url": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF_mini/Min_3.png",
-      "expected_ewes_lambing": 3.8545,
+      "expected_ewes_lambing": 3.6627,
       "expected_lambs_born": 5.1795,
       "lambs_in_first_72h_on_date": 15.7103,
       "modules": [
         {
           "code": "INTENSIVO",
           "name": "INTENSIVO",
-          "expected_ewes_lambing": 3.8545,
+          "expected_ewes_lambing": 3.6627,
           "expected_lambs_born": 5.1795,
           "lambs_in_first_72h_on_date": 15.7103,
           "in_lambing_window": true
@@ -316,14 +316,14 @@
       "requires_review": false,
       "automatic_use": true,
       "image_url": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF_mini/Min_4.png",
-      "expected_ewes_lambing": 3.7779,
+      "expected_ewes_lambing": 3.59,
       "expected_lambs_born": 5.0765,
       "lambs_in_first_72h_on_date": 15.5042,
       "modules": [
         {
           "code": "INTENSIVO",
           "name": "INTENSIVO",
-          "expected_ewes_lambing": 3.7779,
+          "expected_ewes_lambing": 3.59,
           "expected_lambs_born": 5.0765,
           "lambs_in_first_72h_on_date": 15.5042,
           "in_lambing_window": true
