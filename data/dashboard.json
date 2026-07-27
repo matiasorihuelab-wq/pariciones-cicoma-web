@@ -2,7 +2,7 @@
   "schema_version": "3.1.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-07-26T23:50:02.778137-03:00",
+  "generated_at": "2026-07-26T23:51:04.427575-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -21,7 +21,7 @@
       "technical": 0,
       "total": 1
     },
-    "generated_at": "2026-07-26T23:50:02.778137-03:00",
+    "generated_at": "2026-07-26T23:51:04.427575-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -4015,6 +4015,16 @@
       "source": "MANUAL"
     },
     {
+      "date": "2026-07-26",
+      "module_code": "INTENSIVO",
+      "event_type": "INCIDENT",
+      "event_label": "Incidencia",
+      "quantity": null,
+      "observation": "Murió un cordero trillicero",
+      "validation_status": "CONFIRMED",
+      "source": "MANUAL"
+    },
+    {
       "date": "2026-07-24",
       "module_code": "INTENSIVO",
       "event_type": "LAMB_DEATH",
@@ -4076,7 +4086,7 @@
       "processed_at": "2026-07-27T02:04:42.080554Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-07-26T23:50:02.778137-03:00",
+    "last_sync_at": "2026-07-26T23:51:04.427575-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
