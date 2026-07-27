@@ -2,7 +2,7 @@
   "schema_version": "3.1.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-07-26T23:51:04.427575-03:00",
+  "generated_at": "2026-07-27T01:35:09.750693-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -21,7 +21,7 @@
       "technical": 0,
       "total": 1
     },
-    "generated_at": "2026-07-26T23:51:04.427575-03:00",
+    "generated_at": "2026-07-27T01:35:09.750693-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -57,10 +57,10 @@
   "overview": {
     "served_ewes": 888,
     "expected_to_lamb": 832,
-    "lambed_ewes": 1,
-    "progress_percent": 0.1,
+    "lambed_ewes": null,
+    "progress_percent": null,
     "expected_lambs": 979,
-    "born_lambs": 1,
+    "born_lambs": null,
     "born_alive": null,
     "stillborn": null,
     "lamb_deaths": 4,
@@ -89,15 +89,15 @@
       },
       "ewe_counts": {
         "expected_to_lamb": 96,
-        "counted_lambed": 1,
-        "progress_percent": 1.0,
-        "last_count_date": "2026-07-26"
+        "counted_lambed": null,
+        "progress_percent": null,
+        "last_count_date": null
       },
       "lamb_counts": {
         "expected_total": 129,
-        "counted": 1,
-        "progress_percent": 0.8,
-        "last_count_date": "2026-07-26"
+        "counted": null,
+        "progress_percent": null,
+        "last_count_date": null
       },
       "mortality": {
         "lamb_deaths_accumulated": 4,
@@ -168,7 +168,7 @@
       },
       "field_control": {
         "variable": "ovejas_paridas",
-        "calculated": 1,
+        "calculated": null,
         "reported_accumulated": null,
         "reported_date": null,
         "difference": null,
@@ -806,13 +806,13 @@
         "expected_adjusted": [],
         "adjustment": null,
         "observed": {
-          "counted_lambed": 1,
-          "counted_lambs": 1,
+          "counted_lambed": null,
+          "counted_lambs": null,
           "born_alive": null,
           "stillborn": null,
           "lamb_deaths": 4,
           "ewe_deaths": 1,
-          "last_count_date": "2026-07-26",
+          "last_count_date": null,
           "last_event_date": "2026-07-24"
         }
       },
@@ -2549,41 +2549,41 @@
         {
           "key": "lambing_pct_of_served",
           "label": "Porcentaje de parición (sobre servidas)",
-          "value": 0.9709,
-          "numerator": 1,
+          "value": null,
+          "numerator": null,
           "denominator": 103,
           "denominator_label": "ovejas servidas",
-          "status": "OK",
+          "status": "SIN_RECUENTO",
           "unit": "%"
         },
         {
           "key": "lambing_progress_pct",
           "label": "Avance de parición (sobre previstas a parir)",
-          "value": 1.0417,
-          "numerator": 1,
+          "value": null,
+          "numerator": null,
           "denominator": 96,
           "denominator_label": "ovejas previstas a parir",
-          "status": "OK",
+          "status": "SIN_RECUENTO",
           "unit": "%"
         },
         {
           "key": "observed_prolificacy",
           "label": "Prolificidad observada (nacidos por oveja parida)",
-          "value": 1.0,
-          "numerator": 1,
-          "denominator": 1,
+          "value": null,
+          "numerator": null,
+          "denominator": null,
           "denominator_label": "ovejas que parieron",
-          "status": "OK",
+          "status": "SIN_RECUENTO",
           "unit": "corderos/oveja"
         },
         {
           "key": "observed_fecundity_of_served",
           "label": "Fecundidad observada (nacidos sobre servidas)",
-          "value": 0.0097,
-          "numerator": 1,
+          "value": null,
+          "numerator": null,
           "denominator": 103,
           "denominator_label": "ovejas servidas",
-          "status": "OK",
+          "status": "SIN_RECUENTO",
           "unit": "corderos/oveja"
         },
         {
@@ -2609,11 +2609,11 @@
         {
           "key": "lamb_mortality_pct",
           "label": "Mortalidad de corderos (sobre nacidos)",
-          "value": 400.0,
+          "value": null,
           "numerator": 4,
-          "denominator": 1,
+          "denominator": null,
           "denominator_label": "corderos nacidos",
-          "status": "OK",
+          "status": "NO_INFORMADO",
           "unit": "%"
         },
         {
@@ -2631,7 +2631,7 @@
           "label": "Sobrevivencia nacimiento → señalada",
           "value": null,
           "numerator": null,
-          "denominator": 1,
+          "denominator": null,
           "denominator_label": "corderos nacidos",
           "status": "SIN_RECUENTO",
           "unit": "%"
@@ -2651,7 +2651,7 @@
           "label": "Nacidos vivos sobre nacidos",
           "value": null,
           "numerator": null,
-          "denominator": 1,
+          "denominator": null,
           "denominator_label": "corderos nacidos",
           "status": "SIN_RECUENTO",
           "unit": "%"
@@ -2659,31 +2659,31 @@
         {
           "key": "curve_compliance_ewes",
           "label": "Cumplimiento de la curva (ovejas paridas vs esperadas a la fecha)",
-          "value": 2.6776,
-          "numerator": 1,
-          "denominator": 37.3465,
+          "value": null,
+          "numerator": null,
+          "denominator": 41.2777,
           "denominator_label": "ovejas esperadas a parir acumuladas a la fecha",
-          "status": "OK",
+          "status": "SIN_RECUENTO",
           "unit": "%"
         },
         {
           "key": "curve_gap_ewes",
           "label": "Diferencia esperado vs observado (ovejas)",
-          "value": -36.3465,
-          "numerator": 1,
-          "denominator": 37.3465,
+          "value": null,
+          "numerator": null,
+          "denominator": 41.2777,
           "denominator_label": "ovejas esperadas a parir acumuladas a la fecha",
-          "status": "OK",
+          "status": "SIN_RECUENTO",
           "unit": "ovejas"
         },
         {
           "key": "curve_gap_lambs",
           "label": "Diferencia esperado vs observado (corderos)",
-          "value": -49.1843,
-          "numerator": 1,
-          "denominator": 50.1843,
+          "value": null,
+          "numerator": null,
+          "denominator": 55.4669,
           "denominator_label": "corderos esperados a nacer acumulados a la fecha",
-          "status": "OK",
+          "status": "SIN_RECUENTO",
           "unit": "corderos"
         }
       ],
@@ -3216,41 +3216,41 @@
       {
         "key": "lambing_pct_of_served",
         "label": "Porcentaje de parición (sobre servidas)",
-        "value": 0.1126,
-        "numerator": 1,
+        "value": null,
+        "numerator": null,
         "denominator": 888,
         "denominator_label": "ovejas servidas",
-        "status": "OK",
+        "status": "SIN_RECUENTO",
         "unit": "%"
       },
       {
         "key": "lambing_progress_pct",
         "label": "Avance de parición (sobre previstas a parir)",
-        "value": 0.1202,
-        "numerator": 1,
+        "value": null,
+        "numerator": null,
         "denominator": 832,
         "denominator_label": "ovejas previstas a parir",
-        "status": "OK",
+        "status": "SIN_RECUENTO",
         "unit": "%"
       },
       {
         "key": "observed_prolificacy",
         "label": "Prolificidad observada (nacidos por oveja parida)",
-        "value": 1.0,
-        "numerator": 1,
-        "denominator": 1,
+        "value": null,
+        "numerator": null,
+        "denominator": null,
         "denominator_label": "ovejas que parieron",
-        "status": "OK",
+        "status": "SIN_RECUENTO",
         "unit": "corderos/oveja"
       },
       {
         "key": "observed_fecundity_of_served",
         "label": "Fecundidad observada (nacidos sobre servidas)",
-        "value": 0.0011,
-        "numerator": 1,
+        "value": null,
+        "numerator": null,
         "denominator": 888,
         "denominator_label": "ovejas servidas",
-        "status": "OK",
+        "status": "SIN_RECUENTO",
         "unit": "corderos/oveja"
       },
       {
@@ -3278,7 +3278,7 @@
         "label": "Mortalidad de corderos (sobre nacidos)",
         "value": null,
         "numerator": null,
-        "denominator": 1,
+        "denominator": null,
         "denominator_label": "corderos nacidos",
         "status": "SIN_RECUENTO",
         "unit": "%"
@@ -3298,7 +3298,7 @@
         "label": "Sobrevivencia nacimiento → señalada",
         "value": null,
         "numerator": null,
-        "denominator": 1,
+        "denominator": null,
         "denominator_label": "corderos nacidos",
         "status": "SIN_RECUENTO",
         "unit": "%"
@@ -3318,7 +3318,7 @@
         "label": "Nacidos vivos sobre nacidos",
         "value": null,
         "numerator": null,
-        "denominator": 1,
+        "denominator": null,
         "denominator_label": "corderos nacidos",
         "status": "SIN_RECUENTO",
         "unit": "%"
@@ -3326,43 +3326,36 @@
       {
         "key": "curve_compliance_ewes",
         "label": "Cumplimiento de la curva (ovejas paridas vs esperadas a la fecha)",
-        "value": 2.6776,
-        "numerator": 1,
-        "denominator": 37.3465,
+        "value": null,
+        "numerator": null,
+        "denominator": 41.2777,
         "denominator_label": "ovejas esperadas a parir acumuladas a la fecha",
-        "status": "OK",
+        "status": "SIN_RECUENTO",
         "unit": "%"
       },
       {
         "key": "curve_gap_ewes",
         "label": "Diferencia esperado vs observado (ovejas)",
-        "value": -36.3465,
-        "numerator": 1,
-        "denominator": 37.3465,
+        "value": null,
+        "numerator": null,
+        "denominator": 41.2777,
         "denominator_label": "ovejas esperadas a parir acumuladas a la fecha",
-        "status": "OK",
+        "status": "SIN_RECUENTO",
         "unit": "ovejas"
       },
       {
         "key": "curve_gap_lambs",
         "label": "Diferencia esperado vs observado (corderos)",
-        "value": -49.1843,
-        "numerator": 1,
-        "denominator": 50.1843,
+        "value": null,
+        "numerator": null,
+        "denominator": 55.4669,
         "denominator_label": "corderos esperados a nacer acumulados a la fecha",
-        "status": "OK",
+        "status": "SIN_RECUENTO",
         "unit": "corderos"
       }
     ]
   },
-  "daily_evolution": [
-    {
-      "date": "2026-07-26",
-      "lambed_ewes": 1,
-      "born_lambs": 1,
-      "cumulative_lambed": 1
-    }
-  ],
+  "daily_evolution": [],
   "chill_public": {
     "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
     "horizon_days": 5,
@@ -3488,7 +3481,7 @@
   "field_controls": {
     "INTENSIVO": {
       "variable": "ovejas_paridas",
-      "calculated": 1,
+      "calculated": null,
       "reported_accumulated": null,
       "reported_date": null,
       "difference": null,
@@ -3595,9 +3588,9 @@
           "name": "INTENSIVO",
           "expected_to_lamb": 96,
           "expected_lambs": 129,
-          "counted_lambed": null,
-          "counted_lambs": null,
-          "last_count_date": null
+          "counted_lambed": 1,
+          "counted_lambs": 1,
+          "last_count_date": "2026-07-26"
         },
         {
           "code": "DOHNE",
@@ -3621,8 +3614,8 @@
       "totals": {
         "expected_to_lamb": 832,
         "expected_lambs": 979,
-        "counted_lambed": null,
-        "counted_lambs": null
+        "counted_lambed": 1,
+        "counted_lambs": 1
       }
     },
     "module_options": [
@@ -4005,26 +3998,6 @@
   },
   "recent_records": [
     {
-      "date": "2026-07-26",
-      "module_code": "INTENSIVO",
-      "event_type": "LAMBING",
-      "event_label": "Parición",
-      "quantity": 1,
-      "observation": "Murió un trillicero",
-      "validation_status": "CONFIRMED",
-      "source": "MANUAL"
-    },
-    {
-      "date": "2026-07-26",
-      "module_code": "INTENSIVO",
-      "event_type": "INCIDENT",
-      "event_label": "Incidencia",
-      "quantity": null,
-      "observation": "Murió un cordero trillicero",
-      "validation_status": "CONFIRMED",
-      "source": "MANUAL"
-    },
-    {
       "date": "2026-07-24",
       "module_code": "INTENSIVO",
       "event_type": "LAMB_DEATH",
@@ -4083,10 +4056,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-07-27T02:04:42.080554Z",
+      "processed_at": "2026-07-27T04:26:23.834753Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-07-26T23:51:04.427575-03:00",
+    "last_sync_at": "2026-07-27T01:35:09.750693-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }

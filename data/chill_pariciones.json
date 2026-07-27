@@ -33,9 +33,9 @@
         "name": "INTENSIVO",
         "expected_to_lamb": 96,
         "expected_lambs": 129,
-        "counted_lambed": null,
-        "counted_lambs": null,
-        "last_count_date": null
+        "counted_lambed": 1,
+        "counted_lambs": 1,
+        "last_count_date": "2026-07-26"
       },
       {
         "code": "DOHNE",
@@ -59,8 +59,8 @@
     "totals": {
       "expected_to_lamb": 832,
       "expected_lambs": 979,
-      "counted_lambed": null,
-      "counted_lambs": null
+      "counted_lambed": 1,
+      "counted_lambs": 1
     }
   },
   "module_options": [
