@@ -2,12 +2,13 @@
 
 /* Tablero público CICOMA — monitoreo de pariciones 2026.
  * Fuente canónica versionada: APP/web_source (WEB es staging generado).
- * Lee exclusivamente data/dashboard.json (esquema 3.2.0), validando el
+ * Lee exclusivamente data/dashboard.json (esquema 3.3.0), validando el
  * contrato antes de renderizar. Navegación por menú lateral con secciones por
- * lote. Nunca convierte un faltante en cero ni un total parcial en completo. */
+ * lote. Nunca convierte un faltante en cero, nunca presenta un acumulado como
+ * valor diario y nunca calcula un total parcial como si fuera completo. */
 
 const DATA_URL = "./data/dashboard.json";
-const SUPPORTED_SCHEMA = "3.2.0";
+const SUPPORTED_SCHEMA = "3.3.0";
 const SECTIONS = ["resumen", "intensivo", "dohne", "ma"];
 const LOTS = [
   { code: "INTENSIVO", section: "intensivo", name: "Intensivo", breed: "Merino Australiano X Hampshire Down" },
@@ -16,6 +17,9 @@ const LOTS = [
 ];
 const CODE_BY_SECTION = Object.fromEntries(LOTS.map((lot) => [lot.section, lot.code]));
 const RISK_ORDER = ["SIN_RIESGO", "BAJO", "MEDIO", "ALTO", "CRITICO"];
+const INCOMPLETE_RISK = "RIESGO_72H_INCOMPLETO";
+// Texto público obligatorio del estado incompleto. No se usa la forma abreviada.
+const INCOMPLETE_RISK_LABEL = "EVALUACIÓN DE 72 HORAS INCOMPLETA";
 // Icono discreto de evidencia multimedia. El contenido (foto/video) nunca se
 // publica: sólo señala que existe y se consulta en la gestión interna.
 const MEDIA_ICON =
@@ -23,7 +27,8 @@ const MEDIA_ICON =
 
 let DASH = null;
 let AGE_TIMER = null;
-const CURVE_SERIES = {};
+// Estado de los filtros del gráfico integral, por vista (una por sección).
+const CHART_STATE = {};
 
 const integerFormatter = new Intl.NumberFormat("es-UY", { maximumFractionDigits: 0 });
 const decimalFormatter = new Intl.NumberFormat("es-UY", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
@@ -69,6 +74,13 @@ function formatDate(dateString, options = {}) {
   }).format(new Date(year, month - 1, day));
 }
 
+// Día y mes con dos dígitos (26/07), estable en cualquier localización.
+function formatDayMonth(dateString) {
+  const [, month, day] = (dateString || "").slice(0, 10).split("-");
+  if (!month || !day) return "—";
+  return `${day}/${month}`;
+}
+
 function formatDateTime(value, timezone) {
   if (!value) return "—";
   const date = new Date(value);
@@ -84,22 +96,33 @@ function formatDateTime(value, timezone) {
 
 function riskClass(category) {
   if (RISK_ORDER.includes(category)) return category.toLowerCase().replace("_", "-");
-  if (category === "RIESGO_72H_INCOMPLETO") return "incompleto";
+  if (category === INCOMPLETE_RISK) return "incompleto";
   return "unknown";
 }
 
+// Categorías públicas del riesgo climático, cerradas y en lenguaje claro.
+const RISK_LABELS = {
+  SIN_RIESGO: "SIN RIESGO",
+  BAJO: "RIESGO BAJO",
+  MEDIO: "RIESGO MEDIO",
+  ALTO: "RIESGO ALTO",
+  CRITICO: "RIESGO CRÍTICO",
+  NO_DETERMINADO: "NO DETERMINADO",
+  [INCOMPLETE_RISK]: INCOMPLETE_RISK_LABEL,
+};
+
 function riskLabel(category) {
   if (!category) return "NO INFORMADO";
-  if (category === "SIN_RIESGO") return "SIN RIESGO";
-  if (category === "RIESGO_72H_INCOMPLETO") return "RIESGO 72 H INCOMPLETO";
-  if (category === "NO_DETERMINADO") return "NO DETERMINADO";
-  return String(category).replaceAll("_", " ");
+  return RISK_LABELS[category] || String(category).replaceAll("_", " ");
 }
 
 /* ---------------------------------------------------------------- carga --- */
 
 const TOTAL_STATUSES = new Set(["COMPLETE", "PARTIAL", "NOT_REPORTED"]);
 const REMAINING_STATUSES = new Set(["OK", "SIN_RECUENTO", "PARCIAL", "NO_INFORMADO", "ERROR"]);
+const ESTIMATED_STATUSES = new Set(["OK", "SEGUN_REGISTROS", "SIN_RECUENTO", "NO_INFORMADO", "ERROR"]);
+const PROGRESS_STATUSES = new Set(["OK", "SEGUN_REGISTROS", "SIN_RECUENTO", "NO_INFORMADO"]);
+const REGISTERED_STATUSES = new Set(["EXACTO", "MINIMO_CONFIRMADO", "SIN_RECUENTO"]);
 
 // Contrato estricto del lado del cliente. Un contrato inválido corta la carga
 // con un error visible (caja de error), sin aplicar valores por defecto
@@ -109,16 +132,17 @@ function assertDashboard(data) {
   if (data.schema_version !== SUPPORTED_SCHEMA) {
     throw new Error(`Versión de esquema no compatible: ${data.schema_version}`);
   }
-  for (const field of ["overview", "system_health", "chill_public", "field_controls"]) {
+  for (const field of ["overview", "system_health", "chill_public", "field_controls", "campaign_milestones"]) {
     if (!data[field] || typeof data[field] !== "object") throw new Error(`Falta ${field}`);
   }
   if (!Array.isArray(data.modules)) throw new Error("Falta la lista de módulos");
+  if (!Array.isArray(data.mortality_daily)) throw new Error("Falta la mortalidad diaria");
 
   // Misma validación que aplica effectiveHealth: una sola fuente de verdad.
   // Si el estado es inválido, esto lanza y la carga se corta con error visible.
   effectiveHealth(data.system_health, data.generated_at, data.max_age_minutes, Date.now());
 
-  for (const key of ["lambed_ewes", "born_lambs", "born_alive", "stillborn"]) {
+  for (const key of ["lambed_ewes", "born_lambs", "born_alive", "stillborn", "registered_born_lambs"]) {
     const total = data.overview[key];
     if (!total || typeof total !== "object" || !TOTAL_STATUSES.has(total.status)) {
       throw new Error(`Total observado inválido: overview.${key}`);
@@ -131,6 +155,38 @@ function assertDashboard(data) {
     }
     if (typeof block.value === "number" && block.value < 0) {
       throw new Error(`Cantidad restante negativa: overview.${key}`);
+    }
+  }
+  // Restantes estimados: exigen base explícita y jamás un valor negativo.
+  for (const key of ["remaining_ewes_estimated", "remaining_lambs_estimated"]) {
+    const block = data.overview[key];
+    if (!block || typeof block !== "object" || !ESTIMATED_STATUSES.has(block.status)) {
+      throw new Error(`Restante estimado inválido: overview.${key}`);
+    }
+    if (typeof block.value === "number" && block.value < 0) {
+      throw new Error(`Cantidad restante negativa: overview.${key}`);
+    }
+    if (typeof block.basis !== "string" || block.basis.trim() === "") {
+      throw new Error(`Restante estimado sin base de cálculo: overview.${key}`);
+    }
+  }
+  for (const key of ["ewe_progress", "lamb_progress"]) {
+    const block = data.overview[key];
+    if (!block || typeof block !== "object" || !PROGRESS_STATUSES.has(block.status)) {
+      throw new Error(`Avance inválido: overview.${key}`);
+    }
+  }
+  const coverage = data.overview.coverage;
+  if (!coverage || !Array.isArray(coverage.lots_with_records) || !Array.isArray(coverage.lots_without_records)) {
+    throw new Error("Cobertura de registros inválida: overview.coverage");
+  }
+  for (const module of data.modules) {
+    const lamb = module.lamb_counts || {};
+    if (!REGISTERED_STATUSES.has(lamb.registered_born_status)) {
+      throw new Error(`Estado de corderos registrados inválido en ${module.code}`);
+    }
+    if (lamb.stillborn_status !== "INFORMADO" && lamb.stillborn_status !== "NO_INFORMADO") {
+      throw new Error(`Estado de nacidos muertos inválido en ${module.code}`);
     }
   }
 }
@@ -341,6 +397,7 @@ function startAgeClock() {
 const ABSENCE_STATES = new Set([
   "—",
   "SIN RECUENTO",
+  "SIN REGISTROS",
   "SIN DATO",
   "SIN CONTROL",
   "SIN CONTROL RECIENTE",
@@ -397,39 +454,63 @@ function absentOr(value, formatter) {
 }
 
 const LOT_LABEL = { INTENSIVO: "Intensivo", DOHNE: "Dohne", MA: "MA" };
+const LOT_FULL_NAME = { INTENSIVO: "Intensivo", DOHNE: "Merino Dohne", MA: "Merino Australiano" };
 
 function lotNames(codes) {
   return (codes || []).map((code) => LOT_LABEL[code] || code).join(", ");
 }
 
 // Presentación de un total observado estructurado (COMPLETE/PARTIAL/NOT_REPORTED).
-// Un total parcial SIEMPRE se identifica como parcial, con los lotes incluidos
-// y los que faltan; los lotes sin recuento nunca se muestran como cero.
+// Un total parcial se identifica con los lotes incluidos y los que faltan; los
+// lotes sin recuento nunca se muestran como cero.
 function totalDisplay(total) {
   if (!total || total.status === "NOT_REPORTED" || total.value === null) {
-    return { value: "SIN RECUENTO", note: null, partial: false };
+    return { value: "SIN REGISTROS", note: null, partial: false };
   }
   if (total.status === "PARTIAL") {
     return {
       value: formatInteger(total.value),
-      note: `PARCIAL: ${lotNames(total.lots_included)} · falta ${lotNames(total.lots_missing)}`,
+      note: `registrado en ${lotNames(total.lots_included)} · falta ${lotNames(total.lots_missing)}`,
       partial: true,
     };
   }
   return { value: formatInteger(total.value), note: "los tres lotes informados", partial: false };
 }
 
-function totalCard(label, total, opts = {}) {
+// Tarjeta de un acumulado registrado. La cobertura se comunica en la nota
+// discreta al pie de la tarjeta, NO con una etiqueta amarilla grande.
+function registeredCard(label, total, opts = {}) {
   const shown = totalDisplay(total);
   const cls = ["stat"];
   if (opts.kpi) cls.push("stat--kpi");
   if (opts.accent) cls.push("stat--accent");
-  const tag = shown.partial ? `<span class="tag tag--incompleto">PARCIAL</span>` : "";
+  const note = opts.note !== undefined ? opts.note : shown.note;
   return `
     <article class="${cls.join(" ")}">
-      <span class="stat__label">${escapeHtml(label)} ${tag}</span>
+      <span class="stat__label">${escapeHtml(label)}</span>
       <strong class="${valueClass("stat__value", shown.value)}">${escapeHtml(shown.value)}</strong>
-      ${shown.note ? `<span class="stat__note">${escapeHtml(shown.note)}</span>` : ""}
+      ${note ? `<span class="stat__note">${escapeHtml(note)}</span>` : ""}
+    </article>`;
+}
+
+// Avance publicado por el backend: registrado / esperado, con su base.
+function progressCard(label, block, opts = {}) {
+  if (!block) return metricCard(label, "SIN REGISTROS");
+  const cls = ["stat"];
+  if (opts.kpi) cls.push("stat--kpi");
+  if (opts.accent) cls.push("stat--accent");
+  const value =
+    block.percent === null || block.percent === undefined ? "SIN REGISTROS" : formatPercent(block.percent);
+  const fraction =
+    block.registered === null || block.expected === null
+      ? null
+      : `${formatInteger(block.registered)} de ${formatInteger(block.expected)}`;
+  return `
+    <article class="${cls.join(" ")}">
+      <span class="stat__label">${escapeHtml(label)}</span>
+      <strong class="${valueClass("stat__value", value)}">${escapeHtml(value)}</strong>
+      ${fraction ? `<span class="stat__note">${escapeHtml(fraction)}</span>` : ""}
+      ${opts.hideBasis ? "" : `<span class="stat__note stat__note--basis">${escapeHtml(block.basis || "")}</span>`}
     </article>`;
 }
 
@@ -448,6 +529,22 @@ function remainingCard(label, remaining) {
           ? "NO INFORMADO"
           : "SIN RECUENTO";
   return metricCard(label, stateText, remaining.reason || null);
+}
+
+// Restante estimado según los registros. Se muestra siempre con su base para
+// que no se confunda con un valor confirmado.
+function estimatedRemainingCard(label, block) {
+  if (!block) return metricCard(label, "SIN REGISTROS");
+  if (block.status === "OK" || block.status === "SEGUN_REGISTROS") {
+    return metricCard(label, formatInteger(block.value), block.basis || null);
+  }
+  const stateText =
+    block.status === "ERROR"
+      ? "ERROR"
+      : block.status === "NO_INFORMADO"
+        ? "NO INFORMADO"
+        : "SIN REGISTROS";
+  return metricCard(label, stateText, block.reason || block.basis || null);
 }
 
 // Tabla de indicadores productivos generados por el backend: nombre, valor,
@@ -505,22 +602,25 @@ function renderResumen() {
     totalDeaths === null || totalDeaths === undefined
       ? null
       : `${formatInteger(mortality.lamb_deaths || 0)} corderos · ${formatInteger(mortality.ewe_deaths || 0)} oveja(s)`;
+  const coverage = ov.coverage || {};
 
-  // Jerarquía ejecutiva: lo que se mira primero, más grande.
+  // Jerarquía ejecutiva: lo que se mira primero, más grande. Son acumulados
+  // REGISTRADOS, no resultados de campaña: el encabezado lo dice.
   const kpis = [
-    totalCard("Ovejas paridas", ov.lambed_ewes, { kpi: true, accent: true }),
-    totalCard("Corderos nacidos", ov.born_lambs, { kpi: true, accent: true }),
-    metricCard("Avance de parición", formatPercent(ov.progress_percent), "sobre previstas a parir", { kpi: true }),
-    metricCard("Muertes registradas", deaths, deathsNote, { kpi: true }),
+    registeredCard("Ovejas paridas registradas", ov.lambed_ewes, { kpi: true, accent: true, note: null }),
+    registeredCard("Corderos nacidos registrados", ov.registered_born_lambs, { kpi: true, accent: true, note: null }),
+    progressCard("Avance de ovejas paridas", ov.ewe_progress, { kpi: true, hideBasis: true }),
+    progressCard("Avance de corderos nacidos", ov.lamb_progress, { kpi: true, hideBasis: true }),
   ].join("");
 
   // Contexto secundario, tamaño reducido.
   const secondary = [
     metricCard("Previstas a parir", formatInteger(ov.expected_to_lamb)),
     metricCard("Corderos esperados", formatInteger(ov.expected_lambs)),
-    totalCard("Nacidos vivos", ov.born_alive),
-    remainingCard("Ovejas restantes", ov.remaining_ewes),
-    remainingCard("Corderos restantes", ov.remaining_lambs),
+    registeredCard("Nacidos vivos registrados", ov.born_alive, { note: null }),
+    estimatedRemainingCard("Ovejas restantes según registros", ov.remaining_ewes_estimated),
+    estimatedRemainingCard("Corderos restantes estimados", ov.remaining_lambs_estimated),
+    metricCard("Muertes registradas", deaths, deathsNote),
   ].join("");
 
   view.innerHTML = `
@@ -530,7 +630,9 @@ function renderResumen() {
       <p class="view__intro">Lo esencial de un vistazo. Cada lote tiene su vista específica en el menú.</p>
     </header>
 
+    <p class="summary-scope"><strong>${escapeHtml(ov.summary_label || "")}</strong></p>
     <div class="kpi-row">${kpis}</div>
+    <p class="coverage-note">${escapeHtml(coverage.message || "")}</p>
     <div class="stat-grid">${secondary}</div>
 
     <section class="panel">
@@ -539,6 +641,16 @@ function renderResumen() {
         <p>Tocá un lote para ver su detalle.</p>
       </div>
       <div class="lot-cards">${LOTS.map(distributionCard).join("")}</div>
+    </section>
+
+    ${milestonesPanel(null)}
+
+    <section class="panel" id="curva-general">
+      <div class="panel__head">
+        <div><p class="eyebrow">Curva integral</p><h2>Curva prevista, evolución real y mortalidad</h2></div>
+        <p>Comparación entre la distribución prevista de partos, los registros reales acumulados y diarios, y la mortalidad informada durante la campaña.</p>
+      </div>
+      ${curvePanel("resumen", null)}
     </section>
 
     <section class="panel">
@@ -550,10 +662,7 @@ function renderResumen() {
     </section>
 
     <section class="panel" id="chill-general">
-      <div class="panel__head">
-        <div><p class="eyebrow">Chill Index</p><h2>Riesgo ambiental — próximos días</h2></div>
-        <p>Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.</p>
-      </div>
+      ${chillHead(null)}
       ${chillGeneral()}
     </section>`;
 }
@@ -571,9 +680,9 @@ function distributionCard(lot) {
   const module = moduleByCode(lot.code);
   const previsto = module ? formatInteger(module.ewe_counts.expected_to_lamb) : "—";
   const paridas = module ? absentOr(module.ewe_counts.counted_lambed, formatInteger) : "—";
-  const nacidos = module ? absentOr(module.lamb_counts.counted, formatInteger) : "—";
+  const nacidos = module ? absentOr(module.lamb_counts.registered_born, formatInteger) : "—";
   const muertos = module ? formatInteger(module.mortality.lamb_deaths_accumulated) : "—";
-  const progress = module ? formatPercent(module.ewe_counts.progress_percent) : "—";
+  const progress = module ? formatPercent(module.ewe_counts.progress?.percent) : "—";
   const state = dataState(module);
   const cell = (label, value) =>
     `<div><dt>${escapeHtml(label)}</dt><dd class="${absentClass(value)}">${escapeHtml(value)}</dd></div>`;
@@ -586,10 +695,129 @@ function distributionCard(lot) {
         ${cell("Paridas", paridas)}
         ${cell("Nacidos", nacidos)}
         ${cell("Muertes cordero", muertos)}
-        ${cell("Avance", progress)}
+        ${cell("Avance ovejas", progress)}
       </dl>
       <span class="lot-card__state tag tag--${state === "ACTUALIZADO" ? "ok" : "pending"}">${escapeHtml(state)}</span>
     </a>`;
+}
+
+/* ------------------------------------------- hitos y observaciones (§5) --- */
+
+// Sólo eventos estructurados y normalizados. El texto original, el remitente y
+// cualquier comentario libre quedan en la gestión privada: acá se compone la
+// línea a partir de campos cerrados (tipo, subtipo, cantidad, animal).
+function milestoneLine(item) {
+  const parts = [];
+  if (item.module_code) parts.push(LOT_FULL_NAME[item.module_code] || item.module_code);
+  const title = item.subtype_label || item.kind_label;
+  let text = title;
+  if (item.kind === "CONTROL_DE_CAMPO") {
+    const pieces = [];
+    if (item.counted_ewes_lambed !== null && item.counted_ewes_lambed !== undefined) {
+      pieces.push(`${formatInteger(item.counted_ewes_lambed)} ovejas paridas`);
+    }
+    if (item.counted_live_lambs !== null && item.counted_live_lambs !== undefined) {
+      pieces.push(`${formatInteger(item.counted_live_lambs)} corderos nacidos vivos`);
+    }
+    if (pieces.length) text = `${title}: ${pieces.join(" y ")}`;
+  } else if (item.quantity !== null && item.quantity !== undefined) {
+    const animal = item.animal_label ? ` ${item.animal_label}` : "";
+    text = `${title}: ${formatInteger(item.quantity)}${animal}`;
+  }
+  if (item.cause_label) text = `${text} · ${item.cause_label}`;
+  return { scope: parts.join(" · "), text };
+}
+
+function milestonesPanel(lotCode) {
+  const block = DASH.campaign_milestones || {};
+  const all = Array.isArray(block.items) ? block.items : [];
+  const items = lotCode ? all.filter((item) => item.module_code === lotCode) : all;
+  const body = items.length
+    ? `<ul class="milestones">${items
+        .map((item) => {
+          const line = milestoneLine(item);
+          return `
+        <li class="milestone milestone--${escapeHtml(String(item.kind).toLowerCase())}">
+          <span class="milestone__date">${escapeHtml(formatDayMonth(item.date))}</span>
+          ${line.scope ? `<span class="milestone__scope">${escapeHtml(line.scope)}</span>` : ""}
+          <span class="milestone__text">${escapeHtml(line.text)}</span>
+        </li>`;
+        })
+        .join("")}</ul>
+      <p class="chart-note">Los hitos no modifican los recuentos: no suman ovejas paridas, corderos ni mortalidad.</p>`
+    : `<p class="empty-note">SIN HITOS registrados para mostrar.</p>`;
+  return `
+    <section class="panel panel--flat">
+      <div class="panel__head">
+        <div><p class="eyebrow">Campaña</p><h2>Hitos y observaciones del día</h2></div>
+        <p>Eventos estructurados, ordenados del más reciente al más antiguo.</p>
+      </div>
+      ${body}
+    </section>`;
+}
+
+/* --------------------------------------------------------------- chill --- */
+
+function chillHead(lotCode) {
+  const chill = DASH.chill_public || {};
+  const scope = lotCode ? ` — ${LOT_FULL_NAME[lotCode] || lotCode}` : "";
+  return `
+      <div class="panel__head">
+        <div>
+          <p class="eyebrow">Chill Index</p>
+          <h2>${escapeHtml(chill.title || "")}${escapeHtml(scope)}</h2>
+        </div>
+        <p>${escapeHtml(chill.subtitle || "")}</p>
+      </div>
+      <p class="chill-explain">${escapeHtml(chill.explanation || "")}</p>
+      <p class="chill-phrase">${escapeHtml(chill.exposure_phrase || "")}.</p>
+      <p class="chill-disclaimer">${escapeHtml(chill.forecast_disclaimer || "")}</p>`;
+}
+
+// Cobertura: cuántos corderos esperados ya tienen riesgo evaluado, sobre qué
+// denominador, cuántos quedan pendientes y por qué. Todo sale del JSON.
+function chillCoverage(lotCode) {
+  const chill = DASH.chill_public || {};
+  const coverage = lotCode ? (chill.coverage?.by_module || {})[lotCode] : chill.coverage;
+  if (!coverage) return "";
+  const total = coverage.expected_total;
+  const cells = [
+    ["Evaluados hasta la fecha", formatExposure(coverage.evaluated)],
+    ["Con evaluación completa", formatExposure(coverage.classified)],
+    [INCOMPLETE_RISK_LABEL, formatExposure(coverage.incomplete)],
+    ["Pendientes de evaluar", formatExposure(coverage.pending)],
+    ["Corderos esperados (denominador)", formatInteger(total)],
+  ]
+    .map(
+      ([label, value]) =>
+        `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`,
+    )
+    .join("");
+  const headline =
+    total === null || total === undefined
+      ? ""
+      : `${formatExposure(coverage.evaluated)} de ${formatInteger(total)} corderos esperados clasificados hasta la fecha.`;
+  const reasons = [coverage.incomplete_reason, coverage.pending_reason].filter(Boolean);
+  return `
+    <div class="chill-coverage">
+      ${headline ? `<p class="chill-coverage__headline">${escapeHtml(headline)}</p>` : ""}
+      <dl class="control-grid">${cells}</dl>
+      ${reasons.map((reason) => `<p class="chart-note">${escapeHtml(reason)}</p>`).join("")}
+    </div>`;
+}
+
+// Bloque futuro: riesgo climático de los corderos NACIDOS REGISTRADOS. Sólo se
+// puebla con distribución diaria real; con un acumulado no se reparte nada.
+function chillObserved() {
+  const observed = (DASH.chill_public || {}).observed;
+  if (!observed) return "";
+  const pending = observed.status !== "DISPONIBLE";
+  return `
+    <div class="chill-observed${pending ? " chill-observed--pending" : ""}">
+      <h3>Riesgo climático de los corderos nacidos registrados</h3>
+      <p>${escapeHtml(observed.message || "")}</p>
+      ${pending ? `<span class="tag tag--muted">PENDIENTE DE DISTRIBUCIÓN DIARIA</span>` : ""}
+    </div>`;
 }
 
 // Etiqueta relativa del día: HOY / MAÑANA / AYER o el día de la semana.
@@ -618,7 +846,7 @@ function chillDay(day, exposure, lots) {
   const rel = dayRelative(day.date);
   const complete = day.cohort_72h_complete
     ? ""
-    : `<span class="tag tag--incompleto">72 H INCOMPLETO</span>`;
+    : `<span class="tag tag--incompleto">${escapeHtml(INCOMPLETE_RISK_LABEL)}</span>`;
   return `
     <li class="chill-day risk-${escapeHtml(riskClass(cat))}">
       <div class="chill-day__head">
@@ -655,17 +883,20 @@ function chillGeneral() {
 
   return `
     ${stale ? `<p class="tag tag--incompleto">El Chill Index no está actualizado.</p>` : ""}
-    <p class="chill-mode">Exposición diaria — una cohorte puede aparecer en varios días.</p>
+    ${chillCoverage(null)}
+    <p class="chill-mode">Corderos esperados expuestos por día</p>
     <ul class="chill-list">${rows}</ul>
     ${chill72h(chill.exposure_72h, null)}
+    ${chillObserved()}
     <p class="chill-source">Fuente: INIA-GRAS · ${iniaLink()}</p>`;
 }
 
-/* Consolidado 72 h: cada cohorte una vez, por su riesgo máximo. lotCode filtra. */
+/* Consolidado de 72 h: cada cordero esperado contado una sola vez, por su
+   riesgo máximo. `lotCode` limita el consolidado a un lote. */
 function chill72h(exposure, lotCode) {
   if (!exposure || typeof exposure !== "object") return "";
   const scope = lotCode ? (exposure.by_module || {})[lotCode] || {} : exposure;
-  const cells = [...RISK_ORDER, "RIESGO_72H_INCOMPLETO"]
+  const cells = [...RISK_ORDER, INCOMPLETE_RISK]
     .map((cat) => {
       const value = scope[cat];
       if (value === undefined) return "";
@@ -678,7 +909,7 @@ function chill72h(exposure, lotCode) {
     .join("");
   return `
     <div class="chill-72h">
-      <p class="chill-mode">Consolidado 72 h — cada cohorte contada una sola vez, por su riesgo máximo.</p>
+      <p class="chill-mode">Resultado de las primeras 72 horas — cada cordero esperado se cuenta una sola vez, por su nivel de riesgo más alto.</p>
       <div class="expo-grid">${cells}</div>
     </div>`;
 }
@@ -713,8 +944,9 @@ function renderLot(lot) {
     </header>
 
     <section class="panel">
-      <div class="panel__head"><h2>Recuentos del lote</h2></div>
+      <div class="panel__head"><h2>Recuentos registrados del lote</h2><p>${escapeHtml(DASH.overview.summary_label || "")}</p></div>
       <div class="stat-grid">${lotCounts(module)}</div>
+      ${lotCountsNote(module)}
     </section>
 
     <section class="panel">
@@ -723,15 +955,19 @@ function renderLot(lot) {
     </section>
 
     <section class="panel">
-      <div class="panel__head"><h2>Curva de partos</h2><p>Las tres series se muestran por separado: esperada original, esperada ajustada y observada.</p></div>
-      ${lotCurve(lot, curve)}
+      <div class="panel__head">
+        <div><p class="eyebrow">Curva integral</p><h2>Curva prevista, evolución real y mortalidad</h2></div>
+        <p>Comparación entre la distribución prevista de partos, los registros reales acumulados y diarios, y la mortalidad informada durante la campaña.</p>
+      </div>
+      ${curvePanel(lot.section, lot.code)}
     </section>
 
+    ${servicesPanel(curve)}
+
+    ${milestonesPanel(lot.code)}
+
     <section class="panel">
-      <div class="panel__head">
-        <h2>Riesgo ambiental del lote</h2>
-        <p>Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.</p>
-      </div>
+      ${chillHead(lot.code)}
       ${lotChill(lot.code)}
     </section>
 
@@ -778,64 +1014,658 @@ function lotCounts(module) {
   const ec = module.ewe_counts;
   const lc = module.lamb_counts;
   const mort = module.mortality;
+  const paridas =
+    ec.counted_lambed === null
+      ? "SIN RECUENTO"
+      : `${formatInteger(ec.counted_lambed)} de ${formatInteger(ec.expected_to_lamb)}`;
+  const nacidos =
+    lc.registered_born === null
+      ? "SIN RECUENTO"
+      : `${formatInteger(lc.registered_born)} de ${formatInteger(lc.expected_total)}`;
   // Los restantes vienen validados por el backend (valor/estado/motivo):
   // el frontend no resta y jamás muestra un restante negativo.
   return [
     metricCard("Servidas", formatInteger(iv.served)),
     metricCard("Preñadas", formatInteger(iv.expected_to_lamb)),
     metricCard("Corderos esperados", formatInteger(iv.expected_lambs)),
-    metricCard("Ovejas paridas", ec.counted_lambed === null ? "SIN RECUENTO" : formatInteger(ec.counted_lambed)),
-    metricCard("Corderos nacidos", lc.counted === null ? "SIN RECUENTO" : formatInteger(lc.counted)),
-    metricCard("Nacidos vivos", lc.born_alive === null || lc.born_alive === undefined ? "SIN RECUENTO" : formatInteger(lc.born_alive)),
+    metricCard("Ovejas paridas registradas", paridas),
+    metricCard("Corderos nacidos registrados", nacidos, lambRegisteredNote(lc)),
+    progressCard("Avance de ovejas paridas", ec.progress, { hideBasis: true }),
+    progressCard("Avance de corderos nacidos", lc.progress, { hideBasis: true }),
+    metricCard("Nacidos vivos", lc.confirmed_live === null || lc.confirmed_live === undefined ? "SIN RECUENTO" : formatInteger(lc.confirmed_live)),
+    metricCard("Nacidos muertos al parto", lc.stillborn === null || lc.stillborn === undefined ? "NO INFORMADO" : formatInteger(lc.stillborn)),
+    remainingCard("Ovejas restantes", ec.remaining),
+    estimatedRemainingCard("Corderos restantes estimados", lc.remaining_estimated),
     metricCard("Muertes de cordero", formatInteger(mort.lamb_deaths_accumulated)),
     metricCard("Muertes de oveja", formatInteger(mort.ewe_deaths_accumulated)),
-    metricCard("Avance de parición", formatPercent(ec.progress_percent), "sobre previstas a parir"),
-    remainingCard("Ovejas restantes", ec.remaining),
-    remainingCard("Corderos restantes", lc.remaining),
   ].join("");
 }
 
-// Colores fijos de las tres series. La curva original NUNCA desaparece cuando
-// existe una ajustada: se dibujan juntas, cada una identificada en la leyenda.
-const CURVE_COLORS = { original: "#7fb69a", adjusted: "#006937", observed: "#c8102e" };
-
-function lotCurve(lot, curve) {
-  if (!curve || !(curve.expected_original || []).length) {
-    const observedOnly = curve && (curve.observed_series || []).length;
-    return `<p class="empty-note">SIN CURVA CARGADA para este lote.${
-      observedOnly ? " Hay recuentos observados, pero sin curva esperada no se grafican." : ""
-    }</p>`;
+// Aclaración breve al pie de «Corderos nacidos registrados»: qué se informó y
+// qué no. Un mínimo confirmado jamás se presenta como el total exacto.
+function lambRegisteredNote(lambCounts) {
+  if (lambCounts.registered_born === null) return null;
+  if (lambCounts.registered_born_is_minimum) {
+    const live = formatInteger(lambCounts.confirmed_live);
+    return `${live} nacidos vivos reportados. ${lambCounts.stillborn_message || "Nacidos muertos al parto: no informados."}`;
   }
-  const original = curve.expected_original || [];
-  const adjusted = curve.expected_adjusted || [];
-  const observed = curve.observed_series || [];
-  // El acumulado de cada serie viene calculado por el backend (cumulative_pct):
-  // acá no se recalcula nada, sólo se dibuja.
-  CURVE_SERIES[lot.code] = {
-    original: original.map((p) => ({
-      date: p.date,
-      ewes: p.expected_ewes || 0,
-      lambs: p.expected_lambs || 0,
-      cumulative: p.cumulative_pct,
-    })),
-    adjusted: adjusted.map((p) => ({ date: p.date, cumulative: p.cumulative_pct })),
-    observed: observed.map((p) => ({ date: p.date, cumulative: p.cumulative_pct })),
-  };
-  const legend = [
-    `<span class="curve-key"><i style="background:${CURVE_COLORS.original}"></i>Esperada original</span>`,
-    adjusted.length
-      ? `<span class="curve-key"><i style="background:${CURVE_COLORS.adjusted}"></i>Esperada ajustada</span>`
-      : `<span class="curve-key curve-key--off">Esperada ajustada: sin ajuste</span>`,
-    observed.length
-      ? `<span class="curve-key"><i style="background:${CURVE_COLORS.observed}"></i>Observada (confirmada)</span>`
-      : `<span class="curve-key curve-key--off">Observada: sin recuento</span>`,
-  ].join("");
+  return null;
+}
+
+function lotCountsNote(module) {
+  const note = lambRegisteredNote(module.lamb_counts);
+  if (!note) return "";
+  return `<p class="chart-note">Corderos nacidos registrados: ${escapeHtml(note)} Es la cantidad mínima confirmada hasta el momento, no el total exacto.</p>`;
+}
+
+/* ---------------------------------------------------------- servicios --- */
+
+function servicesPanel(curve) {
+  const services = (curve && curve.services) || [];
+  if (!services.length) {
+    return `
+    <section class="panel panel--flat">
+      <div class="panel__head"><h2>Servicios del lote</h2></div>
+      <p class="empty-note">SIN SERVICIOS declarados en la fuente para este lote.</p>
+    </section>`;
+  }
+  const rows = services
+    .map(
+      (service) => `
+      <tr>
+        <td>${escapeHtml(service.service_type)}</td>
+        <td>${escapeHtml(formatDate(service.start_date))}</td>
+        <td>${escapeHtml(formatDate(service.end_date))}</td>
+        <td class="num">${escapeHtml(service.ewes === null || service.ewes === undefined ? "NO INFORMADO" : formatInteger(Math.round(service.ewes)))}</td>
+        <td>${escapeHtml(
+          service.lambing_window_start
+            ? `${formatDate(service.lambing_window_start, { short: true })} → ${formatDate(service.lambing_window_end, { short: true })}`
+            : "SIN CURVA",
+        )}</td>
+        <td class="num">${escapeHtml(formatInteger(service.expected_to_lamb))}</td>
+        <td class="num">${escapeHtml(formatInteger(service.expected_lambs))}</td>
+      </tr>`,
+    )
+    .join("");
+  const limitation = services.find((service) => service.curve_is_aggregated);
   return `
-    <div class="curve-controls">
-      ${legend}
-      <span class="chart-note">Barras: ovejas y corderos previstos por día (curva original). Líneas: acumulado de cada serie.</span>
+    <section class="panel panel--flat">
+      <div class="panel__head"><h2>Servicios del lote</h2><p>Tipo, fechas y previstos según la fuente.</p></div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Tipo de servicio</th><th>Desde</th><th>Hasta</th><th class="num">Ovejas</th><th>Período probable de partos</th><th class="num">Ovejas previstas</th><th class="num">Corderos previstos</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      ${limitation ? `<p class="chart-note">${escapeHtml(limitation.limitation)} No se reparten animales entre servicios de forma artificial.</p>` : ""}
+    </section>`;
+}
+
+/* ---------------------------------------------- curva integral (§7–§10) --- */
+
+const CURVE_COLORS = {
+  original: "#7fb69a",
+  adjusted: "#006937",
+  observed: "#1b6ec2",
+  checkpoint: "#0f4c81",
+  lambDeath: "#c0402f",
+  eweDeath: "#8f2a1d",
+  stillborn: "#d97a1e",
+};
+
+function defaultChartState(lotCode) {
+  return {
+    lot: lotCode || "TOTAL",
+    mode: "cumulative",
+    series: { original: true, adjusted: true, observed: true },
+    mortality: { lamb: true, ewe: true, stillborn: true },
+    from: "",
+    to: "",
+    selected: null,
+  };
+}
+
+function chartState(viewKey, lotCode) {
+  if (!CHART_STATE[viewKey]) CHART_STATE[viewKey] = defaultChartState(lotCode);
+  return CHART_STATE[viewKey];
+}
+
+function curvePanel(viewKey, lotCode) {
+  const curves = DASH.lambing_curves || {};
+  if (!Array.isArray(curves.lots) || !curves.lots.length) {
+    return `<p class="empty-note">SIN CURVA CARGADA — el gráfico se habilita cuando exista curva de partos.</p>`;
+  }
+  const state = chartState(viewKey, lotCode);
+  const lotOptions = lotCode
+    ? ""
+    : `
+      <label class="filter">
+        <span>Lote</span>
+        <select data-chart="${escapeHtml(viewKey)}" data-filter="lot">
+          <option value="TOTAL">Total campaña</option>
+          ${LOTS.map(
+            (lot) =>
+              `<option value="${lot.code}" ${state.lot === lot.code ? "selected" : ""}>${escapeHtml(lot.name)}</option>`,
+          ).join("")}
+        </select>
+      </label>`;
+  const serviceOptions = serviceFilterOptions(state.lot);
+  return `
+    <div class="chart-filters">
+      ${lotOptions}
+      <label class="filter">
+        <span>Servicio</span>
+        <select data-chart="${escapeHtml(viewKey)}" data-filter="service">${serviceOptions}</select>
+      </label>
+      <label class="filter">
+        <span>Vista</span>
+        <select data-chart="${escapeHtml(viewKey)}" data-filter="mode">
+          <option value="cumulative" ${state.mode === "cumulative" ? "selected" : ""}>Acumulada</option>
+          <option value="daily" ${state.mode === "daily" ? "selected" : ""}>Diaria</option>
+        </select>
+      </label>
+      <label class="filter">
+        <span>Desde</span>
+        <input type="date" data-chart="${escapeHtml(viewKey)}" data-filter="from" value="${escapeHtml(state.from)}" />
+      </label>
+      <label class="filter">
+        <span>Hasta</span>
+        <input type="date" data-chart="${escapeHtml(viewKey)}" data-filter="to" value="${escapeHtml(state.to)}" />
+      </label>
     </div>
-    <div class="chart-wrap"><canvas id="curve-${escapeHtml(lot.code)}" role="img" aria-label="Curva de partos de ${escapeHtml(lot.name)}"></canvas></div>`;
+    <div class="chart-toggles" role="group" aria-label="Series visibles">
+      ${toggle(viewKey, "series", "original", "Curva prevista original", state.series.original, CURVE_COLORS.original)}
+      ${toggle(viewKey, "series", "adjusted", "Curva prevista ajustada", state.series.adjusted, CURVE_COLORS.adjusted)}
+      ${toggle(viewKey, "series", "observed", "Evolución real observada", state.series.observed, CURVE_COLORS.observed)}
+      ${toggle(viewKey, "mortality", "lamb", "Mortalidad de corderos", state.mortality.lamb, CURVE_COLORS.lambDeath)}
+      ${toggle(viewKey, "mortality", "ewe", "Mortalidad de ovejas", state.mortality.ewe, CURVE_COLORS.eweDeath)}
+      ${toggle(viewKey, "mortality", "stillborn", "Nacidos muertos al parto", state.mortality.stillborn, CURVE_COLORS.stillborn)}
+    </div>
+    <div class="chart-wrap chart-wrap--integral">
+      <canvas id="curve-${escapeHtml(viewKey)}" role="img" aria-label="Curva prevista, evolución real y mortalidad"></canvas>
+      <div class="chart-tip" id="tip-${escapeHtml(viewKey)}" hidden></div>
+    </div>
+    <p class="chart-note" id="curve-note-${escapeHtml(viewKey)}"></p>
+    <div class="day-detail" id="day-${escapeHtml(viewKey)}"></div>`;
+}
+
+function toggle(viewKey, group, key, label, checked, colour) {
+  return `
+    <label class="toggle">
+      <input type="checkbox" data-chart="${escapeHtml(viewKey)}" data-group="${group}" data-key="${key}" ${checked ? "checked" : ""} />
+      <i style="background:${colour}"></i>
+      <span>${escapeHtml(label)}</span>
+    </label>`;
+}
+
+function serviceFilterOptions(lotCode) {
+  const options = [`<option value="TODOS">Todos los servicios</option>`];
+  const lots = (DASH.lambing_curves?.lots || []).filter(
+    (lot) => lotCode === "TOTAL" || lot.code === lotCode,
+  );
+  for (const lot of lots) {
+    for (const service of lot.services || []) {
+      const value = `${lot.code}:${service.code}`;
+      options.push(
+        `<option value="${escapeHtml(value)}">${escapeHtml(`${LOT_LABEL[lot.code] || lot.code} · ${service.service_type}`)}</option>`,
+      );
+    }
+  }
+  return options.join("");
+}
+
+// Datos del gráfico para el lote/estado actual. Cada serie conserva su origen:
+// la agregación "Total" suma para visualizar, sin perder la identidad del lote.
+function chartData(state) {
+  const curves = DASH.lambing_curves || {};
+  const lots = (curves.lots || []).filter((lot) => state.lot === "TOTAL" || lot.code === state.lot);
+  const inRange = (date) =>
+    (!state.from || date >= state.from) && (!state.to || date <= state.to);
+
+  const original = new Map();
+  const adjusted = new Map();
+  const observed = new Map();
+  const checkpoints = [];
+  for (const lot of lots) {
+    for (const point of lot.expected_original || []) {
+      if (!inRange(point.date)) continue;
+      const bucket = original.get(point.date) || { ewes: 0, lambs: 0, cumulative: null };
+      bucket.ewes += Number(point.expected_ewes) || 0;
+      bucket.lambs += Number(point.expected_lambs) || 0;
+      if (state.lot !== "TOTAL") bucket.cumulative = point.cumulative_pct;
+      original.set(point.date, bucket);
+    }
+    for (const point of lot.expected_adjusted || []) {
+      if (!inRange(point.date)) continue;
+      const bucket = adjusted.get(point.date) || { ewes: 0, lambs: 0, cumulative: null };
+      bucket.ewes += Number(point.expected_ewes) || 0;
+      bucket.lambs += Number(point.expected_lambs) || 0;
+      if (state.lot !== "TOTAL") bucket.cumulative = point.cumulative_pct;
+      adjusted.set(point.date, bucket);
+    }
+    for (const point of lot.observed_series || []) {
+      if (!inRange(point.date)) continue;
+      const bucket = observed.get(point.date) || { ewes: 0, lambs: 0, cumulative: null };
+      bucket.ewes += Number(point.lambed_ewes) || 0;
+      bucket.lambs += Number(point.born_lambs) || 0;
+      if (state.lot !== "TOTAL") bucket.cumulative = point.cumulative_pct;
+      observed.set(point.date, bucket);
+    }
+    for (const point of lot.observed_checkpoints || []) {
+      if (!inRange(point.date)) continue;
+      checkpoints.push({ ...point, module_code: lot.code });
+    }
+  }
+  // Acumulado del total: viene consolidado del backend (no se suman %).
+  if (state.lot === "TOTAL") {
+    for (const point of curves.consolidated || []) {
+      const bucket = original.get(point.date);
+      if (bucket) bucket.cumulative = point.cumulative_pct;
+    }
+  }
+
+  const mortality = (DASH.mortality_daily || []).filter(
+    (row) => (state.lot === "TOTAL" || row.module_code === state.lot) && inRange(row.date),
+  );
+  const stillbornSeries = ((DASH.stillborn_daily || {}).series || []).filter(
+    (row) => (state.lot === "TOTAL" || row.module_code === state.lot) && inRange(row.date),
+  );
+
+  const dates = new Set([...original.keys(), ...adjusted.keys(), ...observed.keys()]);
+  mortality.forEach((row) => dates.add(row.date));
+  stillbornSeries.forEach((row) => dates.add(row.date));
+  checkpoints.forEach((point) => dates.add(point.date));
+  return {
+    dates: [...dates].sort(),
+    original,
+    adjusted,
+    observed,
+    checkpoints,
+    mortality,
+    stillborn: stillbornSeries,
+    adjustedLots: (curves.adjusted_lots || []).filter(
+      (code) => state.lot === "TOTAL" || code === state.lot,
+    ),
+  };
+}
+
+function mortalityAt(data, date, kind) {
+  if (kind === "stillborn") {
+    return data.stillborn
+      .filter((row) => row.date === date)
+      .reduce((total, row) => total + (Number(row.quantity) || 0), 0);
+  }
+  const animal = kind === "lamb" ? "CORDERO" : "OVEJA";
+  return data.mortality
+    .filter((row) => row.date === date && row.animal_type === animal)
+    .reduce((total, row) => total + (Number(row.quantity) || 0), 0);
+}
+
+function drawIntegralChart(viewKey, lotCode) {
+  const state = chartState(viewKey, lotCode);
+  const canvas = byId(`curve-${viewKey}`);
+  if (!canvas) return;
+  const data = chartData(state);
+  const note = byId(`curve-note-${viewKey}`);
+  if (note) note.innerHTML = curveNote(state, data);
+  const wrap = canvas.parentElement;
+  if (!wrap || !data.dates.length) return;
+
+  const context = canvas.getContext("2d");
+  // El ancho útil descuenta el relleno del contenedor: si no, el lienzo
+  // desborda su caja y aparece una barra horizontal en móvil.
+  const style = window.getComputedStyle(wrap);
+  const inset = parseFloat(style.paddingLeft || "0") + parseFloat(style.paddingRight || "0");
+  const width = Math.max(240, Math.floor(wrap.clientWidth - inset));
+  const height = 360;
+  const ratio = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = Math.floor(width * ratio);
+  canvas.height = Math.floor(height * ratio);
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
+  context.setTransform(ratio, 0, 0, ratio, 0, 0);
+  context.clearRect(0, 0, width, height);
+
+  const padding = { top: 20, right: 46, bottom: 40, left: 48 };
+  // Banda inferior independiente para la mortalidad: con su propia escala, no
+  // deforma las curvas de ovejas y corderos.
+  const bandHeight = 62;
+  const gap = 16;
+  const plotWidth = width - padding.left - padding.right;
+  const plotHeight = height - padding.top - padding.bottom - bandHeight - gap;
+  const bandTop = padding.top + plotHeight + gap;
+  const slot = plotWidth / data.dates.length;
+  const centreOf = (index) => padding.left + slot * index + slot / 2;
+  const columnByDate = new Map(data.dates.map((date, index) => [date, index]));
+
+  const cumulative = state.mode === "cumulative";
+  const maxDaily = Math.max(
+    ...data.dates.map((date) => {
+      const orig = data.original.get(date) || { ewes: 0, lambs: 0 };
+      const adj = data.adjusted.get(date) || { ewes: 0, lambs: 0 };
+      const obs = data.observed.get(date) || { ewes: 0, lambs: 0 };
+      return Math.max(
+        state.series.original ? Math.max(orig.ewes, orig.lambs) : 0,
+        state.series.adjusted ? Math.max(adj.ewes, adj.lambs) : 0,
+        state.series.observed ? Math.max(obs.ewes, obs.lambs) : 0,
+      );
+    }),
+    1,
+  );
+
+  context.strokeStyle = "rgba(135, 135, 134, 0.28)";
+  context.lineWidth = 1;
+  context.font = "11px Inter, system-ui, sans-serif";
+  context.fillStyle = "#878786";
+  for (let step = 0; step <= 4; step += 1) {
+    const y = padding.top + (plotHeight / 4) * step;
+    context.beginPath();
+    context.moveTo(padding.left, y);
+    context.lineTo(padding.left + plotWidth, y);
+    context.stroke();
+    context.textAlign = "right";
+    const label = cumulative
+      ? `${Math.round(((4 - step) / 4) * 100)}%`
+      : integerFormatter.format(Math.round((maxDaily * (4 - step)) / 4));
+    context.fillText(label, padding.left - 6, y + 4);
+  }
+
+  if (cumulative) {
+    const line = (map, colour, dashed) => {
+      const points = data.dates
+        .map((date) => ({ date, value: (map.get(date) || {}).cumulative }))
+        .filter((point) => point.value !== null && point.value !== undefined);
+      if (!points.length) return;
+      context.beginPath();
+      context.strokeStyle = colour;
+      context.lineWidth = 2;
+      context.setLineDash(dashed ? [6, 4] : []);
+      points.forEach((point, order) => {
+        const x = centreOf(columnByDate.get(point.date));
+        const y = padding.top + plotHeight - Math.min(Number(point.value), 1) * plotHeight;
+        if (order === 0) context.moveTo(x, y);
+        else context.lineTo(x, y);
+      });
+      context.stroke();
+      context.setLineDash([]);
+    };
+    if (state.series.original) line(data.original, CURVE_COLORS.original, true);
+    if (state.series.adjusted) line(data.adjusted, CURVE_COLORS.adjusted, false);
+    if (state.series.observed) line(data.observed, CURVE_COLORS.observed, false);
+  } else {
+    const barWidth = Math.max(1.5, Math.min(9, slot * 0.3));
+    data.dates.forEach((date, index) => {
+      const centre = centreOf(index);
+      const draw = (value, colour, offset) => {
+        const barHeight = (value / maxDaily) * plotHeight;
+        if (barHeight <= 0) return;
+        context.fillStyle = colour;
+        context.fillRect(centre + offset, padding.top + plotHeight - barHeight, barWidth, barHeight);
+      };
+      const orig = data.original.get(date) || { ewes: 0, lambs: 0 };
+      const adj = data.adjusted.get(date) || { ewes: 0, lambs: 0 };
+      const obs = data.observed.get(date) || { ewes: 0, lambs: 0 };
+      if (state.series.original) {
+        draw(orig.ewes, "rgba(127, 182, 154, 0.85)", -barWidth * 1.6);
+        draw(orig.lambs, "rgba(127, 182, 154, 0.42)", -barWidth * 0.5);
+      }
+      if (state.series.adjusted) draw(adj.ewes, CURVE_COLORS.adjusted, barWidth * 0.6);
+      if (state.series.observed) draw(obs.ewes, CURVE_COLORS.observed, barWidth * 1.7);
+    });
+  }
+
+  // Punto de control acumulado: marca aislada y etiquetada. NUNCA se une con
+  // una línea como si todos los animales hubieran nacido ese día.
+  if (state.series.observed) {
+    for (const point of data.checkpoints) {
+      const index = columnByDate.get(point.date);
+      if (index === undefined) continue;
+      const x = centreOf(index);
+      const pct = point.cumulative_ewes_pct;
+      const y = cumulative && pct !== null && pct !== undefined
+        ? padding.top + plotHeight - Math.min(Number(pct), 1) * plotHeight
+        : padding.top + 10;
+      context.save();
+      context.strokeStyle = CURVE_COLORS.checkpoint;
+      context.setLineDash([3, 3]);
+      context.beginPath();
+      context.moveTo(x, padding.top);
+      context.lineTo(x, padding.top + plotHeight);
+      context.stroke();
+      context.setLineDash([]);
+      context.fillStyle = CURVE_COLORS.checkpoint;
+      context.beginPath();
+      context.moveTo(x, y - 6);
+      context.lineTo(x + 6, y);
+      context.lineTo(x, y + 6);
+      context.lineTo(x - 6, y);
+      context.closePath();
+      context.fill();
+      context.restore();
+    }
+  }
+
+  // Banda de mortalidad diaria, escala propia.
+  const maxDeaths = Math.max(
+    ...data.dates.map((date) =>
+      Math.max(
+        state.mortality.lamb ? mortalityAt(data, date, "lamb") : 0,
+        state.mortality.ewe ? mortalityAt(data, date, "ewe") : 0,
+        state.mortality.stillborn ? mortalityAt(data, date, "stillborn") : 0,
+      ),
+    ),
+    1,
+  );
+  context.strokeStyle = "rgba(135, 135, 134, 0.35)";
+  context.beginPath();
+  context.moveTo(padding.left, bandTop + bandHeight);
+  context.lineTo(padding.left + plotWidth, bandTop + bandHeight);
+  context.stroke();
+  context.fillStyle = "#878786";
+  context.textAlign = "right";
+  context.fillText(integerFormatter.format(maxDeaths), padding.left - 6, bandTop + 10);
+  const deathBar = Math.max(1.5, Math.min(7, slot * 0.24));
+  data.dates.forEach((date, index) => {
+    const centre = centreOf(index);
+    const kinds = [
+      ["lamb", CURVE_COLORS.lambDeath, -deathBar * 1.6],
+      ["ewe", CURVE_COLORS.eweDeath, -deathBar * 0.3],
+      ["stillborn", CURVE_COLORS.stillborn, deathBar],
+    ];
+    for (const [kind, colour, offset] of kinds) {
+      if (!state.mortality[kind]) continue;
+      const value = mortalityAt(data, date, kind);
+      if (!value) continue;
+      const barHeight = (value / maxDeaths) * (bandHeight - 8);
+      context.fillStyle = colour;
+      context.fillRect(centre + offset, bandTop + bandHeight - barHeight, deathBar, barHeight);
+    }
+  });
+
+  context.fillStyle = "#878786";
+  context.textAlign = "center";
+  const labelEvery = Math.max(1, Math.ceil(data.dates.length / 8));
+  data.dates.forEach((date, index) => {
+    if (index % labelEvery !== 0 && index !== data.dates.length - 1) return;
+    context.fillText(formatDate(date, { short: true, includeYear: false }), centreOf(index), height - 12);
+  });
+
+  attachChartPointer(viewKey, canvas, data, { padding, plotWidth, slot });
+  renderDayDetail(viewKey, state, data);
+}
+
+function curveNote(state, data) {
+  const notes = [];
+  if (state.mode === "cumulative") {
+    notes.push("Líneas: avance acumulado de cada serie. Barras inferiores: mortalidad diaria informada.");
+  } else {
+    notes.push("Barras: valores diarios de cada serie. Barras inferiores: mortalidad diaria informada.");
+  }
+  for (const point of data.checkpoints) {
+    notes.push(
+      `Último recuento acumulado al ${formatDayMonth(point.date)} en ${LOT_FULL_NAME[point.module_code] || point.module_code}: ` +
+        `${formatInteger(point.lambed_ewes)} ovejas paridas y ${formatInteger(point.confirmed_live_lambs ?? point.registered_born_lambs)} corderos nacidos vivos. ` +
+        `Sin distribución diaria informada.`,
+    );
+  }
+  if (state.lot === "TOTAL" && data.adjustedLots.length && data.adjustedLots.length < LOTS.length) {
+    notes.push(
+      `La curva ajustada existe sólo en ${lotNames(data.adjustedLots)}: se consulta en la vista de ese lote para no mezclar lotes.`,
+    );
+  }
+  if ((DASH.stillborn_daily || {}).status === "NO_INFORMADO") {
+    notes.push((DASH.stillborn_daily || {}).message || "");
+  }
+  return notes.filter(Boolean).map((text) => escapeHtml(text)).join("<br />");
+}
+
+function attachChartPointer(viewKey, canvas, data, geometry) {
+  const tip = byId(`tip-${viewKey}`);
+  const indexAt = (event) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left - geometry.padding.left;
+    if (x < 0 || x > geometry.plotWidth) return null;
+    const index = Math.floor(x / geometry.slot);
+    return index >= 0 && index < data.dates.length ? index : null;
+  };
+  canvas.onpointermove = (event) => {
+    const index = indexAt(event);
+    if (index === null || !tip) {
+      if (tip) tip.hidden = true;
+      return;
+    }
+    tip.innerHTML = tooltipHtml(data, data.dates[index]);
+    tip.hidden = false;
+    const rect = canvas.getBoundingClientRect();
+    const left = Math.min(Math.max(event.clientX - rect.left - 90, 4), rect.width - 200);
+    tip.style.left = `${Math.max(4, left)}px`;
+  };
+  canvas.onpointerleave = () => {
+    if (tip) tip.hidden = true;
+  };
+  canvas.onclick = (event) => {
+    const index = indexAt(event);
+    if (index === null) return;
+    const state = CHART_STATE[viewKey];
+    state.selected = data.dates[index];
+    renderDayDetail(viewKey, state, data);
+    const detail = byId(`day-${viewKey}`);
+    if (detail) detail.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  };
+}
+
+function tooltipHtml(data, date) {
+  const rows = [`<strong>${escapeHtml(formatDate(date))}</strong>`];
+  const orig = data.original.get(date);
+  if (orig) {
+    rows.push(
+      `Previsto: ${escapeHtml(formatDecimal(orig.ewes))} ovejas · ${escapeHtml(formatDecimal(orig.lambs))} corderos`,
+    );
+  }
+  const obs = data.observed.get(date);
+  if (obs) {
+    rows.push(`Observado: ${escapeHtml(formatInteger(obs.ewes))} ovejas · ${escapeHtml(formatInteger(obs.lambs))} corderos`);
+  }
+  for (const point of data.checkpoints.filter((item) => item.date === date)) {
+    rows.push(`Recuento acumulado informado en esta fecha (${escapeHtml(LOT_LABEL[point.module_code] || point.module_code)})`);
+  }
+  for (const row of data.mortality.filter((item) => item.date === date)) {
+    rows.push(
+      `${escapeHtml(row.animal_type === "OVEJA" ? "Oveja" : "Cordero")}: ${escapeHtml(formatInteger(row.quantity))} · ` +
+        `${escapeHtml(row.cause_label)} · ${escapeHtml(row.death_moment_label)} · ${escapeHtml(row.service_label)}`,
+    );
+  }
+  for (const row of data.stillborn.filter((item) => item.date === date)) {
+    rows.push(`Nacidos muertos al parto: ${escapeHtml(formatInteger(row.quantity))}`);
+  }
+  const risk = (DASH.chill_public?.daily || []).find((day) => day.date === date);
+  if (risk) rows.push(`Riesgo climático previsto: ${escapeHtml(riskLabel(risk.risk_category))}`);
+  return rows.join("<br />");
+}
+
+/* Detalle diario estructurado (§10). */
+function renderDayDetail(viewKey, state, data) {
+  const host = byId(`day-${viewKey}`);
+  if (!host) return;
+  const date = state.selected;
+  if (!date) {
+    host.innerHTML = `<p class="chart-note">Tocá una fecha del gráfico para ver su detalle.</p>`;
+    return;
+  }
+  const orig = data.original.get(date);
+  const adj = data.adjusted.get(date);
+  const obs = data.observed.get(date);
+  const checkpoints = data.checkpoints.filter((item) => item.date === date);
+  const deaths = data.mortality.filter((item) => item.date === date);
+  const stillborn = data.stillborn.filter((item) => item.date === date);
+  const risk = (DASH.chill_public?.daily || []).find((day) => day.date === date);
+  const milestones = (DASH.campaign_milestones?.items || []).filter(
+    (item) => item.date === date && (state.lot === "TOTAL" || item.module_code === state.lot),
+  );
+  const services = (DASH.lambing_curves?.lots || [])
+    .filter((lot) => state.lot === "TOTAL" || lot.code === state.lot)
+    .flatMap((lot) => (lot.services || []).map((service) => `${LOT_LABEL[lot.code]} · ${service.service_type}`));
+
+  const cell = (label, value) =>
+    `<div><dt>${escapeHtml(label)}</dt><dd class="${absentClass(value)}">${escapeHtml(value)}</dd></div>`;
+  const lambDeaths = deaths
+    .filter((row) => row.animal_type === "CORDERO")
+    .reduce((total, row) => total + row.quantity, 0);
+  const eweDeaths = deaths
+    .filter((row) => row.animal_type === "OVEJA")
+    .reduce((total, row) => total + row.quantity, 0);
+  const stillbornTotal = stillborn.reduce((total, row) => total + row.quantity, 0);
+
+  host.innerHTML = `
+    <h3 class="day-detail__title">Detalle del ${escapeHtml(formatDate(date))}</h3>
+    <dl class="control-grid">
+      ${cell("Lote", state.lot === "TOTAL" ? "Total campaña" : LOT_FULL_NAME[state.lot] || state.lot)}
+      ${cell("Servicio", services.length ? services.join(" · ") : "Sin servicio asociado")}
+      ${cell("Ovejas previstas", orig ? formatDecimal(orig.ewes) : "SIN CURVA")}
+      ${cell("Corderos previstos", orig ? formatDecimal(orig.lambs) : "SIN CURVA")}
+      ${cell("Ovejas previstas (ajustada)", adj ? formatDecimal(adj.ewes) : "SIN AJUSTE")}
+      ${cell("Ovejas paridas registradas ese día", obs ? formatInteger(obs.ewes) : "SIN REGISTROS")}
+      ${cell("Corderos nacidos registrados ese día", obs ? formatInteger(obs.lambs) : "SIN REGISTROS")}
+      ${cell("Nacidos muertos al parto", stillborn.length ? formatInteger(stillbornTotal) : "NO INFORMADO")}
+      ${cell("Corderos muertos posteriormente", deaths.length ? formatInteger(lambDeaths) : "SIN REGISTROS")}
+      ${cell("Ovejas muertas", deaths.length ? formatInteger(eweDeaths) : "SIN REGISTROS")}
+      ${cell("Riesgo climático previsto", risk ? riskLabel(risk.risk_category) : "SIN DATO")}
+    </dl>
+    ${checkpoints
+      .map(
+        (point) => `
+      <p class="day-detail__checkpoint"><span class="tag tag--muted">ACUMULADO</span>
+      Recuento acumulado informado en esta fecha (${escapeHtml(LOT_FULL_NAME[point.module_code] || point.module_code)}):
+      ${escapeHtml(formatInteger(point.lambed_ewes))} ovejas paridas y
+      ${escapeHtml(formatInteger(point.confirmed_live_lambs ?? point.registered_born_lambs))} corderos nacidos vivos.
+      No es un valor diario.</p>`,
+      )
+      .join("")}
+    ${
+      deaths.length
+        ? `<div class="table-wrap"><table class="data-table"><thead><tr><th>Animal</th><th class="num">Cant.</th><th>Causa</th><th>Momento</th><th>Servicio</th></tr></thead><tbody>${deaths
+            .map(
+              (row) => `<tr>
+              <td>${escapeHtml(row.animal_type === "OVEJA" ? "Oveja" : "Cordero")}</td>
+              <td class="num">${escapeHtml(formatInteger(row.quantity))}</td>
+              <td>${escapeHtml(row.cause_label)}</td>
+              <td>${escapeHtml(row.death_moment_label)}</td>
+              <td>${escapeHtml(row.service_label)}</td>
+            </tr>`,
+            )
+            .join("")}</tbody></table></div>`
+        : ""
+    }
+    ${
+      milestones.length
+        ? `<ul class="milestones milestones--inline">${milestones
+            .map((item) => {
+              const line = milestoneLine(item);
+              return `<li class="milestone"><span class="milestone__scope">${escapeHtml(line.scope)}</span><span class="milestone__text">${escapeHtml(line.text)}</span></li>`;
+            })
+            .join("")}</ul>`
+        : ""
+    }`;
 }
 
 function lotChill(code) {
@@ -844,9 +1674,11 @@ function lotChill(code) {
   if (!days.length) return `<p class="empty-note">SIN DISTRIBUCIÓN DE PARTOS CARGADA.</p>`;
   const rows = days.map((day) => chillDay(day, (day.by_lot || {})[code])).join("");
   return `
-    <p class="chill-mode">Exposición diaria del lote.</p>
+    ${chillCoverage(code)}
+    <p class="chill-mode">Corderos esperados expuestos por día en este lote</p>
     <ul class="chill-list">${rows}</ul>
     ${chill72h(chill.exposure_72h, code)}
+    ${chillObserved()}
     <p class="chill-source">Fuente: INIA-GRAS · ${iniaLink()}</p>`;
 }
 
@@ -857,6 +1689,7 @@ function lotMortality(lot, module) {
     <div class="mort-summary">
       <div class="mort-tile"><span>Muertes de cordero</span><strong>${escapeHtml(formatInteger(mort.lamb_deaths_accumulated))}</strong></div>
       <div class="mort-tile"><span>Muertes de oveja</span><strong>${escapeHtml(formatInteger(mort.ewe_deaths_accumulated))}</strong></div>
+      <div class="mort-tile"><span>Nacidos muertos al parto</span><strong class="${absentClass(module.lamb_counts.stillborn === null ? "NO INFORMADO" : "")}">${escapeHtml(module.lamb_counts.stillborn === null || module.lamb_counts.stillborn === undefined ? "NO INFORMADO" : formatInteger(module.lamb_counts.stillborn))}</strong></div>
       <div class="mort-tile"><span>Último parte</span><strong>${escapeHtml(formatDate(mort.last_report_date))}</strong></div>
     </div>`;
 
@@ -875,7 +1708,7 @@ function lotMortality(lot, module) {
 
   // El tablero público muestra sólo campos estructurados: fecha, animal,
   // cantidad y causa normalizada. Las descripciones del estado observado son
-  // texto libre y quedan en la gestión interna y el informe privado.
+  // texto libre y quedan en la gestión interna.
   const rows = detail
     .map((event) => {
       const animal = event.animal_type === "OVEJA" ? "Oveja" : "Cordero";
@@ -973,11 +1806,7 @@ function showSection(name) {
 }
 
 function drawSectionCharts(name) {
-  const code = CODE_BY_SECTION[name];
-  if (!code) return;
-  const series = CURVE_SERIES[code];
-  const canvas = byId(`curve-${code}`);
-  if (series && canvas) drawCurveChart(canvas, series);
+  drawIntegralChart(name, CODE_BY_SECTION[name] || null);
 }
 
 function initRouter() {
@@ -990,12 +1819,38 @@ function initRouter() {
       window.setTimeout(closeDrawer, 0);
     }),
   );
+  document.addEventListener("change", onChartFilterChange);
   let resizeFrame = null;
   window.addEventListener("resize", () => {
     if (resizeFrame) cancelAnimationFrame(resizeFrame);
     resizeFrame = requestAnimationFrame(() => drawSectionCharts(currentSection()));
   });
   showSection(currentSection());
+}
+
+function onChartFilterChange(event) {
+  const target = event.target;
+  if (!target || !target.dataset || !target.dataset.chart) return;
+  const viewKey = target.dataset.chart;
+  const state = CHART_STATE[viewKey];
+  if (!state) return;
+  if (target.dataset.group) {
+    state[target.dataset.group][target.dataset.key] = target.checked;
+  } else if (target.dataset.filter === "lot") {
+    state.lot = target.value;
+    state.selected = null;
+    const serviceSelect = document.querySelector(`[data-chart="${viewKey}"][data-filter="service"]`);
+    if (serviceSelect) serviceSelect.innerHTML = serviceFilterOptions(state.lot);
+  } else if (target.dataset.filter === "service") {
+    state.service = target.value;
+  } else if (target.dataset.filter === "mode") {
+    state.mode = target.value;
+  } else if (target.dataset.filter === "from") {
+    state.from = target.value;
+  } else if (target.dataset.filter === "to") {
+    state.to = target.value;
+  }
+  drawIntegralChart(viewKey, CODE_BY_SECTION[viewKey] || null);
 }
 
 function onDrawerKey(event) {
@@ -1023,96 +1878,6 @@ function closeDrawer() {
   byId("nav-toggle").setAttribute("aria-expanded", "false");
   byId("scrim").hidden = true;
   document.removeEventListener("keydown", onDrawerKey);
-}
-
-/* ------------------------------------------------------------- gráfico --- */
-
-function drawCurveChart(canvas, seriesSet) {
-  const wrap = canvas.parentElement;
-  const base = (seriesSet && seriesSet.original) || [];
-  if (!wrap || !base.length) return;
-  const context = canvas.getContext("2d");
-  const width = Math.max(280, Math.floor(wrap.clientWidth));
-  const height = 300;
-  const ratio = Math.min(window.devicePixelRatio || 1, 2);
-  canvas.width = Math.floor(width * ratio);
-  canvas.height = Math.floor(height * ratio);
-  canvas.style.width = `${width}px`;
-  canvas.style.height = `${height}px`;
-  context.setTransform(ratio, 0, 0, ratio, 0, 0);
-  context.clearRect(0, 0, width, height);
-
-  const padding = { top: 18, right: 46, bottom: 42, left: 46 };
-  const plotWidth = width - padding.left - padding.right;
-  const plotHeight = height - padding.top - padding.bottom;
-  const maxValue = Math.max(...base.map((item) => Math.max(item.ewes, item.lambs)), 1);
-  const slot = plotWidth / base.length;
-  const barWidth = Math.max(1.5, Math.min(10, slot * 0.38));
-  // Eje temporal compartido: cada fecha de la curva original tiene su columna.
-  const columnByDate = new Map(base.map((item, index) => [item.date, index]));
-  const centreOf = (index) => padding.left + slot * index + slot / 2;
-
-  context.strokeStyle = "rgba(135, 135, 134, 0.28)";
-  context.lineWidth = 1;
-  context.font = "11px Raleway, system-ui, sans-serif";
-  context.fillStyle = "#878786";
-  for (let step = 0; step <= 4; step += 1) {
-    const y = padding.top + (plotHeight / 4) * step;
-    context.beginPath();
-    context.moveTo(padding.left, y);
-    context.lineTo(padding.left + plotWidth, y);
-    context.stroke();
-    const value = (maxValue * (4 - step)) / 4;
-    context.textAlign = "right";
-    context.fillText(integerFormatter.format(Math.round(value)), padding.left - 6, y + 4);
-    context.textAlign = "left";
-    context.fillText(`${Math.round(((4 - step) / 4) * 100)}%`, padding.left + plotWidth + 8, y + 4);
-  }
-
-  // Barras diarias de la curva ESPERADA ORIGINAL (referencia, nunca se oculta).
-  base.forEach((item, index) => {
-    const centre = centreOf(index);
-    const eweHeight = (item.ewes / maxValue) * plotHeight;
-    const lambHeight = (item.lambs / maxValue) * plotHeight;
-    context.fillStyle = "rgba(0, 105, 55, 0.55)";
-    context.fillRect(centre - barWidth - 1, padding.top + plotHeight - eweHeight, barWidth, eweHeight);
-    context.fillStyle = "rgba(127, 182, 154, 0.55)";
-    context.fillRect(centre + 1, padding.top + plotHeight - lambHeight, barWidth, lambHeight);
-  });
-
-  // Líneas de acumulado por serie, con el cumulative_pct que entrega el
-  // backend (el cliente no acumula ni recalcula). El acumulado observado puede
-  // superar 100 %: se recorta sólo el trazo al área visible.
-  const drawCumulative = (points, colour, dashed) => {
-    const usable = (points || []).filter(
-      (item) => item.cumulative !== null && item.cumulative !== undefined && columnByDate.has(item.date),
-    );
-    if (!usable.length) return;
-    context.beginPath();
-    context.strokeStyle = colour;
-    context.lineWidth = 2;
-    context.setLineDash(dashed ? [6, 4] : []);
-    usable.forEach((item, order) => {
-      const centre = centreOf(columnByDate.get(item.date));
-      const clamped = Math.min(Number(item.cumulative), 1);
-      const y = padding.top + plotHeight - clamped * plotHeight;
-      if (order === 0) context.moveTo(centre, y);
-      else context.lineTo(centre, y);
-    });
-    context.stroke();
-    context.setLineDash([]);
-  };
-  drawCumulative(seriesSet.original, CURVE_COLORS.original, true);
-  drawCumulative(seriesSet.adjusted, CURVE_COLORS.adjusted, false);
-  drawCumulative(seriesSet.observed, CURVE_COLORS.observed, false);
-
-  context.fillStyle = "#878786";
-  context.textAlign = "center";
-  const labelEvery = Math.max(1, Math.ceil(base.length / 8));
-  base.forEach((item, index) => {
-    if (index % labelEvery !== 0 && index !== base.length - 1) return;
-    context.fillText(formatDate(item.date, { short: true, includeYear: false }), centreOf(index), height - 14);
-  });
 }
 
 boot();

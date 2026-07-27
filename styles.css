@@ -1268,6 +1268,17 @@ h3 {
   font-size: 0.78rem;
 }
 
+/* Crédito institucional del equipo, sobrio y presente en escritorio y móvil */
+.site-footer__credit {
+  max-width: var(--content-max);
+  margin: var(--s4) auto 0;
+  padding-top: var(--s3);
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  color: #d6ebdc;
+  font-size: 0.78rem;
+  text-align: center;
+}
+
 .load-error {
   position: fixed;
   inset-inline: 16px;
@@ -1371,6 +1382,34 @@ h3 {
   .lot-card__stats {
     grid-template-columns: 1fr 1fr 1fr;
   }
+
+  /* Filtros del gráfico: dos columnas para no desbordar en 375 px */
+  .chart-filters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--s2);
+  }
+
+  .filter {
+    min-width: 0;
+  }
+
+  .chart-toggles {
+    gap: var(--s2);
+  }
+
+  .toggle {
+    flex: 1 1 46%;
+    font-size: 0.74rem;
+  }
+
+  .milestone {
+    gap: 4px var(--s2);
+  }
+
+  .chart-tip {
+    max-width: calc(100vw - 72px);
+  }
 }
 
 /* ------------------------------------- indicadores productivos (tabla) --- */
@@ -1423,6 +1462,269 @@ h3 {
 .curve-key--off {
   color: var(--ink-500);
   font-weight: 500;
+}
+
+/* ------------------------------------ acumulado registrado y cobertura --- */
+
+.summary-scope {
+  margin: 0 0 var(--s3);
+  color: var(--ink-600);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Cobertura: discreta, nunca una etiqueta amarilla grande sobre las tarjetas */
+.coverage-note {
+  margin: 0 0 var(--s4);
+  padding: var(--s2) var(--s3);
+  border-left: 3px solid var(--border-strong);
+  background: var(--surface-2);
+  color: var(--ink-600);
+  font-size: 0.82rem;
+}
+
+.stat__note--basis {
+  color: var(--ink-400);
+  font-size: 0.68rem;
+}
+
+/* ------------------------------------------ hitos y observaciones (§5) --- */
+
+.milestones {
+  display: grid;
+  gap: var(--s2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.milestone {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s2);
+  padding: var(--s3);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 0.88rem;
+}
+
+.milestone__date {
+  min-width: 52px;
+  color: var(--green-dark);
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+.milestone__scope {
+  padding: 1px 8px;
+  border-radius: var(--r-pill);
+  background: var(--green-pale);
+  color: var(--green-dark);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.milestone__text {
+  color: var(--ink-800);
+}
+
+.milestone--mortalidad_de_corderos,
+.milestone--mortalidad_de_ovejas {
+  border-left: 3px solid var(--ojo);
+}
+
+.milestone--incidencia {
+  border-left: 3px solid var(--amber);
+}
+
+.milestone--control_de_campo {
+  border-left: 3px solid var(--green);
+}
+
+.milestones--inline {
+  margin-top: var(--s3);
+}
+
+/* ------------------------------------------------ chill: textos y cobertura --- */
+
+.chill-explain {
+  margin: 0 0 var(--s3);
+  color: var(--ink-700);
+  font-size: 0.88rem;
+  max-width: 70ch;
+}
+
+.chill-phrase {
+  margin: 0 0 var(--s2);
+  color: var(--ink-900);
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+
+.chill-disclaimer {
+  margin: 0 0 var(--s4);
+  padding: var(--s2) var(--s3);
+  border-left: 3px solid var(--green);
+  background: var(--green-tint);
+  color: var(--ink-700);
+  font-size: 0.84rem;
+}
+
+.chill-coverage {
+  margin-bottom: var(--s4);
+}
+
+.chill-coverage__headline {
+  margin: 0 0 var(--s3);
+  color: var(--ink-900);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.chill-coverage .control-grid dd {
+  font-size: 1.1rem;
+}
+
+.chill-observed {
+  margin-top: var(--s4);
+  padding: var(--s4);
+  border-radius: var(--r);
+  border: 1px dashed var(--border-strong);
+  background: var(--surface-2);
+}
+
+.chill-observed h3 {
+  margin: 0 0 var(--s2);
+  font-size: 0.98rem;
+}
+
+.chill-observed p {
+  margin: 0 0 var(--s2);
+  color: var(--ink-600);
+  font-size: 0.86rem;
+}
+
+/* --------------------------------------------- curva integral y filtros --- */
+
+.chart-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s3);
+  margin-bottom: var(--s3);
+}
+
+.filter {
+  display: grid;
+  gap: 3px;
+  min-width: 132px;
+  flex: 1 1 132px;
+}
+
+.filter > span {
+  color: var(--ink-500);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.filter select,
+.filter input {
+  width: 100%;
+  min-height: 40px;
+  padding: 6px 10px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  font-size: 0.86rem;
+}
+
+.filter select:focus-visible,
+.filter input:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--green) 30%, transparent);
+  outline-offset: 1px;
+}
+
+.chart-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2) var(--s4);
+  margin-bottom: var(--s3);
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  font-size: 0.78rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.toggle input {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--green);
+}
+
+.toggle i {
+  display: inline-block;
+  width: 14px;
+  height: 4px;
+  border-radius: 2px;
+}
+
+.chart-wrap--integral {
+  position: relative;
+  min-height: 360px;
+  touch-action: pan-y;
+}
+
+.chart-tip {
+  position: absolute;
+  top: var(--s3);
+  z-index: 5;
+  max-width: 260px;
+  padding: var(--s2) var(--s3);
+  border-radius: var(--r-sm);
+  background: rgba(4, 56, 31, 0.95);
+  color: #fff;
+  font-size: 0.76rem;
+  line-height: 1.45;
+  pointer-events: none;
+  box-shadow: var(--sh-md);
+}
+
+.chart-tip[hidden] {
+  display: none;
+}
+
+.day-detail {
+  margin-top: var(--s4);
+}
+
+.day-detail__title {
+  margin: 0 0 var(--s3);
+  font-size: 1rem;
+}
+
+.day-detail__checkpoint {
+  margin: var(--s3) 0 0;
+  padding: var(--s3);
+  border-radius: var(--r-sm);
+  border-left: 3px solid var(--green);
+  background: var(--green-tint);
+  color: var(--ink-700);
+  font-size: 0.84rem;
 }
 
 /* ------------------------------------------------------ reduced motion --- */
