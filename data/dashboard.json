@@ -2,18 +2,12 @@
   "schema_version": "3.2.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-07-27T18:05:45.164918-03:00",
+  "generated_at": "2026-07-27T18:11:28.103797-03:00",
   "max_age_minutes": 60,
   "system_health": {
-    "state": "OJO",
-    "headline": "Hay un reporte sin procesar.",
-    "reasons": [
-      {
-        "code": "PACKAGE_ERROR",
-        "message": "Hay un reporte sin procesar.",
-        "severity": "OJO"
-      }
-    ],
+    "state": "OK",
+    "headline": "Todo actualizado",
+    "reasons": [],
     "pending_actions": {
       "reports": 0,
       "links": 0,
@@ -21,7 +15,7 @@
       "technical": 0,
       "total": 0
     },
-    "generated_at": "2026-07-27T18:05:45.164918-03:00",
+    "generated_at": "2026-07-27T18:11:28.103797-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -4694,10 +4688,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-07-27T21:04:13.837151Z",
+      "processed_at": "2026-07-27T21:11:25.006279Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-07-27T18:05:45.164918-03:00",
+    "last_sync_at": "2026-07-27T18:11:28.103797-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
