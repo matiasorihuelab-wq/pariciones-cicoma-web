@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-07-28T14:24:56.647884-03:00",
+  "generated_at": "2026-07-28T14:25:20.556220-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -21,7 +21,7 @@
       "technical": 0,
       "total": 0
     },
-    "generated_at": "2026-07-28T14:24:56.647884-03:00",
+    "generated_at": "2026-07-28T14:25:20.556220-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -4123,12 +4123,12 @@
           "MA": 0.0
         },
         "cohort_72h_complete": true,
-        "cohort_72h_category": "ALTO"
+        "cohort_72h_category": "BAJO"
       },
       {
         "date": "2026-07-29",
-        "risk_category": "MEDIO",
-        "display_risk_category": "MEDIO",
+        "risk_category": "BAJO",
+        "display_risk_category": "BAJO",
         "total_exposed": 15.813,
         "by_lot": {
           "INTENSIVO": 15.8134,
@@ -4136,12 +4136,12 @@
           "MA": 0.0
         },
         "cohort_72h_complete": true,
-        "cohort_72h_category": "ALTO"
+        "cohort_72h_category": "BAJO"
       },
       {
         "date": "2026-07-30",
-        "risk_category": "ALTO",
-        "display_risk_category": "ALTO",
+        "risk_category": "BAJO",
+        "display_risk_category": "BAJO",
         "total_exposed": 15.71,
         "by_lot": {
           "INTENSIVO": 15.7103,
@@ -4149,12 +4149,12 @@
           "MA": 0.0
         },
         "cohort_72h_complete": true,
-        "cohort_72h_category": "ALTO"
+        "cohort_72h_category": "BAJO"
       },
       {
         "date": "2026-07-31",
-        "risk_category": "ALTO",
-        "display_risk_category": "ALTO",
+        "risk_category": "BAJO",
+        "display_risk_category": "BAJO",
         "total_exposed": 15.504,
         "by_lot": {
           "INTENSIVO": 15.5042,
@@ -4166,8 +4166,8 @@
       },
       {
         "date": "2026-08-01",
-        "risk_category": "ALTO",
-        "display_risk_category": "ALTO",
+        "risk_category": "BAJO",
+        "display_risk_category": "BAJO",
         "total_exposed": 15.195,
         "by_lot": {
           "INTENSIVO": 15.1952,
@@ -4184,17 +4184,17 @@
       "cohorts_counted": 5,
       "rule": "Cada cohorte prevista para el día D se evalúa en D, D+1 y D+2 y se cuenta una sola vez bajo su categoría máxima.",
       "SIN_RIESGO": 0.0,
-      "BAJO": 0.0,
+      "BAJO": 15.7103,
       "MEDIO": 0.0,
-      "ALTO": 15.7103,
+      "ALTO": 0.0,
       "CRITICO": 0.0,
       "RIESGO_72H_INCOMPLETO": 10.0157,
       "by_module": {
         "INTENSIVO": {
           "SIN_RIESGO": 0.0,
-          "BAJO": 0.0,
+          "BAJO": 15.7103,
           "MEDIO": 0.0,
-          "ALTO": 15.7103,
+          "ALTO": 0.0,
           "CRITICO": 0.0,
           "RIESGO_72H_INCOMPLETO": 10.0157
         },
@@ -4233,14 +4233,14 @@
           "curve": "ADJUSTED",
           "basis": "EXPECTED",
           "risk_d": "SIN_RIESGO",
-          "risk_d1": "MEDIO",
-          "risk_d2": "ALTO",
+          "risk_d1": "BAJO",
+          "risk_d2": "BAJO",
           "window": [
             "2026-07-28",
             "2026-07-29",
             "2026-07-30"
           ],
-          "max_risk": "ALTO",
+          "max_risk": "BAJO",
           "complete": true,
           "missing_dates": []
         },
@@ -4254,15 +4254,15 @@
           "in_lambing_window": true,
           "curve": "ADJUSTED",
           "basis": "EXPECTED",
-          "risk_d": "MEDIO",
-          "risk_d1": "ALTO",
-          "risk_d2": "ALTO",
+          "risk_d": "BAJO",
+          "risk_d1": "BAJO",
+          "risk_d2": "BAJO",
           "window": [
             "2026-07-29",
             "2026-07-30",
             "2026-07-31"
           ],
-          "max_risk": "ALTO",
+          "max_risk": "BAJO",
           "complete": true,
           "missing_dates": []
         },
@@ -4276,15 +4276,15 @@
           "in_lambing_window": true,
           "curve": "ADJUSTED",
           "basis": "EXPECTED",
-          "risk_d": "ALTO",
-          "risk_d1": "ALTO",
-          "risk_d2": "ALTO",
+          "risk_d": "BAJO",
+          "risk_d1": "BAJO",
+          "risk_d2": "BAJO",
           "window": [
             "2026-07-30",
             "2026-07-31",
             "2026-08-01"
           ],
-          "max_risk": "ALTO",
+          "max_risk": "BAJO",
           "complete": true,
           "missing_dates": []
         },
@@ -4298,8 +4298,8 @@
           "in_lambing_window": true,
           "curve": "ADJUSTED",
           "basis": "EXPECTED",
-          "risk_d": "ALTO",
-          "risk_d1": "ALTO",
+          "risk_d": "BAJO",
+          "risk_d1": "BAJO",
           "risk_d2": null,
           "window": [
             "2026-07-31",
@@ -4322,7 +4322,7 @@
           "in_lambing_window": true,
           "curve": "ADJUSTED",
           "basis": "EXPECTED",
-          "risk_d": "ALTO",
+          "risk_d": "BAJO",
           "risk_d1": null,
           "risk_d2": null,
           "window": [
@@ -4348,14 +4348,14 @@
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
           "risk_d": "SIN_RIESGO",
-          "risk_d1": "MEDIO",
-          "risk_d2": "ALTO",
+          "risk_d1": "BAJO",
+          "risk_d2": "BAJO",
           "window": [
             "2026-07-28",
             "2026-07-29",
             "2026-07-30"
           ],
-          "max_risk": "ALTO",
+          "max_risk": "BAJO",
           "complete": true,
           "missing_dates": []
         },
@@ -4369,15 +4369,15 @@
           "in_lambing_window": false,
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
-          "risk_d": "MEDIO",
-          "risk_d1": "ALTO",
-          "risk_d2": "ALTO",
+          "risk_d": "BAJO",
+          "risk_d1": "BAJO",
+          "risk_d2": "BAJO",
           "window": [
             "2026-07-29",
             "2026-07-30",
             "2026-07-31"
           ],
-          "max_risk": "ALTO",
+          "max_risk": "BAJO",
           "complete": true,
           "missing_dates": []
         },
@@ -4391,15 +4391,15 @@
           "in_lambing_window": false,
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
-          "risk_d": "ALTO",
-          "risk_d1": "ALTO",
-          "risk_d2": "ALTO",
+          "risk_d": "BAJO",
+          "risk_d1": "BAJO",
+          "risk_d2": "BAJO",
           "window": [
             "2026-07-30",
             "2026-07-31",
             "2026-08-01"
           ],
-          "max_risk": "ALTO",
+          "max_risk": "BAJO",
           "complete": true,
           "missing_dates": []
         },
@@ -4413,8 +4413,8 @@
           "in_lambing_window": false,
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
-          "risk_d": "ALTO",
-          "risk_d1": "ALTO",
+          "risk_d": "BAJO",
+          "risk_d1": "BAJO",
           "risk_d2": null,
           "window": [
             "2026-07-31",
@@ -4437,7 +4437,7 @@
           "in_lambing_window": false,
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
-          "risk_d": "ALTO",
+          "risk_d": "BAJO",
           "risk_d1": null,
           "risk_d2": null,
           "window": [
@@ -4463,14 +4463,14 @@
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
           "risk_d": "SIN_RIESGO",
-          "risk_d1": "MEDIO",
-          "risk_d2": "ALTO",
+          "risk_d1": "BAJO",
+          "risk_d2": "BAJO",
           "window": [
             "2026-07-28",
             "2026-07-29",
             "2026-07-30"
           ],
-          "max_risk": "ALTO",
+          "max_risk": "BAJO",
           "complete": true,
           "missing_dates": []
         },
@@ -4484,15 +4484,15 @@
           "in_lambing_window": false,
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
-          "risk_d": "MEDIO",
-          "risk_d1": "ALTO",
-          "risk_d2": "ALTO",
+          "risk_d": "BAJO",
+          "risk_d1": "BAJO",
+          "risk_d2": "BAJO",
           "window": [
             "2026-07-29",
             "2026-07-30",
             "2026-07-31"
           ],
-          "max_risk": "ALTO",
+          "max_risk": "BAJO",
           "complete": true,
           "missing_dates": []
         },
@@ -4506,15 +4506,15 @@
           "in_lambing_window": false,
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
-          "risk_d": "ALTO",
-          "risk_d1": "ALTO",
-          "risk_d2": "ALTO",
+          "risk_d": "BAJO",
+          "risk_d1": "BAJO",
+          "risk_d2": "BAJO",
           "window": [
             "2026-07-30",
             "2026-07-31",
             "2026-08-01"
           ],
-          "max_risk": "ALTO",
+          "max_risk": "BAJO",
           "complete": true,
           "missing_dates": []
         },
@@ -4528,8 +4528,8 @@
           "in_lambing_window": false,
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
-          "risk_d": "ALTO",
-          "risk_d1": "ALTO",
+          "risk_d": "BAJO",
+          "risk_d1": "BAJO",
           "risk_d2": null,
           "window": [
             "2026-07-31",
@@ -4552,7 +4552,7 @@
           "in_lambing_window": false,
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
-          "risk_d": "ALTO",
+          "risk_d": "BAJO",
           "risk_d1": null,
           "risk_d2": null,
           "window": [
@@ -4944,7 +4944,7 @@
     },
     "analyzed_at": "2026-07-28T14:30:00-03:00",
     "forecast_run_date": "2026-07-28",
-    "imported_at": "2026-07-28T14:24:48.364380-03:00",
+    "imported_at": "2026-07-28T14:25:19.515223-03:00",
     "forecast_age_hours": 0.0,
     "update_status": {
       "state": "ACTUALIZADO",
@@ -5022,7 +5022,7 @@
         "ci_max": 900.0,
         "ci_interval": "< 900",
         "ci_unit": "kJ/m2/h",
-        "confidence": 0.95,
+        "confidence": 0.9,
         "requires_review": false,
         "automatic_use": true,
         "image_url": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Min_0.png",
@@ -5062,7 +5062,7 @@
             "2026-07-29",
             "2026-07-30"
           ],
-          "category": "ALTO",
+          "category": "BAJO",
           "complete": true,
           "missing_dates": [],
           "lambs": 5.2826
@@ -5071,13 +5071,13 @@
       },
       {
         "date": "2026-07-29",
-        "risk_category": "MEDIO",
-        "display_risk_category": "MEDIO",
-        "ci_min": 1000.0,
-        "ci_max": 1100.0,
-        "ci_interval": "1000–1100",
+        "risk_category": "BAJO",
+        "display_risk_category": "BAJO",
+        "ci_min": 900.0,
+        "ci_max": 1000.0,
+        "ci_interval": "900–1000",
         "ci_unit": "kJ/m2/h",
-        "confidence": 0.85,
+        "confidence": 0.8,
         "requires_review": false,
         "automatic_use": true,
         "image_url": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Min_1.png",
@@ -5117,7 +5117,7 @@
             "2026-07-30",
             "2026-07-31"
           ],
-          "category": "ALTO",
+          "category": "BAJO",
           "complete": true,
           "missing_dates": [],
           "lambs": 5.2482
@@ -5126,13 +5126,13 @@
       },
       {
         "date": "2026-07-30",
-        "risk_category": "ALTO",
-        "display_risk_category": "ALTO",
-        "ci_min": 1100.0,
-        "ci_max": 1200.0,
-        "ci_interval": "1100–1200",
+        "risk_category": "BAJO",
+        "display_risk_category": "BAJO",
+        "ci_min": 900.0,
+        "ci_max": 1000.0,
+        "ci_interval": "900–1000",
         "ci_unit": "kJ/m2/h",
-        "confidence": 0.85,
+        "confidence": 0.8,
         "requires_review": false,
         "automatic_use": true,
         "image_url": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Min_2.png",
@@ -5172,7 +5172,7 @@
             "2026-07-31",
             "2026-08-01"
           ],
-          "category": "ALTO",
+          "category": "BAJO",
           "complete": true,
           "missing_dates": [],
           "lambs": 5.1795
@@ -5181,13 +5181,13 @@
       },
       {
         "date": "2026-07-31",
-        "risk_category": "ALTO",
-        "display_risk_category": "ALTO",
-        "ci_min": 1100.0,
-        "ci_max": 1200.0,
-        "ci_interval": "1100–1200",
+        "risk_category": "BAJO",
+        "display_risk_category": "BAJO",
+        "ci_min": 900.0,
+        "ci_max": 1000.0,
+        "ci_interval": "900–1000",
         "ci_unit": "kJ/m2/h",
-        "confidence": 0.9,
+        "confidence": 0.75,
         "requires_review": false,
         "automatic_use": true,
         "image_url": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Min_3.png",
@@ -5238,13 +5238,13 @@
       },
       {
         "date": "2026-08-01",
-        "risk_category": "ALTO",
-        "display_risk_category": "ALTO",
-        "ci_min": 1100.0,
-        "ci_max": 1200.0,
-        "ci_interval": "1100–1200",
+        "risk_category": "BAJO",
+        "display_risk_category": "BAJO",
+        "ci_min": 900.0,
+        "ci_max": 1000.0,
+        "ci_interval": "900–1000",
         "ci_unit": "kJ/m2/h",
-        "confidence": 0.9,
+        "confidence": 0.8,
         "requires_review": false,
         "automatic_use": true,
         "image_url": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Min_4.png",
@@ -5301,17 +5301,17 @@
       "cohorts_counted": 5,
       "rule": "Cada cohorte prevista para el día D se evalúa en D, D+1 y D+2 y se cuenta una sola vez bajo su categoría máxima.",
       "SIN_RIESGO": 0.0,
-      "BAJO": 0.0,
+      "BAJO": 15.7103,
       "MEDIO": 0.0,
-      "ALTO": 15.7103,
+      "ALTO": 0.0,
       "CRITICO": 0.0,
       "RIESGO_72H_INCOMPLETO": 10.0157,
       "by_module": {
         "INTENSIVO": {
           "SIN_RIESGO": 0.0,
-          "BAJO": 0.0,
+          "BAJO": 15.7103,
           "MEDIO": 0.0,
-          "ALTO": 15.7103,
+          "ALTO": 0.0,
           "CRITICO": 0.0,
           "RIESGO_72H_INCOMPLETO": 10.0157
         },
@@ -5342,34 +5342,34 @@
   "chill_pariciones_summary": {
     "source": "INIA-GRAS interpretada por Zapia",
     "analyzed_at": "2026-07-28T14:30:00-03:00",
-    "imported_at": "2026-07-28T14:24:48.364380-03:00",
+    "imported_at": "2026-07-28T14:25:19.515223-03:00",
     "update_status": "ACTUALIZADO",
     "product_cross_status": "OK",
     "dates": [
       {
         "date": "2026-07-28",
         "risk_category": "SIN_RIESGO",
-        "confidence": 0.95
+        "confidence": 0.9
       },
       {
         "date": "2026-07-29",
-        "risk_category": "MEDIO",
-        "confidence": 0.85
+        "risk_category": "BAJO",
+        "confidence": 0.8
       },
       {
         "date": "2026-07-30",
-        "risk_category": "ALTO",
-        "confidence": 0.85
+        "risk_category": "BAJO",
+        "confidence": 0.8
       },
       {
         "date": "2026-07-31",
-        "risk_category": "ALTO",
-        "confidence": 0.9
+        "risk_category": "BAJO",
+        "confidence": 0.75
       },
       {
         "date": "2026-08-01",
-        "risk_category": "ALTO",
-        "confidence": 0.9
+        "risk_category": "BAJO",
+        "confidence": 0.8
       }
     ]
   },
@@ -5460,10 +5460,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-07-28T17:24:53.594723Z",
+      "processed_at": "2026-07-28T17:25:15.029475Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-07-28T14:24:56.647884-03:00",
+    "last_sync_at": "2026-07-28T14:25:20.556220-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
