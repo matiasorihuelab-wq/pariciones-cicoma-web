@@ -2,13 +2,13 @@
 
 /* Tablero público CICOMA — monitoreo de pariciones 2026.
  * Fuente canónica versionada: APP/web_source (WEB es staging generado).
- * Lee exclusivamente data/dashboard.json (esquema 3.4.0), validando el
+ * Lee exclusivamente data/dashboard.json (esquema 3.5.0), validando el
  * contrato antes de renderizar. Navegación por menú lateral con secciones por
  * lote. Nunca convierte un faltante en cero, nunca presenta un acumulado como
  * valor diario y nunca calcula un total parcial como si fuera completo. */
 
 const DATA_URL = "./data/dashboard.json";
-const SUPPORTED_SCHEMA = "3.4.0";
+const SUPPORTED_SCHEMA = "3.5.0";
 const SECTIONS = ["resumen", "intensivo", "dohne", "ma"];
 const LOTS = [
   { code: "INTENSIVO", section: "intensivo", name: "Intensivo", breed: "Merino Australiano X Hampshire Down" },
@@ -553,9 +553,21 @@ function estimatedRemainingCard(label, block) {
 function indicatorTable(items, caption) {
   const list = Array.isArray(items) ? items : [];
   if (!list.length) return `<p class="empty-note">SIN INDICADORES DISPONIBLES.</p>`;
+  // Cada estado del contrato se muestra tal cual: un total PARCIAL por lotes
+  // faltantes no es lo mismo que no tener recuento, y decir «SIN RECUENTO»
+  // donde hay un lote informado ocultaría lo que sí se registró.
+  const STATE_TEXT = {
+    OK: "OK",
+    NO_INFORMADO: "NO INFORMADO",
+    PARCIAL: "PARCIAL",
+    SIN_CALCULO: "SIN CÁLCULO",
+    ESTIMADO: "ESTIMADO",
+    SIN_RECUENTO: "SIN RECUENTO",
+  };
+  const stateText = (item) => STATE_TEXT[item.status] || "SIN RECUENTO";
   const fmtValue = (item) => {
     if (item.status !== "OK" || item.value === null || item.value === undefined) {
-      return item.status === "NO_INFORMADO" ? "NO INFORMADO" : "SIN RECUENTO";
+      return stateText(item);
     }
     const value = decimalFormatter.format(item.value);
     return item.unit === "%" ? `${value} %` : `${value} ${item.unit}`;
@@ -567,7 +579,7 @@ function indicatorTable(items, caption) {
   };
   const rows = list
     .map((item) => {
-      const state = item.status === "OK" ? "OK" : item.status === "NO_INFORMADO" ? "NO INFORMADO" : "SIN RECUENTO";
+      const state = stateText(item);
       const stateTone = item.status === "OK" ? "ok" : "pending";
       return `
       <tr>
@@ -608,7 +620,7 @@ function renderResumen() {
   // REGISTRADOS, no resultados de campaña: el encabezado lo dice.
   const kpis = [
     registeredCard("Ovejas paridas registradas", ov.lambed_ewes, { kpi: true, accent: true, note: null }),
-    registeredCard("Corderos nacidos registrados", ov.registered_born_lambs, { kpi: true, accent: true, note: null }),
+    registeredCard("Corderos nacidos acumulados estimados", ov.registered_born_lambs, { kpi: true, accent: true, note: "vivos contabilizados + muertos acumulados" }),
     progressCard("Avance de ovejas paridas", ov.ewe_progress, { kpi: true, hideBasis: true }),
     progressCard("Avance de corderos nacidos", ov.lamb_progress, { kpi: true, hideBasis: true }),
   ].join("");
@@ -617,7 +629,7 @@ function renderResumen() {
   const secondary = [
     metricCard("Previstas a parir", formatInteger(ov.expected_to_lamb)),
     metricCard("Corderos esperados", formatInteger(ov.expected_lambs)),
-    registeredCard("Nacidos vivos registrados", ov.born_alive, { note: null }),
+    registeredCard("Corderos vivos contabilizados", ov.current_stock_lambs_total, { note: "último recuento de campo" }),
     estimatedRemainingCard("Ovejas restantes según registros", ov.remaining_ewes_estimated),
     estimatedRemainingCard("Corderos restantes estimados", ov.remaining_lambs_estimated),
     metricCard("Muertes registradas", deaths, deathsNote),
@@ -680,7 +692,10 @@ function distributionCard(lot) {
   const module = moduleByCode(lot.code);
   const previsto = module ? formatInteger(module.ewe_counts.expected_to_lamb) : "—";
   const paridas = module ? absentOr(module.ewe_counts.counted_lambed, formatInteger) : "—";
-  const nacidos = module ? absentOr(module.lamb_counts.registered_born, formatInteger) : "—";
+  // El stock vivo y la reconstrucción son dos cifras distintas: la tarjeta
+  // muestra las dos y no llama «nacidos» a los corderos que están vivos.
+  const vivos = module ? absentOr(module.lamb_counts.current_stock_lambs, formatInteger) : "—";
+  const nacidos = module ? absentOr(module.lamb_counts.estimated_born_lambs, formatInteger) : "—";
   const muertos = module ? formatInteger(module.mortality.lamb_deaths_accumulated) : "—";
   const progress = module ? formatPercent(module.ewe_counts.progress?.percent) : "—";
   const state = dataState(module);
@@ -693,7 +708,8 @@ function distributionCard(lot) {
       <dl class="lot-card__stats">
         ${cell("Previstas", previsto)}
         ${cell("Paridas", paridas)}
-        ${cell("Nacidos", nacidos)}
+        ${cell("Vivos contabilizados", vivos)}
+        ${cell("Nacidos estimados", nacidos)}
         ${cell("Muertes cordero", muertos)}
         ${cell("Avance ovejas", progress)}
       </dl>
@@ -1313,44 +1329,65 @@ function lotCounts(module) {
     ec.counted_lambed === null
       ? "SIN RECUENTO"
       : `${formatInteger(ec.counted_lambed)} de ${formatInteger(ec.expected_to_lamb)}`;
+  // «Nacidos» es una ESTIMACIÓN: vivos contabilizados más las bajas
+  // acumuladas hasta la fecha del recuento.
   const nacidos =
-    lc.registered_born === null
-      ? "SIN RECUENTO"
-      : `${formatInteger(lc.registered_born)} de ${formatInteger(lc.expected_total)}`;
+    lc.estimated_born_lambs === null || lc.estimated_born_lambs === undefined
+      ? "SIN CÁLCULO"
+      : `${formatInteger(lc.estimated_born_lambs)} de ${formatInteger(lc.expected_total)}`;
+  const ratio = (block, label) => {
+    if (!block || block.value === null || block.value === undefined) {
+      return metricCard(label, "SIN CÁLCULO", block && block.missing ? `Falta: ${block.missing}` : null);
+    }
+    return metricCard(
+      label,
+      formatPercent(block.value),
+      `${formatInteger(block.numerator)} / ${formatInteger(block.denominator)}`,
+    );
+  };
   // Los restantes vienen validados por el backend (valor/estado/motivo):
   // el frontend no resta y jamás muestra un restante negativo.
+  const stock =
+    lc.current_stock_lambs === null || lc.current_stock_lambs === undefined
+      ? "SIN RECUENTO"
+      : formatInteger(lc.current_stock_lambs);
+  const stockNota = lc.current_stock_count_date
+    ? `Último recuento: ${formatDate(lc.current_stock_count_date)}`
+    : null;
   return [
-    metricCard("Servidas", formatInteger(iv.served)),
+    metricCard("Encarneradas", formatInteger(iv.served)),
     metricCard("Preñadas", formatInteger(iv.expected_to_lamb)),
     metricCard("Corderos esperados", formatInteger(iv.expected_lambs)),
     metricCard("Ovejas paridas registradas", paridas),
-    metricCard("Corderos nacidos registrados", nacidos, lambRegisteredNote(lc)),
-    progressCard("Avance de ovejas paridas", ec.progress, { hideBasis: true }),
-    progressCard("Avance de corderos nacidos", lc.progress, { hideBasis: true }),
-    metricCard("Nacidos vivos", lc.confirmed_live === null || lc.confirmed_live === undefined ? "SIN RECUENTO" : formatInteger(lc.confirmed_live)),
-    metricCard("Nacidos muertos al parto", lc.stillborn === null || lc.stillborn === undefined ? "NO INFORMADO" : formatInteger(lc.stillborn)),
+    // 1 · lo efectivamente contado en la recorrida
+    metricCard(lc.current_stock_label || "Corderos vivos contabilizados", stock, stockNota),
+    // 2 · bajas acumuladas
+    metricCard("Corderos muertos acumulados", formatInteger(mort.lamb_deaths_accumulated)),
+    // 3 · reconstrucción
+    metricCard("Corderos nacidos acumulados estimados", nacidos, lc.estimated_born_basis),
+    // 4 · restantes
     remainingCard("Ovejas restantes", ec.remaining),
     estimatedRemainingCard("Corderos restantes estimados", lc.remaining_estimated),
-    metricCard("Muertes de cordero", formatInteger(mort.lamb_deaths_accumulated)),
+    // 5, 6 y 7 · avance, mortalidad y sobrevivencia, con numerador/denominador
+    progressCard("Avance de ovejas paridas", ec.progress, { hideBasis: true }),
+    ratio(lc.lamb_progress_ratio, "Avance de corderos"),
+    ratio(lc.lamb_mortality_ratio, "Mortalidad de corderos"),
+    ratio(lc.lamb_survival_ratio, "Sobrevivencia actual"),
+    metricCard("Nacidos muertos al parto", lc.stillborn === null || lc.stillborn === undefined ? "NO INFORMADO" : formatInteger(lc.stillborn)),
     metricCard("Muertes de oveja", formatInteger(mort.ewe_deaths_accumulated)),
   ].join("");
 }
 
-// Aclaración breve al pie de «Corderos nacidos registrados»: qué se informó y
-// qué no. Un mínimo confirmado jamás se presenta como el total exacto.
-function lambRegisteredNote(lambCounts) {
-  if (lambCounts.registered_born === null) return null;
-  if (lambCounts.registered_born_is_minimum) {
-    const live = formatInteger(lambCounts.confirmed_live);
-    return `${live} nacidos vivos reportados. ${lambCounts.stillborn_message || "Nacidos muertos al parto: no informados."}`;
-  }
-  return null;
-}
-
 function lotCountsNote(module) {
-  const note = lambRegisteredNote(module.lamb_counts);
-  if (!note) return "";
-  return `<p class="chart-note">Corderos nacidos registrados: ${escapeHtml(note)} Es la cantidad mínima confirmada hasta el momento, no el total exacto.</p>`;
+  const lc = module.lamb_counts;
+  if (lc.estimated_born_lambs === null || lc.estimated_born_lambs === undefined) return "";
+  const fecha = lc.current_stock_count_date ? formatDate(lc.current_stock_count_date) : "—";
+  return `<p class="chart-note">${escapeHtml(
+    `Corderos vivos contabilizados el ${fecha}: ${formatInteger(lc.current_stock_lambs)}. ` +
+      `Sumando ${formatInteger(lc.accumulated_lamb_deaths)} corderos muertos acumulados hasta esa fecha, ` +
+      `se estiman ${formatInteger(lc.estimated_born_lambs)} corderos nacidos acumulados. ` +
+      `Es una estimación, no un total exacto.`,
+  )}</p>`;
 }
 
 /* ---------------------------------------------------------- servicios --- */
@@ -1799,7 +1836,7 @@ function curveNote(state, data) {
   for (const point of data.checkpoints) {
     notes.push(
       `Último recuento acumulado al ${formatDayMonth(point.date)} en ${LOT_FULL_NAME[point.module_code] || point.module_code}: ` +
-        `${formatInteger(point.lambed_ewes)} ovejas paridas y ${formatInteger(point.confirmed_live_lambs ?? point.registered_born_lambs)} corderos nacidos vivos. ` +
+        `${formatInteger(point.lambed_ewes)} ovejas paridas y ${formatInteger(point.confirmed_live_lambs ?? point.registered_born_lambs)} corderos vivos contabilizados. ` +
         `Sin distribución diaria informada.`,
     );
   }
@@ -1932,7 +1969,7 @@ function renderDayDetail(viewKey, state, data) {
       <p class="day-detail__checkpoint"><span class="tag tag--muted">ACUMULADO</span>
       Recuento acumulado informado en esta fecha (${escapeHtml(LOT_FULL_NAME[point.module_code] || point.module_code)}):
       ${escapeHtml(formatInteger(point.lambed_ewes))} ovejas paridas y
-      ${escapeHtml(formatInteger(point.confirmed_live_lambs ?? point.registered_born_lambs))} corderos nacidos vivos.
+      ${escapeHtml(formatInteger(point.confirmed_live_lambs ?? point.registered_born_lambs))} corderos vivos contabilizados.
       No es un valor diario.</p>`,
       )
       .join("")}
