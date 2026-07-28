@@ -2,7 +2,7 @@
   "schema_version": "3.3.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-07-27T23:59:45.682318-03:00",
+  "generated_at": "2026-07-28T00:00:14.692965-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -21,7 +21,7 @@
       "technical": 0,
       "total": 1
     },
-    "generated_at": "2026-07-27T23:59:45.682318-03:00",
+    "generated_at": "2026-07-28T00:00:14.692965-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -3539,9 +3539,9 @@
         {
           "key": "curve_compliance_ewes",
           "label": "Cumplimiento de la curva (ovejas paridas vs esperadas a la fecha)",
-          "value": 106.5951,
+          "value": 97.7489,
           "numerator": 44,
-          "denominator": 41.2777,
+          "denominator": 45.0133,
           "denominator_label": "ovejas esperadas a parir acumuladas a la fecha",
           "status": "OK",
           "unit": "%"
@@ -3549,9 +3549,9 @@
         {
           "key": "curve_gap_ewes",
           "label": "Diferencia esperado vs observado (ovejas)",
-          "value": 2.7223,
+          "value": -1.0133,
           "numerator": 44,
-          "denominator": 41.2777,
+          "denominator": 45.0133,
           "denominator_label": "ovejas esperadas a parir acumuladas a la fecha",
           "status": "OK",
           "unit": "ovejas"
@@ -3561,7 +3561,7 @@
           "label": "Diferencia esperado vs observado (corderos)",
           "value": null,
           "numerator": null,
-          "denominator": 55.4669,
+          "denominator": 60.7495,
           "denominator_label": "corderos esperados a nacer acumulados a la fecha",
           "status": "SIN_RECUENTO",
           "unit": "corderos"
@@ -4270,7 +4270,7 @@
         "label": "Cumplimiento de la curva (ovejas paridas vs esperadas a la fecha)",
         "value": null,
         "numerator": null,
-        "denominator": 41.2777,
+        "denominator": 45.0133,
         "denominator_label": "ovejas esperadas a parir acumuladas a la fecha",
         "status": "PARCIAL",
         "unit": "%",
@@ -4288,7 +4288,7 @@
         "label": "Diferencia esperado vs observado (ovejas)",
         "value": null,
         "numerator": null,
-        "denominator": 41.2777,
+        "denominator": 45.0133,
         "denominator_label": "ovejas esperadas a parir acumuladas a la fecha",
         "status": "PARCIAL",
         "unit": "ovejas",
@@ -4306,7 +4306,7 @@
         "label": "Diferencia esperado vs observado (corderos)",
         "value": null,
         "numerator": null,
-        "denominator": 55.4669,
+        "denominator": 60.7495,
         "denominator_label": "corderos esperados a nacer acumulados a la fecha",
         "status": "SIN_RECUENTO",
         "unit": "corderos"
@@ -5293,10 +5293,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-07-28T02:56:12.192185Z",
+      "processed_at": "2026-07-28T03:00:13.659396Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-07-27T23:59:45.682318-03:00",
+    "last_sync_at": "2026-07-28T00:00:14.692965-03:00",
     "pending_operations": 1,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
