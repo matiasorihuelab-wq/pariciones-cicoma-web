@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-07-28T12:14:55.920974-03:00",
+  "generated_at": "2026-07-28T13:52:28.756750-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -21,7 +21,7 @@
       "technical": 0,
       "total": 0
     },
-    "generated_at": "2026-07-28T12:14:55.920974-03:00",
+    "generated_at": "2026-07-28T13:52:28.756750-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -206,6 +206,19 @@
         "counted_lambed": 44,
         "counted_from_events": null,
         "count_source": "RECUENTO_ACUMULADO",
+        "reconciliation": {
+          "value": 44,
+          "status": "OK",
+          "basis": "ACCUMULATED",
+          "subject": "ovejas paridas",
+          "baseline_value": 44,
+          "baseline_date": "2026-07-27",
+          "daily_after_total": 0,
+          "daily_after_count": 0,
+          "daily_included_total": null,
+          "daily_included_count": 0,
+          "reconciliation": "El recuento acumulado es la línea base de su fecha: sólo se suman los partes diarios posteriores. Los anteriores ya están contenidos en él."
+        },
         "progress_percent": 45.8,
         "progress": {
           "registered": 44,
@@ -248,6 +261,17 @@
           "basis": "Corderos esperados menos corderos nacidos acumulados estimados.",
           "reason": null
         },
+        "estimated_current_stock": {
+          "value": 63,
+          "status": "OK",
+          "counted_stock": 63,
+          "counted_on": "2026-07-27",
+          "births_after": null,
+          "deaths_after": 0,
+          "reason": null,
+          "basis": "CURRENT_STOCK"
+        },
+        "stock_history": [],
         "lamb_progress_ratio": {
           "value": 52.7,
           "numerator": 68,
@@ -271,11 +295,11 @@
         },
         "data_cutoff": "2026-07-27",
         "reconciliation": "El recuento de corderos vivos ya incluye lo nacido y vivo hasta su fecha: sólo se suman los partes diarios posteriores a ese recuento.",
-        "registered_born": 63,
-        "registered_born_status": "MINIMO_CONFIRMADO",
-        "registered_born_is_minimum": true,
-        "registered_born_basis": "NACIDOS_VIVOS_INFORMADOS",
-        "confirmed_live": 63,
+        "registered_born": null,
+        "registered_born_status": "SIN_RECUENTO",
+        "registered_born_is_minimum": false,
+        "registered_born_basis": "SIN_RECUENTO",
+        "confirmed_live": null,
         "stillborn_status": "NO_INFORMADO",
         "stillborn_message": "Nacidos muertos al parto: no informados.",
         "progress_percent": null,
@@ -410,6 +434,7 @@
         "counted_lambed": null,
         "counted_from_events": null,
         "count_source": null,
+        "reconciliation": null,
         "progress_percent": null,
         "progress": {
           "registered": null,
@@ -452,6 +477,17 @@
           "basis": "Sin base: falta el recuento.",
           "reason": "Falta el recuento de corderos vivos o los corderos esperados."
         },
+        "estimated_current_stock": {
+          "value": null,
+          "status": "SIN_CALCULO",
+          "counted_stock": null,
+          "counted_on": null,
+          "births_after": null,
+          "deaths_after": 0,
+          "reason": "Todavía no hay un recuento de corderos vivos para este lote.",
+          "basis": null
+        },
+        "stock_history": [],
         "lamb_progress_ratio": {
           "value": null,
           "numerator": null,
@@ -545,6 +581,7 @@
         "counted_lambed": null,
         "counted_from_events": null,
         "count_source": null,
+        "reconciliation": null,
         "progress_percent": null,
         "progress": {
           "registered": null,
@@ -587,6 +624,17 @@
           "basis": "Sin base: falta el recuento.",
           "reason": "Falta el recuento de corderos vivos o los corderos esperados."
         },
+        "estimated_current_stock": {
+          "value": null,
+          "status": "SIN_CALCULO",
+          "counted_stock": null,
+          "counted_on": null,
+          "births_after": null,
+          "deaths_after": 0,
+          "reason": "Todavía no hay un recuento de corderos vivos para este lote.",
+          "basis": null
+        },
+        "stock_history": [],
         "lamb_progress_ratio": {
           "value": null,
           "numerator": null,
@@ -5412,10 +5460,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-07-28T15:14:52.877780Z",
+      "processed_at": "2026-07-28T15:15:14.364839Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-07-28T12:14:55.920974-03:00",
+    "last_sync_at": "2026-07-28T13:52:28.756750-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
