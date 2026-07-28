@@ -2,13 +2,13 @@
 
 /* Tablero público CICOMA — monitoreo de pariciones 2026.
  * Fuente canónica versionada: APP/web_source (WEB es staging generado).
- * Lee exclusivamente data/dashboard.json (esquema 3.3.0), validando el
+ * Lee exclusivamente data/dashboard.json (esquema 3.4.0), validando el
  * contrato antes de renderizar. Navegación por menú lateral con secciones por
  * lote. Nunca convierte un faltante en cero, nunca presenta un acumulado como
  * valor diario y nunca calcula un total parcial como si fuera completo. */
 
 const DATA_URL = "./data/dashboard.json";
-const SUPPORTED_SCHEMA = "3.3.0";
+const SUPPORTED_SCHEMA = "3.4.0";
 const SECTIONS = ["resumen", "intensivo", "dohne", "ma"];
 const LOTS = [
   { code: "INTENSIVO", section: "intensivo", name: "Intensivo", breed: "Merino Australiano X Hampshire Down" },
@@ -663,7 +663,7 @@ function renderResumen() {
 
     <section class="panel" id="chill-general">
       ${chillHead(null)}
-      ${chillGeneral()}
+      ${chillPanel("resumen", null)}
     </section>`;
 }
 
@@ -758,6 +758,72 @@ function milestonesPanel(lotCode) {
 
 /* --------------------------------------------------------------- chill --- */
 
+/* Bloque público del Chill Index, en dos secciones que nunca se mezclan:
+ *   A. lo PREVISTO por la curva  (base EXPECTED)
+ *   B. lo REGISTRADO por fecha   (base DAILY)
+ * El Chill Index no predice muertes: acá no se habla de mortalidad. */
+
+const CHILL_STATE = {};
+
+function defaultChillState(lotCode) {
+  return {
+    lot: lotCode || "TODOS",
+    service: "TODOS",
+    from: "",
+    to: "",
+    curve: { ORIGINAL: true, ADJUSTED: true },
+    show: { expected: true, observed: true },
+    evaluation: { complete: true, incomplete: true },
+    selectedDate: null,
+  };
+}
+
+function chillState(viewKey, lotCode) {
+  if (!CHILL_STATE[viewKey]) CHILL_STATE[viewKey] = defaultChillState(lotCode);
+  return CHILL_STATE[viewKey];
+}
+
+function inChillRange(state, date) {
+  return (!state.from || date >= state.from) && (!state.to || date <= state.to);
+}
+
+function matchesChillLot(state, code) {
+  return state.lot === "TODOS" || state.lot === code;
+}
+
+function matchesChillService(state, row) {
+  if (state.service === "TODOS") return true;
+  const [code, service] = String(state.service).split(":");
+  return row.module_code === code && row.service_code === service;
+}
+
+function matchesEvaluation(state, row) {
+  return row.complete ? state.evaluation.complete : state.evaluation.incomplete;
+}
+
+function chillExpectedRows(state) {
+  const rows = ((DASH.chill_public || {}).expected || {}).daily || [];
+  return rows.filter(
+    (row) =>
+      matchesChillLot(state, row.module_code) &&
+      matchesChillService(state, row) &&
+      inChillRange(state, row.date) &&
+      state.curve[row.curve] !== false &&
+      matchesEvaluation(state, row),
+  );
+}
+
+function chillObservedRows(state) {
+  const rows = ((DASH.chill_public || {}).observed || {}).daily || [];
+  return rows.filter(
+    (row) =>
+      matchesChillLot(state, row.module_code) &&
+      matchesChillService(state, row) &&
+      inChillRange(state, row.date) &&
+      matchesEvaluation(state, row),
+  );
+}
+
 function chillHead(lotCode) {
   const chill = DASH.chill_public || {};
   const scope = lotCode ? ` — ${LOT_FULL_NAME[lotCode] || lotCode}` : "";
@@ -774,49 +840,66 @@ function chillHead(lotCode) {
       <p class="chill-disclaimer">${escapeHtml(chill.forecast_disclaimer || "")}</p>`;
 }
 
-// Cobertura: cuántos corderos esperados ya tienen riesgo evaluado, sobre qué
-// denominador, cuántos quedan pendientes y por qué. Todo sale del JSON.
-function chillCoverage(lotCode) {
-  const chill = DASH.chill_public || {};
-  const coverage = lotCode ? (chill.coverage?.by_module || {})[lotCode] : chill.coverage;
-  if (!coverage) return "";
-  const total = coverage.expected_total;
-  const cells = [
-    ["Evaluados hasta la fecha", formatExposure(coverage.evaluated)],
-    ["Con evaluación completa", formatExposure(coverage.classified)],
-    [INCOMPLETE_RISK_LABEL, formatExposure(coverage.incomplete)],
-    ["Pendientes de evaluar", formatExposure(coverage.pending)],
-    ["Corderos esperados (denominador)", formatInteger(total)],
-  ]
-    .map(
-      ([label, value]) =>
-        `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`,
-    )
-    .join("");
-  const headline =
-    total === null || total === undefined
-      ? ""
-      : `${formatExposure(coverage.evaluated)} de ${formatInteger(total)} corderos esperados clasificados hasta la fecha.`;
-  const reasons = [coverage.incomplete_reason, coverage.pending_reason].filter(Boolean);
-  return `
-    <div class="chill-coverage">
-      ${headline ? `<p class="chill-coverage__headline">${escapeHtml(headline)}</p>` : ""}
-      <dl class="control-grid">${cells}</dl>
-      ${reasons.map((reason) => `<p class="chart-note">${escapeHtml(reason)}</p>`).join("")}
-    </div>`;
+function chillServiceOptions(state) {
+  const options = [`<option value="TODOS">Todos los servicios</option>`];
+  for (const lot of DASH.lambing_curves?.lots || []) {
+    if (!matchesChillLot(state, lot.code)) continue;
+    for (const service of lot.services || []) {
+      const value = `${lot.code}:${service.code}`;
+      options.push(
+        `<option value="${escapeHtml(value)}" ${state.service === value ? "selected" : ""}>${escapeHtml(
+          `${LOT_LABEL[lot.code] || lot.code} · ${service.service_type}`,
+        )}</option>`,
+      );
+    }
+  }
+  return options.join("");
 }
 
-// Bloque futuro: riesgo climático de los corderos NACIDOS REGISTRADOS. Sólo se
-// puebla con distribución diaria real; con un acumulado no se reparte nada.
-function chillObserved() {
-  const observed = (DASH.chill_public || {}).observed;
-  if (!observed) return "";
-  const pending = observed.status !== "DISPONIBLE";
+function chillFilters(viewKey, lotCode, state) {
+  const lotSelect = lotCode
+    ? ""
+    : `
+      <label class="filter">
+        <span>Lote</span>
+        <select data-chill="${escapeHtml(viewKey)}" data-filter="lot">
+          <option value="TODOS">Todos los lotes</option>
+          ${LOTS.map(
+            (lot) =>
+              `<option value="${lot.code}" ${state.lot === lot.code ? "selected" : ""}>${escapeHtml(lot.name)}</option>`,
+          ).join("")}
+        </select>
+      </label>`;
+  const check = (group, key, label) => `
+    <label class="toggle">
+      <input type="checkbox" data-chill="${escapeHtml(viewKey)}" data-cgroup="${group}" data-ckey="${key}" ${
+        state[group][key] ? "checked" : ""
+      } />
+      <span>${escapeHtml(label)}</span>
+    </label>`;
   return `
-    <div class="chill-observed${pending ? " chill-observed--pending" : ""}">
-      <h3>Riesgo climático de los corderos nacidos registrados</h3>
-      <p>${escapeHtml(observed.message || "")}</p>
-      ${pending ? `<span class="tag tag--muted">PENDIENTE DE DISTRIBUCIÓN DIARIA</span>` : ""}
+    <div class="chart-filters">
+      ${lotSelect}
+      <label class="filter">
+        <span>Servicio</span>
+        <select data-chill="${escapeHtml(viewKey)}" data-filter="service">${chillServiceOptions(state)}</select>
+      </label>
+      <label class="filter">
+        <span>Desde</span>
+        <input type="date" data-chill="${escapeHtml(viewKey)}" data-filter="from" value="${escapeHtml(state.from)}" />
+      </label>
+      <label class="filter">
+        <span>Hasta</span>
+        <input type="date" data-chill="${escapeHtml(viewKey)}" data-filter="to" value="${escapeHtml(state.to)}" />
+      </label>
+    </div>
+    <div class="chart-toggles" role="group" aria-label="Series y evaluación del Chill Index">
+      ${check("show", "expected", "Proyección esperada")}
+      ${check("show", "observed", "Nacimientos registrados")}
+      ${check("curve", "ORIGINAL", "Curva original")}
+      ${check("curve", "ADJUSTED", "Curva ajustada")}
+      ${check("evaluation", "complete", "Evaluación completa")}
+      ${check("evaluation", "incomplete", "Evaluación incompleta")}
     </div>`;
 }
 
@@ -839,8 +922,8 @@ function dayRelative(dateString) {
 
 const LOT_SHORT = { INTENSIVO: "Int", DOHNE: "Dohne", MA: "MA" };
 
-// Tarjeta de un día de Chill. `exposure` es la cifra a mostrar; `lots` es el
-// desglose por lote (sólo en la vista general).
+// Tarjeta de un día de exposición esperada. `exposure` es la cifra a mostrar;
+// `lots` es el desglose por lote (sólo cuando se ven todos).
 function chillDay(day, exposure, lots) {
   const cat = day.risk_category;
   const rel = dayRelative(day.date);
@@ -862,37 +945,194 @@ function chillDay(day, exposure, lots) {
     </li>`;
 }
 
-/* Chill general: exposición diaria (con desglose por lote) y consolidado 72 h. */
-function chillGeneral() {
-  const chill = DASH.chill_public || {};
-  const days = Array.isArray(chill.daily) ? chill.daily : [];
-  const stale = chill.update_status && chill.update_status.stale;
+/* --- A. Bloque PREVISTO ---------------------------------------------- */
 
+function chillExpectedSection(state) {
+  const chill = DASH.chill_public || {};
+  const expected = chill.expected || {};
+  const days = Array.isArray(chill.daily) ? chill.daily : [];
+  if (!state.show.expected) return "";
   if (!days.length) {
     return `<p class="empty-note">SIN DISTRIBUCIÓN DE PARTOS CARGADA — el cálculo se habilita cuando exista curva de partos.</p>`;
   }
-
-  const rows = days
+  const visible = days.filter((day) => inChillRange(state, day.date));
+  const cards = visible
     .map((day) => {
-      const lots = LOTS.map(
-        (lot) => `${LOT_SHORT[lot.code]} ${escapeHtml(formatExposure((day.by_lot || {})[lot.code]))}`,
-      ).join(" · ");
-      return chillDay(day, day.total_exposed, lots);
+      const lots =
+        state.lot === "TODOS"
+          ? LOTS.map(
+              (lot) => `${LOT_SHORT[lot.code]} ${escapeHtml(formatExposure((day.by_lot || {})[lot.code]))}`,
+            ).join(" · ")
+          : null;
+      const exposure = state.lot === "TODOS" ? day.total_exposed : (day.by_lot || {})[state.lot];
+      return chillDay(day, exposure, lots);
     })
     .join("");
 
+  const rows = chillExpectedRows(state);
+  const table = rows.length
+    ? `
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr>
+          <th>Fecha</th><th>Lote</th><th>Servicio</th><th class="num">Corderos esperados</th>
+          <th>Chill D</th><th>D+1</th><th>D+2</th><th>Riesgo 72 h</th><th>Evaluación</th><th>Curva</th>
+        </tr></thead>
+        <tbody>${rows
+          .map(
+            (row) => `
+          <tr>
+            <td>${escapeHtml(formatDayMonth(row.date))}</td>
+            <td>${escapeHtml(LOT_LABEL[row.module_code] || row.module_code)}</td>
+            <td>${escapeHtml(row.service_type || "Sin servicio asociado")}</td>
+            <td class="num">${escapeHtml(formatDecimal(row.expected_lambs))}</td>
+            <td>${escapeHtml(riskLabel(row.risk_d))}</td>
+            <td>${escapeHtml(riskLabel(row.risk_d1))}</td>
+            <td>${escapeHtml(riskLabel(row.risk_d2))}</td>
+            <td><span class="risk-pill risk-pill--${escapeHtml(riskClass(row.max_risk))}">${escapeHtml(riskLabel(row.max_risk))}</span></td>
+            <td>${row.complete ? "Completa" : escapeHtml(INCOMPLETE_RISK_LABEL)}</td>
+            <td>${row.curve === "ADJUSTED" ? "Ajustada" : "Original"}</td>
+          </tr>`,
+          )
+          .join("")}</tbody>
+      </table>
+    </div>`
+    : `<p class="empty-note">SIN FILAS PREVISTAS para los filtros elegidos.</p>`;
+
   return `
-    ${stale ? `<p class="tag tag--incompleto">El Chill Index no está actualizado.</p>` : ""}
-    ${chillCoverage(null)}
-    <p class="chill-mode">Corderos esperados expuestos por día</p>
-    <ul class="chill-list">${rows}</ul>
-    ${chill72h(chill.exposure_72h, null)}
-    ${chillObserved()}
-    <p class="chill-source">Fuente: INIA-GRAS · ${iniaLink()}</p>`;
+    <section class="chill-section">
+      <h3 class="chill-section__title">${escapeHtml(expected.title || "")}</h3>
+      <p class="chill-mode">${escapeHtml(expected.daily_title || "")}</p>
+      <ul class="chill-list">${cards}</ul>
+      ${table}
+    </section>`;
 }
 
-/* Consolidado de 72 h: cada cordero esperado contado una sola vez, por su
-   riesgo máximo. `lotCode` limita el consolidado a un lote. */
+/* --- B. Bloque OBSERVADO --------------------------------------------- */
+
+function chillObservedSection(viewKey, state) {
+  const observed = (DASH.chill_public || {}).observed || {};
+  if (!state.show.observed) return "";
+  const rows = chillObservedRows(state);
+  if (!rows.length) {
+    const messages = Array.isArray(observed.messages) ? observed.messages : [];
+    const notes = messages.length ? messages : ["Sin registros diarios de nacimientos para este lote."];
+    return `
+    <section class="chill-section chill-section--observed">
+      <h3 class="chill-section__title">${escapeHtml(observed.title || "")}</h3>
+      ${notes.map((text) => `<p class="empty-note">${escapeHtml(text)}</p>`).join("")}
+    </section>`;
+  }
+
+  // Visualización simple por fecha: altura proporcional a los nacidos y color
+  // según el riesgo máximo de sus primeras 72 horas.
+  const peak = Math.max(...rows.map((row) => Number(row.born_lambs) || 0), 1);
+  const bars = rows
+    .map((row) => {
+      const born = Number(row.born_lambs) || 0;
+      const height = Math.max(6, Math.round((born / peak) * 100));
+      const label =
+        `${formatDayMonth(row.date)} · ${LOT_LABEL[row.module_code] || row.module_code} · ` +
+        `${formatInteger(row.born_lambs)} corderos · ${riskLabel(row.max_risk)}`;
+      return `
+      <button type="button" class="obs-bar risk-${escapeHtml(riskClass(row.max_risk))}"
+        data-chill="${escapeHtml(viewKey)}" data-obsdate="${escapeHtml(row.date)}"
+        title="${escapeHtml(label)}" aria-label="${escapeHtml(label)}">
+        <span class="obs-bar__fill" style="height:${height}%"></span>
+        <span class="obs-bar__value">${escapeHtml(formatInteger(row.born_lambs))}</span>
+        <span class="obs-bar__date">${escapeHtml(formatDayMonth(row.date))}</span>
+      </button>`;
+    })
+    .join("");
+
+  // Resumen por riesgo de los corderos REALMENTE registrados en las filas
+  // visibles. Cada cordero entra en una sola categoría.
+  const totals = {};
+  for (const cat of [...RISK_ORDER, INCOMPLETE_RISK]) totals[cat] = 0;
+  let counted = 0;
+  for (const row of rows) {
+    const born = Number(row.born_lambs) || 0;
+    const bucket = totals[row.max_risk] === undefined ? INCOMPLETE_RISK : row.max_risk;
+    totals[bucket] += born;
+    counted += born;
+  }
+  const summary = [...RISK_ORDER, INCOMPLETE_RISK]
+    .map(
+      (cat) => `
+      <div class="expo-cell expo-cell--${escapeHtml(riskClass(cat))}">
+        <span class="expo-cell__label">${escapeHtml(cat === INCOMPLETE_RISK ? "EVALUACIÓN AMBIENTAL TODAVÍA INCOMPLETA" : riskLabel(cat))}</span>
+        <strong>${escapeHtml(formatInteger(totals[cat]))}</strong>
+      </div>`,
+    )
+    .join("");
+
+  const detail = chillObservedDetail(state, rows);
+  return `
+    <section class="chill-section chill-section--observed">
+      <h3 class="chill-section__title">${escapeHtml(observed.title || "")}</h3>
+      <p class="chill-mode">Corderos nacidos registrados por fecha</p>
+      <div class="obs-chart">${bars}</div>
+      <p class="chart-note">Tocá una fecha para ver el detalle de sus primeras 72 horas.</p>
+      ${detail}
+      <p class="chill-mode">Corderos registrados por nivel de riesgo — ${escapeHtml(formatInteger(counted))} en total, cada uno contado una sola vez</p>
+      <div class="expo-grid">${summary}</div>
+    </section>`;
+}
+
+function chillObservedDetail(state, rows) {
+  const row = rows.find((item) => item.date === state.selectedDate) || null;
+  if (!row) return "";
+  const cell = (label, value) =>
+    `<div><dt>${escapeHtml(label)}</dt><dd class="${absentClass(value)}">${escapeHtml(value)}</dd></div>`;
+  const num = (value) => (value === null || value === undefined ? "NO INFORMADO" : formatInteger(value));
+  return `
+    <dl class="control-grid obs-detail">
+      ${cell("Fecha", formatDate(row.date))}
+      ${cell("Lote", LOT_FULL_NAME[row.module_code] || row.module_code)}
+      ${cell("Servicio", row.service_type || "Sin servicio asociado")}
+      ${cell("Ovejas paridas", num(row.ewes_lambed))}
+      ${cell("Corderos nacidos", num(row.born_lambs))}
+      ${cell("Nacidos vivos", num(row.born_alive))}
+      ${cell("Nacidos muertos al parto", num(row.stillborn))}
+      ${cell("Chill D", riskLabel(row.risk_d))}
+      ${cell("Chill D+1", riskLabel(row.risk_d1))}
+      ${cell("Chill D+2", riskLabel(row.risk_d2))}
+      ${cell("Riesgo de las primeras 72 horas", riskLabel(row.max_risk))}
+      ${cell("Evaluación", row.complete ? "Completa" : INCOMPLETE_RISK_LABEL)}
+      ${cell("Estado de validación", row.validation_status)}
+    </dl>`;
+}
+
+/* --- Información secundaria (ya no domina el bloque) ------------------ */
+
+function chillSecondary(lotCode) {
+  const chill = DASH.chill_public || {};
+  const coverage = lotCode ? (chill.coverage?.by_module || {})[lotCode] : chill.coverage;
+  if (!coverage) return "";
+  const cells = [
+    ["Evaluados hasta la fecha", formatExposure(coverage.evaluated)],
+    ["Con evaluación completa", formatExposure(coverage.classified)],
+    [INCOMPLETE_RISK_LABEL, formatExposure(coverage.incomplete)],
+    ["Pendientes de evaluar", formatExposure(coverage.pending)],
+    ["Corderos esperados (denominador)", formatInteger(coverage.expected_total)],
+  ]
+    .map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`)
+    .join("");
+  const notice = chill.accumulated_notice || {};
+  return `
+    <details class="chill-secondary">
+      <summary>Cobertura de la evaluación ambiental (información secundaria)</summary>
+      <dl class="control-grid">${cells}</dl>
+      ${[coverage.incomplete_reason, coverage.pending_reason]
+        .filter(Boolean)
+        .map((text) => `<p class="chart-note">${escapeHtml(text)}</p>`)
+        .join("")}
+      ${notice.message ? `<p class="chart-note">${escapeHtml(notice.message)}</p>` : ""}
+      ${chill72h(chill.exposure_72h, lotCode)}
+    </details>`;
+}
+
+/* Consolidado de 72 h de lo PREVISTO: cada cordero esperado una sola vez. */
 function chill72h(exposure, lotCode) {
   if (!exposure || typeof exposure !== "object") return "";
   const scope = lotCode ? (exposure.by_module || {})[lotCode] || {} : exposure;
@@ -909,9 +1149,64 @@ function chill72h(exposure, lotCode) {
     .join("");
   return `
     <div class="chill-72h">
-      <p class="chill-mode">Resultado de las primeras 72 horas — cada cordero esperado se cuenta una sola vez, por su nivel de riesgo más alto.</p>
+      <p class="chill-mode">Resultado previsto de las primeras 72 horas — cada cordero esperado se cuenta una sola vez, por su nivel de riesgo más alto.</p>
       <div class="expo-grid">${cells}</div>
     </div>`;
+}
+
+/* --- Panel completo --------------------------------------------------- */
+
+function chillPanel(viewKey, lotCode) {
+  const chill = DASH.chill_public || {};
+  const state = chillState(viewKey, lotCode);
+  const stale = chill.update_status && chill.update_status.stale;
+  return `
+    ${stale ? `<p class="tag tag--incompleto">El Chill Index no está actualizado.</p>` : ""}
+    ${chillFilters(viewKey, lotCode, state)}
+    <div id="chill-body-${escapeHtml(viewKey)}">
+      ${chillExpectedSection(state)}
+      ${chillObservedSection(viewKey, state)}
+      ${chillSecondary(lotCode)}
+      <p class="chill-source">Fuente: INIA-GRAS · ${iniaLink()}</p>
+    </div>`;
+}
+
+function renderChillBody(viewKey, lotCode) {
+  const host = byId(`chill-body-${viewKey}`);
+  if (!host) return;
+  const state = chillState(viewKey, lotCode);
+  host.innerHTML = `
+      ${chillExpectedSection(state)}
+      ${chillObservedSection(viewKey, state)}
+      ${chillSecondary(lotCode)}
+      <p class="chill-source">Fuente: INIA-GRAS · ${iniaLink()}</p>`;
+}
+
+function onChillControl(event) {
+  const target = event.target;
+  if (!target || !target.dataset || !target.dataset.chill) return false;
+  const viewKey = target.dataset.chill;
+  const state = CHILL_STATE[viewKey];
+  if (!state) return false;
+  if (target.dataset.obsdate !== undefined) {
+    state.selectedDate = state.selectedDate === target.dataset.obsdate ? null : target.dataset.obsdate;
+  } else if (target.dataset.cgroup) {
+    state[target.dataset.cgroup][target.dataset.ckey] = target.checked;
+  } else if (target.dataset.filter === "lot") {
+    state.lot = target.value;
+    state.service = "TODOS";
+    state.selectedDate = null;
+  } else if (target.dataset.filter === "service") {
+    state.service = target.value;
+  } else if (target.dataset.filter === "from") {
+    state.from = target.value;
+  } else if (target.dataset.filter === "to") {
+    state.to = target.value;
+  } else {
+    return false;
+  }
+  renderChillBody(viewKey, CODE_BY_SECTION[viewKey] || null);
+  return true;
 }
 
 /* ------------------------------------------------------------ por lote --- */
@@ -968,7 +1263,7 @@ function renderLot(lot) {
 
     <section class="panel">
       ${chillHead(lot.code)}
-      ${lotChill(lot.code)}
+      ${chillPanel(lot.section, lot.code)}
     </section>
 
     <section class="panel">
@@ -1668,20 +1963,6 @@ function renderDayDetail(viewKey, state, data) {
     }`;
 }
 
-function lotChill(code) {
-  const chill = DASH.chill_public || {};
-  const days = Array.isArray(chill.daily) ? chill.daily : [];
-  if (!days.length) return `<p class="empty-note">SIN DISTRIBUCIÓN DE PARTOS CARGADA.</p>`;
-  const rows = days.map((day) => chillDay(day, (day.by_lot || {})[code])).join("");
-  return `
-    ${chillCoverage(code)}
-    <p class="chill-mode">Corderos esperados expuestos por día en este lote</p>
-    <ul class="chill-list">${rows}</ul>
-    ${chill72h(chill.exposure_72h, code)}
-    ${chillObserved()}
-    <p class="chill-source">Fuente: INIA-GRAS · ${iniaLink()}</p>`;
-}
-
 function lotMortality(lot, module) {
   const mort = module.mortality;
   const detail = Array.isArray(mort.detail) ? mort.detail : [];
@@ -1820,6 +2101,11 @@ function initRouter() {
     }),
   );
   document.addEventListener("change", onChartFilterChange);
+  // Las barras observadas son botones: responden a click y a toque.
+  document.addEventListener("click", (event) => {
+    const button = event.target && event.target.closest && event.target.closest("[data-obsdate]");
+    if (button) onChillControl({ target: button });
+  });
   let resizeFrame = null;
   window.addEventListener("resize", () => {
     if (resizeFrame) cancelAnimationFrame(resizeFrame);
@@ -1830,6 +2116,7 @@ function initRouter() {
 
 function onChartFilterChange(event) {
   const target = event.target;
+  if (onChillControl(event)) return;
   if (!target || !target.dataset || !target.dataset.chart) return;
   const viewKey = target.dataset.chart;
   const state = CHART_STATE[viewKey];

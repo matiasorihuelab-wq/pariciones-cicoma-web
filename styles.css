@@ -1727,6 +1727,156 @@ h3 {
   font-size: 0.84rem;
 }
 
+/* ------------------------------ chill: previsto vs registrado (§A y §B) --- */
+
+.chill-section {
+  margin-top: var(--s5);
+  padding-top: var(--s4);
+  border-top: 1px solid var(--border);
+}
+
+.chill-section:first-of-type {
+  margin-top: var(--s4);
+  border-top: 0;
+  padding-top: 0;
+}
+
+.chill-section__title {
+  margin: 0 0 var(--s3);
+  font-size: 1.02rem;
+  color: var(--green-dark);
+}
+
+.chill-section--observed {
+  border-top: 2px solid var(--green-pale);
+}
+
+.chill-secondary {
+  margin-top: var(--s5);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.chill-secondary > summary {
+  padding: var(--s3) var(--s4);
+  cursor: pointer;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--ink-600);
+  list-style: none;
+}
+
+.chill-secondary > summary::-webkit-details-marker {
+  display: none;
+}
+
+.chill-secondary > summary::before {
+  content: "▸";
+  display: inline-block;
+  margin-right: 8px;
+  color: var(--green);
+  transition: transform var(--dur) var(--ease);
+}
+
+.chill-secondary[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.chill-secondary[open] > summary {
+  border-bottom: 1px solid var(--border);
+}
+
+.chill-secondary > *:not(summary) {
+  margin: var(--s3) var(--s4);
+}
+
+/* Nacimientos registrados por fecha: barras táctiles con su riesgo máximo */
+.obs-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--s2);
+  min-height: 150px;
+  padding: var(--s3);
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  overflow-x: auto;
+}
+
+.obs-bar {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+  width: 54px;
+  min-height: 44px;
+  padding: 0 0 var(--s2);
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  cursor: pointer;
+}
+
+.obs-bar:hover,
+.obs-bar:focus-visible {
+  background: var(--surface-3);
+  outline: none;
+}
+
+.obs-bar__fill {
+  display: block;
+  width: 24px;
+  min-height: 6px;
+  border-radius: 4px 4px 0 0;
+  background: var(--risk-sin);
+}
+
+.obs-bar.risk-bajo .obs-bar__fill {
+  background: var(--risk-bajo);
+}
+
+.obs-bar.risk-medio .obs-bar__fill {
+  background: var(--risk-medio);
+}
+
+.obs-bar.risk-alto .obs-bar__fill {
+  background: var(--risk-alto);
+}
+
+.obs-bar.risk-critico .obs-bar__fill {
+  background: var(--risk-critico);
+}
+
+.obs-bar.risk-incompleto .obs-bar__fill {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--risk-inc),
+    var(--risk-inc) 4px,
+    var(--surface-2) 4px,
+    var(--surface-2) 8px
+  );
+}
+
+.obs-bar__value {
+  font-size: 0.82rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+.obs-bar__date {
+  color: var(--ink-500);
+  font-size: 0.66rem;
+  white-space: nowrap;
+}
+
+.obs-detail {
+  margin-top: var(--s3);
+}
+
 /* ------------------------------------------------------ reduced motion --- */
 
 @media (prefers-reduced-motion: reduce) {
