@@ -312,7 +312,8 @@ function renderHealth() {
       ? `${totalActions} ${totalActions === 1 ? "acción pendiente" : "acciones pendientes"}`
       : `${countReasons} ${countReasons === 1 ? "incidencia" : "incidencias"}`;
   const reasons = byId("health-pop-reasons");
-  const pendingCodes = ["PENDING_EVENT", "PENDING_LINK", "PENDING_MEDIA"];
+  // Motivos que YA están resumidos en la línea de contadores: no se repiten.
+  const pendingCodes = ["PENDING_EVENT", "PENDING_LINK", "PENDING_MEDIA", "PACKAGE_ERROR"];
   const lines = [];
   if (isOjo && actions && totalActions > 0) {
     const parts = [];
@@ -323,6 +324,12 @@ function renderHealth() {
       parts.push(`${actions.media} archivo${actions.media === 1 ? "" : "s"} multimedia`);
     if (actions.technical)
       parts.push(`${actions.technical} problema${actions.technical === 1 ? "" : "s"} técnico`);
+    // Un paquete de entrada que falló tiene su propia categoría: sin ella el
+    // contador decía «1 acción pendiente» y el detalle quedaba vacío.
+    if (actions.packages)
+      parts.push(
+        `${actions.packages} paquete${actions.packages === 1 ? "" : "s"} de entrada con error`,
+      );
     lines.push(`<li>${escapeHtml(parts.join(" · "))}</li>`);
   }
   if (isOjo) {
