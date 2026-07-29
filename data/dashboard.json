@@ -2,27 +2,21 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-07-28T22:29:41.459714-03:00",
+  "generated_at": "2026-07-28T22:34:32.343651-03:00",
   "max_age_minutes": 60,
   "system_health": {
-    "state": "OJO",
-    "headline": "Hay un paquete de entrada que no pudo procesarse.",
-    "reasons": [
-      {
-        "code": "PACKAGE_ERROR",
-        "message": "Hay un paquete de entrada que no pudo procesarse.",
-        "severity": "OJO"
-      }
-    ],
+    "state": "OK",
+    "headline": "Todo actualizado",
+    "reasons": [],
     "pending_actions": {
       "reports": 0,
       "links": 0,
       "media": 0,
       "technical": 0,
-      "packages": 1,
-      "total": 1
+      "packages": 0,
+      "total": 0
     },
-    "generated_at": "2026-07-28T22:29:41.459714-03:00",
+    "generated_at": "2026-07-28T22:34:32.343651-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -5461,10 +5455,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-07-29T01:29:38.400366Z",
+      "processed_at": "2026-07-29T01:34:29.281301Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-07-28T22:29:41.459714-03:00",
+    "last_sync_at": "2026-07-28T22:34:32.343651-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
