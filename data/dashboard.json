@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-03T14:20:06.781099-03:00",
+  "generated_at": "2026-08-03T14:22:36.608220-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -20,9 +20,10 @@
       "media": 0,
       "technical": 0,
       "packages": 0,
-      "total": 1
+      "unclassified": 3,
+      "total": 4
     },
-    "generated_at": "2026-08-03T14:20:06.781099-03:00",
+    "generated_at": "2026-08-03T14:22:36.608220-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -92,7 +93,20 @@
         "MA"
       ]
     },
+    "estimated_current_stock_total": {
+      "value": 62,
+      "status": "PARTIAL",
+      "lots_included": [
+        "INTENSIVO"
+      ],
+      "lots_missing": [
+        "DOHNE",
+        "MA"
+      ]
+    },
+    "estimated_current_stock_label": "Corderos vivos estimados hoy",
     "accumulated_lamb_deaths_total": 5,
+    "lamb_deaths_registered_total": 6,
     "ewe_progress": {
       "registered": 44,
       "expected": 832,
@@ -253,6 +267,7 @@
         "current_stock_count_date": "2026-07-27",
         "current_stock_label": "Corderos vivos contabilizados",
         "accumulated_lamb_deaths": 5,
+        "lamb_deaths_registered": 6,
         "estimated_born_lambs": 68,
         "estimated_born_basis": "Corderos vivos contabilizados más corderos muertos acumulados hasta la fecha del recuento.",
         "estimated_born_is_estimate": true,
@@ -263,14 +278,14 @@
           "reason": null
         },
         "estimated_current_stock": {
-          "value": 63,
-          "status": "SIN_CONCILIAR",
+          "value": 62,
+          "status": "ESTIMADO",
           "counted_stock": 63,
           "counted_on": "2026-07-27",
-          "births_after": null,
+          "births_after": 0,
           "deaths_after": 1,
-          "reason": "No se conocen los nacimientos posteriores al recuento: se conserva el último stock contabilizado y los eventos posteriores se muestran aparte.",
-          "basis": "CURRENT_STOCK"
+          "reason": null,
+          "basis": "CURRENT_STOCK_MAS_EVENTOS_POSTERIORES"
         },
         "stock_history": [],
         "lamb_progress_ratio": {
@@ -480,6 +495,7 @@
         "current_stock_count_date": null,
         "current_stock_label": "Corderos vivos contabilizados",
         "accumulated_lamb_deaths": 0,
+        "lamb_deaths_registered": 0,
         "estimated_born_lambs": null,
         "estimated_born_basis": null,
         "estimated_born_is_estimate": false,
@@ -627,6 +643,7 @@
         "current_stock_count_date": null,
         "current_stock_label": "Corderos vivos contabilizados",
         "accumulated_lamb_deaths": 0,
+        "lamb_deaths_registered": 0,
         "estimated_born_lambs": null,
         "estimated_born_basis": null,
         "estimated_born_is_estimate": false,
@@ -5515,10 +5532,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-08-03T17:20:03.670789Z",
+      "processed_at": "2026-08-03T17:20:35.004957Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-08-03T14:20:06.781099-03:00",
+    "last_sync_at": "2026-08-03T14:22:36.608220-03:00",
     "pending_operations": 1,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
