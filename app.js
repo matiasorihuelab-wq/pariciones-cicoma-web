@@ -627,7 +627,7 @@ function renderResumen() {
   // REGISTRADOS, no resultados de campaña: el encabezado lo dice.
   const kpis = [
     registeredCard("Ovejas paridas registradas", ov.lambed_ewes, { kpi: true, accent: true, note: null }),
-    registeredCard("Corderos nacidos acumulados estimados", ov.registered_born_lambs, { kpi: true, accent: true, note: "vivos contabilizados + muertos acumulados" }),
+    registeredCard("Corderos nacidos acumulados estimados", ov.registered_born_lambs, { kpi: true, accent: true, note: "último recuento de vivos + muertos acumulados" }),
     progressCard("Avance de ovejas paridas", ov.ewe_progress, { kpi: true, hideBasis: true }),
     progressCard("Avance de corderos nacidos", ov.lamb_progress, { kpi: true, hideBasis: true }),
   ].join("");
@@ -636,7 +636,14 @@ function renderResumen() {
   const secondary = [
     metricCard("Previstas a parir", formatInteger(ov.expected_to_lamb)),
     metricCard("Corderos esperados", formatInteger(ov.expected_lambs)),
-    registeredCard("Corderos vivos contabilizados", ov.current_stock_lambs_total, { note: "último recuento de campo" }),
+    // Los tres conceptos del balance de campo, separados y en este orden:
+    // lo contado, lo muerto y la reconstrucción. El contabilizado es una
+    // fotografía de su fecha y por eso la lleva escrita; ninguna muerte
+    // posterior lo baja.
+    registeredCard("Corderos vivos contabilizados", ov.current_stock_lambs_total, {
+      note: ov.current_stock_count_date ? `conteo realizado el ${formatDate(ov.current_stock_count_date)}` : "último recuento de campo",
+    }),
+    metricCard("Corderos muertos acumulados", absentOr(ov.accumulated_lamb_deaths_total, formatInteger), "todas las bajas registradas"),
     estimatedRemainingCard("Ovejas restantes según registros", ov.remaining_ewes_estimated),
     estimatedRemainingCard("Corderos restantes estimados", ov.remaining_lambs_estimated),
     metricCard("Muertes registradas", deaths, deathsNote),
@@ -1391,7 +1398,9 @@ function lotCountsNote(module) {
   const fecha = lc.current_stock_count_date ? formatDate(lc.current_stock_count_date) : "—";
   return `<p class="chart-note">${escapeHtml(
     `Corderos vivos contabilizados el ${fecha}: ${formatInteger(lc.current_stock_lambs)}. ` +
-      `Sumando ${formatInteger(lc.accumulated_lamb_deaths)} corderos muertos acumulados hasta esa fecha, ` +
+      `Ese número es el del recuento y no cambia con las muertes cargadas después: ` +
+      `sólo lo reemplaza un recuento nuevo. ` +
+      `Sumándole ${formatInteger(lc.accumulated_lamb_deaths)} corderos muertos acumulados, ` +
       `se estiman ${formatInteger(lc.estimated_born_lambs)} corderos nacidos acumulados. ` +
       `Es una estimación, no un total exacto.`,
   )}</p>`;
