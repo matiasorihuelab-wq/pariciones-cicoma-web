@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-03T18:03:30.827221-03:00",
+  "generated_at": "2026-08-03T18:07:51.796508-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -11,6 +11,11 @@
       {
         "code": "PENDING_EVENT",
         "message": "Hay un reporte pendiente de contabilizar.",
+        "severity": "OJO"
+      },
+      {
+        "code": "CHILL_STALE",
+        "message": "El Chill Index no está actualizado.",
         "severity": "OJO"
       }
     ],
@@ -23,7 +28,7 @@
       "unclassified": 3,
       "total": 4
     },
-    "generated_at": "2026-08-03T18:03:30.827221-03:00",
+    "generated_at": "2026-08-03T18:07:51.796508-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -4136,9 +4141,9 @@
     ],
     "status": "OK",
     "update_status": {
-      "state": "ACTUALIZADO",
-      "stale": false,
-      "message": "Pronóstico válido importado desde Zapia."
+      "state": "DESACTUALIZADO",
+      "stale": true,
+      "message": "El último archivo detectado no superó la validación."
     },
     "daily": [
       {
@@ -5008,9 +5013,9 @@
     "imported_at": "2026-07-28T14:25:19.515223-03:00",
     "forecast_age_hours": 0.0,
     "update_status": {
-      "state": "ACTUALIZADO",
-      "stale": false,
-      "message": "Pronóstico válido importado desde Zapia."
+      "state": "DESACTUALIZADO",
+      "stale": true,
+      "message": "El último archivo detectado no superó la validación."
     },
     "product_cross": {
       "status": "OK",
@@ -5404,7 +5409,7 @@
     "source": "INIA-GRAS interpretada por Zapia",
     "analyzed_at": "2026-07-28T14:30:00-03:00",
     "imported_at": "2026-07-28T14:25:19.515223-03:00",
-    "update_status": "ACTUALIZADO",
+    "update_status": "DESACTUALIZADO",
     "product_cross_status": "OK",
     "dates": [
       {
@@ -5532,10 +5537,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-08-03T21:03:27.768268Z",
+      "processed_at": "2026-08-03T21:07:47.689916Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-08-03T18:03:30.827221-03:00",
+    "last_sync_at": "2026-08-03T18:07:51.796508-03:00",
     "pending_operations": 1,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }

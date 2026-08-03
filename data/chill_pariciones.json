@@ -15,9 +15,9 @@
   "imported_at": "2026-07-28T14:25:19.515223-03:00",
   "forecast_age_hours": 0.0,
   "update_status": {
-    "state": "ACTUALIZADO",
-    "stale": false,
-    "message": "Pronóstico válido importado desde Zapia."
+    "state": "DESACTUALIZADO",
+    "stale": true,
+    "message": "El último archivo detectado no superó la validación."
   },
   "product_cross": {
     "status": "OK",
