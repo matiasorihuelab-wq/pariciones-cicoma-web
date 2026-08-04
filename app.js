@@ -1221,14 +1221,29 @@ const RISK_LABEL = {
   MUY_ALTO: "Muy alto",
 };
 
-//: Motivo técnico traducido para la gestión. El público ve sólo «Sin datos».
+//: Motivo técnico traducido. El público ve sólo «Sin datos» o «Error»; el
+//: motivo acompaña como nota, sin exponer detalle sensible.
 const NO_DATA_REASON = {
   WRF_UNDEFINED_GRID: "INIA publicó el mapa sin grilla utilizable",
   SOURCE_DATE_UNVERIFIED: "No se pudo verificar que la corrida sea vigente",
   MAP_NOT_PUBLISHED: "INIA no publicó el mapa de esa fecha",
-  MAP_REJECTED: "El mapa no superó la validación",
-  SOURCE_UNAVAILABLE: "No se pudo consultar la fuente",
   FORECAST_EXPIRED: "La fecha del pronóstico ya pasó",
+  WRF_MINI_ONLY: "Sólo hay miniatura, que no habilita una categoría",
+};
+
+//: Fallas técnicas. Se ven en negro como «Sin datos», pero son otra cosa: acá
+//: el problema es nuestro o de la red, no de la fuente que no tiene datos.
+const ERROR_REASON = {
+  SOURCE_TIMEOUT: "La fuente no respondió a tiempo",
+  SOURCE_HTTP_403: "La fuente rechazó la consulta",
+  SOURCE_HTTP_404: "Respuesta inesperada de la fuente",
+  SOURCE_HTTP_429: "La fuente limitó las consultas",
+  SOURCE_HTTP_5XX: "La fuente devolvió un error",
+  CORRUPT_IMAGE: "La imagen recibida no se pudo leer",
+  INVALID_DIMENSIONS: "La imagen no tiene las dimensiones esperadas",
+  CLASSIFICATION_ERROR: "No se pudo clasificar el mapa",
+  CONTRACT_VALIDATION_ERROR: "El resultado no superó la validación",
+  PUBLICATION_ERROR: "No se pudo publicar el resultado",
 };
 
 //: Estado del SISTEMA (distinto del estado de cada día). El verde se reserva
@@ -1237,8 +1252,9 @@ const CHILL_STATE_TONE = {
   ACTUALIZADO: "ok",
   DATOS_PARCIALES: "warn",
   SIN_PRONOSTICO_CONFIABLE: "warn",
-  FUENTE_NO_DISPONIBLE: "bad",
-  ERROR_DE_VALIDACION: "bad",
+  DATOS_PARCIALES_CON_ERRORES: "bad",
+  ERROR_DE_FUENTE: "bad",
+  ERROR_DE_PIPELINE: "bad",
 };
 
 async function loadChillIndex() {
@@ -1256,8 +1272,23 @@ function chillDayCard(map) {
   const legible = new Intl.DateTimeFormat("es-UY", { day: "numeric", month: "long" }).format(
     new Date(`${map.valid_date}T12:00:00`),
   );
-  if (map.display_status !== "DISPONIBLE") {
-    const motivo = NO_DATA_REASON[map.reason] || "Sin información verificable";
+  // Estado de la fecha. `SIN_DATOS` y `ERROR` comparten el negro —ninguno es una
+  // categoría de riesgo— pero conservan clases y textos distintos: uno dice que
+  // la fuente no tiene el dato, el otro que no pudimos obtenerlo.
+  const disponibilidad = map.availability_status || map.display_status;
+  if (disponibilidad === "ERROR") {
+    const motivo = ERROR_REASON[map.reason_code] || "No se pudo obtener el dato";
+    return `
+      <article class="forecast-card forecast-card--error"
+               role="listitem"
+               aria-label="Pronóstico Chill Index para el ${escapeHtml(legible)}: error al obtener los datos.">
+        <span class="forecast-card__date">${escapeHtml(fecha)}</span>
+        <strong class="forecast-card__value">Error</strong>
+        <span class="forecast-card__note">${escapeHtml(motivo)}</span>
+      </article>`;
+  }
+  if (disponibilidad !== "DISPONIBLE") {
+    const motivo = NO_DATA_REASON[map.reason_code] || "Sin información verificable";
     return `
       <article class="forecast-card forecast-card--no-data"
                role="listitem"

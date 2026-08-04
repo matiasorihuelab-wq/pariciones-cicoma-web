@@ -1968,21 +1968,30 @@ h3 {
 .forecast-card--alto { border-color: #0000ff; background: #eef2ff; }
 .forecast-card--muy_alto { border-color: #a000c8; background: #faf5ff; }
 
-/* «Sin datos»: negro sólido, letras blancas, sin color lateral ni degradado
-   que pueda leerse como una categoría, y sin animación de alerta. El
-   significado no depende del color: el texto lo dice y el aria-label también. */
-.forecast-card--no-data {
+/* «Sin datos» y «Error»: negro sólido, letras blancas, sin color lateral ni
+   degradado que pueda leerse como una categoría, y sin animación de alerta.
+   No se usa rojo para el error: rojo, naranja, amarillo y verde pertenecen a la
+   escala de riesgo del Chill Index y confundirían las dos cosas.
+
+   Las dos clases comparten el aspecto pero son estados semánticos distintos:
+   «Sin datos» es la fuente sin información, «Error» es una falla técnica. El
+   significado no depende del color: lo dice el texto y lo dice el aria-label. */
+.forecast-card--no-data,
+.forecast-card--error {
   background: #000;
   border-color: #000;
   color: #fff;
 }
 
 .forecast-card--no-data .forecast-card__date,
-.forecast-card--no-data .forecast-card__note {
+.forecast-card--no-data .forecast-card__note,
+.forecast-card--error .forecast-card__date,
+.forecast-card--error .forecast-card__note {
   color: #e2e8f0;
 }
 
-.forecast-card--no-data .forecast-card__value {
+.forecast-card--no-data .forecast-card__value,
+.forecast-card--error .forecast-card__value {
   color: #fff;
   font-weight: 700;
 }
