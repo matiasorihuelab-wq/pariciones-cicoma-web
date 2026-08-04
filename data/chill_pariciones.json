@@ -10,10 +10,10 @@
   "location": {
     "name": "CICOMA"
   },
-  "analyzed_at": "2026-08-04T20:25:54.832613+00:00",
+  "analyzed_at": "2026-08-04T22:09:34.104202+00:00",
   "forecast_run_date": "2026-08-04",
-  "imported_at": "2026-08-04T18:06:03.003378-03:00",
-  "forecast_age_hours": 0.82,
+  "imported_at": "2026-08-04T19:11:04.478568-03:00",
+  "forecast_age_hours": 0.03,
   "update_status": {
     "state": "ACTUALIZADO",
     "stale": false,
@@ -130,7 +130,7 @@
           "2026-08-05",
           "2026-08-06"
         ],
-        "category": "ALTO",
+        "category": "MEDIO",
         "complete": true,
         "missing_dates": [],
         "lambs": 2.879
@@ -139,11 +139,11 @@
     },
     {
       "date": "2026-08-05",
-      "risk_category": "BAJO",
-      "display_risk_category": "BAJO",
-      "ci_min": 900.0,
-      "ci_max": 1000.0,
-      "ci_interval": "900–1000",
+      "risk_category": "SIN_RIESGO",
+      "display_risk_category": "SIN_RIESGO",
+      "ci_min": null,
+      "ci_max": 900.0,
+      "ci_interval": "< 900",
       "ci_unit": "kJ/m2/h",
       "confidence": 0.9,
       "requires_review": false,
@@ -185,7 +185,7 @@
           "2026-08-06",
           "2026-08-07"
         ],
-        "category": "CRITICO",
+        "category": "MEDIO",
         "complete": true,
         "missing_dates": [],
         "lambs": 2.1923
@@ -194,13 +194,13 @@
     },
     {
       "date": "2026-08-06",
-      "risk_category": "ALTO",
-      "display_risk_category": "ALTO",
-      "ci_min": 1100.0,
-      "ci_max": 1200.0,
-      "ci_interval": "1100–1200",
+      "risk_category": "MEDIO",
+      "display_risk_category": "MEDIO",
+      "ci_min": 1000.0,
+      "ci_max": 1100.0,
+      "ci_interval": "1000–1100",
       "ci_unit": "kJ/m2/h",
-      "confidence": 0.75,
+      "confidence": 0.9,
       "requires_review": false,
       "automatic_use": true,
       "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260806.png",
@@ -240,22 +240,20 @@
           "2026-08-07",
           "2026-08-08"
         ],
-        "category": "RIESGO_72H_INCOMPLETO",
-        "complete": false,
-        "missing_dates": [
-          "2026-08-08"
-        ],
+        "category": "ALTO",
+        "complete": true,
+        "missing_dates": [],
         "lambs": 2.0549
       },
       "cross_status": "OK"
     },
     {
       "date": "2026-08-07",
-      "risk_category": "CRITICO",
-      "display_risk_category": "CRITICO",
-      "ci_min": 1200.0,
-      "ci_max": null,
-      "ci_interval": "> 1200",
+      "risk_category": "BAJO",
+      "display_risk_category": "BAJO",
+      "ci_min": 900.0,
+      "ci_max": 1000.0,
+      "ci_interval": "900–1000",
       "ci_unit": "kJ/m2/h",
       "confidence": 0.9,
       "requires_review": false,
@@ -300,7 +298,6 @@
         "category": "RIESGO_72H_INCOMPLETO",
         "complete": false,
         "missing_dates": [
-          "2026-08-08",
           "2026-08-09"
         ],
         "lambs": 1.9519
@@ -309,15 +306,15 @@
     },
     {
       "date": "2026-08-08",
-      "risk_category": "NO_DETERMINADO",
-      "display_risk_category": "RIESGO PENDIENTE DE REVISIÓN",
-      "ci_min": null,
-      "ci_max": null,
-      "ci_interval": "NO DETERMINADO",
+      "risk_category": "ALTO",
+      "display_risk_category": "ALTO",
+      "ci_min": 1100.0,
+      "ci_max": 1200.0,
+      "ci_interval": "1100–1200",
       "ci_unit": "kJ/m2/h",
-      "confidence": 0.0,
-      "requires_review": true,
-      "automatic_use": false,
+      "confidence": 0.9,
+      "requires_review": false,
+      "automatic_use": true,
       "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260808.png",
       "expected_ewes_lambing": 1.3318,
       "expected_lambs_born": 1.8832,
@@ -358,7 +355,6 @@
         "category": "RIESGO_72H_INCOMPLETO",
         "complete": false,
         "missing_dates": [
-          "2026-08-08",
           "2026-08-09",
           "2026-08-10"
         ],
@@ -374,18 +370,18 @@
     "rule": "Cada cohorte prevista para el día D se evalúa en D, D+1 y D+2 y se cuenta una sola vez bajo su categoría máxima.",
     "SIN_RIESGO": 0.0,
     "BAJO": 0.0,
-    "MEDIO": 0.0,
-    "ALTO": 2.879,
-    "CRITICO": 2.1923,
-    "RIESGO_72H_INCOMPLETO": 5.89,
+    "MEDIO": 5.0713,
+    "ALTO": 2.0549,
+    "CRITICO": 0.0,
+    "RIESGO_72H_INCOMPLETO": 3.8351,
     "by_module": {
       "INTENSIVO": {
         "SIN_RIESGO": 0.0,
         "BAJO": 0.0,
-        "MEDIO": 0.0,
-        "ALTO": 2.879,
-        "CRITICO": 2.1923,
-        "RIESGO_72H_INCOMPLETO": 5.89
+        "MEDIO": 5.0713,
+        "ALTO": 2.0549,
+        "CRITICO": 0.0,
+        "RIESGO_72H_INCOMPLETO": 3.8351
       },
       "DOHNE": {
         "SIN_RIESGO": 0.0,
