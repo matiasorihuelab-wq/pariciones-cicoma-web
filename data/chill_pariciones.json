@@ -3,8 +3,8 @@
   "status": "OK",
   "source": {
     "name": "INIA-GRAS",
-    "interpreted_by": "CICOMA (pipeline determinístico)",
-    "label": "INIA-GRAS, clasificación determinística propia",
+    "interpreted_by": "Zapia",
+    "label": "INIA-GRAS interpretada por Zapia",
     "official_url": "https://inia.uy/gras/Aplicaciones_y_recursos/Prevision%20Corderos"
   },
   "location": {
@@ -13,11 +13,11 @@
   "analyzed_at": "2026-08-04T11:39:14.677387+00:00",
   "forecast_run_date": "2026-08-04",
   "imported_at": "2026-08-04T12:54:32.947456-03:00",
-  "forecast_age_hours": 5.08,
+  "forecast_age_hours": 5.85,
   "update_status": {
     "state": "ACTUALIZADO",
     "stale": false,
-    "message": "Pronóstico válido del pipeline propio (WRF completo de INIA-GRAS)."
+    "message": "Pronóstico válido importado desde Zapia."
   },
   "product_cross": {
     "status": "OK",

@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-04T14:25:53.850735-03:00",
+  "generated_at": "2026-08-04T14:30:05.771491-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -23,7 +23,7 @@
       "unclassified": 2,
       "total": 3
     },
-    "generated_at": "2026-08-04T14:25:53.850735-03:00",
+    "generated_at": "2026-08-04T14:30:05.771491-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -4094,7 +4094,7 @@
     "update_status": {
       "state": "ACTUALIZADO",
       "stale": false,
-      "message": "Pronóstico válido del pipeline propio (WRF completo de INIA-GRAS)."
+      "message": "Pronóstico válido importado desde Zapia."
     },
     "daily": [
       {
@@ -4962,8 +4962,8 @@
     "status": "OK",
     "source": {
       "name": "INIA-GRAS",
-      "interpreted_by": "CICOMA (pipeline determinístico)",
-      "label": "INIA-GRAS, clasificación determinística propia",
+      "interpreted_by": "Zapia",
+      "label": "INIA-GRAS interpretada por Zapia",
       "official_url": "https://inia.uy/gras/Aplicaciones_y_recursos/Prevision%20Corderos"
     },
     "location": {
@@ -4974,11 +4974,11 @@
     "analyzed_at": "2026-08-04T11:39:14.677387+00:00",
     "forecast_run_date": "2026-08-04",
     "imported_at": "2026-08-04T12:54:32.947456-03:00",
-    "forecast_age_hours": 5.08,
+    "forecast_age_hours": 5.85,
     "update_status": {
       "state": "ACTUALIZADO",
       "stale": false,
-      "message": "Pronóstico válido del pipeline propio (WRF completo de INIA-GRAS)."
+      "message": "Pronóstico válido importado desde Zapia."
     },
     "product_cross": {
       "status": "OK",
@@ -5373,7 +5373,7 @@
     }
   },
   "chill_pariciones_summary": {
-    "source": "INIA-GRAS, clasificación determinística propia",
+    "source": "INIA-GRAS interpretada por Zapia",
     "analyzed_at": "2026-08-04T11:39:14.677387+00:00",
     "imported_at": "2026-08-04T12:54:32.947456-03:00",
     "update_status": "ACTUALIZADO",
@@ -5504,10 +5504,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-08-04T17:25:50.790415Z",
+      "processed_at": "2026-08-04T17:26:21.767131Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-08-04T14:25:53.850735-03:00",
+    "last_sync_at": "2026-08-04T14:30:05.771491-03:00",
     "pending_operations": 1,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
