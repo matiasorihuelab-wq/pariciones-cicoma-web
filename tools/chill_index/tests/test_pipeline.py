@@ -224,11 +224,12 @@ def test_la_antiguedad_del_ultimo_valido_se_conserva() -> None:
 
 
 def test_un_dia_sin_datos_no_lleva_categoria_ni_intervalo() -> None:
-    mapa = contract.no_data_map(
+    mapa = contract.unavailable_map(
         forecast_day=0,
         valid_date="2026-08-03",
         source_url="https://ejemplo/mapa.png",
-        reason="WRF_UNDEFINED_GRID",
+        availability_status="SIN_DATOS",
+        reason_code="WRF_UNDEFINED_GRID",
     )
     assert mapa["risk_category"] == "NO_DETERMINADO"
     assert mapa["display_status"] == "SIN_DATOS"
@@ -268,19 +269,30 @@ def test_el_contrato_rechaza_publicar_sin_hash() -> None:
 
 def test_el_contrato_rechaza_una_categoria_con_estado_sin_datos() -> None:
     payload = _payload_minimo()
+    payload["maps"][0]["availability_status"] = "SIN_DATOS"
     payload["maps"][0]["display_status"] = "SIN_DATOS"
     with pytest.raises(contract.ContractError, match="sin datos"):
+        contract.validate(payload, today_iso=HOY.isoformat())
+
+
+def test_el_contrato_exige_que_los_dos_estados_coincidan() -> None:
+    """`display_status` es lo que ve el público; no puede contradecir el semántico."""
+
+    payload = _payload_minimo()
+    payload["maps"][0]["display_status"] = "ERROR"
+    with pytest.raises(contract.ContractError, match="no coincide"):
         contract.validate(payload, today_iso=HOY.isoformat())
 
 
 def test_actualizado_exige_serie_completa_y_vigente() -> None:
     payload = _payload_minimo()
     payload["maps"].append(
-        contract.no_data_map(
+        contract.unavailable_map(
             forecast_day=1,
             valid_date="2026-08-04",
             source_url="https://ejemplo/otro.png",
-            reason="WRF_UNDEFINED_GRID",
+            availability_status="SIN_DATOS",
+            reason_code="WRF_UNDEFINED_GRID",
         )
     )
     with pytest.raises(contract.ContractError, match="ACTUALIZADO exige"):
@@ -315,29 +327,28 @@ def test_estado_del_sistema_segun_cobertura(disponibles: int, esperado: str) -> 
             )
         else:
             mapas.append(
-                contract.no_data_map(
+                contract.unavailable_map(
                     forecast_day=indice,
                     valid_date=fecha,
                     source_url="https://ejemplo/m.png",
-                    reason="WRF_UNDEFINED_GRID",
+                    availability_status="SIN_DATOS",
+                    reason_code="WRF_UNDEFINED_GRID",
                 )
             )
-    assert contract.system_status(mapas, today_iso=HOY.isoformat(), fetch_failed=False) == esperado
+    assert contract.system_status(mapas, today_iso=HOY.isoformat()) == esperado
 
 
 def test_fuente_caida_es_estado_de_fuente_no_disponible() -> None:
     mapas = [
-        contract.no_data_map(
+        contract.unavailable_map(
             forecast_day=0,
             valid_date=HOY.isoformat(),
             source_url="https://ejemplo/m.png",
-            reason="SOURCE_UNAVAILABLE",
+            availability_status="ERROR",
+            reason_code="SOURCE_HTTP_5XX",
         )
     ]
-    assert (
-        contract.system_status(mapas, today_iso=HOY.isoformat(), fetch_failed=True)
-        == "FUENTE_NO_DISPONIBLE"
-    )
+    assert contract.system_status(mapas, today_iso=HOY.isoformat()) == "ERROR_DE_FUENTE"
 
 
 def _payload_minimo() -> dict:
@@ -531,7 +542,7 @@ def test_escenario_real_grilla_vacia_publica_sin_datos(tmp_path: Path) -> None:
     publicado = json.loads((tmp_path / "data" / "chill_index.json").read_text(encoding="utf-8"))
     assert all(m["display_status"] == "SIN_DATOS" for m in publicado["maps"])
     assert all(m["risk_category"] == "NO_DETERMINADO" for m in publicado["maps"])
-    assert all(m["reason"] == "WRF_UNDEFINED_GRID" for m in publicado["maps"])
+    assert all(m["reason_code"] == "WRF_UNDEFINED_GRID" for m in publicado["maps"])
     assert all(m["ci_min"] is None for m in publicado["maps"])
     assert "SIN_RIESGO" not in json.dumps(publicado["maps"])
     assert publicado["freshness"]["covers_today"] is False
@@ -561,7 +572,7 @@ def test_un_mapa_valido_pero_viejo_no_se_publica(tmp_path: Path) -> None:
     resumen = _correr(tmp_path, sesion, skip_mini=True)
     assert resumen["status"] == "SIN_PRONOSTICO_CONFIABLE"
     publicado = json.loads((tmp_path / "data" / "chill_index.json").read_text(encoding="utf-8"))
-    assert all(m["reason"] == "SOURCE_DATE_UNVERIFIED" for m in publicado["maps"])
+    assert all(m["reason_code"] == "SOURCE_DATE_UNVERIFIED" for m in publicado["maps"])
 
 
 def test_serie_parcial_produce_datos_parciales(tmp_path: Path) -> None:
@@ -581,16 +592,18 @@ def test_serie_parcial_produce_datos_parciales(tmp_path: Path) -> None:
 def test_fuente_totalmente_caida(tmp_path: Path) -> None:
     sesion = _SesionFalsa({}, por_defecto=_Respuesta(503))
     resumen = _correr(tmp_path, sesion, skip_mini=True)
-    assert resumen["status"] == "FUENTE_NO_DISPONIBLE"
+    assert resumen["status"] == "ERROR_DE_FUENTE"
     publicado = json.loads((tmp_path / "data" / "chill_index.json").read_text(encoding="utf-8"))
-    assert all(m["reason"] == "SOURCE_UNAVAILABLE" for m in publicado["maps"])
+    assert all(m["reason_code"] == "SOURCE_HTTP_5XX" for m in publicado["maps"])
+    assert all(m["availability_status"] == "ERROR" for m in publicado["maps"])
 
 
 def test_mapa_no_publicado_da_404(tmp_path: Path) -> None:
     sesion = _SesionFalsa({}, por_defecto=_Respuesta(404))
     resumen = _correr(tmp_path, sesion, skip_mini=True)
     publicado = json.loads((tmp_path / "data" / "chill_index.json").read_text(encoding="utf-8"))
-    assert all(m["reason"] == "MAP_NOT_PUBLISHED" for m in publicado["maps"])
+    assert all(m["reason_code"] == "MAP_NOT_PUBLISHED" for m in publicado["maps"])
+    assert all(m["availability_status"] == "SIN_DATOS" for m in publicado["maps"])
     assert resumen["maps_downloaded"] == 0
 
 

@@ -30,6 +30,32 @@ def _iso(value: datetime) -> str:
     return value.isoformat()
 
 
+
+def _download_failure(descarga: Any) -> tuple[str, str]:
+    """Traduce un fallo de descarga a (disponibilidad, motivo).
+
+    Un 404 es la respuesta definitiva de INIA cuando **todavía no publicó** el
+    mapa de esa fecha: la fuente contestó bien y no hay dato. Cualquier otra
+    cosa —timeout, 403, 429, 5xx, DNS— es una falla técnica.
+    """
+
+    estado = descarga.http_status
+    if estado == 404:
+        return "SIN_DATOS", "MAP_NOT_PUBLISHED"
+    if estado == 403:
+        return "ERROR", "SOURCE_HTTP_403"
+    if estado == 429:
+        return "ERROR", "SOURCE_HTTP_429"
+    if estado is not None and 500 <= estado < 600:
+        return "ERROR", "SOURCE_HTTP_5XX"
+    if estado is not None and estado != 200:
+        return "ERROR", "SOURCE_HTTP_404" if estado == 404 else "SOURCE_HTTP_5XX"
+    detalle = (descarga.error or "").lower()
+    if "timeout" in detalle or "timedout" in detalle:
+        return "ERROR", "SOURCE_TIMEOUT"
+    return "ERROR", "SOURCE_TIMEOUT"
+
+
 def run(
     *,
     output: Path,
@@ -57,7 +83,7 @@ def run(
     validos = 0
     indefinidos = 0
     rechazados = 0
-    fetch_failed_all = True
+    errores = 0
     forecast_run_date: str | None = None
     edad_fuente: float | None = None
 
@@ -68,24 +94,24 @@ def run(
         etiqueta = dia.isoformat()
 
         if not descarga.ok:
-            if descarga.http_status == 404:
-                motivo, estado = "MAP_NOT_PUBLISHED", "NOT_FETCHED"
-            else:
-                motivo, estado = "SOURCE_UNAVAILABLE", "NOT_FETCHED"
+            disponibilidad, motivo = _download_failure(descarga)
+            if disponibilidad == "ERROR":
+                errores += 1
             mapas.append(
-                contract.no_data_map(
+                contract.unavailable_map(
                     forecast_day=indice,
                     valid_date=etiqueta,
                     source_url=url,
-                    reason=motivo,
+                    availability_status=disponibilidad,
+                    reason_code=motivo,
                     reason_detail=descarga.error,
-                    validation_status=estado,
+                    validation_status="NOT_FETCHED",
                     http_status=descarga.http_status,
+                    checked_at=descarga.requested_at,
                 )
             )
             continue
 
-        fetch_failed_all = False
         descargados += 1
         assert descarga.body is not None and descarga.sha256 is not None
 
@@ -98,11 +124,12 @@ def run(
         if revision.status == imaging.NO_DATA:
             indefinidos += 1
             mapas.append(
-                contract.no_data_map(
+                contract.unavailable_map(
                     forecast_day=indice,
                     valid_date=etiqueta,
                     source_url=url,
-                    reason="WRF_UNDEFINED_GRID",
+                    availability_status="SIN_DATOS",
+                    reason_code="WRF_UNDEFINED_GRID",
                     reason_detail=revision.reason,
                     validation_status=imaging.NO_DATA,
                     sha256=descarga.sha256,
@@ -110,18 +137,29 @@ def run(
                     source_age_hours=vigencia.source_age_hours,
                     http_status=descarga.http_status,
                     evidence_path=evidencia,
+                    checked_at=descarga.requested_at,
                 )
             )
             continue
 
         if revision.status != imaging.VALID:
             rechazados += 1
+            errores += 1
+            # Un PNG ilegible o de dimensiones inesperadas es una falla técnica,
+            # no una fuente sin datos: la fuente entregó algo que no pudimos
+            # procesar.
+            motivo = (
+                "INVALID_DIMENSIONS"
+                if "Dimensiones" in revision.reason
+                else "CORRUPT_IMAGE"
+            )
             mapas.append(
-                contract.no_data_map(
+                contract.unavailable_map(
                     forecast_day=indice,
                     valid_date=etiqueta,
                     source_url=url,
-                    reason="MAP_REJECTED",
+                    availability_status="ERROR",
+                    reason_code=motivo,
                     reason_detail=revision.reason,
                     validation_status=revision.status,
                     sha256=descarga.sha256,
@@ -129,6 +167,7 @@ def run(
                     source_age_hours=vigencia.source_age_hours,
                     http_status=descarga.http_status,
                     evidence_path=evidencia,
+                    checked_at=descarga.requested_at,
                 )
             )
             continue
@@ -136,11 +175,12 @@ def run(
         if not vigencia.verified:
             rechazados += 1
             mapas.append(
-                contract.no_data_map(
+                contract.unavailable_map(
                     forecast_day=indice,
                     valid_date=etiqueta,
                     source_url=url,
-                    reason="SOURCE_DATE_UNVERIFIED",
+                    availability_status="SIN_DATOS",
+                    reason_code="SOURCE_DATE_UNVERIFIED",
                     reason_detail=(
                         "El mapa tiene datos pero su Last-Modified no permite verificar "
                         "que la corrida sea vigente"
@@ -151,17 +191,19 @@ def run(
                     source_age_hours=vigencia.source_age_hours,
                     http_status=descarga.http_status,
                     evidence_path=evidencia,
+                    checked_at=descarga.requested_at,
                 )
             )
             continue
 
         if freshness.horizon_expired(dia, today=hoy):
             mapas.append(
-                contract.no_data_map(
+                contract.unavailable_map(
                     forecast_day=indice,
                     valid_date=etiqueta,
                     source_url=url,
-                    reason="FORECAST_EXPIRED",
+                    availability_status="SIN_DATOS",
+                    reason_code="FORECAST_EXPIRED",
                     reason_detail="La fecha del pronóstico ya pasó",
                     validation_status=imaging.VALID,
                     sha256=descarga.sha256,
@@ -169,6 +211,7 @@ def run(
                     source_age_hours=vigencia.source_age_hours,
                     http_status=descarga.http_status,
                     evidence_path=evidencia,
+                    checked_at=descarga.requested_at,
                 )
             )
             continue
@@ -182,12 +225,14 @@ def run(
         )
         if clasificacion.category is None:
             rechazados += 1
+            errores += 1
             mapas.append(
-                contract.no_data_map(
+                contract.unavailable_map(
                     forecast_day=indice,
                     valid_date=etiqueta,
                     source_url=url,
-                    reason="MAP_REJECTED",
+                    availability_status="ERROR",
+                    reason_code="CLASSIFICATION_ERROR",
                     reason_detail=clasificacion.reason
                     or "La categoría no pudo determinarse con la paleta calibrada",
                     validation_status=imaging.VALID,
@@ -196,6 +241,7 @@ def run(
                     source_age_hours=vigencia.source_age_hours,
                     http_status=descarga.http_status,
                     evidence_path=evidencia,
+                    checked_at=descarga.requested_at,
                 )
             )
             continue
@@ -218,6 +264,7 @@ def run(
                 category=clasificacion.category,
                 confidence=clasificacion.confidence,
                 evidence_path=evidencia,
+                checked_at=descarga.requested_at,
             )
         )
 
@@ -229,9 +276,7 @@ def run(
     if validos and forecast_run_date:
         ultima_fecha = forecast_run_date
 
-    estado = contract.system_status(
-        mapas, today_iso=hoy.isoformat(), fetch_failed=fetch_failed_all
-    )
+    estado = contract.system_status(mapas, today_iso=hoy.isoformat())
     finished = datetime.now(UTC)
 
     payload: dict[str, Any] = {
@@ -239,7 +284,7 @@ def run(
         "pipeline_version": settings.PIPELINE_VERSION,
         "status": estado,
         "status_label": contract.STATUS_LABELS[estado],
-        "status_detail": _status_detail(estado, indefinidos, len(fechas)),
+        "status_detail": _status_detail(estado, indefinidos, len(fechas), errores),
         "source": settings.SOURCE_NAME,
         "source_page": settings.SOURCE_PAGE,
         "location": dict(settings.LOCATION),
@@ -250,7 +295,7 @@ def run(
         "forecast_run_date": forecast_run_date,
         "freshness": {
             "covers_today": any(
-                m["valid_date"] == hoy.isoformat() and m["display_status"] == "DISPONIBLE"
+                m["valid_date"] == hoy.isoformat() and m["availability_status"] == "DISPONIBLE"
                 for m in mapas
             ),
             "maps_valid": validos,
@@ -301,10 +346,15 @@ def run(
         maps_valid=validos,
         maps_undefined=indefinidos,
         maps_rejected=rechazados,
+        maps_error=errores,
         output_hash=hash_nuevo,
         previous_output_hash=hash_anterior,
-        error_code=None if estado != "FUENTE_NO_DISPONIBLE" else "SOURCE_UNAVAILABLE",
-        error_detail=None,
+        error_code=next(
+            (m["reason_code"] for m in mapas if m["availability_status"] == "ERROR"), None
+        ),
+        error_detail=next(
+            (m["reason_detail"] for m in mapas if m["availability_status"] == "ERROR"), None
+        ),
         workflow_run_url=workflow_run_url,
     )
     history.append_run(history_path, entrada)
@@ -316,24 +366,35 @@ def run(
         "maps_valid": validos,
         "maps_undefined": indefinidos,
         "maps_rejected": rechazados,
+        "maps_error": errores,
         "maps_downloaded": descargados,
         "content_changed": cambio,
         "output_hash": hash_nuevo,
         "days": [
-            {"date": m["valid_date"], "risk": m["risk_category"], "reason": m["reason"]}
+            {
+                "date": m["valid_date"],
+                "risk": m["risk_category"],
+                "availability": m["availability_status"],
+                "reason": m["reason_code"],
+            }
             for m in mapas
         ],
     }
 
 
-def _status_detail(estado: str, indefinidos: int, total: int) -> str | None:
+def _status_detail(estado: str, indefinidos: int, total: int, errores: int) -> str | None:
     if estado == "SIN_PRONOSTICO_CONFIABLE" and indefinidos:
         return (
             f"INIA publicó {indefinidos} de {total} mapas sin grilla utilizable "
             "(patrón 'Entire Grid Undefined')."
         )
-    if estado == "FUENTE_NO_DISPONIBLE":
-        return "No se pudo obtener ningún mapa de la fuente oficial."
+    if estado in ("ERROR_DE_FUENTE", "ERROR_DE_PIPELINE"):
+        return f"Fallas técnicas en {errores} de {total} fechas del horizonte."
+    if estado == "DATOS_PARCIALES_CON_ERRORES":
+        return (
+            f"Hay pronóstico para algunas fechas; {errores} de {total} fallaron "
+            "por un problema técnico."
+        )
     if estado == "DATOS_PARCIALES":
         return "Sólo algunas fechas del horizonte tienen un mapa válido y vigente."
     return None
@@ -387,7 +448,12 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Estado del sistema : {resumen['status']}")
     print(f"Publicación        : {resumen['publication']}")
     for dia in resumen["days"]:
-        detalle = dia["risk"] if dia["risk"] != "NO_DETERMINADO" else f"SIN DATOS ({dia['reason']})"
+        if dia["availability"] == "DISPONIBLE":
+            detalle = dia["risk"]
+        elif dia["availability"] == "ERROR":
+            detalle = f"ERROR ({dia['reason']})"
+        else:
+            detalle = f"SIN DATOS ({dia['reason']})"
         print(f"  {dia['date']}  {detalle}")
     return 0
 

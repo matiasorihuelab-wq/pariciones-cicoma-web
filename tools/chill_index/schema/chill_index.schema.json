@@ -22,57 +22,130 @@
     "diagnostics"
   ],
   "properties": {
-    "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
-    "pipeline_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "pipeline_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
     "status": {
       "type": "string",
       "enum": [
         "ACTUALIZADO",
         "DATOS_PARCIALES",
         "SIN_PRONOSTICO_CONFIABLE",
-        "FUENTE_NO_DISPONIBLE",
-        "ERROR_DE_VALIDACION"
+        "DATOS_PARCIALES_CON_ERRORES",
+        "ERROR_DE_FUENTE",
+        "ERROR_DE_PIPELINE"
       ]
     },
-    "status_label": { "type": "string", "minLength": 1 },
-    "status_detail": { "type": ["string", "null"] },
-    "source": { "type": "string", "minLength": 1 },
-    "source_page": { "type": "string", "format": "uri" },
+    "status_label": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status_detail": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_page": {
+      "type": "string",
+      "format": "uri"
+    },
     "location": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["name", "latitude", "longitude"],
+      "required": [
+        "name",
+        "latitude",
+        "longitude"
+      ],
       "properties": {
-        "name": { "type": "string" },
-        "latitude": { "type": "number" },
-        "longitude": { "type": "number" }
+        "name": {
+          "type": "string"
+        },
+        "latitude": {
+          "type": "number"
+        },
+        "longitude": {
+          "type": "number"
+        }
       }
     },
-    "timezone": { "type": "string" },
-    "run_started_at": { "type": "string" },
-    "run_finished_at": { "type": "string" },
-    "run_trigger": { "type": ["string", "null"] },
+    "timezone": {
+      "type": "string"
+    },
+    "run_started_at": {
+      "type": "string"
+    },
+    "run_finished_at": {
+      "type": "string"
+    },
+    "run_trigger": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
     "forecast_run_date": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
     },
     "freshness": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["covers_today", "maps_valid", "maps_total"],
+      "required": [
+        "covers_today",
+        "maps_valid",
+        "maps_total"
+      ],
       "properties": {
-        "covers_today": { "type": "boolean" },
-        "maps_valid": { "type": "integer", "minimum": 0 },
-        "maps_total": { "type": "integer", "minimum": 0 },
-        "source_age_hours": { "type": ["number", "null"] },
+        "covers_today": {
+          "type": "boolean"
+        },
+        "maps_valid": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maps_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "source_age_hours": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
         "last_valid_forecast_run_date": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
         },
-        "last_valid_age_days": { "type": ["integer", "null"] }
+        "last_valid_age_days": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
       }
     },
-    "model": { "type": "string", "minLength": 1 },
+    "model": {
+      "type": "string",
+      "minLength": 1
+    },
     "maps": {
       "type": "array",
       "minItems": 1,
@@ -85,70 +158,199 @@
           "source_url",
           "source_sha256",
           "source_last_modified",
+          "checked_at",
           "validation_status",
           "risk_category",
+          "availability_status",
           "display_status",
           "ci_min",
           "ci_max",
           "ci_unit",
           "confidence",
           "requires_review",
-          "reason"
+          "reason_code"
         ],
         "properties": {
-          "forecast_day": { "type": "integer", "minimum": 0 },
-          "valid_date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
-          "source_url": { "type": "string", "format": "uri" },
-          "source_sha256": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" },
-          "source_last_modified": { "type": ["string", "null"] },
-          "source_age_hours": { "type": ["number", "null"] },
-          "http_status": { "type": ["integer", "null"] },
+          "forecast_day": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "valid_date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "source_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "source_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "source_last_modified": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source_age_hours": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "http_status": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
           "validation_status": {
             "type": "string",
-            "enum": ["VALID", "NO_DATA", "INVALID_IMAGE", "INDETERMINATE", "NOT_FETCHED"]
+            "enum": [
+              "VALID",
+              "NO_DATA",
+              "INVALID_IMAGE",
+              "INDETERMINATE",
+              "NOT_FETCHED"
+            ]
           },
           "risk_category": {
             "type": "string",
-            "enum": ["SIN_RIESGO", "BAJO", "MEDIO", "ALTO", "MUY_ALTO", "NO_DETERMINADO"]
-          },
-          "display_status": { "type": "string", "enum": ["DISPONIBLE", "SIN_DATOS"] },
-          "ci_min": { "type": ["number", "null"] },
-          "ci_max": { "type": ["number", "null"] },
-          "ci_unit": { "type": "string" },
-          "confidence": { "type": "string", "enum": ["high", "medium", "low", "none"] },
-          "requires_review": { "type": "boolean" },
-          "reason": {
-            "type": ["string", "null"],
             "enum": [
-              "WRF_UNDEFINED_GRID",
-              "SOURCE_DATE_UNVERIFIED",
-              "MAP_NOT_PUBLISHED",
-              "MAP_REJECTED",
-              "SOURCE_UNAVAILABLE",
-              "FORECAST_EXPIRED",
-              null
+              "SIN_RIESGO",
+              "BAJO",
+              "MEDIO",
+              "ALTO",
+              "MUY_ALTO",
+              "NO_DETERMINADO"
             ]
           },
-          "reason_detail": { "type": ["string", "null"] },
-          "evidence_path": { "type": ["string", "null"] }
+          "display_status": {
+            "type": "string",
+            "enum": [
+              "DISPONIBLE",
+              "SIN_DATOS",
+              "ERROR"
+            ]
+          },
+          "ci_min": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "ci_max": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "ci_unit": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low",
+              "none"
+            ]
+          },
+          "requires_review": {
+            "type": "boolean"
+          },
+          "reason_detail": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evidence_path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "availability_status": {
+            "type": "string",
+            "enum": [
+              "DISPONIBLE",
+              "SIN_DATOS",
+              "ERROR"
+            ]
+          },
+          "checked_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reason_code": {
+            "type": "string",
+            "enum": [
+              "MAP_VALID",
+              "MAP_NOT_PUBLISHED",
+              "WRF_UNDEFINED_GRID",
+              "FORECAST_EXPIRED",
+              "SOURCE_DATE_UNVERIFIED",
+              "WRF_MINI_ONLY",
+              "SOURCE_TIMEOUT",
+              "SOURCE_HTTP_403",
+              "SOURCE_HTTP_404",
+              "SOURCE_HTTP_429",
+              "SOURCE_HTTP_5XX",
+              "CORRUPT_IMAGE",
+              "INVALID_DIMENSIONS",
+              "CLASSIFICATION_ERROR",
+              "CONTRACT_VALIDATION_ERROR",
+              "PUBLICATION_ERROR"
+            ]
+          }
         }
       }
     },
     "diagnostics": {
       "type": "object",
-      "required": ["wrf_mini"],
+      "required": [
+        "wrf_mini"
+      ],
       "properties": {
         "wrf_mini": {
           "type": "object",
-          "required": ["policy", "observations"],
+          "required": [
+            "policy",
+            "observations"
+          ],
           "properties": {
-            "policy": { "type": "string", "minLength": 1 },
-            "run_date_hint": { "type": ["string", "null"] },
-            "observations": { "type": "array" }
+            "policy": {
+              "type": "string",
+              "minLength": 1
+            },
+            "run_date_hint": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "observations": {
+              "type": "array"
+            }
           }
         },
-        "http": { "type": "array" },
-        "notes": { "type": "array", "items": { "type": "string" } }
+        "http": {
+          "type": "array"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     }
   }

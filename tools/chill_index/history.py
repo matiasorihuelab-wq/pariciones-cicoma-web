@@ -77,6 +77,7 @@ def build_entry(
     error_detail: str | None = None,
     workflow_run_url: str | None = None,
     commit_sha: str | None = None,
+    maps_error: int = 0,
 ) -> dict[str, Any]:
     """Entrada del historial con los campos exigidos por la operación."""
 
@@ -95,6 +96,7 @@ def build_entry(
         "maps_valid": maps_valid,
         "maps_undefined": maps_undefined,
         "maps_rejected": maps_rejected,
+        "maps_error": maps_error,
         "output_hash": output_hash,
         "previous_output_hash": previous_output_hash,
         "error_code": error_code,

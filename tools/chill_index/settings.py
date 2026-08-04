@@ -14,8 +14,8 @@ from typing import Any
 
 #: Versión del pipeline. Se publica en el contrato: cambiar la clasificación
 #: sin cambiar esto haría irreproducible un resultado histórico.
-PIPELINE_VERSION = "1.0.0"
-SCHEMA_VERSION = "1.0.0"
+PIPELINE_VERSION = "1.1.0"
+SCHEMA_VERSION = "1.1.0"
 
 TIMEZONE = "America/Montevideo"
 
@@ -93,26 +93,56 @@ MAX_SOURCE_AGE_HOURS = 36.0
 
 RISK_CATEGORIES = ("SIN_RIESGO", "BAJO", "MEDIO", "ALTO", "MUY_ALTO", "NO_DETERMINADO")
 CONFIDENCE_LEVELS = ("high", "medium", "low", "none")
-DISPLAY_STATUS = ("DISPONIBLE", "SIN_DATOS")
 
-#: Motivos técnicos por los que una fecha queda sin dato. El público sólo ve
-#: «Sin datos»; el motivo vive en el contrato, el historial y la gestión.
-REASON_CODES = (
-    "WRF_UNDEFINED_GRID",
-    "SOURCE_DATE_UNVERIFIED",
+#: Disponibilidad de la fecha. Distingue dos cosas que antes se confundían:
+#:
+#: * ``SIN_DATOS``  → el pipeline funcionó bien y **la fuente** no tiene
+#:   información utilizable para esa fecha. No es una falla nuestra.
+#: * ``ERROR``      → el pipeline **no pudo procesar** la fuente por una falla
+#:   técnica: red, HTTP, imagen corrupta, clasificador, validación.
+#:
+#: Las dos se ven en negro y ninguna es una categoría de riesgo, pero el texto,
+#: el estado semántico y el motivo son distintos.
+AVAILABILITY_STATUS = ("DISPONIBLE", "SIN_DATOS", "ERROR")
+DISPLAY_STATUS = AVAILABILITY_STATUS
+
+#: Motivos por los que la fuente no aporta un pronóstico utilizable. El pipeline
+#: funcionó: no hay nada que arreglar de este lado.
+REASON_NO_DATA = (
     "MAP_NOT_PUBLISHED",
-    "MAP_REJECTED",
-    "SOURCE_UNAVAILABLE",
+    "WRF_UNDEFINED_GRID",
     "FORECAST_EXPIRED",
+    "SOURCE_DATE_UNVERIFIED",
+    "WRF_MINI_ONLY",
 )
+
+#: Motivos de falla técnica. Estos sí exigen mirar el pipeline o la red.
+REASON_ERROR = (
+    "SOURCE_TIMEOUT",
+    "SOURCE_HTTP_403",
+    "SOURCE_HTTP_404",
+    "SOURCE_HTTP_429",
+    "SOURCE_HTTP_5XX",
+    "CORRUPT_IMAGE",
+    "INVALID_DIMENSIONS",
+    "CLASSIFICATION_ERROR",
+    "CONTRACT_VALIDATION_ERROR",
+    "PUBLICATION_ERROR",
+)
+
+#: Motivo de una fecha publicada con categoría.
+REASON_VALID = "MAP_VALID"
+
+REASON_CODES = (REASON_VALID, *REASON_NO_DATA, *REASON_ERROR)
 
 #: Estado del sistema (NO es el estado de un día).
 SYSTEM_STATUS = (
     "ACTUALIZADO",
     "DATOS_PARCIALES",
     "SIN_PRONOSTICO_CONFIABLE",
-    "FUENTE_NO_DISPONIBLE",
-    "ERROR_DE_VALIDACION",
+    "DATOS_PARCIALES_CON_ERRORES",
+    "ERROR_DE_FUENTE",
+    "ERROR_DE_PIPELINE",
 )
 
 _HERE = Path(__file__).parent
