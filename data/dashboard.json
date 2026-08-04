@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-04T12:53:53.199018-03:00",
+  "generated_at": "2026-08-04T12:54:49.508150-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -11,11 +11,6 @@
       {
         "code": "PENDING_EVENT",
         "message": "Hay un reporte pendiente de contabilizar.",
-        "severity": "OJO"
-      },
-      {
-        "code": "CHILL_STALE",
-        "message": "El Chill Index no está actualizado.",
         "severity": "OJO"
       }
     ],
@@ -28,7 +23,7 @@
       "unclassified": 2,
       "total": 3
     },
-    "generated_at": "2026-08-04T12:53:53.199018-03:00",
+    "generated_at": "2026-08-04T12:54:49.508150-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -4097,57 +4092,44 @@
     ],
     "status": "OK",
     "update_status": {
-      "state": "DESACTUALIZADO",
-      "stale": true,
-      "message": "El último archivo detectado no superó la validación."
+      "state": "ACTUALIZADO",
+      "stale": false,
+      "message": "Pronóstico válido importado desde Zapia."
     },
     "daily": [
       {
-        "date": "2026-07-28",
+        "date": "2026-08-04",
         "risk_category": "SIN_RIESGO",
         "display_risk_category": "SIN_RIESGO",
-        "total_exposed": 15.848,
+        "total_exposed": 10.697,
         "by_lot": {
-          "INTENSIVO": 15.8478,
+          "INTENSIVO": 10.6972,
           "DOHNE": 0.0,
           "MA": 0.0
         },
         "cohort_72h_complete": true,
-        "cohort_72h_category": "BAJO"
+        "cohort_72h_category": "ALTO"
       },
       {
-        "date": "2026-07-29",
+        "date": "2026-08-05",
         "risk_category": "BAJO",
         "display_risk_category": "BAJO",
-        "total_exposed": 15.813,
+        "total_exposed": 8.637,
         "by_lot": {
-          "INTENSIVO": 15.8134,
+          "INTENSIVO": 8.637,
           "DOHNE": 0.0,
           "MA": 0.0
         },
         "cohort_72h_complete": true,
-        "cohort_72h_category": "BAJO"
+        "cohort_72h_category": "CRITICO"
       },
       {
-        "date": "2026-07-30",
-        "risk_category": "BAJO",
-        "display_risk_category": "BAJO",
-        "total_exposed": 15.71,
+        "date": "2026-08-06",
+        "risk_category": "ALTO",
+        "display_risk_category": "ALTO",
+        "total_exposed": 7.126,
         "by_lot": {
-          "INTENSIVO": 15.7103,
-          "DOHNE": 0.0,
-          "MA": 0.0
-        },
-        "cohort_72h_complete": true,
-        "cohort_72h_category": "BAJO"
-      },
-      {
-        "date": "2026-07-31",
-        "risk_category": "BAJO",
-        "display_risk_category": "BAJO",
-        "total_exposed": 15.504,
-        "by_lot": {
-          "INTENSIVO": 15.5042,
+          "INTENSIVO": 7.1262,
           "DOHNE": 0.0,
           "MA": 0.0
         },
@@ -4155,12 +4137,25 @@
         "cohort_72h_category": "RIESGO_72H_INCOMPLETO"
       },
       {
-        "date": "2026-08-01",
-        "risk_category": "BAJO",
-        "display_risk_category": "BAJO",
-        "total_exposed": 15.195,
+        "date": "2026-08-07",
+        "risk_category": "CRITICO",
+        "display_risk_category": "CRITICO",
+        "total_exposed": 6.199,
         "by_lot": {
-          "INTENSIVO": 15.1952,
+          "INTENSIVO": 6.1991,
+          "DOHNE": 0.0,
+          "MA": 0.0
+        },
+        "cohort_72h_complete": false,
+        "cohort_72h_category": "RIESGO_72H_INCOMPLETO"
+      },
+      {
+        "date": "2026-08-08",
+        "risk_category": "NO_DETERMINADO",
+        "display_risk_category": "RIESGO PENDIENTE DE REVISIÓN",
+        "total_exposed": 5.89,
+        "by_lot": {
+          "INTENSIVO": 5.89,
           "DOHNE": 0.0,
           "MA": 0.0
         },
@@ -4174,19 +4169,19 @@
       "cohorts_counted": 5,
       "rule": "Cada cohorte prevista para el día D se evalúa en D, D+1 y D+2 y se cuenta una sola vez bajo su categoría máxima.",
       "SIN_RIESGO": 0.0,
-      "BAJO": 15.7103,
+      "BAJO": 0.0,
       "MEDIO": 0.0,
-      "ALTO": 0.0,
-      "CRITICO": 0.0,
-      "RIESGO_72H_INCOMPLETO": 10.0157,
+      "ALTO": 2.879,
+      "CRITICO": 2.1923,
+      "RIESGO_72H_INCOMPLETO": 5.89,
       "by_module": {
         "INTENSIVO": {
           "SIN_RIESGO": 0.0,
-          "BAJO": 15.7103,
+          "BAJO": 0.0,
           "MEDIO": 0.0,
-          "ALTO": 0.0,
-          "CRITICO": 0.0,
-          "RIESGO_72H_INCOMPLETO": 10.0157
+          "ALTO": 2.879,
+          "CRITICO": 2.1923,
+          "RIESGO_72H_INCOMPLETO": 5.89
         },
         "DOHNE": {
           "SIN_RIESGO": 0.0,
@@ -4213,239 +4208,128 @@
       "basis": "EXPECTED",
       "daily": [
         {
-          "date": "2026-07-28",
+          "date": "2026-08-04",
           "module_code": "INTENSIVO",
           "module_name": "Intensivo",
           "service_code": "SERVICIO_1",
           "service_type": "Servicio natural (carneros)",
-          "expected_lambs": 5.2826,
+          "expected_lambs": 2.879,
           "in_lambing_window": true,
           "curve": "ADJUSTED",
           "basis": "EXPECTED",
           "risk_d": "SIN_RIESGO",
           "risk_d1": "BAJO",
-          "risk_d2": "BAJO",
+          "risk_d2": "ALTO",
           "window": [
-            "2026-07-28",
-            "2026-07-29",
-            "2026-07-30"
+            "2026-08-04",
+            "2026-08-05",
+            "2026-08-06"
           ],
-          "max_risk": "BAJO",
+          "max_risk": "ALTO",
           "complete": true,
           "missing_dates": []
         },
         {
-          "date": "2026-07-29",
+          "date": "2026-08-05",
           "module_code": "INTENSIVO",
           "module_name": "Intensivo",
           "service_code": "SERVICIO_1",
           "service_type": "Servicio natural (carneros)",
-          "expected_lambs": 5.2482,
+          "expected_lambs": 2.1923,
           "in_lambing_window": true,
           "curve": "ADJUSTED",
           "basis": "EXPECTED",
           "risk_d": "BAJO",
-          "risk_d1": "BAJO",
-          "risk_d2": "BAJO",
+          "risk_d1": "ALTO",
+          "risk_d2": "CRITICO",
           "window": [
-            "2026-07-29",
-            "2026-07-30",
-            "2026-07-31"
+            "2026-08-05",
+            "2026-08-06",
+            "2026-08-07"
           ],
-          "max_risk": "BAJO",
+          "max_risk": "CRITICO",
           "complete": true,
           "missing_dates": []
         },
         {
-          "date": "2026-07-30",
+          "date": "2026-08-06",
           "module_code": "INTENSIVO",
           "module_name": "Intensivo",
           "service_code": "SERVICIO_1",
           "service_type": "Servicio natural (carneros)",
-          "expected_lambs": 5.1795,
+          "expected_lambs": 2.0549,
           "in_lambing_window": true,
           "curve": "ADJUSTED",
           "basis": "EXPECTED",
-          "risk_d": "BAJO",
-          "risk_d1": "BAJO",
-          "risk_d2": "BAJO",
-          "window": [
-            "2026-07-30",
-            "2026-07-31",
-            "2026-08-01"
-          ],
-          "max_risk": "BAJO",
-          "complete": true,
-          "missing_dates": []
-        },
-        {
-          "date": "2026-07-31",
-          "module_code": "INTENSIVO",
-          "module_name": "Intensivo",
-          "service_code": "SERVICIO_1",
-          "service_type": "Servicio natural (carneros)",
-          "expected_lambs": 5.0765,
-          "in_lambing_window": true,
-          "curve": "ADJUSTED",
-          "basis": "EXPECTED",
-          "risk_d": "BAJO",
-          "risk_d1": "BAJO",
+          "risk_d": "ALTO",
+          "risk_d1": "CRITICO",
           "risk_d2": null,
           "window": [
-            "2026-07-31",
-            "2026-08-01",
-            "2026-08-02"
+            "2026-08-06",
+            "2026-08-07",
+            "2026-08-08"
           ],
           "max_risk": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-02"
+            "2026-08-08"
           ]
         },
         {
-          "date": "2026-08-01",
+          "date": "2026-08-07",
           "module_code": "INTENSIVO",
           "module_name": "Intensivo",
           "service_code": "SERVICIO_1",
           "service_type": "Servicio natural (carneros)",
-          "expected_lambs": 4.9392,
+          "expected_lambs": 1.9519,
           "in_lambing_window": true,
           "curve": "ADJUSTED",
           "basis": "EXPECTED",
-          "risk_d": "BAJO",
+          "risk_d": "CRITICO",
           "risk_d1": null,
           "risk_d2": null,
           "window": [
-            "2026-08-01",
-            "2026-08-02",
-            "2026-08-03"
+            "2026-08-07",
+            "2026-08-08",
+            "2026-08-09"
           ],
           "max_risk": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-02",
-            "2026-08-03"
+            "2026-08-08",
+            "2026-08-09"
           ]
         },
         {
-          "date": "2026-07-28",
-          "module_code": "DOHNE",
-          "module_name": "Merino Dohne",
+          "date": "2026-08-08",
+          "module_code": "INTENSIVO",
+          "module_name": "Intensivo",
           "service_code": "SERVICIO_1",
-          "service_type": "IATF + repaso natural",
-          "expected_lambs": 0.0,
-          "in_lambing_window": false,
-          "curve": "ORIGINAL",
+          "service_type": "Servicio natural (carneros)",
+          "expected_lambs": 1.8832,
+          "in_lambing_window": true,
+          "curve": "ADJUSTED",
           "basis": "EXPECTED",
-          "risk_d": "SIN_RIESGO",
-          "risk_d1": "BAJO",
-          "risk_d2": "BAJO",
-          "window": [
-            "2026-07-28",
-            "2026-07-29",
-            "2026-07-30"
-          ],
-          "max_risk": "BAJO",
-          "complete": true,
-          "missing_dates": []
-        },
-        {
-          "date": "2026-07-29",
-          "module_code": "DOHNE",
-          "module_name": "Merino Dohne",
-          "service_code": "SERVICIO_1",
-          "service_type": "IATF + repaso natural",
-          "expected_lambs": 0.0,
-          "in_lambing_window": false,
-          "curve": "ORIGINAL",
-          "basis": "EXPECTED",
-          "risk_d": "BAJO",
-          "risk_d1": "BAJO",
-          "risk_d2": "BAJO",
-          "window": [
-            "2026-07-29",
-            "2026-07-30",
-            "2026-07-31"
-          ],
-          "max_risk": "BAJO",
-          "complete": true,
-          "missing_dates": []
-        },
-        {
-          "date": "2026-07-30",
-          "module_code": "DOHNE",
-          "module_name": "Merino Dohne",
-          "service_code": "SERVICIO_1",
-          "service_type": "IATF + repaso natural",
-          "expected_lambs": 0.0,
-          "in_lambing_window": false,
-          "curve": "ORIGINAL",
-          "basis": "EXPECTED",
-          "risk_d": "BAJO",
-          "risk_d1": "BAJO",
-          "risk_d2": "BAJO",
-          "window": [
-            "2026-07-30",
-            "2026-07-31",
-            "2026-08-01"
-          ],
-          "max_risk": "BAJO",
-          "complete": true,
-          "missing_dates": []
-        },
-        {
-          "date": "2026-07-31",
-          "module_code": "DOHNE",
-          "module_name": "Merino Dohne",
-          "service_code": "SERVICIO_1",
-          "service_type": "IATF + repaso natural",
-          "expected_lambs": 0.0,
-          "in_lambing_window": false,
-          "curve": "ORIGINAL",
-          "basis": "EXPECTED",
-          "risk_d": "BAJO",
-          "risk_d1": "BAJO",
-          "risk_d2": null,
-          "window": [
-            "2026-07-31",
-            "2026-08-01",
-            "2026-08-02"
-          ],
-          "max_risk": "RIESGO_72H_INCOMPLETO",
-          "complete": false,
-          "missing_dates": [
-            "2026-08-02"
-          ]
-        },
-        {
-          "date": "2026-08-01",
-          "module_code": "DOHNE",
-          "module_name": "Merino Dohne",
-          "service_code": "SERVICIO_1",
-          "service_type": "IATF + repaso natural",
-          "expected_lambs": 0.0,
-          "in_lambing_window": false,
-          "curve": "ORIGINAL",
-          "basis": "EXPECTED",
-          "risk_d": "BAJO",
+          "risk_d": null,
           "risk_d1": null,
           "risk_d2": null,
           "window": [
-            "2026-08-01",
-            "2026-08-02",
-            "2026-08-03"
+            "2026-08-08",
+            "2026-08-09",
+            "2026-08-10"
           ],
           "max_risk": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-02",
-            "2026-08-03"
+            "2026-08-08",
+            "2026-08-09",
+            "2026-08-10"
           ]
         },
         {
-          "date": "2026-07-28",
-          "module_code": "MA",
-          "module_name": "Merino Australiano",
+          "date": "2026-08-04",
+          "module_code": "DOHNE",
+          "module_name": "Merino Dohne",
           "service_code": "SERVICIO_1",
           "service_type": "IATF + repaso natural",
           "expected_lambs": 0.0,
@@ -4454,20 +4338,20 @@
           "basis": "EXPECTED",
           "risk_d": "SIN_RIESGO",
           "risk_d1": "BAJO",
-          "risk_d2": "BAJO",
+          "risk_d2": "ALTO",
           "window": [
-            "2026-07-28",
-            "2026-07-29",
-            "2026-07-30"
+            "2026-08-04",
+            "2026-08-05",
+            "2026-08-06"
           ],
-          "max_risk": "BAJO",
+          "max_risk": "ALTO",
           "complete": true,
           "missing_dates": []
         },
         {
-          "date": "2026-07-29",
-          "module_code": "MA",
-          "module_name": "Merino Australiano",
+          "date": "2026-08-05",
+          "module_code": "DOHNE",
+          "module_name": "Merino Dohne",
           "service_code": "SERVICIO_1",
           "service_type": "IATF + repaso natural",
           "expected_lambs": 0.0,
@@ -4475,65 +4359,116 @@
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
           "risk_d": "BAJO",
-          "risk_d1": "BAJO",
-          "risk_d2": "BAJO",
+          "risk_d1": "ALTO",
+          "risk_d2": "CRITICO",
           "window": [
-            "2026-07-29",
-            "2026-07-30",
-            "2026-07-31"
+            "2026-08-05",
+            "2026-08-06",
+            "2026-08-07"
           ],
-          "max_risk": "BAJO",
+          "max_risk": "CRITICO",
           "complete": true,
           "missing_dates": []
         },
         {
-          "date": "2026-07-30",
-          "module_code": "MA",
-          "module_name": "Merino Australiano",
+          "date": "2026-08-06",
+          "module_code": "DOHNE",
+          "module_name": "Merino Dohne",
           "service_code": "SERVICIO_1",
           "service_type": "IATF + repaso natural",
           "expected_lambs": 0.0,
           "in_lambing_window": false,
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
-          "risk_d": "BAJO",
-          "risk_d1": "BAJO",
-          "risk_d2": "BAJO",
-          "window": [
-            "2026-07-30",
-            "2026-07-31",
-            "2026-08-01"
-          ],
-          "max_risk": "BAJO",
-          "complete": true,
-          "missing_dates": []
-        },
-        {
-          "date": "2026-07-31",
-          "module_code": "MA",
-          "module_name": "Merino Australiano",
-          "service_code": "SERVICIO_1",
-          "service_type": "IATF + repaso natural",
-          "expected_lambs": 0.0,
-          "in_lambing_window": false,
-          "curve": "ORIGINAL",
-          "basis": "EXPECTED",
-          "risk_d": "BAJO",
-          "risk_d1": "BAJO",
+          "risk_d": "ALTO",
+          "risk_d1": "CRITICO",
           "risk_d2": null,
           "window": [
-            "2026-07-31",
-            "2026-08-01",
-            "2026-08-02"
+            "2026-08-06",
+            "2026-08-07",
+            "2026-08-08"
           ],
           "max_risk": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-02"
+            "2026-08-08"
           ]
         },
         {
-          "date": "2026-08-01",
+          "date": "2026-08-07",
+          "module_code": "DOHNE",
+          "module_name": "Merino Dohne",
+          "service_code": "SERVICIO_1",
+          "service_type": "IATF + repaso natural",
+          "expected_lambs": 0.0,
+          "in_lambing_window": false,
+          "curve": "ORIGINAL",
+          "basis": "EXPECTED",
+          "risk_d": "CRITICO",
+          "risk_d1": null,
+          "risk_d2": null,
+          "window": [
+            "2026-08-07",
+            "2026-08-08",
+            "2026-08-09"
+          ],
+          "max_risk": "RIESGO_72H_INCOMPLETO",
+          "complete": false,
+          "missing_dates": [
+            "2026-08-08",
+            "2026-08-09"
+          ]
+        },
+        {
+          "date": "2026-08-08",
+          "module_code": "DOHNE",
+          "module_name": "Merino Dohne",
+          "service_code": "SERVICIO_1",
+          "service_type": "IATF + repaso natural",
+          "expected_lambs": 0.0,
+          "in_lambing_window": false,
+          "curve": "ORIGINAL",
+          "basis": "EXPECTED",
+          "risk_d": null,
+          "risk_d1": null,
+          "risk_d2": null,
+          "window": [
+            "2026-08-08",
+            "2026-08-09",
+            "2026-08-10"
+          ],
+          "max_risk": "RIESGO_72H_INCOMPLETO",
+          "complete": false,
+          "missing_dates": [
+            "2026-08-08",
+            "2026-08-09",
+            "2026-08-10"
+          ]
+        },
+        {
+          "date": "2026-08-04",
+          "module_code": "MA",
+          "module_name": "Merino Australiano",
+          "service_code": "SERVICIO_1",
+          "service_type": "IATF + repaso natural",
+          "expected_lambs": 0.0,
+          "in_lambing_window": false,
+          "curve": "ORIGINAL",
+          "basis": "EXPECTED",
+          "risk_d": "SIN_RIESGO",
+          "risk_d1": "BAJO",
+          "risk_d2": "ALTO",
+          "window": [
+            "2026-08-04",
+            "2026-08-05",
+            "2026-08-06"
+          ],
+          "max_risk": "ALTO",
+          "complete": true,
+          "missing_dates": []
+        },
+        {
+          "date": "2026-08-05",
           "module_code": "MA",
           "module_name": "Merino Australiano",
           "service_code": "SERVICIO_1",
@@ -4543,18 +4478,90 @@
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
           "risk_d": "BAJO",
-          "risk_d1": null,
+          "risk_d1": "ALTO",
+          "risk_d2": "CRITICO",
+          "window": [
+            "2026-08-05",
+            "2026-08-06",
+            "2026-08-07"
+          ],
+          "max_risk": "CRITICO",
+          "complete": true,
+          "missing_dates": []
+        },
+        {
+          "date": "2026-08-06",
+          "module_code": "MA",
+          "module_name": "Merino Australiano",
+          "service_code": "SERVICIO_1",
+          "service_type": "IATF + repaso natural",
+          "expected_lambs": 0.0,
+          "in_lambing_window": false,
+          "curve": "ORIGINAL",
+          "basis": "EXPECTED",
+          "risk_d": "ALTO",
+          "risk_d1": "CRITICO",
           "risk_d2": null,
           "window": [
-            "2026-08-01",
-            "2026-08-02",
-            "2026-08-03"
+            "2026-08-06",
+            "2026-08-07",
+            "2026-08-08"
           ],
           "max_risk": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-02",
-            "2026-08-03"
+            "2026-08-08"
+          ]
+        },
+        {
+          "date": "2026-08-07",
+          "module_code": "MA",
+          "module_name": "Merino Australiano",
+          "service_code": "SERVICIO_1",
+          "service_type": "IATF + repaso natural",
+          "expected_lambs": 0.0,
+          "in_lambing_window": false,
+          "curve": "ORIGINAL",
+          "basis": "EXPECTED",
+          "risk_d": "CRITICO",
+          "risk_d1": null,
+          "risk_d2": null,
+          "window": [
+            "2026-08-07",
+            "2026-08-08",
+            "2026-08-09"
+          ],
+          "max_risk": "RIESGO_72H_INCOMPLETO",
+          "complete": false,
+          "missing_dates": [
+            "2026-08-08",
+            "2026-08-09"
+          ]
+        },
+        {
+          "date": "2026-08-08",
+          "module_code": "MA",
+          "module_name": "Merino Australiano",
+          "service_code": "SERVICIO_1",
+          "service_type": "IATF + repaso natural",
+          "expected_lambs": 0.0,
+          "in_lambing_window": false,
+          "curve": "ORIGINAL",
+          "basis": "EXPECTED",
+          "risk_d": null,
+          "risk_d1": null,
+          "risk_d2": null,
+          "window": [
+            "2026-08-08",
+            "2026-08-09",
+            "2026-08-10"
+          ],
+          "max_risk": "RIESGO_72H_INCOMPLETO",
+          "complete": false,
+          "missing_dates": [
+            "2026-08-08",
+            "2026-08-09",
+            "2026-08-10"
           ]
         }
       ],
@@ -4599,20 +4606,20 @@
       "message": "Sin registros diarios de nacimientos para este lote."
     },
     "coverage": {
-      "classified": 15.7103,
-      "incomplete": 10.0157,
-      "evaluated": 25.726,
+      "classified": 5.0713,
+      "incomplete": 5.89,
+      "evaluated": 10.9613,
       "expected_total": 979,
-      "pending": 953.274,
+      "pending": 968.0387,
       "incomplete_reason": "El pronóstico ambiental disponible todavía no cubre los tres días posteriores a esas fechas de nacimiento previstas.",
       "pending_reason": "El resto de los corderos esperados nace en fechas que el pronóstico ambiental disponible todavía no alcanza.",
       "by_module": {
         "INTENSIVO": {
-          "classified": 15.7103,
-          "incomplete": 10.0157,
-          "evaluated": 25.726,
+          "classified": 5.0713,
+          "incomplete": 5.89,
+          "evaluated": 10.9613,
           "expected_total": 129,
-          "pending": 103.274,
+          "pending": 118.0387,
           "incomplete_reason": "El pronóstico ambiental disponible todavía no cubre los tres días posteriores a esas fechas de nacimiento previstas.",
           "pending_reason": "El resto de los corderos esperados nace en fechas que el pronóstico ambiental disponible todavía no alcanza."
         },
@@ -4964,14 +4971,14 @@
       "latitude": null,
       "longitude": null
     },
-    "analyzed_at": "2026-07-28T14:30:00-03:00",
-    "forecast_run_date": "2026-07-28",
-    "imported_at": "2026-07-28T14:25:19.515223-03:00",
-    "forecast_age_hours": 0.0,
+    "analyzed_at": "2026-08-04T11:39:14.677387+00:00",
+    "forecast_run_date": "2026-08-04",
+    "imported_at": "2026-08-04T12:54:32.947456-03:00",
+    "forecast_age_hours": 4.26,
     "update_status": {
-      "state": "DESACTUALIZADO",
-      "stale": true,
-      "message": "El último archivo detectado no superó la validación."
+      "state": "ACTUALIZADO",
+      "stale": false,
+      "message": "Pronóstico válido importado desde Zapia."
     },
     "product_cross": {
       "status": "OK",
@@ -5037,7 +5044,7 @@
     ],
     "days": [
       {
-        "date": "2026-07-28",
+        "date": "2026-08-04",
         "risk_category": "SIN_RIESGO",
         "display_risk_category": "SIN_RIESGO",
         "ci_min": null,
@@ -5047,17 +5054,17 @@
         "confidence": 0.9,
         "requires_review": false,
         "automatic_use": true,
-        "image_url": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Min_0.png",
-        "expected_ewes_lambing": 3.7356,
-        "expected_lambs_born": 5.2826,
-        "lambs_in_first_72h_on_date": 15.8478,
+        "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260804.png",
+        "expected_ewes_lambing": 2.0359,
+        "expected_lambs_born": 2.879,
+        "lambs_in_first_72h_on_date": 10.6972,
         "modules": [
           {
             "code": "INTENSIVO",
             "name": "INTENSIVO",
-            "expected_ewes_lambing": 3.7356,
-            "expected_lambs_born": 5.2826,
-            "lambs_in_first_72h_on_date": 15.8478,
+            "expected_ewes_lambing": 2.0359,
+            "expected_lambs_born": 2.879,
+            "lambs_in_first_72h_on_date": 10.6972,
             "in_lambing_window": true
           },
           {
@@ -5080,39 +5087,39 @@
         "cohort_72h": {
           "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
           "window": [
-            "2026-07-28",
-            "2026-07-29",
-            "2026-07-30"
+            "2026-08-04",
+            "2026-08-05",
+            "2026-08-06"
           ],
-          "category": "BAJO",
+          "category": "ALTO",
           "complete": true,
           "missing_dates": [],
-          "lambs": 5.2826
+          "lambs": 2.879
         },
         "cross_status": "OK"
       },
       {
-        "date": "2026-07-29",
+        "date": "2026-08-05",
         "risk_category": "BAJO",
         "display_risk_category": "BAJO",
         "ci_min": 900.0,
         "ci_max": 1000.0,
         "ci_interval": "900–1000",
         "ci_unit": "kJ/m2/h",
-        "confidence": 0.8,
+        "confidence": 0.9,
         "requires_review": false,
         "automatic_use": true,
-        "image_url": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Min_1.png",
-        "expected_ewes_lambing": 3.7114,
-        "expected_lambs_born": 5.2482,
-        "lambs_in_first_72h_on_date": 15.8134,
+        "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260805.png",
+        "expected_ewes_lambing": 1.5502,
+        "expected_lambs_born": 2.1923,
+        "lambs_in_first_72h_on_date": 8.637,
         "modules": [
           {
             "code": "INTENSIVO",
             "name": "INTENSIVO",
-            "expected_ewes_lambing": 3.7114,
-            "expected_lambs_born": 5.2482,
-            "lambs_in_first_72h_on_date": 15.8134,
+            "expected_ewes_lambing": 1.5502,
+            "expected_lambs_born": 2.1923,
+            "lambs_in_first_72h_on_date": 8.637,
             "in_lambing_window": true
           },
           {
@@ -5135,94 +5142,39 @@
         "cohort_72h": {
           "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
           "window": [
-            "2026-07-29",
-            "2026-07-30",
-            "2026-07-31"
+            "2026-08-05",
+            "2026-08-06",
+            "2026-08-07"
           ],
-          "category": "BAJO",
+          "category": "CRITICO",
           "complete": true,
           "missing_dates": [],
-          "lambs": 5.2482
+          "lambs": 2.1923
         },
         "cross_status": "OK"
       },
       {
-        "date": "2026-07-30",
-        "risk_category": "BAJO",
-        "display_risk_category": "BAJO",
-        "ci_min": 900.0,
-        "ci_max": 1000.0,
-        "ci_interval": "900–1000",
-        "ci_unit": "kJ/m2/h",
-        "confidence": 0.8,
-        "requires_review": false,
-        "automatic_use": true,
-        "image_url": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Min_2.png",
-        "expected_ewes_lambing": 3.6627,
-        "expected_lambs_born": 5.1795,
-        "lambs_in_first_72h_on_date": 15.7103,
-        "modules": [
-          {
-            "code": "INTENSIVO",
-            "name": "INTENSIVO",
-            "expected_ewes_lambing": 3.6627,
-            "expected_lambs_born": 5.1795,
-            "lambs_in_first_72h_on_date": 15.7103,
-            "in_lambing_window": true
-          },
-          {
-            "code": "DOHNE",
-            "name": "MERINO DOHNE",
-            "expected_ewes_lambing": null,
-            "expected_lambs_born": null,
-            "lambs_in_first_72h_on_date": 0.0,
-            "in_lambing_window": false
-          },
-          {
-            "code": "MA",
-            "name": "MERINO AUSTRALIANO",
-            "expected_ewes_lambing": null,
-            "expected_lambs_born": null,
-            "lambs_in_first_72h_on_date": 0.0,
-            "in_lambing_window": false
-          }
-        ],
-        "cohort_72h": {
-          "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
-          "window": [
-            "2026-07-30",
-            "2026-07-31",
-            "2026-08-01"
-          ],
-          "category": "BAJO",
-          "complete": true,
-          "missing_dates": [],
-          "lambs": 5.1795
-        },
-        "cross_status": "OK"
-      },
-      {
-        "date": "2026-07-31",
-        "risk_category": "BAJO",
-        "display_risk_category": "BAJO",
-        "ci_min": 900.0,
-        "ci_max": 1000.0,
-        "ci_interval": "900–1000",
+        "date": "2026-08-06",
+        "risk_category": "ALTO",
+        "display_risk_category": "ALTO",
+        "ci_min": 1100.0,
+        "ci_max": 1200.0,
+        "ci_interval": "1100–1200",
         "ci_unit": "kJ/m2/h",
         "confidence": 0.75,
         "requires_review": false,
         "automatic_use": true,
-        "image_url": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Min_3.png",
-        "expected_ewes_lambing": 3.59,
-        "expected_lambs_born": 5.0765,
-        "lambs_in_first_72h_on_date": 15.5042,
+        "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260806.png",
+        "expected_ewes_lambing": 1.4531,
+        "expected_lambs_born": 2.0549,
+        "lambs_in_first_72h_on_date": 7.1262,
         "modules": [
           {
             "code": "INTENSIVO",
             "name": "INTENSIVO",
-            "expected_ewes_lambing": 3.59,
-            "expected_lambs_born": 5.0765,
-            "lambs_in_first_72h_on_date": 15.5042,
+            "expected_ewes_lambing": 1.4531,
+            "expected_lambs_born": 2.0549,
+            "lambs_in_first_72h_on_date": 7.1262,
             "in_lambing_window": true
           },
           {
@@ -5245,41 +5197,41 @@
         "cohort_72h": {
           "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
           "window": [
-            "2026-07-31",
-            "2026-08-01",
-            "2026-08-02"
+            "2026-08-06",
+            "2026-08-07",
+            "2026-08-08"
           ],
           "category": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-02"
+            "2026-08-08"
           ],
-          "lambs": 5.0765
+          "lambs": 2.0549
         },
         "cross_status": "OK"
       },
       {
-        "date": "2026-08-01",
-        "risk_category": "BAJO",
-        "display_risk_category": "BAJO",
-        "ci_min": 900.0,
-        "ci_max": 1000.0,
-        "ci_interval": "900–1000",
+        "date": "2026-08-07",
+        "risk_category": "CRITICO",
+        "display_risk_category": "CRITICO",
+        "ci_min": 1200.0,
+        "ci_max": null,
+        "ci_interval": "> 1200",
         "ci_unit": "kJ/m2/h",
-        "confidence": 0.8,
+        "confidence": 0.9,
         "requires_review": false,
         "automatic_use": true,
-        "image_url": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Min_4.png",
-        "expected_ewes_lambing": 3.4928,
-        "expected_lambs_born": 4.9392,
-        "lambs_in_first_72h_on_date": 15.1952,
+        "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260807.png",
+        "expected_ewes_lambing": 1.3803,
+        "expected_lambs_born": 1.9519,
+        "lambs_in_first_72h_on_date": 6.1991,
         "modules": [
           {
             "code": "INTENSIVO",
             "name": "INTENSIVO",
-            "expected_ewes_lambing": 3.4928,
-            "expected_lambs_born": 4.9392,
-            "lambs_in_first_72h_on_date": 15.1952,
+            "expected_ewes_lambing": 1.3803,
+            "expected_lambs_born": 1.9519,
+            "lambs_in_first_72h_on_date": 6.1991,
             "in_lambing_window": true
           },
           {
@@ -5302,17 +5254,76 @@
         "cohort_72h": {
           "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
           "window": [
-            "2026-08-01",
-            "2026-08-02",
-            "2026-08-03"
+            "2026-08-07",
+            "2026-08-08",
+            "2026-08-09"
           ],
           "category": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-02",
-            "2026-08-03"
+            "2026-08-08",
+            "2026-08-09"
           ],
-          "lambs": 4.9392
+          "lambs": 1.9519
+        },
+        "cross_status": "OK"
+      },
+      {
+        "date": "2026-08-08",
+        "risk_category": "NO_DETERMINADO",
+        "display_risk_category": "RIESGO PENDIENTE DE REVISIÓN",
+        "ci_min": null,
+        "ci_max": null,
+        "ci_interval": "NO DETERMINADO",
+        "ci_unit": "kJ/m2/h",
+        "confidence": 0.0,
+        "requires_review": true,
+        "automatic_use": false,
+        "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260808.png",
+        "expected_ewes_lambing": 1.3318,
+        "expected_lambs_born": 1.8832,
+        "lambs_in_first_72h_on_date": 5.89,
+        "modules": [
+          {
+            "code": "INTENSIVO",
+            "name": "INTENSIVO",
+            "expected_ewes_lambing": 1.3318,
+            "expected_lambs_born": 1.8832,
+            "lambs_in_first_72h_on_date": 5.89,
+            "in_lambing_window": true
+          },
+          {
+            "code": "DOHNE",
+            "name": "MERINO DOHNE",
+            "expected_ewes_lambing": null,
+            "expected_lambs_born": null,
+            "lambs_in_first_72h_on_date": 0.0,
+            "in_lambing_window": false
+          },
+          {
+            "code": "MA",
+            "name": "MERINO AUSTRALIANO",
+            "expected_ewes_lambing": null,
+            "expected_lambs_born": null,
+            "lambs_in_first_72h_on_date": 0.0,
+            "in_lambing_window": false
+          }
+        ],
+        "cohort_72h": {
+          "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
+          "window": [
+            "2026-08-08",
+            "2026-08-09",
+            "2026-08-10"
+          ],
+          "category": "RIESGO_72H_INCOMPLETO",
+          "complete": false,
+          "missing_dates": [
+            "2026-08-08",
+            "2026-08-09",
+            "2026-08-10"
+          ],
+          "lambs": 1.8832
         },
         "cross_status": "OK"
       }
@@ -5323,19 +5334,19 @@
       "cohorts_counted": 5,
       "rule": "Cada cohorte prevista para el día D se evalúa en D, D+1 y D+2 y se cuenta una sola vez bajo su categoría máxima.",
       "SIN_RIESGO": 0.0,
-      "BAJO": 15.7103,
+      "BAJO": 0.0,
       "MEDIO": 0.0,
-      "ALTO": 0.0,
-      "CRITICO": 0.0,
-      "RIESGO_72H_INCOMPLETO": 10.0157,
+      "ALTO": 2.879,
+      "CRITICO": 2.1923,
+      "RIESGO_72H_INCOMPLETO": 5.89,
       "by_module": {
         "INTENSIVO": {
           "SIN_RIESGO": 0.0,
-          "BAJO": 15.7103,
+          "BAJO": 0.0,
           "MEDIO": 0.0,
-          "ALTO": 0.0,
-          "CRITICO": 0.0,
-          "RIESGO_72H_INCOMPLETO": 10.0157
+          "ALTO": 2.879,
+          "CRITICO": 2.1923,
+          "RIESGO_72H_INCOMPLETO": 5.89
         },
         "DOHNE": {
           "SIN_RIESGO": 0.0,
@@ -5363,35 +5374,35 @@
   },
   "chill_pariciones_summary": {
     "source": "INIA-GRAS interpretada por Zapia",
-    "analyzed_at": "2026-07-28T14:30:00-03:00",
-    "imported_at": "2026-07-28T14:25:19.515223-03:00",
-    "update_status": "DESACTUALIZADO",
+    "analyzed_at": "2026-08-04T11:39:14.677387+00:00",
+    "imported_at": "2026-08-04T12:54:32.947456-03:00",
+    "update_status": "ACTUALIZADO",
     "product_cross_status": "OK",
     "dates": [
       {
-        "date": "2026-07-28",
+        "date": "2026-08-04",
         "risk_category": "SIN_RIESGO",
         "confidence": 0.9
       },
       {
-        "date": "2026-07-29",
+        "date": "2026-08-05",
         "risk_category": "BAJO",
-        "confidence": 0.8
+        "confidence": 0.9
       },
       {
-        "date": "2026-07-30",
-        "risk_category": "BAJO",
-        "confidence": 0.8
-      },
-      {
-        "date": "2026-07-31",
-        "risk_category": "BAJO",
+        "date": "2026-08-06",
+        "risk_category": "ALTO",
         "confidence": 0.75
       },
       {
-        "date": "2026-08-01",
-        "risk_category": "BAJO",
-        "confidence": 0.8
+        "date": "2026-08-07",
+        "risk_category": "CRITICO",
+        "confidence": 0.9
+      },
+      {
+        "date": "2026-08-08",
+        "risk_category": "NO_DETERMINADO",
+        "confidence": 0.0
       }
     ]
   },
@@ -5493,10 +5504,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-08-04T15:50:27.463700Z",
+      "processed_at": "2026-08-04T15:54:46.447307Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-08-04T12:53:53.199018-03:00",
+    "last_sync_at": "2026-08-04T12:54:49.508150-03:00",
     "pending_operations": 1,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }

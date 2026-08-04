@@ -10,14 +10,14 @@
   "location": {
     "name": "CICOMA"
   },
-  "analyzed_at": "2026-07-28T14:30:00-03:00",
-  "forecast_run_date": "2026-07-28",
-  "imported_at": "2026-07-28T14:25:19.515223-03:00",
-  "forecast_age_hours": 0.0,
+  "analyzed_at": "2026-08-04T11:39:14.677387+00:00",
+  "forecast_run_date": "2026-08-04",
+  "imported_at": "2026-08-04T12:54:32.947456-03:00",
+  "forecast_age_hours": 4.26,
   "update_status": {
-    "state": "DESACTUALIZADO",
-    "stale": true,
-    "message": "El último archivo detectado no superó la validación."
+    "state": "ACTUALIZADO",
+    "stale": false,
+    "message": "Pronóstico válido importado desde Zapia."
   },
   "product_cross": {
     "status": "OK",
@@ -83,7 +83,7 @@
   ],
   "days": [
     {
-      "date": "2026-07-28",
+      "date": "2026-08-04",
       "risk_category": "SIN_RIESGO",
       "display_risk_category": "SIN_RIESGO",
       "ci_min": null,
@@ -93,17 +93,17 @@
       "confidence": 0.9,
       "requires_review": false,
       "automatic_use": true,
-      "image_url": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Min_0.png",
-      "expected_ewes_lambing": 3.7356,
-      "expected_lambs_born": 5.2826,
-      "lambs_in_first_72h_on_date": 15.8478,
+      "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260804.png",
+      "expected_ewes_lambing": 2.0359,
+      "expected_lambs_born": 2.879,
+      "lambs_in_first_72h_on_date": 10.6972,
       "modules": [
         {
           "code": "INTENSIVO",
           "name": "INTENSIVO",
-          "expected_ewes_lambing": 3.7356,
-          "expected_lambs_born": 5.2826,
-          "lambs_in_first_72h_on_date": 15.8478,
+          "expected_ewes_lambing": 2.0359,
+          "expected_lambs_born": 2.879,
+          "lambs_in_first_72h_on_date": 10.6972,
           "in_lambing_window": true
         },
         {
@@ -126,39 +126,39 @@
       "cohort_72h": {
         "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
         "window": [
-          "2026-07-28",
-          "2026-07-29",
-          "2026-07-30"
+          "2026-08-04",
+          "2026-08-05",
+          "2026-08-06"
         ],
-        "category": "BAJO",
+        "category": "ALTO",
         "complete": true,
         "missing_dates": [],
-        "lambs": 5.2826
+        "lambs": 2.879
       },
       "cross_status": "OK"
     },
     {
-      "date": "2026-07-29",
+      "date": "2026-08-05",
       "risk_category": "BAJO",
       "display_risk_category": "BAJO",
       "ci_min": 900.0,
       "ci_max": 1000.0,
       "ci_interval": "900–1000",
       "ci_unit": "kJ/m2/h",
-      "confidence": 0.8,
+      "confidence": 0.9,
       "requires_review": false,
       "automatic_use": true,
-      "image_url": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Min_1.png",
-      "expected_ewes_lambing": 3.7114,
-      "expected_lambs_born": 5.2482,
-      "lambs_in_first_72h_on_date": 15.8134,
+      "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260805.png",
+      "expected_ewes_lambing": 1.5502,
+      "expected_lambs_born": 2.1923,
+      "lambs_in_first_72h_on_date": 8.637,
       "modules": [
         {
           "code": "INTENSIVO",
           "name": "INTENSIVO",
-          "expected_ewes_lambing": 3.7114,
-          "expected_lambs_born": 5.2482,
-          "lambs_in_first_72h_on_date": 15.8134,
+          "expected_ewes_lambing": 1.5502,
+          "expected_lambs_born": 2.1923,
+          "lambs_in_first_72h_on_date": 8.637,
           "in_lambing_window": true
         },
         {
@@ -181,94 +181,39 @@
       "cohort_72h": {
         "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
         "window": [
-          "2026-07-29",
-          "2026-07-30",
-          "2026-07-31"
+          "2026-08-05",
+          "2026-08-06",
+          "2026-08-07"
         ],
-        "category": "BAJO",
+        "category": "CRITICO",
         "complete": true,
         "missing_dates": [],
-        "lambs": 5.2482
+        "lambs": 2.1923
       },
       "cross_status": "OK"
     },
     {
-      "date": "2026-07-30",
-      "risk_category": "BAJO",
-      "display_risk_category": "BAJO",
-      "ci_min": 900.0,
-      "ci_max": 1000.0,
-      "ci_interval": "900–1000",
-      "ci_unit": "kJ/m2/h",
-      "confidence": 0.8,
-      "requires_review": false,
-      "automatic_use": true,
-      "image_url": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Min_2.png",
-      "expected_ewes_lambing": 3.6627,
-      "expected_lambs_born": 5.1795,
-      "lambs_in_first_72h_on_date": 15.7103,
-      "modules": [
-        {
-          "code": "INTENSIVO",
-          "name": "INTENSIVO",
-          "expected_ewes_lambing": 3.6627,
-          "expected_lambs_born": 5.1795,
-          "lambs_in_first_72h_on_date": 15.7103,
-          "in_lambing_window": true
-        },
-        {
-          "code": "DOHNE",
-          "name": "MERINO DOHNE",
-          "expected_ewes_lambing": null,
-          "expected_lambs_born": null,
-          "lambs_in_first_72h_on_date": 0.0,
-          "in_lambing_window": false
-        },
-        {
-          "code": "MA",
-          "name": "MERINO AUSTRALIANO",
-          "expected_ewes_lambing": null,
-          "expected_lambs_born": null,
-          "lambs_in_first_72h_on_date": 0.0,
-          "in_lambing_window": false
-        }
-      ],
-      "cohort_72h": {
-        "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
-        "window": [
-          "2026-07-30",
-          "2026-07-31",
-          "2026-08-01"
-        ],
-        "category": "BAJO",
-        "complete": true,
-        "missing_dates": [],
-        "lambs": 5.1795
-      },
-      "cross_status": "OK"
-    },
-    {
-      "date": "2026-07-31",
-      "risk_category": "BAJO",
-      "display_risk_category": "BAJO",
-      "ci_min": 900.0,
-      "ci_max": 1000.0,
-      "ci_interval": "900–1000",
+      "date": "2026-08-06",
+      "risk_category": "ALTO",
+      "display_risk_category": "ALTO",
+      "ci_min": 1100.0,
+      "ci_max": 1200.0,
+      "ci_interval": "1100–1200",
       "ci_unit": "kJ/m2/h",
       "confidence": 0.75,
       "requires_review": false,
       "automatic_use": true,
-      "image_url": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Min_3.png",
-      "expected_ewes_lambing": 3.59,
-      "expected_lambs_born": 5.0765,
-      "lambs_in_first_72h_on_date": 15.5042,
+      "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260806.png",
+      "expected_ewes_lambing": 1.4531,
+      "expected_lambs_born": 2.0549,
+      "lambs_in_first_72h_on_date": 7.1262,
       "modules": [
         {
           "code": "INTENSIVO",
           "name": "INTENSIVO",
-          "expected_ewes_lambing": 3.59,
-          "expected_lambs_born": 5.0765,
-          "lambs_in_first_72h_on_date": 15.5042,
+          "expected_ewes_lambing": 1.4531,
+          "expected_lambs_born": 2.0549,
+          "lambs_in_first_72h_on_date": 7.1262,
           "in_lambing_window": true
         },
         {
@@ -291,41 +236,41 @@
       "cohort_72h": {
         "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
         "window": [
-          "2026-07-31",
-          "2026-08-01",
-          "2026-08-02"
+          "2026-08-06",
+          "2026-08-07",
+          "2026-08-08"
         ],
         "category": "RIESGO_72H_INCOMPLETO",
         "complete": false,
         "missing_dates": [
-          "2026-08-02"
+          "2026-08-08"
         ],
-        "lambs": 5.0765
+        "lambs": 2.0549
       },
       "cross_status": "OK"
     },
     {
-      "date": "2026-08-01",
-      "risk_category": "BAJO",
-      "display_risk_category": "BAJO",
-      "ci_min": 900.0,
-      "ci_max": 1000.0,
-      "ci_interval": "900–1000",
+      "date": "2026-08-07",
+      "risk_category": "CRITICO",
+      "display_risk_category": "CRITICO",
+      "ci_min": 1200.0,
+      "ci_max": null,
+      "ci_interval": "> 1200",
       "ci_unit": "kJ/m2/h",
-      "confidence": 0.8,
+      "confidence": 0.9,
       "requires_review": false,
       "automatic_use": true,
-      "image_url": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Min_4.png",
-      "expected_ewes_lambing": 3.4928,
-      "expected_lambs_born": 4.9392,
-      "lambs_in_first_72h_on_date": 15.1952,
+      "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260807.png",
+      "expected_ewes_lambing": 1.3803,
+      "expected_lambs_born": 1.9519,
+      "lambs_in_first_72h_on_date": 6.1991,
       "modules": [
         {
           "code": "INTENSIVO",
           "name": "INTENSIVO",
-          "expected_ewes_lambing": 3.4928,
-          "expected_lambs_born": 4.9392,
-          "lambs_in_first_72h_on_date": 15.1952,
+          "expected_ewes_lambing": 1.3803,
+          "expected_lambs_born": 1.9519,
+          "lambs_in_first_72h_on_date": 6.1991,
           "in_lambing_window": true
         },
         {
@@ -348,17 +293,76 @@
       "cohort_72h": {
         "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
         "window": [
-          "2026-08-01",
-          "2026-08-02",
-          "2026-08-03"
+          "2026-08-07",
+          "2026-08-08",
+          "2026-08-09"
         ],
         "category": "RIESGO_72H_INCOMPLETO",
         "complete": false,
         "missing_dates": [
-          "2026-08-02",
-          "2026-08-03"
+          "2026-08-08",
+          "2026-08-09"
         ],
-        "lambs": 4.9392
+        "lambs": 1.9519
+      },
+      "cross_status": "OK"
+    },
+    {
+      "date": "2026-08-08",
+      "risk_category": "NO_DETERMINADO",
+      "display_risk_category": "RIESGO PENDIENTE DE REVISIÓN",
+      "ci_min": null,
+      "ci_max": null,
+      "ci_interval": "NO DETERMINADO",
+      "ci_unit": "kJ/m2/h",
+      "confidence": 0.0,
+      "requires_review": true,
+      "automatic_use": false,
+      "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260808.png",
+      "expected_ewes_lambing": 1.3318,
+      "expected_lambs_born": 1.8832,
+      "lambs_in_first_72h_on_date": 5.89,
+      "modules": [
+        {
+          "code": "INTENSIVO",
+          "name": "INTENSIVO",
+          "expected_ewes_lambing": 1.3318,
+          "expected_lambs_born": 1.8832,
+          "lambs_in_first_72h_on_date": 5.89,
+          "in_lambing_window": true
+        },
+        {
+          "code": "DOHNE",
+          "name": "MERINO DOHNE",
+          "expected_ewes_lambing": null,
+          "expected_lambs_born": null,
+          "lambs_in_first_72h_on_date": 0.0,
+          "in_lambing_window": false
+        },
+        {
+          "code": "MA",
+          "name": "MERINO AUSTRALIANO",
+          "expected_ewes_lambing": null,
+          "expected_lambs_born": null,
+          "lambs_in_first_72h_on_date": 0.0,
+          "in_lambing_window": false
+        }
+      ],
+      "cohort_72h": {
+        "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
+        "window": [
+          "2026-08-08",
+          "2026-08-09",
+          "2026-08-10"
+        ],
+        "category": "RIESGO_72H_INCOMPLETO",
+        "complete": false,
+        "missing_dates": [
+          "2026-08-08",
+          "2026-08-09",
+          "2026-08-10"
+        ],
+        "lambs": 1.8832
       },
       "cross_status": "OK"
     }
@@ -369,19 +373,19 @@
     "cohorts_counted": 5,
     "rule": "Cada cohorte prevista para el día D se evalúa en D, D+1 y D+2 y se cuenta una sola vez bajo su categoría máxima.",
     "SIN_RIESGO": 0.0,
-    "BAJO": 15.7103,
+    "BAJO": 0.0,
     "MEDIO": 0.0,
-    "ALTO": 0.0,
-    "CRITICO": 0.0,
-    "RIESGO_72H_INCOMPLETO": 10.0157,
+    "ALTO": 2.879,
+    "CRITICO": 2.1923,
+    "RIESGO_72H_INCOMPLETO": 5.89,
     "by_module": {
       "INTENSIVO": {
         "SIN_RIESGO": 0.0,
-        "BAJO": 15.7103,
+        "BAJO": 0.0,
         "MEDIO": 0.0,
-        "ALTO": 0.0,
-        "CRITICO": 0.0,
-        "RIESGO_72H_INCOMPLETO": 10.0157
+        "ALTO": 2.879,
+        "CRITICO": 2.1923,
+        "RIESGO_72H_INCOMPLETO": 5.89
       },
       "DOHNE": {
         "SIN_RIESGO": 0.0,
