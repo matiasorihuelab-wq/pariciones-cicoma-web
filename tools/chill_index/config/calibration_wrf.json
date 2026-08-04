@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0.0",
+  "variant": "WRF",
+  "derived_from": "images/evidencia_inicial_20260730 (Chill_wrf20260730/31/0802, marco detectado por barrido de líneas oscuras)",
+  "expected_size": [780, 650],
+  "frame": {"x0": 141, "y0": 56, "x1": 638, "y1": 593},
+  "lon_min": -59.0,
+  "lon_max": -53.0,
+  "lat_max": -30.0,
+  "lat_min": -35.0,
+  "graticule_color": [170, 170, 170],
+  "graticule_tolerance_px": 2.5,
+  "control_lines": {
+    "lat_degrees": [-31, -32, -33, -34],
+    "lon_degrees": [-58, -57, -56, -55, -54]
+  },
+  "min_control_points": 4,
+  "estimated_error_px": 1.0,
+  "estimated_error_km": 1.2,
+  "km_per_pixel_lon": 1.15,
+  "notes": "Marco (141,56)-(638,593) estable en las tres corridas válidas observadas. 31S detectado en y=164 (teórico 163.4); 58W en x=224 (teórico 223.8)."
+}
