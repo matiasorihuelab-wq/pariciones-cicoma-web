@@ -81,19 +81,26 @@ jobs:
         run: |
           python - <<'PY'
           import json, sys
+          from datetime import datetime
           from pathlib import Path
+          from zoneinfo import ZoneInfo
           sys.path.insert(0, ".")
-          from tools.chill_index import contract
+          from tools.chill_index import contract, settings
 
           payload = json.loads(Path("data/chill_index.json").read_text(encoding="utf-8"))
-          contract.validate(payload)
+          # El día de hoy va como argumento: sin él, la invariante de ACTUALIZADO
+          # no puede evaluarse y un contrato correcto se rechazaría.
+          hoy = datetime.now(ZoneInfo(settings.TIMEZONE)).date().isoformat()
+          contract.validate(payload, today_iso=hoy)
           print(f"Contrato válido. Estado: {payload['status']}")
           for mapa in payload["maps"]:
-              etiqueta = (
-                  mapa["risk_category"]
-                  if mapa["display_status"] == "DISPONIBLE"
-                  else f"SIN DATOS ({mapa['reason']})"
-              )
+              estado = mapa["availability_status"]
+              if estado == "DISPONIBLE":
+                  etiqueta = mapa["risk_category"]
+              elif estado == "ERROR":
+                  etiqueta = f"ERROR ({mapa['reason_code']})"
+              else:
+                  etiqueta = f"SIN DATOS ({mapa['reason_code']})"
               print(f"  {mapa['valid_date']}  {etiqueta}")
           PY
 

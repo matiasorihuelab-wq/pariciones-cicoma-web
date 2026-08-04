@@ -29,14 +29,15 @@ def main() -> int:
         print(f"- Último pronóstico válido conocido: {ultimo} (hace {dias} día/s)")
     print(f"- Verificado a las: {datos.get('run_finished_at')}\n")
 
+    etiquetas = {"DISPONIBLE": None, "SIN_DATOS": "**Sin datos**", "ERROR": "**Error**"}
     print("| Fecha | Resultado | Confianza | Motivo técnico |")
     print("|---|---|---|---|")
     for mapa in datos["maps"]:
-        disponible = mapa["display_status"] == "DISPONIBLE"
-        categoria = mapa["risk_category"] if disponible else "**Sin datos**"
+        disponibilidad = mapa.get("availability_status", mapa.get("display_status"))
+        categoria = etiquetas.get(disponibilidad) or mapa["risk_category"]
+        motivo = mapa.get("reason_code") or "—"
         print(
-            f"| {mapa['valid_date']} | {categoria} | {mapa['confidence']} "
-            f"| {mapa['reason'] or '—'} |"
+            f"| {mapa['valid_date']} | {categoria} | {mapa['confidence']} | {motivo} |"
         )
 
     mini = datos.get("diagnostics", {}).get("wrf_mini", {})
