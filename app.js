@@ -8,6 +8,10 @@
  * valor diario y nunca calcula un total parcial como si fuera completo. */
 
 const DATA_URL = "./data/dashboard.json";
+//: Contrato del pipeline autónomo del Chill Index. Lo publica GitHub Actions
+//: directamente en este repositorio: no pasa por Zapia ni por Google Drive.
+const CHILL_INDEX_URL = "./data/chill_index.json";
+let CHILL_INDEX = null;
 const SUPPORTED_SCHEMA = "3.5.0";
 const SECTIONS = ["resumen", "intensivo", "dohne", "ma"];
 const LOTS = [
@@ -198,6 +202,9 @@ async function boot() {
     const data = await response.json();
     assertDashboard(data);
     DASH = data;
+    // Contrato del pipeline autónomo (GitHub Actions → Pages). Se pide aparte:
+    // si faltara, el resto del tablero igual se muestra.
+    await loadChillIndex();
     renderAll();
     initRouter();
     initHealth();
@@ -1194,6 +1201,7 @@ function chillPanel(viewKey, lotCode) {
     ${stale ? `<p class="tag tag--incompleto">El Chill Index no está actualizado.</p>` : ""}
     ${chillFilters(viewKey, lotCode, state)}
     <div id="chill-body-${escapeHtml(viewKey)}">
+      ${chillIndexSection()}
       ${chillExpectedSection(state)}
       ${chillObservedSection(viewKey, state)}
       ${chillSecondary(lotCode)}
@@ -1201,11 +1209,135 @@ function chillPanel(viewKey, lotCode) {
     </div>`;
 }
 
+/* ------------------------------------- pronóstico diario (pipeline propio) --- */
+
+//: Etiqueta pública de cada categoría. `NO_DETERMINADO` no se rotula como
+//: riesgo: la tarjeta correspondiente dice «Sin datos».
+const RISK_LABEL = {
+  SIN_RIESGO: "Sin riesgo",
+  BAJO: "Bajo",
+  MEDIO: "Medio",
+  ALTO: "Alto",
+  MUY_ALTO: "Muy alto",
+};
+
+//: Motivo técnico traducido para la gestión. El público ve sólo «Sin datos».
+const NO_DATA_REASON = {
+  WRF_UNDEFINED_GRID: "INIA publicó el mapa sin grilla utilizable",
+  SOURCE_DATE_UNVERIFIED: "No se pudo verificar que la corrida sea vigente",
+  MAP_NOT_PUBLISHED: "INIA no publicó el mapa de esa fecha",
+  MAP_REJECTED: "El mapa no superó la validación",
+  SOURCE_UNAVAILABLE: "No se pudo consultar la fuente",
+  FORECAST_EXPIRED: "La fecha del pronóstico ya pasó",
+};
+
+//: Estado del SISTEMA (distinto del estado de cada día). El verde se reserva
+//: para «hay pronóstico válido»: comprobar que la fuente respondió no es salud.
+const CHILL_STATE_TONE = {
+  ACTUALIZADO: "ok",
+  DATOS_PARCIALES: "warn",
+  SIN_PRONOSTICO_CONFIABLE: "warn",
+  FUENTE_NO_DISPONIBLE: "bad",
+  ERROR_DE_VALIDACION: "bad",
+};
+
+async function loadChillIndex() {
+  try {
+    const response = await fetch(`${CHILL_INDEX_URL}?t=${Date.now()}`, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    CHILL_INDEX = await response.json();
+  } catch (_error) {
+    CHILL_INDEX = null;
+  }
+}
+
+function chillDayCard(map) {
+  const fecha = formatDate(map.valid_date);
+  const legible = new Intl.DateTimeFormat("es-UY", { day: "numeric", month: "long" }).format(
+    new Date(`${map.valid_date}T12:00:00`),
+  );
+  if (map.display_status !== "DISPONIBLE") {
+    const motivo = NO_DATA_REASON[map.reason] || "Sin información verificable";
+    return `
+      <article class="forecast-card forecast-card--no-data"
+               role="listitem"
+               aria-label="Pronóstico Chill Index para el ${escapeHtml(legible)}: sin datos disponibles.">
+        <span class="forecast-card__date">${escapeHtml(fecha)}</span>
+        <strong class="forecast-card__value">Sin datos</strong>
+        <span class="forecast-card__note">${escapeHtml(motivo)}</span>
+      </article>`;
+  }
+  const etiqueta = RISK_LABEL[map.risk_category] || map.risk_category;
+  const intervalo =
+    map.ci_min === null && map.ci_max === null
+      ? ""
+      : map.ci_min === null
+        ? `&lt; ${formatInteger(map.ci_max)}`
+        : map.ci_max === null
+          ? `&gt; ${formatInteger(map.ci_min)}`
+          : `${formatInteger(map.ci_min)}–${formatInteger(map.ci_max)}`;
+  return `
+    <article class="forecast-card forecast-card--${escapeHtml(map.risk_category.toLowerCase())}"
+             role="listitem"
+             aria-label="Pronóstico Chill Index para el ${escapeHtml(legible)}: riesgo ${escapeHtml(etiqueta)}.">
+      <span class="forecast-card__date">${escapeHtml(fecha)}</span>
+      <strong class="forecast-card__value">${escapeHtml(etiqueta)}</strong>
+      <span class="forecast-card__note">${intervalo ? `${intervalo} ${escapeHtml(map.ci_unit)}` : ""}</span>
+    </article>`;
+}
+
+function chillIndexSection() {
+  if (!CHILL_INDEX) {
+    return `
+      <section class="chill-index" aria-labelledby="chill-index-title">
+        <h3 id="chill-index-title">Chill Index diario</h3>
+        <p class="chill-index__status chill-index__status--bad">
+          No se pudo leer el pronóstico publicado por el pipeline.
+        </p>
+      </section>`;
+  }
+  const d = CHILL_INDEX;
+  const tono = CHILL_STATE_TONE[d.status] || "warn";
+  const corrida = d.forecast_run_date
+    ? `corrida de INIA del ${formatDate(d.forecast_run_date)}`
+    : "sin corrida vigente de INIA";
+  const ultimo = d.freshness && d.freshness.last_valid_forecast_run_date;
+  const antiguedad =
+    d.freshness && typeof d.freshness.last_valid_age_days === "number"
+      ? d.freshness.last_valid_age_days
+      : null;
+  const historico =
+    ultimo && antiguedad !== null
+      ? `<li>Último pronóstico válido: ${escapeHtml(formatDate(ultimo))}${
+          antiguedad > 0 ? ` (hace ${antiguedad} día${antiguedad === 1 ? "" : "s"})` : " (hoy)"
+        }</li>`
+      : "";
+  return `
+    <section class="chill-index" aria-labelledby="chill-index-title">
+      <h3 id="chill-index-title">Chill Index diario</h3>
+      <p class="chill-index__status chill-index__status--${tono}">
+        ${escapeHtml(d.status_label)}
+      </p>
+      ${d.status_detail ? `<p class="chill-index__detail">${escapeHtml(d.status_detail)}</p>` : ""}
+      <div class="forecast-grid" role="list">
+        ${d.maps.map(chillDayCard).join("")}
+      </div>
+      <ul class="chill-index__meta">
+        <li>Fuente: INIA-GRAS, ${escapeHtml(corrida)}</li>
+        <li>Modelo: ${escapeHtml(d.model)}</li>
+        <li>Última verificación de la fuente: ${escapeHtml(formatDateTime(d.run_finished_at, DASH.timezone))}</li>
+        ${historico}
+        <li>Las miniaturas WRF_mini se observan como diagnóstico y no publican categorías.</li>
+      </ul>
+    </section>`;
+}
+
 function renderChillBody(viewKey, lotCode) {
   const host = byId(`chill-body-${viewKey}`);
   if (!host) return;
   const state = chillState(viewKey, lotCode);
   host.innerHTML = `
+      ${chillIndexSection()}
       ${chillExpectedSection(state)}
       ${chillObservedSection(viewKey, state)}
       ${chillSecondary(lotCode)}

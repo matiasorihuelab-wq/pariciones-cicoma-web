@@ -1889,3 +1889,105 @@ h3 {
     scroll-behavior: auto !important;
   }
 }
+
+/* ------------------------------------------------ Chill Index diario ---- */
+/* Tarjetas por fecha del pipeline autónomo. Cada día se evalúa por separado:
+   una fecha sin mapa WRF válido y vigente muestra «Sin datos» en negro, que es
+   un estado de AUSENCIA de información y no una categoría de riesgo. */
+
+.chill-index {
+  margin: 1.5rem 0 2rem;
+}
+
+.chill-index h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+}
+
+.chill-index__status {
+  margin: 0 0 0.25rem;
+  font-weight: 700;
+}
+
+.chill-index__status--ok { color: #15803d; }
+.chill-index__status--warn { color: #b45309; }
+.chill-index__status--bad { color: #b91c1c; }
+
+.chill-index__detail {
+  margin: 0 0 0.75rem;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.chill-index__meta {
+  margin: 0.75rem 0 0;
+  padding-left: 1.1rem;
+  color: #475569;
+  font-size: 0.82rem;
+}
+
+.forecast-grid {
+  display: grid;
+  gap: 0.6rem;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+}
+
+.forecast-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-height: 6.2rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.6rem;
+  background: #f8fafc;
+}
+
+.forecast-card__date {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.forecast-card__value {
+  font-size: 1.35rem;
+  line-height: 1.15;
+}
+
+.forecast-card__note {
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+/* Cada categoría lleva su color de la leyenda de INIA. */
+.forecast-card--sin_riesgo { border-color: #00dc00; background: #f0fdf4; }
+.forecast-card--bajo { border-color: #00c8c8; background: #ecfeff; }
+.forecast-card--medio { border-color: #00a0ff; background: #eff6ff; }
+.forecast-card--alto { border-color: #0000ff; background: #eef2ff; }
+.forecast-card--muy_alto { border-color: #a000c8; background: #faf5ff; }
+
+/* «Sin datos»: negro sólido, letras blancas, sin color lateral ni degradado
+   que pueda leerse como una categoría, y sin animación de alerta. El
+   significado no depende del color: el texto lo dice y el aria-label también. */
+.forecast-card--no-data {
+  background: #000;
+  border-color: #000;
+  color: #fff;
+}
+
+.forecast-card--no-data .forecast-card__date,
+.forecast-card--no-data .forecast-card__note {
+  color: #e2e8f0;
+}
+
+.forecast-card--no-data .forecast-card__value {
+  color: #fff;
+  font-weight: 700;
+}
+
+@media (max-width: 30rem) {
+  .forecast-grid { grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); }
+  .forecast-card__value { font-size: 1.15rem; }
+}

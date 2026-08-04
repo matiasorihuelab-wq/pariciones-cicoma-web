@@ -20,9 +20,3 @@ probar_web.bat
 !assets/**
 !tests/
 !tests/**
-
-# Artefactos locales del pipeline Chill Index
-__pycache__/
-*.pyc
-.pytest_cache/
-pipeline.log
