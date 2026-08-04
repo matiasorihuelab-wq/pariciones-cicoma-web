@@ -14,16 +14,39 @@ from pathlib import Path
 from typing import Any
 
 
-def payload_hash(payload: dict[str, Any]) -> str:
-    """Hash del contenido **significativo**: ignora los sellos de la corrida.
+#: Campos que cambian en cada corrida sin que cambie el pronóstico: los sellos
+#: de ejecución, la antigüedad medida (que avanza sola con el reloj) y el
+#: diagnóstico, que registra cada consulta HTTP.
+_VOLATILE_TOP = ("run_started_at", "run_finished_at", "run_trigger", "diagnostics")
+_VOLATILE_NESTED = ("source_age_hours",)
 
-    Sin esto, cada ejecución cambiaría el archivo aunque la fuente no hubiera
-    cambiado, y el repositorio se llenaría de commits sin información nueva.
+
+def _stable_view(payload: dict[str, Any]) -> dict[str, Any]:
+    """Copia del contrato sin lo que varía por el mero paso del tiempo."""
+
+    reducido = {k: v for k, v in payload.items() if k not in _VOLATILE_TOP}
+    frescura = dict(reducido.get("freshness") or {})
+    for clave in _VOLATILE_NESTED:
+        frescura.pop(clave, None)
+    if frescura:
+        reducido["freshness"] = frescura
+    reducido["maps"] = [
+        {k: v for k, v in mapa.items() if k not in _VOLATILE_NESTED}
+        for mapa in reducido.get("maps", [])
+    ]
+    return reducido
+
+
+def payload_hash(payload: dict[str, Any]) -> str:
+    """Hash del contenido **significativo**: ignora lo que cambia con el reloj.
+
+    Sin esto, cada ejecución reescribiría el archivo aunque la fuente no hubiera
+    cambiado —la antigüedad medida avanza sola— y el repositorio se llenaría de
+    commits sin información nueva. Lo que sí cambia el hash es el pronóstico:
+    otra categoría, otra fecha, otro hash de imagen u otro estado.
     """
 
-    volatil = {"run_started_at", "run_finished_at", "run_trigger"}
-    reducido = {k: v for k, v in payload.items() if k not in volatil}
-    texto = json.dumps(reducido, ensure_ascii=False, sort_keys=True)
+    texto = json.dumps(_stable_view(payload), ensure_ascii=False, sort_keys=True)
     return hashlib.sha256(texto.encode("utf-8")).hexdigest()
 
 

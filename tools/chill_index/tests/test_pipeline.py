@@ -634,3 +634,21 @@ def test_la_evidencia_de_cada_mapa_queda_archivada(tmp_path: Path) -> None:
     assert guardadas, "cada imagen analizada deja una copia inmutable"
     publicado = json.loads((tmp_path / "data" / "chill_index.json").read_text(encoding="utf-8"))
     assert all(m["evidence_path"] for m in publicado["maps"])
+
+
+def test_el_hash_ignora_la_antiguedad_que_avanza_sola() -> None:
+    """Dos corridas del mismo pronóstico no deben producir commits distintos."""
+
+    uno = _payload_minimo()
+    otro = json.loads(json.dumps(uno))
+    otro["freshness"]["source_age_hours"] = 9.99
+    otro["maps"][0]["source_age_hours"] = 9.99
+    otro["diagnostics"] = {"wrf_mini": {"policy": "otra", "observations": [1, 2, 3]}}
+    assert publisher.payload_hash(uno) == publisher.payload_hash(otro)
+
+
+def test_el_hash_si_cambia_cuando_cambia_el_pronostico() -> None:
+    uno = _payload_minimo()
+    otro = json.loads(json.dumps(uno))
+    otro["maps"][0]["risk_category"] = "ALTO"
+    assert publisher.payload_hash(uno) != publisher.payload_hash(otro)
