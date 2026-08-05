@@ -469,6 +469,7 @@ function absentOr(value, formatter) {
 
 const LOT_LABEL = { INTENSIVO: "Intensivo", DOHNE: "Dohne", MA: "MA" };
 const LOT_FULL_NAME = { INTENSIVO: "Intensivo", DOHNE: "Merino Dohne", MA: "Merino Australiano" };
+const MILESTONE_SCOPE_CLASS = { INTENSIVO: "intensivo", DOHNE: "dohne", MA: "ma" };
 
 function lotNames(codes) {
   return (codes || []).map((code) => LOT_LABEL[code] || code).join(", ");
@@ -620,54 +621,8 @@ function formatNumberShort(value) {
 
 function renderResumen() {
   const view = byId("view-resumen");
-  const ov = DASH.overview;
-  const mortality = DASH.mortality_summary || {};
-  const totalDeaths = mortality.total_deaths;
-  const deaths = totalDeaths === null || totalDeaths === undefined ? "SIN RECUENTO" : formatInteger(totalDeaths);
-  const deathsNote =
-    totalDeaths === null || totalDeaths === undefined
-      ? null
-      : `${formatInteger(mortality.lamb_deaths || 0)} corderos · ${formatInteger(mortality.ewe_deaths || 0)} oveja(s)`;
-  const coverage = ov.coverage || {};
-
-  // Jerarquía ejecutiva: lo que se mira primero, más grande. Son acumulados
-  // REGISTRADOS, no resultados de campaña: el encabezado lo dice.
-  const kpis = [
-    registeredCard("Ovejas paridas registradas", ov.lambed_ewes, { kpi: true, accent: true, note: null }),
-    registeredCard("Corderos nacidos acumulados estimados", ov.registered_born_lambs, { kpi: true, accent: true, note: "último recuento de vivos + muertos acumulados" }),
-    progressCard("Avance de ovejas paridas", ov.ewe_progress, { kpi: true, hideBasis: true }),
-    progressCard("Avance de corderos nacidos", ov.lamb_progress, { kpi: true, hideBasis: true }),
-  ].join("");
-
-  // Contexto secundario, tamaño reducido.
-  const secondary = [
-    metricCard("Previstas a parir", formatInteger(ov.expected_to_lamb)),
-    metricCard("Corderos esperados", formatInteger(ov.expected_lambs)),
-    // Los tres conceptos del balance de campo, separados y en este orden:
-    // lo contado, lo muerto y la reconstrucción. El contabilizado es una
-    // fotografía de su fecha y por eso la lleva escrita; ninguna muerte
-    // posterior lo baja.
-    registeredCard("Corderos vivos contabilizados", ov.current_stock_lambs_total, {
-      note: ov.current_stock_count_date ? `conteo realizado el ${formatDate(ov.current_stock_count_date)}` : "último recuento de campo",
-    }),
-    metricCard("Corderos muertos acumulados", absentOr(ov.accumulated_lamb_deaths_total, formatInteger), "todas las bajas registradas"),
-    estimatedRemainingCard("Ovejas restantes según registros", ov.remaining_ewes_estimated),
-    estimatedRemainingCard("Corderos restantes estimados", ov.remaining_lambs_estimated),
-    metricCard("Muertes registradas", deaths, deathsNote),
-  ].join("");
-
   view.innerHTML = `
-    <header class="view__head">
-      <p class="eyebrow">Panorama general</p>
-      <h1 id="title-resumen">Resumen de la campaña</h1>
-      <p class="view__intro">Lo esencial de un vistazo. Cada lote tiene su vista específica en el menú.</p>
-    </header>
-
-    <p class="summary-scope"><strong>${escapeHtml(ov.summary_label || "")}</strong></p>
-    <div class="kpi-row">${kpis}</div>
-    <p class="coverage-note">${escapeHtml(coverage.message || "")}</p>
-    <div class="stat-grid">${secondary}</div>
-
+    <h1 id="title-resumen" class="sr-only">Campaña por lote</h1>
     <section class="panel">
       <div class="panel__head">
         <div><p class="eyebrow">Por lote</p><h2>Los tres módulos</h2></div>
@@ -718,21 +673,29 @@ function distributionCard(lot) {
   const vivos = module ? absentOr(module.lamb_counts.current_stock_lambs, formatInteger) : "—";
   const nacidos = module ? absentOr(module.lamb_counts.estimated_born_lambs, formatInteger) : "—";
   const muertos = module ? formatInteger(module.mortality.lamb_deaths_accumulated) : "—";
+  const ovejasMuertas = module ? formatInteger(module.mortality.ewe_deaths_accumulated) : "—";
   const progress = module ? formatPercent(module.ewe_counts.progress?.percent) : "—";
+  const lambProgress = module ? formatPercent(module.lamb_counts.progress?.percent) : "—";
   const state = dataState(module);
-  const cell = (label, value) =>
-    `<div><dt>${escapeHtml(label)}</dt><dd class="${absentClass(value)}">${escapeHtml(value)}</dd></div>`;
+  const bornEstimateHelp =
+    "Valor estimado a partir del último recuento físico de corderos vivos más las muertes acumuladas.";
+  const cell = (label, value, help = null) =>
+    `<div><dt${help ? ` title="${escapeHtml(help)}"` : ""}>${escapeHtml(label)}${
+      help ? `<span class="sr-only">. ${escapeHtml(help)}</span>` : ""
+    }</dt><dd class="${absentClass(value)}">${escapeHtml(value)}</dd></div>`;
   return `
     <a class="lot-card" href="#${lot.section}">
       <span class="lot-card__name">${escapeHtml(lot.name)}</span>
       ${lot.breed ? `<span class="lot-card__breed">${escapeHtml(lot.breed)}</span>` : ""}
       <dl class="lot-card__stats">
-        ${cell("Previstas", previsto)}
+        ${cell("Preñadas a parir", previsto)}
         ${cell("Paridas", paridas)}
         ${cell("Vivos contabilizados", vivos)}
-        ${cell("Nacidos estimados", nacidos)}
-        ${cell("Muertes cordero", muertos)}
+        ${cell("Corderos nacidos", nacidos, bornEstimateHelp)}
+        ${cell("Muerte de corderos", muertos)}
+        ${cell("Muerte de ovejas", ovejasMuertas)}
         ${cell("Avance ovejas", progress)}
+        ${cell("Avance de corderos", lambProgress)}
       </dl>
       <span class="lot-card__state tag tag--${state === "ACTUALIZADO" ? "ok" : "pending"}">${escapeHtml(state)}</span>
     </a>`;
@@ -773,10 +736,15 @@ function milestonesPanel(lotCode) {
     ? `<ul class="milestones">${items
         .map((item) => {
           const line = milestoneLine(item);
+          const scopeClass = MILESTONE_SCOPE_CLASS[item.module_code] || "";
           return `
         <li class="milestone milestone--${escapeHtml(String(item.kind).toLowerCase())}">
           <span class="milestone__date">${escapeHtml(formatDayMonth(item.date))}</span>
-          ${line.scope ? `<span class="milestone__scope">${escapeHtml(line.scope)}</span>` : ""}
+          ${
+            line.scope
+              ? `<span class="milestone__scope${scopeClass ? ` milestone__scope--${scopeClass}` : ""}">${escapeHtml(line.scope)}</span>`
+              : ""
+          }
           <span class="milestone__text">${escapeHtml(line.text)}</span>
         </li>`;
         })

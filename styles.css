@@ -1530,6 +1530,21 @@ h3 {
   text-transform: uppercase;
 }
 
+.milestone__scope--intensivo {
+  background: var(--green);
+  color: var(--surface);
+}
+
+.milestone__scope--ma {
+  background: #2563eb;
+  color: var(--surface);
+}
+
+.milestone__scope--dohne {
+  background: #475569;
+  color: var(--surface);
+}
+
 .milestone__text {
   color: var(--ink-800);
 }
