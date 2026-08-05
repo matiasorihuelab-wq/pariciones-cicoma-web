@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-05T17:33:04.686226-03:00",
+  "generated_at": "2026-08-05T19:26:53.470398-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -11,6 +11,11 @@
       {
         "code": "PENDING_EVENT",
         "message": "Hay un reporte pendiente de contabilizar.",
+        "severity": "OJO"
+      },
+      {
+        "code": "INPUT_PENDING",
+        "message": "Hay un reporte en la carpeta de entrada sin registrar.",
         "severity": "OJO"
       }
     ],
@@ -23,7 +28,7 @@
       "unclassified": 2,
       "total": 3
     },
-    "generated_at": "2026-08-05T17:33:04.686226-03:00",
+    "generated_at": "2026-08-05T19:26:53.470398-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -4959,10 +4964,10 @@
       "latitude": null,
       "longitude": null
     },
-    "analyzed_at": "2026-08-05T19:04:38.078481+00:00",
+    "analyzed_at": "2026-08-05T20:26:59.426398+00:00",
     "forecast_run_date": "2026-08-04",
-    "imported_at": "2026-08-05T16:08:18.638518-03:00",
-    "forecast_age_hours": 0.18,
+    "imported_at": "2026-08-05T17:33:07.181917-03:00",
+    "forecast_age_hours": 2.0,
     "update_status": {
       "state": "ACTUALIZADO",
       "stale": false,
@@ -5358,8 +5363,8 @@
   },
   "chill_pariciones_summary": {
     "source": "INIA-GRAS interpretada por Zapia",
-    "analyzed_at": "2026-08-05T19:04:38.078481+00:00",
-    "imported_at": "2026-08-05T16:08:18.638518-03:00",
+    "analyzed_at": "2026-08-05T20:26:59.426398+00:00",
+    "imported_at": "2026-08-05T17:33:07.181917-03:00",
     "update_status": "ACTUALIZADO",
     "product_cross_status": "OK",
     "dates": [
@@ -5488,10 +5493,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-08-05T20:33:01.610880Z",
+      "processed_at": "2026-08-05T20:55:10.867819Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-08-05T17:33:04.686226-03:00",
+    "last_sync_at": "2026-08-05T19:26:53.470398-03:00",
     "pending_operations": 1,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
