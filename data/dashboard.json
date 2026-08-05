@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-05T16:08:06.187032-03:00",
+  "generated_at": "2026-08-05T16:08:18.794707-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -23,7 +23,7 @@
       "unclassified": 2,
       "total": 3
     },
-    "generated_at": "2026-08-05T16:08:06.187032-03:00",
+    "generated_at": "2026-08-05T16:08:18.794707-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -4125,8 +4125,8 @@
       },
       {
         "date": "2026-08-07",
-        "risk_category": "MEDIO",
-        "display_risk_category": "MEDIO",
+        "risk_category": "BAJO",
+        "display_risk_category": "BAJO",
         "total_exposed": 6.199,
         "by_lot": {
           "INTENSIVO": 6.1991,
@@ -4219,7 +4219,7 @@
           "basis": "EXPECTED",
           "risk_d": "SIN_RIESGO",
           "risk_d1": "MEDIO",
-          "risk_d2": "MEDIO",
+          "risk_d2": "BAJO",
           "window": [
             "2026-08-05",
             "2026-08-06",
@@ -4240,7 +4240,7 @@
           "curve": "ADJUSTED",
           "basis": "EXPECTED",
           "risk_d": "MEDIO",
-          "risk_d1": "MEDIO",
+          "risk_d1": "BAJO",
           "risk_d2": "ALTO",
           "window": [
             "2026-08-06",
@@ -4261,7 +4261,7 @@
           "in_lambing_window": true,
           "curve": "ADJUSTED",
           "basis": "EXPECTED",
-          "risk_d": "MEDIO",
+          "risk_d": "BAJO",
           "risk_d1": "ALTO",
           "risk_d2": "MEDIO",
           "window": [
@@ -4334,7 +4334,7 @@
           "basis": "EXPECTED",
           "risk_d": "SIN_RIESGO",
           "risk_d1": "MEDIO",
-          "risk_d2": "MEDIO",
+          "risk_d2": "BAJO",
           "window": [
             "2026-08-05",
             "2026-08-06",
@@ -4355,7 +4355,7 @@
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
           "risk_d": "MEDIO",
-          "risk_d1": "MEDIO",
+          "risk_d1": "BAJO",
           "risk_d2": "ALTO",
           "window": [
             "2026-08-06",
@@ -4376,7 +4376,7 @@
           "in_lambing_window": false,
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
-          "risk_d": "MEDIO",
+          "risk_d": "BAJO",
           "risk_d1": "ALTO",
           "risk_d2": "MEDIO",
           "window": [
@@ -4449,7 +4449,7 @@
           "basis": "EXPECTED",
           "risk_d": "SIN_RIESGO",
           "risk_d1": "MEDIO",
-          "risk_d2": "MEDIO",
+          "risk_d2": "BAJO",
           "window": [
             "2026-08-05",
             "2026-08-06",
@@ -4470,7 +4470,7 @@
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
           "risk_d": "MEDIO",
-          "risk_d1": "MEDIO",
+          "risk_d1": "BAJO",
           "risk_d2": "ALTO",
           "window": [
             "2026-08-06",
@@ -4491,7 +4491,7 @@
           "in_lambing_window": false,
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
-          "risk_d": "MEDIO",
+          "risk_d": "BAJO",
           "risk_d1": "ALTO",
           "risk_d2": "MEDIO",
           "window": [
@@ -4959,9 +4959,9 @@
       "latitude": null,
       "longitude": null
     },
-    "analyzed_at": "2026-08-05T17:29:55.995917+00:00",
-    "forecast_run_date": "2026-08-05",
-    "imported_at": "2026-08-05T14:33:14.736760-03:00",
+    "analyzed_at": "2026-08-05T19:04:38.078481+00:00",
+    "forecast_run_date": "2026-08-04",
+    "imported_at": "2026-08-05T16:08:18.638518-03:00",
     "forecast_age_hours": 0.06,
     "update_status": {
       "state": "ACTUALIZADO",
@@ -5143,11 +5143,11 @@
       },
       {
         "date": "2026-08-07",
-        "risk_category": "MEDIO",
-        "display_risk_category": "MEDIO",
-        "ci_min": 1000.0,
-        "ci_max": 1100.0,
-        "ci_interval": "1000–1100",
+        "risk_category": "BAJO",
+        "display_risk_category": "BAJO",
+        "ci_min": 900.0,
+        "ci_max": 1000.0,
+        "ci_interval": "900–1000",
         "ci_unit": "kJ/m2/h",
         "confidence": 0.9,
         "requires_review": false,
@@ -5358,8 +5358,8 @@
   },
   "chill_pariciones_summary": {
     "source": "INIA-GRAS interpretada por Zapia",
-    "analyzed_at": "2026-08-05T17:29:55.995917+00:00",
-    "imported_at": "2026-08-05T14:33:14.736760-03:00",
+    "analyzed_at": "2026-08-05T19:04:38.078481+00:00",
+    "imported_at": "2026-08-05T16:08:18.638518-03:00",
     "update_status": "ACTUALIZADO",
     "product_cross_status": "OK",
     "dates": [
@@ -5375,7 +5375,7 @@
       },
       {
         "date": "2026-08-07",
-        "risk_category": "MEDIO",
+        "risk_category": "BAJO",
         "confidence": 0.9
       },
       {
@@ -5488,10 +5488,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-08-05T19:08:03.124611Z",
+      "processed_at": "2026-08-05T19:08:14.825718Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-08-05T16:08:06.187032-03:00",
+    "last_sync_at": "2026-08-05T16:08:18.794707-03:00",
     "pending_operations": 1,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }

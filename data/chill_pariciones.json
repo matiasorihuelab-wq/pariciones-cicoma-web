@@ -10,9 +10,9 @@
   "location": {
     "name": "CICOMA"
   },
-  "analyzed_at": "2026-08-05T17:29:55.995917+00:00",
-  "forecast_run_date": "2026-08-05",
-  "imported_at": "2026-08-05T14:33:14.736760-03:00",
+  "analyzed_at": "2026-08-05T19:04:38.078481+00:00",
+  "forecast_run_date": "2026-08-04",
+  "imported_at": "2026-08-05T16:08:18.638518-03:00",
   "forecast_age_hours": 0.06,
   "update_status": {
     "state": "ACTUALIZADO",
@@ -194,11 +194,11 @@
     },
     {
       "date": "2026-08-07",
-      "risk_category": "MEDIO",
-      "display_risk_category": "MEDIO",
-      "ci_min": 1000.0,
-      "ci_max": 1100.0,
-      "ci_interval": "1000–1100",
+      "risk_category": "BAJO",
+      "display_risk_category": "BAJO",
+      "ci_min": 900.0,
+      "ci_max": 1000.0,
+      "ci_interval": "900–1000",
       "ci_unit": "kJ/m2/h",
       "confidence": 0.9,
       "requires_review": false,
