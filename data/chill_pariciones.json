@@ -13,7 +13,7 @@
   "analyzed_at": "2026-08-05T19:04:38.078481+00:00",
   "forecast_run_date": "2026-08-04",
   "imported_at": "2026-08-05T16:08:18.638518-03:00",
-  "forecast_age_hours": 0.06,
+  "forecast_age_hours": 0.18,
   "update_status": {
     "state": "ACTUALIZADO",
     "stale": false,
