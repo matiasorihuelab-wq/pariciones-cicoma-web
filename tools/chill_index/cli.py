@@ -500,7 +500,13 @@ def run(
     ultima_valida = history.last_valid_forecast(corridas)
     ultima_fecha = ultima_valida.get("forecast_run_date") if ultima_valida else None
     if validos and forecast_run_date:
-        ultima_fecha = forecast_run_date
+        # Nunca hacia atrás. `forecast_run_date` sale del Last-Modified del
+        # PRIMER mapa válido, y cuál es el primero depende de qué fechas
+        # sobrevivieron ese día: el 07/08 pasó de 06/08 a 05/08 y el tablero
+        # saltó de «hace 1 día» a «hace 2 días» sin que INIA hubiera perdido
+        # nada. Que hoy sólo sirvan mapas de una corrida más vieja no borra que
+        # ayer hubo una más nueva. Las fechas ISO se comparan como texto.
+        ultima_fecha = max(f for f in (ultima_fecha, forecast_run_date) if f)
 
     estado = contract.system_status(mapas, today_iso=hoy.isoformat())
     finished = datetime.now(UTC)

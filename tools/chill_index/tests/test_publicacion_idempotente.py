@@ -193,3 +193,52 @@ def test_un_pronostico_distinto_siempre_publica(tmp_path: Path) -> None:
         (tmp_path / "data" / "chill_index.json").read_text(encoding="utf-8")
     )
     assert {m["risk_category"] for m in publicado["maps"]} == {"MUY_ALTO"}
+
+
+def test_la_ultima_corrida_valida_nunca_retrocede(tmp_path: Path) -> None:
+    """Observado en producción el 07/08 (corrida 31147681704).
+
+    `forecast_run_date` sale del `Last-Modified` del PRIMER mapa válido, y cuál
+    es el primero depende de qué fechas sobrevivieron ese día. Entre dos
+    corridas seguidas pasó de 06/08 a 05/08, y el tablero saltó de «hace 1 día»
+    a «hace 2 días» sin que INIA hubiera perdido nada. Que hoy sólo sirvan
+    mapas de una corrida más vieja no borra que ayer hubo una más nueva.
+    """
+
+    ayer = AHORA - timedelta(days=1)
+
+    class _SesionConFecha:
+        def __init__(self, cuerpo: bytes, last_modified: datetime) -> None:
+            self.cuerpo = cuerpo
+            self.lm = last_modified.strftime("%a, %d %b %Y %H:%M:%S GMT")
+
+        def get(self, _url: str, **_kw: object) -> _Respuesta:
+            return _Respuesta(200, self.cuerpo, {"Last-Modified": self.lm})
+
+    # Primera corrida: INIA sirve mapas de HOY.
+    _correr(tmp_path, _SesionConFecha(_wrf("MEDIO"), AHORA), ahora=AHORA, hoy=HOY)
+    primero = json.loads(
+        (tmp_path / "data" / "chill_index.json").read_text(encoding="utf-8")
+    )
+    assert primero["freshness"]["latest_valid_forecast"] == "2026-08-03"
+
+    # Segunda corrida el MISMO día: ahora los mapas válidos son de la corrida
+    # de ayer. El pronóstico cambia, pero la última corrida válida conocida no
+    # puede envejecer.
+    _correr(
+        tmp_path,
+        _SesionConFecha(_wrf("ALTO"), ayer),
+        ahora=AHORA + timedelta(hours=2),
+        hoy=HOY,
+    )
+    segundo = json.loads(
+        (tmp_path / "data" / "chill_index.json").read_text(encoding="utf-8")
+    )
+
+    assert segundo["forecast_run_date"] == "2026-08-02", (
+        "la corrida de ESTOS mapas sí es vieja"
+    )
+    assert segundo["freshness"]["latest_valid_forecast"] == "2026-08-03", (
+        "pero la última corrida válida conocida no retrocede"
+    )
+    assert segundo["freshness"]["last_valid_age_days"] == 0
