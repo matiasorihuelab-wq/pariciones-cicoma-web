@@ -519,6 +519,7 @@ def _correr(tmp_path: Path, sesion: _SesionFalsa, **extra: object) -> dict:
         output=tmp_path / "data" / "chill_index.json",
         evidence_root=tmp_path / "evidence",
         history_path=tmp_path / "data" / "chill_history.jsonl",
+        batches_path=tmp_path / "data" / "mini_batches.jsonl",
         trigger="test",
         today=HOY,
         now=AHORA,
@@ -622,8 +623,16 @@ def test_una_segunda_corrida_identica_es_idempotente(tmp_path: Path) -> None:
     assert len(history.read_runs(tmp_path / "data" / "chill_history.jsonl")) == 2
 
 
-def test_la_miniatura_nunca_publica_una_categoria(tmp_path: Path) -> None:
-    """WRF completo vacío y miniatura con color: el público ve SIN_DATOS."""
+def test_la_miniatura_rescata_la_fecha_cuando_el_wrf_completo_no_sirve(
+    tmp_path: Path,
+) -> None:
+    """POLÍTICA CANÓNICA (2026-08-06): el mini es FALLBACK, no descarte.
+
+    Reemplaza a ``test_la_miniatura_nunca_publica_una_categoria``, que fijaba la
+    regla anterior («WRF_mini no publica categorías»). El responsable la derogó:
+    con el WRF completo inservible, un mini interpretable de la MISMA fecha debe
+    usarse. Sólo si tampoco el mini sirve se publica sin dato.
+    """
 
     sesion = _SesionFalsa(
         {"WRF_mini": _Respuesta(200, _png((117, 98), (0, 0, 255)), {"Last-Modified": _lm(AHORA)})},
@@ -631,11 +640,39 @@ def test_la_miniatura_nunca_publica_una_categoria(tmp_path: Path) -> None:
     )
     _correr(tmp_path, sesion)
     publicado = json.loads((tmp_path / "data" / "chill_index.json").read_text(encoding="utf-8"))
-    assert all(m["display_status"] == "SIN_DATOS" for m in publicado["maps"])
-    diagnostico = publicado["diagnostics"]["wrf_mini"]
-    assert diagnostico["observations"], "la miniatura se observa como evidencia"
-    assert "no se usa como fuente autónoma" in diagnostico["policy"].lower()
-    assert "WRF_mini" not in publicado["model"]
+    con_dato = [m for m in publicado["maps"] if m["display_status"] == "DISPONIBLE"]
+    assert con_dato, "el mini azul debía rescatar al menos una fecha"
+    assert all(m["risk_category"] == "ALTO" for m in con_dato), "azul (0,0,255) es ALTO"
+    # La confianza del fallback nunca es la del WRF completo.
+    assert all(m["confidence"] in ("medium", "low") for m in con_dato)
+
+
+def test_el_contrato_publico_no_cambia_de_forma_por_el_fallback(tmp_path: Path) -> None:
+    """La trazabilidad del producto vive en el historial, no en el contrato.
+
+    El esquema publica ``additionalProperties: false``: agregar ``source_product``
+    a cada mapa sería una migración contractual. Se evitó a propósito.
+    """
+
+    sesion = _SesionFalsa(
+        {"WRF_mini": _Respuesta(200, _png((117, 98), (0, 0, 255)), {"Last-Modified": _lm(AHORA)})},
+        por_defecto=_Respuesta(200, _grilla_vacia(), {"Last-Modified": _lm(AHORA)}),
+    )
+    _correr(tmp_path, sesion)
+    publicado = json.loads((tmp_path / "data" / "chill_index.json").read_text(encoding="utf-8"))
+    for mapa in publicado["maps"]:
+        assert "source_product" not in mapa
+        assert "fallback_reason" not in mapa
+    # Pero el historial sí lo registra.
+    historial = [
+        json.loads(linea)
+        for linea in (tmp_path / "data" / "chill_history.jsonl").read_text(encoding="utf-8").splitlines()
+        if linea.strip()
+    ]
+    fuentes = historial[-1]["sources_by_date"]
+    assert fuentes, "el historial debe decir qué producto resolvió cada fecha"
+    assert any(f.get("source_product") == "WRF_MINI" for f in fuentes)
+    assert all("valid_date" in f for f in fuentes)
 
 
 def test_la_evidencia_de_cada_mapa_queda_archivada(tmp_path: Path) -> None:

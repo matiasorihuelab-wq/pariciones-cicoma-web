@@ -139,6 +139,20 @@
             "integer",
             "null"
           ]
+        },
+        "latest_source_seen": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Instante en que INIA respondió por última vez con un cuerpo descargable. Es «se miró la fuente», NO «hay pronóstico nuevo»: puede ser de hoy mientras last_valid_forecast_run_date sigue siendo de días atrás."
+        },
+        "latest_valid_forecast": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Fecha de la última corrida de INIA que produjo al menos una categoría utilizable. Es la única fecha que puede presentarse como «el pronóstico»."
         }
       }
     },

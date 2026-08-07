@@ -5,18 +5,35 @@ name: Chill Index
 # Corre en GitHub, no en la computadora del establecimiento: la publicación del
 # pronóstico ya no depende de que haya alguien con la máquina encendida.
 #
-# Horarios: INIA genera la corrida WRF alrededor de las 13:06 hora local y la
-# reprocesa durante la tarde. Se intenta cuatro veces para cubrir esa ventana.
-# Uruguay está en UTC-3 todo el año (no aplica horario de verano), así que:
+# Horarios: seis controles diarios, decididos con la auditoría sombra
+# (AUDITORIA_CHILL_SHADOW, 2026-07-30 → 2026-08-03) y con el episodio del
+# 2026-08-06. Uruguay está en UTC-3 todo el año (no aplica horario de verano).
 #
-#   13:00 local = 16:00 UTC
-#   14:30 local = 17:30 UTC
-#   16:00 local = 19:00 UTC
-#   18:00 local = 21:00 UTC
+#   07:17 local = 10:17 UTC   ┐ dos controles tempranos: el Last-Modified de los
+#   11:17 local = 14:17 UTC   ┘ mapas se observó a las 06:00–07:00 local
+#   13:17 local = 16:17 UTC   ┐
+#   14:47 local = 17:47 UTC   │ cuatro controles próximos en la ventana donde se
+#   16:17 local = 19:17 UTC   │ observaron republicaciones bajo la misma URL
+#   18:47 local = 21:47 UTC   ┘ (sellos de 14:00 local el 27/07 y el 29/07)
 #
-# El cron de GitHub Actions es "best effort" y puede demorarse varios minutos.
-# Ese atraso NO altera la vigencia: la antigüedad se mide contra el
-# Last-Modified de la fuente, nunca contra la hora de ejecución.
+# Por qué NO el esquema anterior (13:00 / 14:30 / 16:00 / 18:00 local): suponía
+# que la corrida aparece ≈13:06 local, dato que viene del sello INTERNO de dos
+# mapas. El Last-Modified HTTP —que es lo que decide la vigencia— se observó a
+# las 06:00–07:00 local en 5 de 7 días. El esquema viejo no miraba nunca esa
+# franja y concentraba las cuatro oportunidades en cinco horas de la tarde: el
+# 2026-08-06 los runners de GitHub fallaron dos veces seguidas y el pronóstico
+# quedó congelado más de 24 h.
+#
+# Por qué NO "cada 6 horas": gastaría tres de cuatro intentos en la madrugada,
+# cuando ningún sello observado cae en esa franja.
+#
+# Los minutos son deliberadamente 17 y 47: el comienzo exacto de hora es cuando
+# más carga tiene la cola de GitHub Actions.
+#
+# El cron de GitHub Actions es "best effort" y puede demorarse varios minutos:
+# estos horarios NO son una garantía al minuto. Ese atraso NO altera la
+# vigencia: la antigüedad se mide contra el Last-Modified de la fuente, nunca
+# contra la hora de ejecución.
 
 on:
   workflow_dispatch:
@@ -26,10 +43,12 @@ on:
         required: false
         default: "manual"
   schedule:
-    - cron: "0 16 * * *"
-    - cron: "30 17 * * *"
-    - cron: "0 19 * * *"
-    - cron: "0 21 * * *"
+    - cron: "17 10 * * *" # 07:17 local
+    - cron: "17 14 * * *" # 11:17 local
+    - cron: "17 16 * * *" # 13:17 local
+    - cron: "47 17 * * *" # 14:47 local
+    - cron: "17 19 * * *" # 16:17 local
+    - cron: "47 21 * * *" # 18:47 local
 
 # Una sola corrida por vez: dos ejecuciones simultáneas podrían pisarse al
 # commitear. No se cancela la que ya está corriendo.
@@ -73,6 +92,7 @@ jobs:
             --output data/chill_index.json \
             --evidence evidence \
             --history data/chill_history.jsonl \
+            --batches data/mini_batches.jsonl \
             --trigger "${{ github.event_name }}" \
             --workflow-run-url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
             | tee pipeline.log
@@ -115,7 +135,12 @@ jobs:
           ESTADO=$(python -c "import json;print(json.load(open('data/chill_index.json'))['status'])")
           git config user.name "cicoma-chill-bot"
           git config user.email "cicoma-chill-bot@users.noreply.github.com"
-          git add data/chill_index.json data/chill_history.jsonl evidence
+          # `mini_batches.jsonl` es la MEMORIA de identidad de los juegos de
+          # miniaturas. Sin versionarlo, cada corrida arrancaría sin saber qué
+          # lotes conoce y volvería a fechar por Last-Modified un juego viejo
+          # que INIA re-sirve: justo el error que la arquitectura cierra.
+          git add data/chill_index.json data/chill_history.jsonl \
+                  data/mini_batches.jsonl evidence
           if git diff --cached --quiet; then
             echo "Sin cambios: no se crea un commit vacío."
             echo "committed=false" >> "$GITHUB_OUTPUT"

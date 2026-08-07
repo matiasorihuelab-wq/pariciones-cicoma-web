@@ -18,7 +18,14 @@ from typing import Any
 #: de ejecución, la antigüedad medida (que avanza sola con el reloj) y el
 #: diagnóstico, que registra cada consulta HTTP.
 _VOLATILE_TOP = ("run_started_at", "run_finished_at", "run_trigger", "diagnostics")
-_VOLATILE_NESTED = ("source_age_hours",)
+#: `checked_at` y `latest_source_seen` son la hora en que MIRAMOS, no el
+#: pronóstico. Contaban para el hash y rompían en silencio la idempotencia que
+#: este módulo promete: desde que se agregó `checked_at` toda corrida reescribía
+#: el archivo y dejaba un commit sin información nueva (verificado el 2026-08-07
+#: sobre dos corridas productivas consecutivas cuyo único cambio eran sellos).
+#: Que no cuenten para el hash no las congela: `cli.run()` refresca el archivo
+#: una vez por día local para que «última verificación» nunca mienta.
+_VOLATILE_NESTED = ("source_age_hours", "checked_at", "latest_source_seen")
 
 
 def _stable_view(payload: dict[str, Any]) -> dict[str, Any]:

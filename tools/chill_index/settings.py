@@ -31,6 +31,16 @@ MINI_BASE = (
     "agroclima/AlertaOvinos/WRF_mini"
 )
 MINI_PATTERN = "Min_{index}.png"
+#: Los cinco minis pertenecen a UNA corrida. La regla canónica, demostrada por
+#: los reportes históricos del proyecto (28/07 y 29/07), es:
+#:
+#:     valid_date(Min_N) = batch_run_date + N
+#:
+#: y NO `hoy + N`. Los rótulos «Hoy | Mañana | Pasado | Hoy+3 | Hoy+4» de la
+#: página describen bien un juego FRESCO, pero no deben desplazar un lote viejo
+#: que INIA siga sirviendo: al cruzar la medianoche el lote no cambia de fechas.
+#: La identidad y la fecha base viven en `batches.py`, persistidas por hash.
+MINI_INDEX_IS_RELATIVE_TO_BATCH_RUN_DATE = True
 
 USER_AGENT = "CICOMA-ChillIndex/1.0 (pipeline publico de pariciones; solo lectura)"
 TIMEOUT_SECONDS = 30
@@ -38,7 +48,11 @@ MAX_RETRIES = 3
 BACKOFF_BASE_SECONDS = 2.0
 
 #: Ubicación del establecimiento.
-LOCATION = {"name": "CICOMA", "latitude": -31.0543558, "longitude": -57.2304711}
+LOCATION: dict[str, str | float] = {
+    "name": "CICOMA",
+    "latitude": -31.0543558,
+    "longitude": -57.2304711,
+}
 
 #: Horizonte publicado: hoy y los cuatro días siguientes.
 HORIZON_DAYS = 5
@@ -78,8 +92,30 @@ CI_UNIT = "kJ/m2/h"
 CLASSIFICATION_WINDOW = 7
 LAB_MATCH_THRESHOLD = 22.0
 
+#: WRF_mini: FALLBACK de la misma fecha válida cuando el WRF completo no es
+#: interpretable. Un píxel del mini cubre ≈7,7 km contra 1,15 km del completo,
+#: así que la ventana es más chica en píxeles pero cubre MÁS territorio: 5×5 en
+#: el mini ≈ 38 km de lado. Con esa resolución no se puede exigir unanimidad.
+MINI_CLASSIFICATION_WINDOW = 5
+#: Mínimo de píxeles de paleta en la ventana para que el mini sea interpretable.
+#: Por debajo de esto la categoría queda NO_DETERMINADO: no se inventa.
+MINI_MIN_VALID_PIXELS = 8
+#: Proporción mínima de la categoría dominante para publicarla sin ambigüedad.
+MINI_DOMINANT_SHARE = 0.6
+
+#: Criterio precautorio del mini, documentado y acotado. Ante dos categorías
+#: ADYACENTES con presencia cromática real y sin dominante clara, se publica la
+#: de MAYOR riesgo: esta herramienta previene mortalidad neonatal y el error de
+#: subestimar cuesta más que el de sobreestimar. NO convierte cualquier duda en
+#: crítico: exige que las dos categorías estén realmente presentes y sean
+#: vecinas en la escala.
+MINI_PRECAUTIONARY_ADJACENT = True
+
+#: Orden de la escala, de menor a mayor riesgo. Sirve para decidir adyacencia.
+RISK_SCALE = ("SIN_RIESGO", "BAJO", "MEDIO", "ALTO", "CRITICO")
+
 #: Validación de imagen.
-WRF_EXPECTED_SIZE = (780, 650)
+WRF_EXPECTED_SIZE: tuple[int, int] = (780, 650)
 MIN_PALETTE_COVERAGE_VALID = 0.35
 MAX_PALETTE_COVERAGE_NO_DATA = 0.02
 
@@ -152,3 +188,16 @@ def load_calibration() -> dict[str, Any]:
     """Calibración geográfica del WRF completo (marco y extensión del dominio)."""
 
     return json.loads((_HERE / "config" / "calibration_wrf.json").read_text(encoding="utf-8"))
+
+
+def load_mini_calibration() -> dict[str, Any]:
+    """Calibración geográfica del WRF_mini.
+
+    Es OTRA transformación: misma extensión geográfica que el completo, pero
+    117×98 px en vez de 780×650. El píxel de CICOMA en el completo (288, 169)
+    ni siquiera existe en el mini.
+    """
+
+    return json.loads(
+        (_HERE / "config" / "calibration_wrf_mini.json").read_text(encoding="utf-8")
+    )

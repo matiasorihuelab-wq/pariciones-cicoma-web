@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0.0",
+  "variant": "WRF_MINI",
+  "derived_from": "AUDITORIA_CHILL_SHADOW/config/calibration_wrf_mini.json (2026-07-30). Marco detectado por barrido de lineas oscuras sobre Min_0..Min_2 y verificado contra el marco del WRF completo escalado: 141*0.15=21.15, 638*0.15=95.7, 56*0.1508=8.44, 593*0.1508=89.4. Copiado al pipeline el 2026-08-06 para que la configuracion productiva sea autosuficiente.",
+  "expected_size": [
+    117,
+    98
+  ],
+  "frame": {
+    "x0": 21.15,
+    "y0": 8.44,
+    "x1": 95.7,
+    "y1": 89.4
+  },
+  "lon_min": -59.0,
+  "lon_max": -53.0,
+  "lat_max": -30.0,
+  "lat_min": -35.0,
+  "frame_detect_dark_threshold": 200,
+  "frame_tolerance_px": 2.0,
+  "min_control_points": 4,
+  "estimated_error_px": 1.5,
+  "estimated_error_km": 10.0,
+  "km_per_pixel_lon": 7.7,
+  "confidence_penalty": "La miniatura conserva la misma extensión geográfica (marco = marco completo × 0.15). Un píxel ≈ 6.7 km E-O: el error de localización es un orden de magnitud mayor que en el WRF completo.",
+  "notes": "Marco esperado: filas oscuras en y≈8.5 y y≈89, columnas en x≈21 y x≈95. Coincide con el marco del WRF completo escalado (141*0.15=21.2, 638*0.15=95.7, 56*0.1508=8.4, 593*0.1508=89.4). Umbral 190→200 el 2026-07-30 21:45: los minis de la corrida vespertina usan trazo fino y el marco antialiasado no llegaba a 190 en todos los bordes; a 200 los colores de paleta (canales exactamente 200) siguen excluidos por comparación estricta.",
+  "policy": "WRF_mini es FALLBACK de la misma fecha valida cuando el WRF completo no es interpretable. Menor resolucion (~7.7 km/px contra 1.15): la confianza se degrada, pero no se descarta el producto."
+}

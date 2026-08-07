@@ -39,6 +39,7 @@ def _correr(tmp_path: Path, sesion: _SesionFalsa) -> dict[str, Any]:
         output=tmp_path / "data" / "chill_index.json",
         evidence_root=tmp_path / "evidence",
         history_path=tmp_path / "data" / "chill_history.jsonl",
+        batches_path=tmp_path / "data" / "mini_batches.jsonl",
         trigger="test",
         today=HOY,
         now=AHORA,

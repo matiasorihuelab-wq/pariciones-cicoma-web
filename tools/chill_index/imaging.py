@@ -74,9 +74,27 @@ def nearest_palette(rgb: tuple[int, int, int]) -> tuple[str | None, float]:
     return best
 
 
+def check_wrf_mini(content: bytes, calibration: dict[str, Any]) -> ImageCheck:
+    """Valida un WRF_mini con SU tamaño y SU marco.
+
+    Mismos criterios que el completo —PNG legible, dimensiones esperadas y
+    grilla con colores de la leyenda— pero contra la calibración del mini. Un
+    placeholder sin grilla se detecta igual: cobertura de paleta ≈ 0.
+    """
+
+    ancho, alto = calibration["expected_size"]
+    return _check(content, calibration, (int(ancho), int(alto)))
+
+
 def check_wrf(content: bytes, calibration: dict[str, Any]) -> ImageCheck:
     """Valida un WRF completo: formato, dimensiones y grilla con datos."""
 
+    return _check(content, calibration, settings.WRF_EXPECTED_SIZE)
+
+
+def _check(
+    content: bytes, calibration: dict[str, Any], expected: tuple[int, int]
+) -> ImageCheck:
     if not content.startswith(PNG_SIGNATURE):
         return ImageCheck(status=INVALID_IMAGE, reason="El contenido no es un PNG")
     try:
@@ -85,7 +103,6 @@ def check_wrf(content: bytes, calibration: dict[str, Any]) -> ImageCheck:
         return ImageCheck(status=INVALID_IMAGE, reason=f"PNG ilegible: {exc}")
 
     width, height = image.size
-    expected = tuple(settings.WRF_EXPECTED_SIZE)
     if (width, height) != expected:
         return ImageCheck(
             status=INVALID_IMAGE,

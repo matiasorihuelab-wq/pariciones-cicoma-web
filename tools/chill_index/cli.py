@@ -20,8 +20,8 @@ from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
-from . import contract, freshness, history, http_source, imaging, publisher, settings
-from .classifier import classify
+from . import batches, contract, freshness, history, http_source, imaging, publisher, settings
+from .classifier import classify, classify_mini
 
 MODEL_LABEL = "WRF (INIA-GRAS), resolución completa 780x650"
 
@@ -56,11 +56,143 @@ def _download_failure(descarga: Any) -> tuple[str, str]:
     return "ERROR", "SOURCE_TIMEOUT"
 
 
+def _observe_mini_batch(
+    *, session: Any, now: datetime, batches_path: Path, skip: bool
+) -> tuple[batches.MiniBatch | None, dict[str, batches.MiniBatch], list[dict[str, Any]]]:
+    """Descarga los cinco minis, identifica el lote y persiste su fecha base.
+
+    El lote se reconoce por el hash de sus cinco cuerpos. Si ya se conocia, se
+    reutiliza su ``batch_run_date``: que INIA vuelva a servir un lote viejo no
+    lo convierte en la corrida de hoy.
+    """
+
+    if skip:
+        return None, batches.read_batches(batches_path), []
+    miembros: dict[str, dict[str, Any]] = {}
+    observaciones: list[dict[str, Any]] = []
+    for indice in range(settings.HORIZON_DAYS):
+        url = http_source.mini_url(indice)
+        descarga = http_source.fetch(url, session=session, now=now)
+        registro = descarga.evidence()
+        registro["index"] = indice
+        observaciones.append(registro)
+        if not descarga.ok or descarga.sha256 is None:
+            continue
+        momento = descarga.last_modified_utc()
+        miembros[str(indice)] = {
+            "sha256": descarga.sha256,
+            "url": url,
+            "last_modified": descarga.last_modified,
+            "last_modified_utc": momento.isoformat() if momento else None,
+            "bytes": len(descarga.body or b""),
+        }
+    if not miembros:
+        return None, batches.read_batches(batches_path), observaciones
+    lote, lotes = batches.observe(batches_path, miembros, now=now)
+    return lote, lotes, observaciones
+
+
+def _try_mini(
+    *,
+    valid_date: date,
+    forecast_day: int,
+    lotes: dict[str, batches.MiniBatch],
+    session: Any,
+    now: datetime,
+    evidence_root: Path,
+    motivo_wrf: str,
+) -> tuple[dict[str, Any], dict[str, Any]] | None:
+    """Resuelve una fecha con el WRF_mini. ``None`` si ningun lote la rescata.
+
+    Se llama SOLO cuando el WRF completo no fue interpretable. Recorre los
+    lotes que predicen esa fecha del mas reciente al mas antiguo: el pronostico
+    mas nuevo manda, y si resulta invalido se cae al anterior. Nunca toma un
+    mini de otra fecha ni de un lote sin fecha base.
+    """
+
+    intentos: list[dict[str, Any]] = []
+    for lote, indice in batches.forecast_for(valid_date, lotes):
+        url = http_source.mini_url(indice)
+        descarga = http_source.fetch(url, session=session, now=now)
+        if not descarga.ok or descarga.body is None or descarga.sha256 is None:
+            intentos.append({"batch_id": lote.batch_id, "resultado": "no se descargo"})
+            continue
+        # El cuerpo servido tiene que ser el del lote, y tenemos que SABER cual
+        # es el suyo. Las URLs Min_N sirven siempre el juego vigente: un lote del
+        # que no conocemos los hashes no puede reclamar una fecha, porque no hay
+        # forma de comprobar que lo que INIA esta sirviendo sea suyo. Sin esta
+        # verificacion, un lote sembrado por auditoria —o cualquier lote viejo—
+        # le pondria SU fecha a los pixeles de otro juego.
+        esperado = (lote.members.get(str(indice)) or {}).get("sha256")
+        if not esperado:
+            intentos.append(
+                {"batch_id": lote.batch_id, "resultado": "no se conocen los cuerpos de ese lote"}
+            )
+            continue
+        if esperado != descarga.sha256:
+            intentos.append(
+                {"batch_id": lote.batch_id, "resultado": "el slot ya no sirve el cuerpo del lote"}
+            )
+            continue
+        revision = imaging.check_wrf_mini(descarga.body, settings.load_mini_calibration())
+        if revision.status != imaging.VALID or revision.image is None:
+            intentos.append({"batch_id": lote.batch_id, "resultado": f"mini {revision.status}"})
+            continue
+        clasificacion = classify_mini(
+            revision.image,
+            settings.load_mini_calibration(),
+            lat=float(settings.LOCATION["latitude"]),
+            lon=float(settings.LOCATION["longitude"]),
+        )
+        if clasificacion.category is None:
+            intentos.append({"batch_id": lote.batch_id, "resultado": clasificacion.reason})
+            continue
+        evidencia = publisher.store_evidence(
+            evidence_root, day=valid_date.isoformat(), sha256=descarga.sha256, content=descarga.body
+        )
+        vigencia = freshness.evaluate_source(descarga.last_modified_utc(), now=now)
+        mapa = contract.risk_map(
+            forecast_day=forecast_day,
+            valid_date=valid_date.isoformat(),
+            source_url=url,
+            sha256=descarga.sha256,
+            last_modified=descarga.last_modified,
+            source_age_hours=vigencia.source_age_hours,
+            http_status=descarga.http_status,
+            category=clasificacion.category,
+            confidence=clasificacion.confidence,
+            evidence_path=evidencia,
+            checked_at=descarga.requested_at,
+        )
+        # La trazabilidad NO va en el contrato publico
+        # (additionalProperties:false): queda en el historial interno.
+        traza = {
+            "valid_date": valid_date.isoformat(),
+            "source_product": "WRF_MINI",
+            "source_url": url,
+            "source_sha256": descarga.sha256,
+            "source_last_modified": descarga.last_modified,
+            "mini_index": indice,
+            "batch_id": lote.batch_id,
+            "batch_run_date": lote.batch_run_date,
+            "fallback_reason": motivo_wrf,
+            "category": clasificacion.category,
+            "confidence": clasificacion.confidence,
+            "votes": clasificacion.votes,
+            "detail": clasificacion.reason,
+            "rejected_batches": intentos,
+            "checked_at": descarga.requested_at,
+        }
+        return mapa, traza
+    return None
+
+
 def run(
     *,
     output: Path,
     evidence_root: Path,
     history_path: Path,
+    batches_path: Path,
     trigger: str,
     today: date | None = None,
     now: datetime | None = None,
@@ -76,16 +208,61 @@ def run(
     run_id = uuid.uuid4().hex[:12]
     calibration = settings.load_calibration()
 
+    # Identidad del juego de minis: se resuelve una vez por corrida y su
+    # fecha base se persiste, para que un lote viejo no se relea como el de hoy.
+    lote_actual, lotes_mini, observaciones_mini = _observe_mini_batch(
+        session=session, now=started, batches_path=batches_path, skip=skip_mini
+    )
+
     fechas = [hoy + timedelta(days=i) for i in range(settings.HORIZON_DAYS)]
     mapas: list[dict[str, Any]] = []
+    #: Qué producto resolvió cada fecha. Interno: no viaja en el contrato.
+    trazabilidad: list[dict[str, Any]] = []
     http_log: list[dict[str, Any]] = []
     descargados = 0
     validos = 0
+    #: Fechas que resolvió el respaldo. Se cuentan aparte porque un rescate del
+    #: mini NO establece una corrida nueva del WRF: da una categoría publicable,
+    #: no una `forecast_run_date`.
+    rescatados = 0
     indefinidos = 0
     rechazados = 0
     errores = 0
     forecast_run_date: str | None = None
     edad_fuente: float | None = None
+    #: Ultimo instante en que INIA entrego un cuerpo descargable. Es «se
+    #: miro la fuente», no «hay pronostico nuevo»: los dos conceptos se
+    #: publican por separado para no volver a decir «actualizado hoy»
+    #: cuando lo unico de hoy fue la verificacion.
+    ultima_lectura: str | None = None
+
+    def _sin_wrf(mapa: dict[str, Any], *, indice: int, dia: date, motivo: str) -> dict[str, Any]:
+        """El WRF no sirvió: se intenta el mini de ESA fecha antes de rendirse."""
+
+        nonlocal rescatados
+        if skip_mini:
+            return mapa
+        rescate = _try_mini(
+            valid_date=dia,
+            forecast_day=indice,
+            lotes=lotes_mini,
+            session=session,
+            now=started,
+            evidence_root=evidence_root,
+            motivo_wrf=motivo,
+        )
+        if rescate is None:
+            trazabilidad.append({
+                "valid_date": dia.isoformat(),
+                "source_product": None,
+                "fallback_reason": motivo,
+                "detail": "ni el WRF completo ni el WRF_mini de esa fecha fueron interpretables",
+            })
+            return mapa
+        mapa_mini, traza = rescate
+        trazabilidad.append(traza)
+        rescatados += 1
+        return mapa_mini
 
     for indice, dia in enumerate(fechas):
         url = http_source.wrf_url(dia)
@@ -98,6 +275,7 @@ def run(
             if disponibilidad == "ERROR":
                 errores += 1
             mapas.append(
+                _sin_wrf(
                 contract.unavailable_map(
                     forecast_day=indice,
                     valid_date=etiqueta,
@@ -109,11 +287,18 @@ def run(
                     http_status=descarga.http_status,
                     checked_at=descarga.requested_at,
                 )
+                ,
+                    indice=indice,
+                    dia=dia,
+                    motivo="el WRF completo no se pudo descargar",
+                )
             )
             continue
 
         descargados += 1
         assert descarga.body is not None and descarga.sha256 is not None
+        if ultima_lectura is None or descarga.requested_at > ultima_lectura:
+            ultima_lectura = descarga.requested_at
 
         revision = imaging.check_wrf(descarga.body, calibration)
         evidencia = publisher.store_evidence(
@@ -124,6 +309,7 @@ def run(
         if revision.status == imaging.NO_DATA:
             indefinidos += 1
             mapas.append(
+                _sin_wrf(
                 contract.unavailable_map(
                     forecast_day=indice,
                     valid_date=etiqueta,
@@ -138,6 +324,11 @@ def run(
                     http_status=descarga.http_status,
                     evidence_path=evidencia,
                     checked_at=descarga.requested_at,
+                )
+                ,
+                    indice=indice,
+                    dia=dia,
+                    motivo="WRF completo sin grilla utilizable (placeholder)",
                 )
             )
             continue
@@ -154,6 +345,7 @@ def run(
                 else "CORRUPT_IMAGE"
             )
             mapas.append(
+                _sin_wrf(
                 contract.unavailable_map(
                     forecast_day=indice,
                     valid_date=etiqueta,
@@ -169,12 +361,18 @@ def run(
                     evidence_path=evidencia,
                     checked_at=descarga.requested_at,
                 )
+                ,
+                    indice=indice,
+                    dia=dia,
+                    motivo="el WRF completo no se pudo descargar",
+                )
             )
             continue
 
         if not vigencia.verified:
             rechazados += 1
             mapas.append(
+                _sin_wrf(
                 contract.unavailable_map(
                     forecast_day=indice,
                     valid_date=etiqueta,
@@ -193,11 +391,17 @@ def run(
                     evidence_path=evidencia,
                     checked_at=descarga.requested_at,
                 )
+                ,
+                    indice=indice,
+                    dia=dia,
+                    motivo="no se pudo verificar la vigencia del WRF completo",
+                )
             )
             continue
 
         if freshness.horizon_expired(dia, today=hoy):
             mapas.append(
+                _sin_wrf(
                 contract.unavailable_map(
                     forecast_day=indice,
                     valid_date=etiqueta,
@@ -213,6 +417,11 @@ def run(
                     evidence_path=evidencia,
                     checked_at=descarga.requested_at,
                 )
+                ,
+                    indice=indice,
+                    dia=dia,
+                    motivo="el WRF completo no fue interpretable",
+                )
             )
             continue
 
@@ -227,6 +436,7 @@ def run(
             rechazados += 1
             errores += 1
             mapas.append(
+                _sin_wrf(
                 contract.unavailable_map(
                     forecast_day=indice,
                     valid_date=etiqueta,
@@ -243,6 +453,11 @@ def run(
                     evidence_path=evidencia,
                     checked_at=descarga.requested_at,
                 )
+                ,
+                    indice=indice,
+                    dia=dia,
+                    motivo="el WRF completo no pudo clasificarse",
+                )
             )
             continue
 
@@ -252,23 +467,34 @@ def run(
             if momento is not None:
                 forecast_run_date = momento.astimezone(tz).date().isoformat()
                 edad_fuente = vigencia.source_age_hours
-        mapas.append(
-            contract.risk_map(
-                forecast_day=indice,
-                valid_date=etiqueta,
-                source_url=url,
-                sha256=descarga.sha256,
-                last_modified=descarga.last_modified,
-                source_age_hours=vigencia.source_age_hours,
-                http_status=descarga.http_status,
-                category=clasificacion.category,
-                confidence=clasificacion.confidence,
-                evidence_path=evidencia,
-                checked_at=descarga.requested_at,
-            )
+        mapa_wrf = contract.risk_map(
+            forecast_day=indice,
+            valid_date=etiqueta,
+            source_url=url,
+            sha256=descarga.sha256,
+            last_modified=descarga.last_modified,
+            source_age_hours=vigencia.source_age_hours,
+            http_status=descarga.http_status,
+            category=clasificacion.category,
+            confidence=clasificacion.confidence,
+            evidence_path=evidencia,
+            checked_at=descarga.requested_at,
         )
+        trazabilidad.append({
+            "valid_date": etiqueta,
+            "source_product": "WRF",
+            "source_url": url,
+            "source_sha256": descarga.sha256,
+            "source_last_modified": descarga.last_modified,
+            "category": clasificacion.category,
+            "confidence": clasificacion.confidence,
+            "checked_at": descarga.requested_at,
+        })
+        mapas.append(mapa_wrf)
 
-    diagnostico_mini = _diagnose_mini(session=session, now=started, skip=skip_mini)
+    diagnostico_mini = _diagnose_mini(
+        lote=lote_actual, observaciones=observaciones_mini, skip=skip_mini
+    )
 
     corridas = history.read_runs(history_path)
     ultima_valida = history.last_valid_forecast(corridas)
@@ -298,11 +524,13 @@ def run(
                 m["valid_date"] == hoy.isoformat() and m["availability_status"] == "DISPONIBLE"
                 for m in mapas
             ),
-            "maps_valid": validos,
+            "maps_valid": validos + rescatados,
             "maps_total": len(mapas),
             "source_age_hours": edad_fuente,
             "last_valid_forecast_run_date": ultima_fecha,
             "last_valid_age_days": freshness.carry_forward_age(ultima_fecha, today=hoy),
+            "latest_source_seen": ultima_lectura,
+            "latest_valid_forecast": ultima_fecha,
         },
         "model": MODEL_LABEL,
         "maps": mapas,
@@ -310,9 +538,12 @@ def run(
             "wrf_mini": diagnostico_mini,
             "http": http_log,
             "notes": [
-                "WRF_mini se descarga sólo como diagnóstico: no publica categorías "
-                "productivas mientras no exista una calibración validada.",
-                "Una fecha sin mapa WRF completo válido y vigente se publica como "
+                "El WRF completo es la fuente primaria. WRF_mini sólo se usa como "
+                "respaldo de una fecha cuyo WRF completo no fue interpretable, con "
+                "su propia calibración y regla precautoria.",
+                "Cada miniatura se fecha por el lote al que pertenece "
+                "(batch_run_date + índice), no por el día en que se la descarga.",
+                "Una fecha que ningún producto pudo resolver se publica como "
                 "NO_DETERMINADO / SIN_DATOS, nunca como SIN_RIESGO.",
             ],
         },
@@ -325,6 +556,10 @@ def run(
     hash_nuevo = publisher.payload_hash(payload)
     cambio = hash_anterior != hash_nuevo
 
+    # No hace falta forzar un refresco periódico del sello de verificación: el
+    # horizonte son cinco fechas contadas desde hoy, así que al cruzar la
+    # medianoche los cinco `valid_date` cambian y el contrato se reescribe solo.
+    # «Última verificación» no puede quedar más de un día atrasada.
     if cambio:
         publisher.write_atomic(output, payload)
         resultado_publicacion = "PUBLICADO"
@@ -343,7 +578,7 @@ def run(
         new_series=bool(cambio and validos),
         maps_requested=len(fechas),
         maps_downloaded=descargados,
-        maps_valid=validos,
+        maps_valid=validos + rescatados,
         maps_undefined=indefinidos,
         maps_rejected=rechazados,
         maps_error=errores,
@@ -357,19 +592,35 @@ def run(
         ),
         workflow_run_url=workflow_run_url,
     )
+    # Trazabilidad por fecha: qué producto la resolvió y por qué. Vive acá,
+    # en el historial interno, y no en el contrato público.
+    entrada["sources_by_date"] = trazabilidad
+    entrada["mini_batch"] = (
+        {
+            "batch_id": lote_actual.batch_id,
+            "batch_run_date": lote_actual.batch_run_date,
+            "first_seen_at": lote_actual.first_seen_at,
+            "last_seen_at": lote_actual.last_seen_at,
+            "run_date_source": lote_actual.run_date_source,
+        }
+        if lote_actual is not None
+        else None
+    )
     history.append_run(history_path, entrada)
 
     return {
         "run_id": run_id,
         "status": estado,
         "publication": resultado_publicacion,
-        "maps_valid": validos,
+        "maps_valid": validos + rescatados,
+        "maps_rescued_by_mini": rescatados,
         "maps_undefined": indefinidos,
         "maps_rejected": rechazados,
         "maps_error": errores,
         "maps_downloaded": descargados,
         "content_changed": cambio,
         "output_hash": hash_nuevo,
+        "sources_by_date": trazabilidad,
         "days": [
             {
                 "date": m["valid_date"],
@@ -400,29 +651,36 @@ def _status_detail(estado: str, indefinidos: int, total: int, errores: int) -> s
     return None
 
 
-def _diagnose_mini(*, session: Any, now: datetime, skip: bool) -> dict[str, Any]:
-    """Observa las miniaturas. Evidencia y comparación: nunca fuente productiva."""
+def _diagnose_mini(
+    *,
+    lote: batches.MiniBatch | None,
+    observaciones: list[dict[str, Any]],
+    skip: bool,
+) -> dict[str, Any]:
+    """Identidad y estado del juego de miniaturas observado en esta corrida.
+
+    No descarga nada: las cinco miniaturas ya se bajaron una sola vez al
+    resolver la identidad del lote. Publica la fecha base del lote —que es lo
+    que fecha sus cinco slots— y no una «pista» tomada del Last-Modified de
+    Min_0, que era engañosa cuando INIA re-servía un lote viejo.
+    """
 
     politica = (
-        "WRF_mini NO se usa como fuente autónoma de categorías productivas. "
-        "Se observa para diagnóstico, comparación y alerta de disponibilidad."
+        "WRF_mini es fuente de respaldo POR FECHA: sólo resuelve una fecha cuando "
+        "el WRF completo de esa misma fecha no fue interpretable. Cada slot se "
+        "fecha como batch_run_date + índice del lote al que pertenece, nunca como "
+        "hoy + índice."
     )
     if skip:
         return {"policy": politica, "run_date_hint": None, "observations": []}
-
-    observaciones: list[dict[str, Any]] = []
-    pista: str | None = None
-    for indice in range(settings.HORIZON_DAYS):
-        url = http_source.mini_url(indice)
-        descarga = http_source.fetch(url, session=session, now=now)
-        registro = descarga.evidence()
-        registro["index"] = indice
-        if indice == 0 and descarga.last_modified_utc() is not None:
-            momento = descarga.last_modified_utc()
-            assert momento is not None
-            pista = momento.astimezone(ZoneInfo(settings.TIMEZONE)).date().isoformat()
-        observaciones.append(registro)
-    return {"policy": politica, "run_date_hint": pista, "observations": observaciones}
+    return {
+        "policy": politica,
+        "run_date_hint": lote.batch_run_date if lote else None,
+        "batch_id": lote.batch_id if lote else None,
+        "batch_run_date": lote.batch_run_date if lote else None,
+        "batch_run_date_source": lote.run_date_source if lote else None,
+        "observations": observaciones,
+    }
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -430,6 +688,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output", default="data/chill_index.json")
     parser.add_argument("--evidence", default="evidence")
     parser.add_argument("--history", default="data/chill_history.jsonl")
+    parser.add_argument("--batches", default="data/mini_batches.jsonl")
     parser.add_argument("--trigger", default="manual")
     parser.add_argument("--workflow-run-url", default=None)
     parser.add_argument("--skip-mini", action="store_true")
@@ -439,6 +698,7 @@ def main(argv: list[str] | None = None) -> int:
         output=Path(args.output),
         evidence_root=Path(args.evidence),
         history_path=Path(args.history),
+        batches_path=Path(args.batches),
         trigger=args.trigger,
         workflow_run_url=args.workflow_run_url,
         skip_mini=args.skip_mini,
