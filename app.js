@@ -85,6 +85,18 @@ function formatDayMonth(dateString) {
   return `${day}/${month}`;
 }
 
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+// dd/mm/aaaa, con el mismo criterio que formatDayMonth: sin Intl, para que el
+// formato no dependa de la localización del navegador. Un valor que no sea una
+// fecha ISO completa no se dibuja: se devuelve la marca de dato ausente.
+function formatDayMonthYear(dateString) {
+  const iso = (dateString || "").slice(0, 10);
+  if (!ISO_DATE_RE.test(iso)) return "—";
+  const [year, month, day] = iso.split("-");
+  return `${day}/${month}/${year}`;
+}
+
 function formatDateTime(value, timezone) {
   if (!value) return "—";
   const date = new Date(value);
@@ -619,6 +631,9 @@ function formatNumberShort(value) {
   return Number.isInteger(value) ? integerFormatter.format(value) : decimalFormatter.format(value);
 }
 
+/* El resumen NO publica indicadores productivos globales: los catorce viven en
+ * la vista de cada sistema (`renderLot` → `indicatorTable` sobre
+ * `productive_indicators.by_module`) y no se repiten acá. */
 function renderResumen() {
   const view = byId("view-resumen");
   view.innerHTML = `
@@ -641,14 +656,6 @@ function renderResumen() {
       ${curvePanel("resumen", null)}
     </section>
 
-    <section class="panel">
-      <div class="panel__head">
-        <div><p class="eyebrow">Total campaña</p><h2>Indicadores productivos</h2></div>
-        <p>Generados por el sistema con numerador y denominador explícitos.</p>
-      </div>
-      ${indicatorTable((DASH.productive_indicators || {}).total, "Indicadores productivos totales")}
-    </section>
-
     <section class="panel" id="chill-general">
       ${chillHead(null)}
       ${chillPanel("resumen", null)}
@@ -664,6 +671,34 @@ function dataState(module) {
   return module.ewe_counts?.counted_lambed === null ? "SIN RECUENTO" : "ACTUALIZADO";
 }
 
+/* Fechas OPERATIVAS de la tarjeta: la del hecho reportado y la del recuento
+ * físico. Nunca una fecha técnica (generación del tablero, publicación,
+ * procesamiento del mensaje) ni una fecha de otro módulo. */
+
+// Fecha del último reporte válido de muerte —de corderos o de ovejas— del
+// módulo. El backend publica el máximo `occurred_on` de los eventos de baja
+// contabilizados del lote: es la fecha del hecho, no la del mensaje.
+function lastMortalityReportDate(module) {
+  return module ? module.mortality?.last_report_date || null : null;
+}
+
+// Fecha del último RECUENTO FÍSICO aceptado del módulo. Sus dos únicos orígenes
+// son el conteo de corderos vivos de una recorrida
+// (`lamb_counts.current_stock_count_date`) y el control acumulado de ovejas
+// paridas informado desde el campo (`field_control.reported_date`); vale el más
+// reciente. La fecha de recuento publicada dentro de `ewe_counts` no sirve:
+// avanza con los partes diarios posteriores, que son reportes de parto y no un
+// recuento físico.
+function lastPhysicalCountDate(module) {
+  if (!module) return null;
+  const candidates = [
+    module.lamb_counts?.current_stock_count_date,
+    module.field_control?.reported_date,
+  ].filter((value) => typeof value === "string" && ISO_DATE_RE.test(value.slice(0, 10)));
+  if (!candidates.length) return null;
+  return candidates.reduce((latest, value) => (value > latest ? value : latest));
+}
+
 function distributionCard(lot) {
   const module = moduleByCode(lot.code);
   const previsto = module ? formatInteger(module.ewe_counts.expected_to_lamb) : "—";
@@ -676,7 +711,8 @@ function distributionCard(lot) {
   const ovejasMuertas = module ? formatInteger(module.mortality.ewe_deaths_accumulated) : "—";
   const progress = module ? formatPercent(module.ewe_counts.progress?.percent) : "—";
   const lambProgress = module ? formatPercent(module.lamb_counts.progress?.percent) : "—";
-  const state = dataState(module);
+  const mortalityReportDate = formatDayMonthYear(lastMortalityReportDate(module));
+  const physicalCountDate = formatDayMonthYear(lastPhysicalCountDate(module));
   const bornEstimateHelp =
     "Valor estimado a partir del último recuento físico de corderos vivos más las muertes acumuladas.";
   const cell = (label, value, help = null) =>
@@ -697,7 +733,16 @@ function distributionCard(lot) {
         ${cell("Avance ovejas", progress)}
         ${cell("Avance de corderos", lambProgress)}
       </dl>
-      <span class="lot-card__state tag tag--${state === "ACTUALIZADO" ? "ok" : "pending"}">${escapeHtml(state)}</span>
+      <dl class="lot-card__dates">
+        <div>
+          <dt>Último reporte de mortandad:</dt>
+          <dd>${escapeHtml(mortalityReportDate)}</dd>
+        </div>
+        <div>
+          <dt>Último recuento:</dt>
+          <dd>${escapeHtml(physicalCountDate)}</dd>
+        </div>
+      </dl>
     </a>`;
 }
 
@@ -768,17 +813,16 @@ function milestonesPanel(lotCode) {
  *   B. lo REGISTRADO por fecha   (base DAILY)
  * El Chill Index no predice muertes: acá no se habla de mortalidad. */
 
+//: Titulo del bloque. NO se usa `chill_public.title` del contrato porque
+//: anuncia «riesgo previsto», que es justamente lo que dejo de mostrarse: el
+//: bloque publica el pronostico diario y los nacimientos registrados.
+const CHILL_TITLE = "Chill Index diario y nacimientos registrados";
+
 const CHILL_STATE = {};
 
 function defaultChillState(lotCode) {
   return {
     lot: lotCode || "TODOS",
-    service: "TODOS",
-    from: "",
-    to: "",
-    curve: { ORIGINAL: true, ADJUSTED: true },
-    show: { expected: true, observed: true },
-    evaluation: { complete: true, incomplete: true },
     selectedDate: null,
   };
 }
@@ -788,83 +832,36 @@ function chillState(viewKey, lotCode) {
   return CHILL_STATE[viewKey];
 }
 
-function inChillRange(state, date) {
-  return (!state.from || date >= state.from) && (!state.to || date <= state.to);
-}
-
 function matchesChillLot(state, code) {
   return state.lot === "TODOS" || state.lot === code;
 }
 
-function matchesChillService(state, row) {
-  if (state.service === "TODOS") return true;
-  const [code, service] = String(state.service).split(":");
-  return row.module_code === code && row.service_code === service;
-}
-
-function matchesEvaluation(state, row) {
-  return row.complete ? state.evaluation.complete : state.evaluation.incomplete;
-}
-
-function chillExpectedRows(state) {
-  const rows = ((DASH.chill_public || {}).expected || {}).daily || [];
-  return rows.filter(
-    (row) =>
-      matchesChillLot(state, row.module_code) &&
-      matchesChillService(state, row) &&
-      inChillRange(state, row.date) &&
-      state.curve[row.curve] !== false &&
-      matchesEvaluation(state, row),
-  );
-}
-
+/* El lote es el unico filtro que queda. Las filas se leen enteras del
+ * contrato, sin recalcular nada. */
 function chillObservedRows(state) {
   const rows = ((DASH.chill_public || {}).observed || {}).daily || [];
-  return rows.filter(
-    (row) =>
-      matchesChillLot(state, row.module_code) &&
-      matchesChillService(state, row) &&
-      inChillRange(state, row.date) &&
-      matchesEvaluation(state, row),
-  );
+  return rows.filter((row) => matchesChillLot(state, row.module_code));
 }
 
+// El encabezado se queda con el título y el subtítulo. Los tres párrafos
+// explicativos describen la ESTIMACIÓN por curva, no el pronóstico diario: se
+// muestran junto al bloque previsto, para que las tarjetas diarias queden
+// primero.
 function chillHead(lotCode) {
-  const chill = DASH.chill_public || {};
   const scope = lotCode ? ` — ${LOT_FULL_NAME[lotCode] || lotCode}` : "";
   return `
       <div class="panel__head">
         <div>
           <p class="eyebrow">Chill Index</p>
-          <h2>${escapeHtml(chill.title || "")}${escapeHtml(scope)}</h2>
+          <h2>${escapeHtml(CHILL_TITLE)}${escapeHtml(scope)}</h2>
         </div>
-        <p>${escapeHtml(chill.subtitle || "")}</p>
-      </div>
-      <p class="chill-explain">${escapeHtml(chill.explanation || "")}</p>
-      <p class="chill-phrase">${escapeHtml(chill.exposure_phrase || "")}.</p>
-      <p class="chill-disclaimer">${escapeHtml(chill.forecast_disclaimer || "")}</p>`;
-}
-
-function chillServiceOptions(state) {
-  const options = [`<option value="TODOS">Todos los servicios</option>`];
-  for (const lot of DASH.lambing_curves?.lots || []) {
-    if (!matchesChillLot(state, lot.code)) continue;
-    for (const service of lot.services || []) {
-      const value = `${lot.code}:${service.code}`;
-      options.push(
-        `<option value="${escapeHtml(value)}" ${state.service === value ? "selected" : ""}>${escapeHtml(
-          `${LOT_LABEL[lot.code] || lot.code} · ${service.service_type}`,
-        )}</option>`,
-      );
-    }
-  }
-  return options.join("");
+      </div>`;
 }
 
 function chillFilters(viewKey, lotCode, state) {
-  const lotSelect = lotCode
-    ? ""
-    : `
+  if (lotCode) return "";
+  return `
+    <div class="chart-filters">
       <label class="filter">
         <span>Lote</span>
         <select data-chill="${escapeHtml(viewKey)}" data-filter="lot">
@@ -874,37 +871,7 @@ function chillFilters(viewKey, lotCode, state) {
               `<option value="${lot.code}" ${state.lot === lot.code ? "selected" : ""}>${escapeHtml(lot.name)}</option>`,
           ).join("")}
         </select>
-      </label>`;
-  const check = (group, key, label) => `
-    <label class="toggle">
-      <input type="checkbox" data-chill="${escapeHtml(viewKey)}" data-cgroup="${group}" data-ckey="${key}" ${
-        state[group][key] ? "checked" : ""
-      } />
-      <span>${escapeHtml(label)}</span>
-    </label>`;
-  return `
-    <div class="chart-filters">
-      ${lotSelect}
-      <label class="filter">
-        <span>Servicio</span>
-        <select data-chill="${escapeHtml(viewKey)}" data-filter="service">${chillServiceOptions(state)}</select>
       </label>
-      <label class="filter">
-        <span>Desde</span>
-        <input type="date" data-chill="${escapeHtml(viewKey)}" data-filter="from" value="${escapeHtml(state.from)}" />
-      </label>
-      <label class="filter">
-        <span>Hasta</span>
-        <input type="date" data-chill="${escapeHtml(viewKey)}" data-filter="to" value="${escapeHtml(state.to)}" />
-      </label>
-    </div>
-    <div class="chart-toggles" role="group" aria-label="Series y evaluación del Chill Index">
-      ${check("show", "expected", "Proyección esperada")}
-      ${check("show", "observed", "Nacimientos registrados")}
-      ${check("curve", "ORIGINAL", "Curva original")}
-      ${check("curve", "ADJUSTED", "Curva ajustada")}
-      ${check("evaluation", "complete", "Evaluación completa")}
-      ${check("evaluation", "incomplete", "Evaluación incompleta")}
     </div>`;
 }
 
@@ -925,99 +892,10 @@ function dayRelative(dateString) {
     .toUpperCase();
 }
 
-const LOT_SHORT = { INTENSIVO: "Int", DOHNE: "Dohne", MA: "MA" };
-
-// Tarjeta de un día de exposición esperada. `exposure` es la cifra a mostrar;
-// `lots` es el desglose por lote (sólo cuando se ven todos).
-function chillDay(day, exposure, lots) {
-  const cat = day.risk_category;
-  const rel = dayRelative(day.date);
-  const complete = day.cohort_72h_complete
-    ? ""
-    : `<span class="tag tag--incompleto">${escapeHtml(INCOMPLETE_RISK_LABEL)}</span>`;
-  return `
-    <li class="chill-day risk-${escapeHtml(riskClass(cat))}">
-      <div class="chill-day__head">
-        <span class="chill-day__date">
-          ${rel ? `<span class="chill-day__rel">${escapeHtml(rel)}</span>` : ""}
-          <span class="chill-day__day">${escapeHtml(formatDate(day.date, { short: true }))}</span>
-        </span>
-        <span class="risk-pill risk-pill--${escapeHtml(riskClass(cat))}">${escapeHtml(riskLabel(cat))}</span>
-      </div>
-      <span class="chill-day__value"><strong>${escapeHtml(formatExposure(exposure))}</strong> <span>corderos expuestos</span></span>
-      ${lots ? `<span class="chill-day__lots">${lots}</span>` : ""}
-      ${complete}
-    </li>`;
-}
-
-/* --- A. Bloque PREVISTO ---------------------------------------------- */
-
-function chillExpectedSection(state) {
-  const chill = DASH.chill_public || {};
-  const expected = chill.expected || {};
-  const days = Array.isArray(chill.daily) ? chill.daily : [];
-  if (!state.show.expected) return "";
-  if (!days.length) {
-    return `<p class="empty-note">SIN DISTRIBUCIÓN DE PARTOS CARGADA — el cálculo se habilita cuando exista curva de partos.</p>`;
-  }
-  const visible = days.filter((day) => inChillRange(state, day.date));
-  const cards = visible
-    .map((day) => {
-      const lots =
-        state.lot === "TODOS"
-          ? LOTS.map(
-              (lot) => `${LOT_SHORT[lot.code]} ${escapeHtml(formatExposure((day.by_lot || {})[lot.code]))}`,
-            ).join(" · ")
-          : null;
-      const exposure = state.lot === "TODOS" ? day.total_exposed : (day.by_lot || {})[state.lot];
-      return chillDay(day, exposure, lots);
-    })
-    .join("");
-
-  const rows = chillExpectedRows(state);
-  const table = rows.length
-    ? `
-    <div class="table-wrap">
-      <table class="data-table">
-        <thead><tr>
-          <th>Fecha</th><th>Lote</th><th>Servicio</th><th class="num">Corderos esperados</th>
-          <th>Chill D</th><th>D+1</th><th>D+2</th><th>Riesgo 72 h</th><th>Evaluación</th><th>Curva</th>
-        </tr></thead>
-        <tbody>${rows
-          .map(
-            (row) => `
-          <tr>
-            <td>${escapeHtml(formatDayMonth(row.date))}</td>
-            <td>${escapeHtml(LOT_LABEL[row.module_code] || row.module_code)}</td>
-            <td>${escapeHtml(row.service_type || "Sin servicio asociado")}</td>
-            <td class="num">${escapeHtml(formatDecimal(row.expected_lambs))}</td>
-            <td>${escapeHtml(riskLabel(row.risk_d))}</td>
-            <td>${escapeHtml(riskLabel(row.risk_d1))}</td>
-            <td>${escapeHtml(riskLabel(row.risk_d2))}</td>
-            <td><span class="risk-pill risk-pill--${escapeHtml(riskClass(row.max_risk))}">${escapeHtml(riskLabel(row.max_risk))}</span></td>
-            <td>${row.complete ? "Completa" : escapeHtml(INCOMPLETE_RISK_LABEL)}</td>
-            <td>${row.curve === "ADJUSTED" ? "Ajustada" : "Original"}</td>
-          </tr>`,
-          )
-          .join("")}</tbody>
-      </table>
-    </div>`
-    : `<p class="empty-note">SIN FILAS PREVISTAS para los filtros elegidos.</p>`;
-
-  return `
-    <section class="chill-section">
-      <h3 class="chill-section__title">${escapeHtml(expected.title || "")}</h3>
-      <p class="chill-mode">${escapeHtml(expected.daily_title || "")}</p>
-      <ul class="chill-list">${cards}</ul>
-      ${table}
-    </section>`;
-}
-
 /* --- B. Bloque OBSERVADO --------------------------------------------- */
 
 function chillObservedSection(viewKey, state) {
   const observed = (DASH.chill_public || {}).observed || {};
-  if (!state.show.observed) return "";
   const rows = chillObservedRows(state);
   if (!rows.length) {
     const messages = Array.isArray(observed.messages) ? observed.messages : [];
@@ -1108,73 +986,34 @@ function chillObservedDetail(state, rows) {
     </dl>`;
 }
 
-/* --- Información secundaria (ya no domina el bloque) ------------------ */
-
-function chillSecondary(lotCode) {
-  const chill = DASH.chill_public || {};
-  const coverage = lotCode ? (chill.coverage?.by_module || {})[lotCode] : chill.coverage;
-  if (!coverage) return "";
-  const cells = [
-    ["Evaluados hasta la fecha", formatExposure(coverage.evaluated)],
-    ["Con evaluación completa", formatExposure(coverage.classified)],
-    [INCOMPLETE_RISK_LABEL, formatExposure(coverage.incomplete)],
-    ["Pendientes de evaluar", formatExposure(coverage.pending)],
-    ["Corderos esperados (denominador)", formatInteger(coverage.expected_total)],
-  ]
-    .map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`)
-    .join("");
-  const notice = chill.accumulated_notice || {};
-  return `
-    <details class="chill-secondary">
-      <summary>Cobertura de la evaluación ambiental (información secundaria)</summary>
-      <dl class="control-grid">${cells}</dl>
-      ${[coverage.incomplete_reason, coverage.pending_reason]
-        .filter(Boolean)
-        .map((text) => `<p class="chart-note">${escapeHtml(text)}</p>`)
-        .join("")}
-      ${notice.message ? `<p class="chart-note">${escapeHtml(notice.message)}</p>` : ""}
-      ${chill72h(chill.exposure_72h, lotCode)}
-    </details>`;
-}
-
-/* Consolidado de 72 h de lo PREVISTO: cada cordero esperado una sola vez. */
-function chill72h(exposure, lotCode) {
-  if (!exposure || typeof exposure !== "object") return "";
-  const scope = lotCode ? (exposure.by_module || {})[lotCode] || {} : exposure;
-  const cells = [...RISK_ORDER, INCOMPLETE_RISK]
-    .map((cat) => {
-      const value = scope[cat];
-      if (value === undefined) return "";
-      return `
-        <div class="expo-cell expo-cell--${escapeHtml(riskClass(cat))}">
-          <span class="expo-cell__label">${escapeHtml(riskLabel(cat))}</span>
-          <strong>${escapeHtml(formatExposure(value))}</strong>
-        </div>`;
-    })
-    .join("");
-  return `
-    <div class="chill-72h">
-      <p class="chill-mode">Resultado previsto de las primeras 72 horas — cada cordero esperado se cuenta una sola vez, por su nivel de riesgo más alto.</p>
-      <div class="expo-grid">${cells}</div>
-    </div>`;
-}
-
 /* --- Panel completo --------------------------------------------------- */
 
+/* Orden del bloque: primero el pronóstico diario —lo operativo inmediato—, y
+ * después la estimación por curva y los nacimientos registrados. El pronóstico
+ * queda FUERA del cuerpo que se redibuja: no depende de los controles, así que
+ * no tiene por qué volver a dibujarse al filtrar. */
 function chillPanel(viewKey, lotCode) {
   const chill = DASH.chill_public || {};
   const state = chillState(viewKey, lotCode);
   const stale = chill.update_status && chill.update_status.stale;
   return `
     ${stale ? `<p class="tag tag--incompleto">El Chill Index no está actualizado.</p>` : ""}
+    ${chillIndexSection()}
+    ${chillSourceNote()}
     ${chillFilters(viewKey, lotCode, state)}
     <div id="chill-body-${escapeHtml(viewKey)}">
-      ${chillIndexSection()}
-      ${chillExpectedSection(state)}
       ${chillObservedSection(viewKey, state)}
-      ${chillSecondary(lotCode)}
-      <p class="chill-source">Fuente: INIA-GRAS · ${iniaLink()}</p>
     </div>`;
+}
+
+/* Atribución: INIA-GRAS es la fuente METEOROLÓGICA del pronóstico diario. Los
+ * nacimientos registrados que siguen en el bloque son partes de campo de
+ * CICOMA y no deben atribuirse a INIA. El enlace es el oficial que ya existía;
+ * no se agregan enlaces nuevos. */
+function chillSourceNote() {
+  return `
+    <p class="chill-source">Fuente meteorológica oficial: INIA-GRAS · ${iniaLink()}<br />
+      Los nacimientos registrados provienen de los partes de campo de CICOMA.</p>`;
 }
 
 /* ------------------------------------- pronóstico diario (pipeline propio) --- */
@@ -1186,7 +1025,11 @@ const RISK_LABEL = {
   BAJO: "Bajo",
   MEDIO: "Medio",
   ALTO: "Alto",
-  MUY_ALTO: "Muy alto",
+  // `MUY_ALTO` es el identificador INTERNO del contrato para el rango >1200.
+  // La escala pública de INIA lo llama CRÍTICO y es el texto que ve el
+  // productor: un mismo rango no puede tener dos nombres. No se migra el
+  // contrato, se traduce acá.
+  MUY_ALTO: "Crítico",
 };
 
 //: Motivo técnico traducido. El público ve sólo «Sin datos» o «Error»; el
@@ -1212,17 +1055,6 @@ const ERROR_REASON = {
   CLASSIFICATION_ERROR: "No se pudo clasificar el mapa",
   CONTRACT_VALIDATION_ERROR: "El resultado no superó la validación",
   PUBLICATION_ERROR: "No se pudo publicar el resultado",
-};
-
-//: Estado del SISTEMA (distinto del estado de cada día). El verde se reserva
-//: para «hay pronóstico válido»: comprobar que la fuente respondió no es salud.
-const CHILL_STATE_TONE = {
-  ACTUALIZADO: "ok",
-  DATOS_PARCIALES: "warn",
-  SIN_PRONOSTICO_CONFIABLE: "warn",
-  DATOS_PARCIALES_CON_ERRORES: "bad",
-  ERROR_DE_FUENTE: "bad",
-  ERROR_DE_PIPELINE: "bad",
 };
 
 async function loadChillIndex() {
@@ -1285,6 +1117,40 @@ function chillDayCard(map) {
     </article>`;
 }
 
+/* Vigencia del pronóstico, decidida por el CONTRATO y no por la etiqueta que el
+ * pipeline congeló al correr. `status_label` se genera en la corrida y puede
+ * decir «actualizado hoy» cuando lo único de hoy fue la verificación: la única
+ * fuente confiable de vigencia son `forecast_run_date` y `freshness`.
+ *
+ *   A · corrida válida de hoy             -> actualizado
+ *   B · se verificó hoy, corrida anterior -> se muestra su fecha real y la edad
+ *   C · sin corrida válida                -> se dice, sin fingir que hay dato
+ */
+function chillFreshness(d) {
+  const f = d.freshness || {};
+  const dias = typeof f.last_valid_age_days === "number" ? f.last_valid_age_days : null;
+  const corrida = f.last_valid_forecast_run_date || d.forecast_run_date || null;
+  if (!corrida) {
+    return {
+      tono: "bad",
+      titular: "Sin pronóstico válido disponible",
+      detalle: "La última consulta a INIA-GRAS no dejó ninguna corrida utilizable.",
+      dias: null,
+    };
+  }
+  const fecha = formatDate(corrida);
+  if (dias === 0) {
+    return { tono: "ok", titular: `Pronóstico de INIA del ${fecha}`, detalle: null, dias: 0 };
+  }
+  const edad = dias === null ? "" : ` — hace ${dias} día${dias === 1 ? "" : "s"}`;
+  return {
+    tono: dias !== null && dias >= 2 ? "bad" : "warn",
+    titular: `Última corrida válida de INIA: ${fecha}${edad}`,
+    detalle: "Se verificó la fuente, pero INIA todavía no publicó una corrida nueva utilizable.",
+    dias,
+  };
+}
+
 function chillIndexSection() {
   if (!CHILL_INDEX) {
     return `
@@ -1296,37 +1162,29 @@ function chillIndexSection() {
       </section>`;
   }
   const d = CHILL_INDEX;
-  const tono = CHILL_STATE_TONE[d.status] || "warn";
-  const corrida = d.forecast_run_date
-    ? `corrida de INIA del ${formatDate(d.forecast_run_date)}`
-    : "sin corrida vigente de INIA";
-  const ultimo = d.freshness && d.freshness.last_valid_forecast_run_date;
-  const antiguedad =
-    d.freshness && typeof d.freshness.last_valid_age_days === "number"
-      ? d.freshness.last_valid_age_days
-      : null;
-  const historico =
-    ultimo && antiguedad !== null
-      ? `<li>Último pronóstico válido: ${escapeHtml(formatDate(ultimo))}${
-          antiguedad > 0 ? ` (hace ${antiguedad} día${antiguedad === 1 ? "" : "s"})` : " (hoy)"
-        }</li>`
-      : "";
+  const vig = chillFreshness(d);
+  // Metadatos en orden de utilidad para el campo: vigencia y fecha del
+  // pronóstico arriba; del detalle técnico sólo queda la última verificación,
+  // que es lo que distingue «se miró» de «hay dato nuevo».
+  // Verificar es que INIA haya ENTREGADO algo, no que el pipeline haya
+  // terminado: una corrida que no bajó ningún cuerpo no verificó nada.
+  const mirada = (d.freshness || {}).latest_source_seen || d.run_finished_at || null;
+  const verificacion = mirada
+    ? `<li>Última verificación de la fuente: ${escapeHtml(formatDateTime(mirada, DASH.timezone))}</li>`
+    : "";
   return `
     <section class="chill-index" aria-labelledby="chill-index-title">
       <h3 id="chill-index-title">Chill Index diario</h3>
-      <p class="chill-index__status chill-index__status--${tono}">
-        ${escapeHtml(d.status_label)}
+      <p class="chill-index__status chill-index__status--${vig.tono}">
+        ${escapeHtml(vig.titular)}
       </p>
+      ${vig.detalle ? `<p class="chill-index__detail">${escapeHtml(vig.detalle)}</p>` : ""}
       ${d.status_detail ? `<p class="chill-index__detail">${escapeHtml(d.status_detail)}</p>` : ""}
       <div class="forecast-grid" role="list">
         ${d.maps.map(chillDayCard).join("")}
       </div>
       <ul class="chill-index__meta">
-        <li>Fuente: INIA-GRAS, ${escapeHtml(corrida)}</li>
-        <li>Modelo: ${escapeHtml(d.model)}</li>
-        <li>Última verificación de la fuente: ${escapeHtml(formatDateTime(d.run_finished_at, DASH.timezone))}</li>
-        ${historico}
-        <li>Las miniaturas WRF_mini se observan como diagnóstico y no publican categorías.</li>
+        ${verificacion}
       </ul>
     </section>`;
 }
@@ -1336,11 +1194,7 @@ function renderChillBody(viewKey, lotCode) {
   if (!host) return;
   const state = chillState(viewKey, lotCode);
   host.innerHTML = `
-      ${chillIndexSection()}
-      ${chillExpectedSection(state)}
-      ${chillObservedSection(viewKey, state)}
-      ${chillSecondary(lotCode)}
-      <p class="chill-source">Fuente: INIA-GRAS · ${iniaLink()}</p>`;
+      ${chillObservedSection(viewKey, state)}`;
 }
 
 function onChillControl(event) {
@@ -1351,18 +1205,9 @@ function onChillControl(event) {
   if (!state) return false;
   if (target.dataset.obsdate !== undefined) {
     state.selectedDate = state.selectedDate === target.dataset.obsdate ? null : target.dataset.obsdate;
-  } else if (target.dataset.cgroup) {
-    state[target.dataset.cgroup][target.dataset.ckey] = target.checked;
   } else if (target.dataset.filter === "lot") {
     state.lot = target.value;
-    state.service = "TODOS";
     state.selectedDate = null;
-  } else if (target.dataset.filter === "service") {
-    state.service = target.value;
-  } else if (target.dataset.filter === "from") {
-    state.from = target.value;
-  } else if (target.dataset.filter === "to") {
-    state.to = target.value;
   } else {
     return false;
   }
@@ -1588,8 +1433,7 @@ const CURVE_COLORS = {
   observed: "#1b6ec2",
   checkpoint: "#0f4c81",
   lambDeath: "#c0402f",
-  eweDeath: "#8f2a1d",
-  stillborn: "#d97a1e",
+  eweDeath: "#111111",
 };
 
 function defaultChartState(lotCode) {
@@ -1597,7 +1441,7 @@ function defaultChartState(lotCode) {
     lot: lotCode || "TOTAL",
     mode: "cumulative",
     series: { original: true, adjusted: true, observed: true },
-    mortality: { lamb: true, ewe: true, stillborn: true },
+    mortality: { lamb: true, ewe: true },
     from: "",
     to: "",
     selected: null,
@@ -1628,14 +1472,9 @@ function curvePanel(viewKey, lotCode) {
           ).join("")}
         </select>
       </label>`;
-  const serviceOptions = serviceFilterOptions(state.lot);
   return `
     <div class="chart-filters">
       ${lotOptions}
-      <label class="filter">
-        <span>Servicio</span>
-        <select data-chart="${escapeHtml(viewKey)}" data-filter="service">${serviceOptions}</select>
-      </label>
       <label class="filter">
         <span>Vista</span>
         <select data-chart="${escapeHtml(viewKey)}" data-filter="mode">
@@ -1658,7 +1497,6 @@ function curvePanel(viewKey, lotCode) {
       ${toggle(viewKey, "series", "observed", "Evolución real observada", state.series.observed, CURVE_COLORS.observed)}
       ${toggle(viewKey, "mortality", "lamb", "Mortalidad de corderos", state.mortality.lamb, CURVE_COLORS.lambDeath)}
       ${toggle(viewKey, "mortality", "ewe", "Mortalidad de ovejas", state.mortality.ewe, CURVE_COLORS.eweDeath)}
-      ${toggle(viewKey, "mortality", "stillborn", "Nacidos muertos al parto", state.mortality.stillborn, CURVE_COLORS.stillborn)}
     </div>
     <div class="chart-wrap chart-wrap--integral">
       <canvas id="curve-${escapeHtml(viewKey)}" role="img" aria-label="Curva prevista, evolución real y mortalidad"></canvas>
@@ -1675,22 +1513,6 @@ function toggle(viewKey, group, key, label, checked, colour) {
       <i style="background:${colour}"></i>
       <span>${escapeHtml(label)}</span>
     </label>`;
-}
-
-function serviceFilterOptions(lotCode) {
-  const options = [`<option value="TODOS">Todos los servicios</option>`];
-  const lots = (DASH.lambing_curves?.lots || []).filter(
-    (lot) => lotCode === "TOTAL" || lot.code === lotCode,
-  );
-  for (const lot of lots) {
-    for (const service of lot.services || []) {
-      const value = `${lot.code}:${service.code}`;
-      options.push(
-        `<option value="${escapeHtml(value)}">${escapeHtml(`${LOT_LABEL[lot.code] || lot.code} · ${service.service_type}`)}</option>`,
-      );
-    }
-  }
-  return options.join("");
 }
 
 // Datos del gráfico para el lote/estado actual. Cada serie conserva su origen:
@@ -1730,9 +1552,11 @@ function chartData(state) {
       if (state.lot !== "TOTAL") bucket.cumulative = point.cumulative_pct;
       observed.set(point.date, bucket);
     }
-    for (const point of lot.observed_checkpoints || []) {
-      if (!inRange(point.date)) continue;
-      checkpoints.push({ ...point, module_code: lot.code });
+    if (state.lot === "INTENSIVO") {
+      for (const point of lot.observed_checkpoints || []) {
+        if (!inRange(point.date)) continue;
+        checkpoints.push({ ...point, module_code: lot.code });
+      }
     }
   }
   // Acumulado del total: viene consolidado del backend (no se suman %).
@@ -1746,13 +1570,8 @@ function chartData(state) {
   const mortality = (DASH.mortality_daily || []).filter(
     (row) => (state.lot === "TOTAL" || row.module_code === state.lot) && inRange(row.date),
   );
-  const stillbornSeries = ((DASH.stillborn_daily || {}).series || []).filter(
-    (row) => (state.lot === "TOTAL" || row.module_code === state.lot) && inRange(row.date),
-  );
-
   const dates = new Set([...original.keys(), ...adjusted.keys(), ...observed.keys()]);
   mortality.forEach((row) => dates.add(row.date));
-  stillbornSeries.forEach((row) => dates.add(row.date));
   checkpoints.forEach((point) => dates.add(point.date));
   return {
     dates: [...dates].sort(),
@@ -1761,7 +1580,6 @@ function chartData(state) {
     observed,
     checkpoints,
     mortality,
-    stillborn: stillbornSeries,
     adjustedLots: (curves.adjusted_lots || []).filter(
       (code) => state.lot === "TOTAL" || code === state.lot,
     ),
@@ -1769,11 +1587,6 @@ function chartData(state) {
 }
 
 function mortalityAt(data, date, kind) {
-  if (kind === "stillborn") {
-    return data.stillborn
-      .filter((row) => row.date === date)
-      .reduce((total, row) => total + (Number(row.quantity) || 0), 0);
-  }
   const animal = kind === "lamb" ? "CORDERO" : "OVEJA";
   return data.mortality
     .filter((row) => row.date === date && row.animal_type === animal)
@@ -1853,7 +1666,12 @@ function drawIntegralChart(viewKey, lotCode) {
     const line = (map, colour, dashed) => {
       const points = data.dates
         .map((date) => ({ date, value: (map.get(date) || {}).cumulative }))
-        .filter((point) => point.value !== null && point.value !== undefined);
+        .filter(
+          (point) =>
+            point.value !== null &&
+            point.value !== undefined &&
+            Number.isFinite(Number(point.value)),
+        );
       if (!points.length) return;
       context.beginPath();
       context.strokeStyle = colour;
@@ -1900,9 +1718,11 @@ function drawIntegralChart(viewKey, lotCode) {
       const index = columnByDate.get(point.date);
       if (index === undefined) continue;
       const x = centreOf(index);
-      const pct = point.cumulative_ewes_pct;
-      const y = cumulative && pct !== null && pct !== undefined
-        ? padding.top + plotHeight - Math.min(Number(pct), 1) * plotHeight
+      // El backend calcula este cociente con el denominador del propio módulo;
+      // no se reconstruye contra el total de campaña.
+      const pct = Number(point.cumulative_ewes_pct);
+      const y = cumulative && Number.isFinite(pct)
+        ? padding.top + plotHeight - Math.min(Math.max(pct, 0), 1) * plotHeight
         : padding.top + 10;
       context.save();
       context.strokeStyle = CURVE_COLORS.checkpoint;
@@ -1930,7 +1750,6 @@ function drawIntegralChart(viewKey, lotCode) {
       Math.max(
         state.mortality.lamb ? mortalityAt(data, date, "lamb") : 0,
         state.mortality.ewe ? mortalityAt(data, date, "ewe") : 0,
-        state.mortality.stillborn ? mortalityAt(data, date, "stillborn") : 0,
       ),
     ),
     1,
@@ -1949,15 +1768,23 @@ function drawIntegralChart(viewKey, lotCode) {
     const kinds = [
       ["lamb", CURVE_COLORS.lambDeath, -deathBar * 1.6],
       ["ewe", CURVE_COLORS.eweDeath, -deathBar * 0.3],
-      ["stillborn", CURVE_COLORS.stillborn, deathBar],
     ];
     for (const [kind, colour, offset] of kinds) {
       if (!state.mortality[kind]) continue;
       const value = mortalityAt(data, date, kind);
       if (!value) continue;
       const barHeight = (value / maxDeaths) * (bandHeight - 8);
+      const barX = centre + offset;
+      const barY = bandTop + bandHeight - barHeight;
       context.fillStyle = colour;
-      context.fillRect(centre + offset, bandTop + bandHeight - barHeight, deathBar, barHeight);
+      context.fillRect(barX, barY, deathBar, barHeight);
+      // La oveja conserva la barra, con un marcador superior que también la
+      // distingue del cordero cuando el ancho disponible es mínimo.
+      if (kind === "ewe") {
+        context.beginPath();
+        context.arc(barX + deathBar / 2, barY, Math.max(2.5, deathBar * 0.55), 0, Math.PI * 2);
+        context.fill();
+      }
     }
   });
 
@@ -1991,9 +1818,6 @@ function curveNote(state, data) {
     notes.push(
       `La curva ajustada existe sólo en ${lotNames(data.adjustedLots)}: se consulta en la vista de ese lote para no mezclar lotes.`,
     );
-  }
-  if ((DASH.stillborn_daily || {}).status === "NO_INFORMADO") {
-    notes.push((DASH.stillborn_daily || {}).message || "");
   }
   return notes.filter(Boolean).map((text) => escapeHtml(text)).join("<br />");
 }
@@ -2033,29 +1857,93 @@ function attachChartPointer(viewKey, canvas, data, geometry) {
   };
 }
 
+function roundedExpectedAnimalText(value, singular, plural) {
+  if (value === null || value === undefined || value === "") return "";
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric) || numeric < 0) return "";
+  const rounded = Math.round(numeric);
+  return `${formatInteger(rounded)} ${rounded === 1 ? singular : plural}`;
+}
+
+function animalCountText(value, singular, plural) {
+  const numeric = Number(value);
+  if (!Number.isInteger(numeric) || numeric <= 0) return "";
+  return `${formatInteger(numeric)} ${numeric === 1 ? singular : plural}`;
+}
+
+function meaningfulTooltipDetail(value) {
+  if (value === null || value === undefined) return "";
+  const text = String(value).trim();
+  if (!text || isAbsenceState(text)) return "";
+  const normalized = text.toLocaleLowerCase("es").replace(/\s+/g, " ");
+  if (/^(causa|momento) no determinad[oa]$/.test(normalized)) return "";
+  if (/^no (informad[oa]|determinad[oa])$/.test(normalized)) return "";
+  return text;
+}
+
+function groupedTooltipMortality(rows) {
+  const grouped = new Map();
+  for (const row of rows) {
+    const quantity = Number(row.quantity);
+    if (!Number.isInteger(quantity) || quantity <= 0) continue;
+    if (row.animal_type !== "OVEJA" && row.animal_type !== "CORDERO") continue;
+    const moduleName = LOT_FULL_NAME[row.module_code] || String(row.module_code || "").trim();
+    if (!moduleName) continue;
+    const cause = meaningfulTooltipDetail(row.cause_label);
+    const moment = meaningfulTooltipDetail(row.death_moment_label);
+    const key = JSON.stringify([row.animal_type, moduleName, cause, moment]);
+    const item = grouped.get(key) || {
+      animalType: row.animal_type,
+      moduleName,
+      cause,
+      moment,
+      quantity: 0,
+    };
+    item.quantity += quantity;
+    grouped.set(key, item);
+  }
+  return [...grouped.values()];
+}
+
+function tooltipMortalityLine(item) {
+  const isEwe = item.animalType === "OVEJA";
+  const count = animalCountText(item.quantity, isEwe ? "oveja" : "cordero", isEwe ? "ovejas" : "corderos");
+  if (!count) return "";
+  const mortalityColour = isEwe ? CURVE_COLORS.eweDeath : CURVE_COLORS.lambDeath;
+  const details = [];
+  if (item.cause && item.moment) {
+    details.push(`Causa: ${escapeHtml(item.cause)}`, `Momento: ${escapeHtml(item.moment)}`);
+  } else if (item.cause) {
+    details.push(escapeHtml(item.cause));
+  } else if (item.moment) {
+    details.push(escapeHtml(item.moment));
+  }
+  const suffix = details.length ? ` · ${details.join(" · ")}` : "";
+  return `<span aria-hidden="true" style="color:${mortalityColour}">●</span> ${escapeHtml(count)} · ${escapeHtml(item.moduleName)}${suffix}`;
+}
+
 function tooltipHtml(data, date) {
   const rows = [`<strong>${escapeHtml(formatDate(date))}</strong>`];
   const orig = data.original.get(date);
   if (orig) {
-    rows.push(
-      `Previsto: ${escapeHtml(formatDecimal(orig.ewes))} ovejas · ${escapeHtml(formatDecimal(orig.lambs))} corderos`,
-    );
+    const expected = [
+      roundedExpectedAnimalText(orig.ewes, "oveja", "ovejas"),
+      roundedExpectedAnimalText(orig.lambs, "cordero", "corderos"),
+    ].filter(Boolean);
+    if (expected.length) rows.push(`Previsto: ${expected.map((value) => escapeHtml(value)).join(" · ")}`);
   }
   const obs = data.observed.get(date);
   if (obs) {
     rows.push(`Observado: ${escapeHtml(formatInteger(obs.ewes))} ovejas · ${escapeHtml(formatInteger(obs.lambs))} corderos`);
   }
   for (const point of data.checkpoints.filter((item) => item.date === date)) {
-    rows.push(`Recuento acumulado informado en esta fecha (${escapeHtml(LOT_LABEL[point.module_code] || point.module_code)})`);
+    rows.push("Recuento acumulado informado en esta fecha");
+    rows.push(`Lote: ${escapeHtml(LOT_FULL_NAME[point.module_code] || point.module_code)}`);
   }
-  for (const row of data.mortality.filter((item) => item.date === date)) {
-    rows.push(
-      `${escapeHtml(row.animal_type === "OVEJA" ? "Oveja" : "Cordero")}: ${escapeHtml(formatInteger(row.quantity))} · ` +
-        `${escapeHtml(row.cause_label)} · ${escapeHtml(row.death_moment_label)} · ${escapeHtml(row.service_label)}`,
-    );
-  }
-  for (const row of data.stillborn.filter((item) => item.date === date)) {
-    rows.push(`Nacidos muertos al parto: ${escapeHtml(formatInteger(row.quantity))}`);
+  const mortality = groupedTooltipMortality(data.mortality.filter((item) => item.date === date));
+  for (const item of mortality) {
+    const line = tooltipMortalityLine(item);
+    if (line) rows.push(line);
   }
   const risk = (DASH.chill_public?.daily || []).find((day) => day.date === date);
   if (risk) rows.push(`Riesgo climático previsto: ${escapeHtml(riskLabel(risk.risk_category))}`);
@@ -2076,14 +1964,10 @@ function renderDayDetail(viewKey, state, data) {
   const obs = data.observed.get(date);
   const checkpoints = data.checkpoints.filter((item) => item.date === date);
   const deaths = data.mortality.filter((item) => item.date === date);
-  const stillborn = data.stillborn.filter((item) => item.date === date);
   const risk = (DASH.chill_public?.daily || []).find((day) => day.date === date);
   const milestones = (DASH.campaign_milestones?.items || []).filter(
     (item) => item.date === date && (state.lot === "TOTAL" || item.module_code === state.lot),
   );
-  const services = (DASH.lambing_curves?.lots || [])
-    .filter((lot) => state.lot === "TOTAL" || lot.code === state.lot)
-    .flatMap((lot) => (lot.services || []).map((service) => `${LOT_LABEL[lot.code]} · ${service.service_type}`));
 
   const cell = (label, value) =>
     `<div><dt>${escapeHtml(label)}</dt><dd class="${absentClass(value)}">${escapeHtml(value)}</dd></div>`;
@@ -2093,19 +1977,16 @@ function renderDayDetail(viewKey, state, data) {
   const eweDeaths = deaths
     .filter((row) => row.animal_type === "OVEJA")
     .reduce((total, row) => total + row.quantity, 0);
-  const stillbornTotal = stillborn.reduce((total, row) => total + row.quantity, 0);
 
   host.innerHTML = `
     <h3 class="day-detail__title">Detalle del ${escapeHtml(formatDate(date))}</h3>
     <dl class="control-grid">
       ${cell("Lote", state.lot === "TOTAL" ? "Total campaña" : LOT_FULL_NAME[state.lot] || state.lot)}
-      ${cell("Servicio", services.length ? services.join(" · ") : "Sin servicio asociado")}
       ${cell("Ovejas previstas", orig ? formatDecimal(orig.ewes) : "SIN CURVA")}
       ${cell("Corderos previstos", orig ? formatDecimal(orig.lambs) : "SIN CURVA")}
       ${cell("Ovejas previstas (ajustada)", adj ? formatDecimal(adj.ewes) : "SIN AJUSTE")}
       ${cell("Ovejas paridas registradas ese día", obs ? formatInteger(obs.ewes) : "SIN REGISTROS")}
       ${cell("Corderos nacidos registrados ese día", obs ? formatInteger(obs.lambs) : "SIN REGISTROS")}
-      ${cell("Nacidos muertos al parto", stillborn.length ? formatInteger(stillbornTotal) : "NO INFORMADO")}
       ${cell("Corderos muertos posteriormente", deaths.length ? formatInteger(lambDeaths) : "SIN REGISTROS")}
       ${cell("Ovejas muertas", deaths.length ? formatInteger(eweDeaths) : "SIN REGISTROS")}
       ${cell("Riesgo climático previsto", risk ? riskLabel(risk.risk_category) : "SIN DATO")}
@@ -2114,7 +1995,7 @@ function renderDayDetail(viewKey, state, data) {
       .map(
         (point) => `
       <p class="day-detail__checkpoint"><span class="tag tag--muted">ACUMULADO</span>
-      Recuento acumulado informado en esta fecha (${escapeHtml(LOT_FULL_NAME[point.module_code] || point.module_code)}):
+      Recuento acumulado informado en esta fecha:
       ${escapeHtml(formatInteger(point.lambed_ewes))} ovejas paridas y
       ${escapeHtml(formatInteger(point.confirmed_live_lambs ?? point.registered_born_lambs))} corderos vivos contabilizados.
       No es un valor diario.</p>`,
@@ -2122,14 +2003,13 @@ function renderDayDetail(viewKey, state, data) {
       .join("")}
     ${
       deaths.length
-        ? `<div class="table-wrap"><table class="data-table"><thead><tr><th>Animal</th><th class="num">Cant.</th><th>Causa</th><th>Momento</th><th>Servicio</th></tr></thead><tbody>${deaths
+        ? `<div class="table-wrap"><table class="data-table"><thead><tr><th>Animal</th><th class="num">Cant.</th><th>Causa</th><th>Momento</th></tr></thead><tbody>${deaths
             .map(
               (row) => `<tr>
               <td>${escapeHtml(row.animal_type === "OVEJA" ? "Oveja" : "Cordero")}</td>
               <td class="num">${escapeHtml(formatInteger(row.quantity))}</td>
               <td>${escapeHtml(row.cause_label)}</td>
               <td>${escapeHtml(row.death_moment_label)}</td>
-              <td>${escapeHtml(row.service_label)}</td>
             </tr>`,
             )
             .join("")}</tbody></table></div>`
@@ -2310,10 +2190,6 @@ function onChartFilterChange(event) {
   } else if (target.dataset.filter === "lot") {
     state.lot = target.value;
     state.selected = null;
-    const serviceSelect = document.querySelector(`[data-chart="${viewKey}"][data-filter="service"]`);
-    if (serviceSelect) serviceSelect.innerHTML = serviceFilterOptions(state.lot);
-  } else if (target.dataset.filter === "service") {
-    state.service = target.value;
   } else if (target.dataset.filter === "mode") {
     state.mode = target.value;
   } else if (target.dataset.filter === "from") {

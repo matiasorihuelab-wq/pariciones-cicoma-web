@@ -734,9 +734,33 @@ h3 {
   font-variant-numeric: tabular-nums;
 }
 
-.lot-card__state {
-  justify-self: start;
-  margin-top: var(--s1);
+/* Fechas operativas al pie de la tarjeta: jerarquía secundaria, sin recuadro
+   propio. Cada línea envuelve por su cuenta para no desbordar en 375 px. */
+.lot-card__dates {
+  display: grid;
+  gap: 2px;
+  margin: var(--s1) 0 0;
+}
+
+.lot-card__dates > div {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 5px;
+  min-width: 0;
+}
+
+.lot-card__dates dt {
+  color: var(--ink-500);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.lot-card__dates dd {
+  margin: 0;
+  color: var(--ink-600);
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Tags / estados */
@@ -816,142 +840,6 @@ h3 {
   font-weight: 700;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-}
-
-.chill-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(196px, 1fr));
-  gap: var(--s3);
-  margin: 0 0 var(--s5);
-  padding: 0;
-  list-style: none;
-}
-
-.chill-day {
-  position: relative;
-  display: grid;
-  gap: 7px;
-  padding: var(--s4);
-  padding-top: calc(var(--s4) + 3px);
-  border-radius: var(--r);
-  border: 1px solid var(--border);
-  background: var(--surface);
-  box-shadow: var(--sh-xs);
-  overflow: hidden;
-}
-
-/* Banda superior de color según riesgo (no comunica solo por color: hay texto) */
-.chill-day::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 3px;
-  background: var(--risk-sin);
-}
-
-.chill-day.risk-critico::before {
-  background: var(--risk-critico);
-}
-.chill-day.risk-alto::before {
-  background: var(--risk-alto);
-}
-.chill-day.risk-medio::before {
-  background: var(--risk-medio);
-}
-.chill-day.risk-bajo::before {
-  background: var(--risk-bajo);
-}
-.chill-day.risk-sin-riesgo::before {
-  background: var(--risk-sin);
-}
-.chill-day.risk-incompleto::before,
-.chill-day.risk-unknown::before {
-  background: var(--risk-inc);
-}
-
-.chill-day__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--s2);
-}
-
-.chill-day__date {
-  display: grid;
-  gap: 1px;
-}
-
-.chill-day__rel {
-  color: var(--green);
-  font-size: 0.6rem;
-  font-weight: 750;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.chill-day__day {
-  font-weight: 780;
-  font-variant-numeric: tabular-nums;
-}
-
-.chill-day__value {
-  font-size: 0.9rem;
-  color: var(--ink-900);
-}
-
-.chill-day__value strong {
-  font-size: 1.15rem;
-  font-weight: 780;
-  font-variant-numeric: tabular-nums;
-}
-
-.chill-day__value span {
-  color: var(--ink-500);
-  font-weight: 600;
-}
-
-.chill-day__lots {
-  color: var(--ink-500);
-  font-size: 0.74rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.risk-pill {
-  padding: 3px 9px;
-  border-radius: var(--r-pill);
-  font-size: 0.64rem;
-  font-weight: 780;
-  letter-spacing: 0.04em;
-  color: #fff;
-  white-space: nowrap;
-}
-
-.risk-pill--critico {
-  background: var(--risk-critico);
-}
-.risk-pill--alto {
-  background: var(--risk-alto);
-}
-.risk-pill--medio {
-  color: #4a3808;
-  background: var(--risk-medio);
-}
-.risk-pill--bajo {
-  background: var(--risk-bajo);
-}
-.risk-pill--sin-riesgo {
-  color: #2b4535;
-  background: var(--risk-sin);
-}
-.risk-pill--incompleto,
-.risk-pill--unknown {
-  color: #5c4708;
-  background: var(--amber-soft);
-}
-
-.chill-72h {
-  padding-top: var(--s4);
-  border-top: 1px dashed var(--border-strong);
 }
 
 .expo-grid {
@@ -1566,31 +1454,6 @@ h3 {
   margin-top: var(--s3);
 }
 
-/* ------------------------------------------------ chill: textos y cobertura --- */
-
-.chill-explain {
-  margin: 0 0 var(--s3);
-  color: var(--ink-700);
-  font-size: 0.88rem;
-  max-width: 70ch;
-}
-
-.chill-phrase {
-  margin: 0 0 var(--s2);
-  color: var(--ink-900);
-  font-size: 0.9rem;
-  font-weight: 650;
-}
-
-.chill-disclaimer {
-  margin: 0 0 var(--s4);
-  padding: var(--s2) var(--s3);
-  border-left: 3px solid var(--green);
-  background: var(--green-tint);
-  color: var(--ink-700);
-  font-size: 0.84rem;
-}
-
 .chill-coverage {
   margin-bottom: var(--s4);
 }
@@ -1764,47 +1627,6 @@ h3 {
 
 .chill-section--observed {
   border-top: 2px solid var(--green-pale);
-}
-
-.chill-secondary {
-  margin-top: var(--s5);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  background: var(--surface-2);
-  overflow: hidden;
-}
-
-.chill-secondary > summary {
-  padding: var(--s3) var(--s4);
-  cursor: pointer;
-  font-size: 0.84rem;
-  font-weight: 700;
-  color: var(--ink-600);
-  list-style: none;
-}
-
-.chill-secondary > summary::-webkit-details-marker {
-  display: none;
-}
-
-.chill-secondary > summary::before {
-  content: "▸";
-  display: inline-block;
-  margin-right: 8px;
-  color: var(--green);
-  transition: transform var(--dur) var(--ease);
-}
-
-.chill-secondary[open] > summary::before {
-  transform: rotate(90deg);
-}
-
-.chill-secondary[open] > summary {
-  border-bottom: 1px solid var(--border);
-}
-
-.chill-secondary > *:not(summary) {
-  margin: var(--s3) var(--s4);
 }
 
 /* Nacimientos registrados por fecha: barras táctiles con su riesgo máximo */
