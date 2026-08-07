@@ -37,8 +37,17 @@ def _download_failure(descarga: Any) -> tuple[str, str]:
     Un 404 es la respuesta definitiva de INIA cuando **todavía no publicó** el
     mapa de esa fecha: la fuente contestó bien y no hay dato. Cualquier otra
     cosa —timeout, 403, 429, 5xx, DNS— es una falla técnica.
+
+    Caso aparte: la CDN sirvió un cuerpo RANCIO y el bypass no consiguió el
+    vigente. Hay un 200 y hay un cuerpo, pero se sabe viejo: usarlo sería
+    publicar una corrida vieja como si fuera la de hoy. No es una falla
+    técnica del pipeline sino una fuente cuya vigencia no se pudo verificar:
+    SIN_DATOS / SOURCE_DATE_UNVERIFIED, el mismo motivo que ya cubre «no sé
+    si esta corrida es la vigente».
     """
 
+    if getattr(descarga, "stale_reason", None) and getattr(descarga, "cache_bypassed", False):
+        return "SIN_DATOS", "SOURCE_DATE_UNVERIFIED"
     estado = descarga.http_status
     if estado == 404:
         return "SIN_DATOS", "MAP_NOT_PUBLISHED"

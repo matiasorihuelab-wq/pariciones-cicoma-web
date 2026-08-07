@@ -47,6 +47,35 @@ TIMEOUT_SECONDS = 30
 MAX_RETRIES = 3
 BACKOFF_BASE_SECONDS = 2.0
 
+# --- Caché de borde de la fuente ------------------------------------------
+#
+# INIA sirve los mapas detrás de Cloudflare. Un GET a la URL canónica puede
+# devolver 200 con `CF-Cache-Status: HIT` y un cuerpo que el borde cacheó hace
+# DÍAS, aunque el origen ya tenga una corrida más nueva. Verificado el
+# 2026-08-07: el mapa del 08/08 llegaba con `Age: 270268` (75,1 h) y grilla
+# vacía, mientras el origen tenía un mapa válido sellado ese mismo día.
+# `Last-Modified` no delata el problema: describe con exactitud el objeto
+# servido, que es justamente el viejo.
+#
+# UMBRAL. INIA regenera el horizonte completo en un solo lote, una vez por día:
+# los sellos observados son 06/08 14:21:31 y 07/08 13:06:21 UTC (≈23 h). Las
+# tres respuestas rancias medidas tenían Age de 21,4 h, 48,5 h y 75,1 h, y en
+# las tres el origen ya tenía una versión más nueva. 12 h queda por debajo de
+# la más ajustada de ellas y por encima de lo que envejece una copia sana entre
+# corridas —el pipeline consulta seis veces por día—, así que detecta los tres
+# casos reales sin disparar el bypass en cada chequeo. Cuando dispara, el costo
+# es UN GET extra.
+MAX_EDGE_CACHE_AGE_SECONDS = 12 * 3600
+
+#: Valores de `CF-Cache-Status` que confirman que la respuesta salió del borde
+#: y no del origen. `MISS`, `EXPIRED`, `BYPASS`, `DYNAMIC` y `REVALIDATED`
+#: implican que se consultó al origen: esos cuerpos son de la corrida vigente.
+STALE_CACHE_STATUSES = ("HIT", "STALE", "UPDATING")
+
+#: Parámetro del segundo GET. Cualquier query string basta para que el borde
+#: consulte al origen. NUNCA forma parte de la identidad del recurso.
+CACHE_BUSTER_PARAM = "cb"
+
 #: Ubicación del establecimiento.
 LOCATION: dict[str, str | float] = {
     "name": "CICOMA",
