@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-08T19:21:47.121349-03:00",
+  "generated_at": "2026-08-08T19:22:11.467705-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -28,7 +28,7 @@
       "unclassified": 3,
       "total": 4
     },
-    "generated_at": "2026-08-08T19:21:47.121349-03:00",
+    "generated_at": "2026-08-08T19:22:11.467705-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -5018,10 +5018,10 @@
       "latitude": null,
       "longitude": null
     },
-    "analyzed_at": "2026-08-08T19:51:03.999489+00:00",
-    "forecast_run_date": "2026-08-07",
-    "imported_at": "2026-08-08T18:15:40.030448-03:00",
-    "forecast_age_hours": 1.41,
+    "analyzed_at": "2026-08-08T22:17:19.487689+00:00",
+    "forecast_run_date": "2026-08-08",
+    "imported_at": "2026-08-08T19:22:11.424726-03:00",
+    "forecast_age_hours": 0.08,
     "update_status": {
       "state": "ACTUALIZADO",
       "stale": false,
@@ -5320,10 +5320,10 @@
         "ci_max": null,
         "ci_interval": "> 1200",
         "ci_unit": "kJ/m2/h",
-        "confidence": 0.75,
+        "confidence": 0.9,
         "requires_review": false,
         "automatic_use": true,
-        "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF_mini/Min_4.png",
+        "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260812.png",
         "expected_ewes_lambing": 1.3075,
         "expected_lambs_born": 1.8489,
         "lambs_in_first_72h_on_date": 5.5467,
@@ -5417,8 +5417,8 @@
   },
   "chill_pariciones_summary": {
     "source": "INIA-GRAS, clasificación determinística propia",
-    "analyzed_at": "2026-08-08T19:51:03.999489+00:00",
-    "imported_at": "2026-08-08T18:15:40.030448-03:00",
+    "analyzed_at": "2026-08-08T22:17:19.487689+00:00",
+    "imported_at": "2026-08-08T19:22:11.424726-03:00",
     "update_status": "ACTUALIZADO",
     "product_cross_status": "OK",
     "dates": [
@@ -5445,7 +5445,7 @@
       {
         "date": "2026-08-12",
         "risk_category": "CRITICO",
-        "confidence": 0.75
+        "confidence": 0.9
       }
     ]
   },
@@ -5594,10 +5594,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-08-08T22:21:44.023409Z",
+      "processed_at": "2026-08-08T22:22:09.070675Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-08-08T19:21:47.121349-03:00",
+    "last_sync_at": "2026-08-08T19:22:11.467705-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }

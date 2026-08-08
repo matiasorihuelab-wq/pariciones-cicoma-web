@@ -10,10 +10,10 @@
   "location": {
     "name": "CICOMA"
   },
-  "analyzed_at": "2026-08-08T19:51:03.999489+00:00",
-  "forecast_run_date": "2026-08-07",
-  "imported_at": "2026-08-08T18:15:40.030448-03:00",
-  "forecast_age_hours": 1.41,
+  "analyzed_at": "2026-08-08T22:17:19.487689+00:00",
+  "forecast_run_date": "2026-08-08",
+  "imported_at": "2026-08-08T19:22:11.424726-03:00",
+  "forecast_age_hours": 0.08,
   "update_status": {
     "state": "ACTUALIZADO",
     "stale": false,
@@ -312,10 +312,10 @@
       "ci_max": null,
       "ci_interval": "> 1200",
       "ci_unit": "kJ/m2/h",
-      "confidence": 0.75,
+      "confidence": 0.9,
       "requires_review": false,
       "automatic_use": true,
-      "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF_mini/Min_4.png",
+      "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260812.png",
       "expected_ewes_lambing": 1.3075,
       "expected_lambs_born": 1.8489,
       "lambs_in_first_72h_on_date": 5.5467,
