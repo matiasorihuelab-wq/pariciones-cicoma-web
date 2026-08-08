@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-08T10:39:19.197962-03:00",
+  "generated_at": "2026-08-08T10:41:19.831266-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -28,7 +28,7 @@
       "unclassified": 3,
       "total": 4
     },
-    "generated_at": "2026-08-08T10:39:19.197962-03:00",
+    "generated_at": "2026-08-08T10:41:19.831266-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -5469,6 +5469,17 @@
     {
       "date": "2026-08-05",
       "module_code": "INTENSIVO",
+      "event_type": "LAMBING",
+      "event_label": "Parición",
+      "quantity": 82,
+      "cause_code": null,
+      "cause_label": null,
+      "validation_status": "CANDIDATE",
+      "source": "ZAPIA_VALIDADO"
+    },
+    {
+      "date": "2026-08-05",
+      "module_code": "INTENSIVO",
       "event_type": "EWE_DEATH",
       "event_label": "Muerte de oveja",
       "quantity": 1,
@@ -5599,10 +5610,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-08-08T13:39:12.583118Z",
-      "status": "YA_PROCESADO"
+      "processed_at": "2026-08-08T13:41:19.782727Z",
+      "status": "COMPLETADO"
     },
-    "last_sync_at": "2026-08-08T10:39:19.197962-03:00",
+    "last_sync_at": "2026-08-08T10:41:19.831266-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
