@@ -10,10 +10,10 @@
   "location": {
     "name": "CICOMA"
   },
-  "analyzed_at": "2026-08-08T10:56:08.691151+00:00",
-  "forecast_run_date": "2026-08-07",
-  "imported_at": "2026-08-08T07:58:02.049809-03:00",
-  "forecast_age_hours": 8.57,
+  "analyzed_at": "2026-08-08T18:19:25.992785+00:00",
+  "forecast_run_date": "2026-08-08",
+  "imported_at": "2026-08-08T16:35:50.363773-03:00",
+  "forecast_age_hours": 1.27,
   "update_status": {
     "state": "ACTUALIZADO",
     "stale": false,
@@ -240,11 +240,9 @@
           "2026-08-11",
           "2026-08-12"
         ],
-        "category": "RIESGO_72H_INCOMPLETO",
-        "complete": false,
-        "missing_dates": [
-          "2026-08-12"
-        ],
+        "category": "CRITICO",
+        "complete": true,
+        "missing_dates": [],
         "lambs": 1.8489
       },
       "cross_status": "OK"
@@ -300,7 +298,6 @@
         "category": "RIESGO_72H_INCOMPLETO",
         "complete": false,
         "missing_dates": [
-          "2026-08-12",
           "2026-08-13"
         ],
         "lambs": 1.8489
@@ -309,16 +306,16 @@
     },
     {
       "date": "2026-08-12",
-      "risk_category": "NO_DETERMINADO",
-      "display_risk_category": "RIESGO PENDIENTE DE REVISIÓN",
-      "ci_min": null,
+      "risk_category": "CRITICO",
+      "display_risk_category": "CRITICO",
+      "ci_min": 1200.0,
       "ci_max": null,
-      "ci_interval": "NO DETERMINADO",
+      "ci_interval": "> 1200",
       "ci_unit": "kJ/m2/h",
-      "confidence": 0.0,
-      "requires_review": true,
-      "automatic_use": false,
-      "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260812.png",
+      "confidence": 0.75,
+      "requires_review": false,
+      "automatic_use": true,
+      "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF_mini/Min_4.png",
       "expected_ewes_lambing": 1.3075,
       "expected_lambs_born": 1.8489,
       "lambs_in_first_72h_on_date": 5.5467,
@@ -358,7 +355,6 @@
         "category": "RIESGO_72H_INCOMPLETO",
         "complete": false,
         "missing_dates": [
-          "2026-08-12",
           "2026-08-13",
           "2026-08-14"
         ],
@@ -376,16 +372,16 @@
     "BAJO": 0.0,
     "MEDIO": 3.7321,
     "ALTO": 0.0,
-    "CRITICO": 0.0,
-    "RIESGO_72H_INCOMPLETO": 5.5467,
+    "CRITICO": 1.8489,
+    "RIESGO_72H_INCOMPLETO": 3.6978,
     "by_module": {
       "INTENSIVO": {
         "SIN_RIESGO": 0.0,
         "BAJO": 0.0,
         "MEDIO": 3.7321,
         "ALTO": 0.0,
-        "CRITICO": 0.0,
-        "RIESGO_72H_INCOMPLETO": 5.5467
+        "CRITICO": 1.8489,
+        "RIESGO_72H_INCOMPLETO": 3.6978
       },
       "DOHNE": {
         "SIN_RIESGO": 0.0,
