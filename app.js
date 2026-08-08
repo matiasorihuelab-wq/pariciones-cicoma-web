@@ -1573,6 +1573,10 @@ function toggle(viewKey, group, key, label, checked, colour) {
 function chartData(state) {
   const curves = DASH.lambing_curves || {};
   const lots = (curves.lots || []).filter((lot) => state.lot === "TOTAL" || lot.code === state.lot);
+  // `TOTAL` no es un lote del contrato: es el ámbito agregado de la campaña.
+  // Distinguirlo no es un candado por nombre de lote — los tres lotes reales se
+  // tratan igual entre sí— y ya gobierna el acumulado consolidado más abajo.
+  const esAmbitoAgregado = state.lot === "TOTAL";
   const inRange = (date) =>
     (!state.from || date >= state.from) && (!state.to || date <= state.to);
 
@@ -1610,10 +1614,24 @@ function chartData(state) {
     // "INTENSIVO"`— que era el único lote con recuento cuando se escribió: si
     // Merino Dohne o Merino Australiano informaban uno, el punto quedaba
     // invisible sin que nada lo avisara. Lo decide el DATO, no el lote.
-    for (const point of lot.observed_checkpoints || []) {
-      // Sin fecha no hay dónde ubicarlo: no se inventa una columna.
-      if (!point.date || !inRange(point.date)) continue;
-      checkpoints.push({ ...point, module_code: lot.code });
+    //
+    // Lo que sí decide el ÁMBITO. Un control pertenece al lote que lo informó:
+    // su población y su denominador son los de ese lote. «Total campaña» no
+    // puede heredarlo —44 / 96 es el avance de ovejas de Intensivo, no el de la
+    // campaña— ni inferirlo sumando controles parciales, que medirían cada uno
+    // contra una base distinta. Hasta que el contrato publique un control de
+    // campaña con su propia población, el ámbito agregado no dibuja ninguno.
+    //
+    // Esto NO reintroduce el candado derogado: no hay ningún código de lote en
+    // la condición. `TOTAL` no es un lote, es el ámbito agregado —el mismo que
+    // ya decide el acumulado consolidado unas líneas más abajo—, y cualquier
+    // lote real, presente o futuro, sigue dibujando el suyo.
+    if (!esAmbitoAgregado) {
+      for (const point of lot.observed_checkpoints || []) {
+        // Sin fecha no hay dónde ubicarlo: no se inventa una columna.
+        if (!point.date || !inRange(point.date)) continue;
+        checkpoints.push({ ...point, module_code: lot.code });
+      }
     }
   }
   // Acumulado del total: viene consolidado del backend (no se suman %).
