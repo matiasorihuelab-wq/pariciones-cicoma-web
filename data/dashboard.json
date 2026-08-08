@@ -2,33 +2,33 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-06T16:13:18.269671-03:00",
+  "generated_at": "2026-08-07T23:29:24.079142-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
-    "headline": "Hay un reporte pendiente de contabilizar.",
+    "headline": "Hay archivos multimedia pendientes de revisión.",
     "reasons": [
-      {
-        "code": "PENDING_EVENT",
-        "message": "Hay un reporte pendiente de contabilizar.",
-        "severity": "OJO"
-      },
       {
         "code": "PENDING_MEDIA",
         "message": "Hay archivos multimedia pendientes de revisión.",
         "severity": "OJO"
+      },
+      {
+        "code": "FIELD_CONTROL_DIFF",
+        "message": "Existe una diferencia con el control de campo.",
+        "severity": "OJO"
       }
     ],
     "pending_actions": {
-      "reports": 2,
+      "reports": 0,
       "links": 0,
       "media": 1,
       "technical": 0,
       "packages": 0,
-      "unclassified": 5,
-      "total": 8
+      "unclassified": 3,
+      "total": 4
     },
-    "generated_at": "2026-08-06T16:13:18.269671-03:00",
+    "generated_at": "2026-08-07T23:29:24.079142-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -77,7 +77,7 @@
       "message": "Datos registrados actualmente: Intensivo. Merino Dohne y Merino Australiano todavía sin registros de parición."
     },
     "registered_born_lambs": {
-      "value": 69,
+      "value": 70,
       "status": "PARTIAL",
       "lots_included": [
         "INTENSIVO"
@@ -100,7 +100,7 @@
     },
     "current_stock_count_date": "2026-07-27",
     "current_stock_label": "Corderos vivos contabilizados",
-    "accumulated_lamb_deaths_total": 6,
+    "accumulated_lamb_deaths_total": 7,
     "ewe_progress": {
       "registered": 44,
       "expected": 832,
@@ -110,9 +110,9 @@
       "basis": "Ovejas paridas registradas sobre ovejas previstas a parir."
     },
     "lamb_progress": {
-      "registered": 69,
+      "registered": 70,
       "expected": 979,
-      "percent": 7.0,
+      "percent": 7.2,
       "status": "SEGUN_REGISTROS",
       "is_estimate": true,
       "basis": "Corderos nacidos acumulados estimados sobre corderos esperados."
@@ -125,7 +125,7 @@
       "reason": null
     },
     "remaining_lambs_estimated": {
-      "value": 910,
+      "value": 909,
       "status": "SEGUN_REGISTROS",
       "is_estimate": true,
       "basis": "Corderos esperados menos corderos nacidos acumulados estimados.",
@@ -145,12 +145,13 @@
     "progress_percent": null,
     "expected_lambs": 979,
     "born_lambs": {
-      "value": null,
-      "status": "NOT_REPORTED",
-      "lots_included": [],
+      "value": 1,
+      "status": "PARTIAL",
+      "lots_included": [
+        "INTENSIVO"
+      ],
       "lots_missing": [
         "DOHNE",
-        "INTENSIVO",
         "MA"
       ]
     },
@@ -174,8 +175,8 @@
         "MA"
       ]
     },
-    "lamb_deaths": 6,
-    "ewe_deaths": 1,
+    "lamb_deaths": 7,
+    "ewe_deaths": 2,
     "deaths_last_24h": null,
     "remaining_ewes": {
       "value": null,
@@ -185,9 +186,9 @@
     },
     "remaining_lambs": {
       "value": null,
-      "status": "SIN_RECUENTO",
-      "reason": "Sin recuento confirmado de corderos nacidos.",
-      "compatible": null
+      "status": "PARCIAL",
+      "reason": "Recuento parcial de corderos nacidos: falta el recuento de DOHNE, MA. No se calculan restantes sobre un parcial.",
+      "compatible": false
     }
   },
   "modules": [
@@ -213,7 +214,7 @@
       "ewe_counts": {
         "expected_to_lamb": 96,
         "counted_lambed": 44,
-        "counted_from_events": null,
+        "counted_from_events": 1,
         "count_source": "RECUENTO_ACUMULADO",
         "reconciliation": {
           "value": 44,
@@ -224,8 +225,8 @@
           "baseline_date": "2026-07-27",
           "daily_after_total": 0,
           "daily_after_count": 0,
-          "daily_included_total": null,
-          "daily_included_count": 0,
+          "daily_included_total": 1,
+          "daily_included_count": 1,
           "reconciliation": "El recuento acumulado es la línea base de su fecha: sólo se suman los partes diarios posteriores. Los anteriores ya están contenidos en él."
         },
         "progress_percent": 45.8,
@@ -254,71 +255,71 @@
       },
       "lamb_counts": {
         "expected_total": 129,
-        "counted": null,
+        "counted": 1,
         "born_alive": null,
         "stillborn": null,
         "current_stock_lambs": 63,
         "current_stock_count_date": "2026-07-27",
         "current_stock_label": "Corderos vivos contabilizados",
-        "accumulated_lamb_deaths": 6,
-        "estimated_born_lambs": 69,
-        "estimated_born_basis": "Corderos vivos del último recuento más todos los corderos muertos acumulados.",
+        "accumulated_lamb_deaths": 7,
+        "estimated_born_lambs": 70,
+        "estimated_born_basis": "Último recuento físico de corderos vivos más todos los corderos muertos acumulados de la campaña.",
         "estimated_born_is_estimate": true,
         "estimated_remaining_lambs": {
-          "value": 60,
+          "value": 59,
           "status": "ESTIMADO",
-          "basis": "Corderos esperados menos corderos nacidos acumulados estimados.",
+          "basis": "Corderos esperados menos corderos nacidos acumulados.",
           "reason": null
         },
         "stock_history": [],
         "lamb_progress_ratio": {
-          "value": 53.5,
-          "numerator": 69,
+          "value": 54.3,
+          "numerator": 70,
           "denominator": 129,
           "status": "ESTIMADO",
           "missing": null
         },
         "lamb_mortality_ratio": {
-          "value": 8.7,
-          "numerator": 6,
-          "denominator": 69,
+          "value": 10.0,
+          "numerator": 7,
+          "denominator": 70,
           "status": "ESTIMADO",
           "missing": null
         },
         "lamb_survival_ratio": {
-          "value": 91.3,
+          "value": 90.0,
           "numerator": 63,
-          "denominator": 69,
+          "denominator": 70,
           "status": "ESTIMADO",
           "missing": null
         },
         "data_cutoff": "2026-07-27",
-        "reconciliation": "El recuento de corderos vivos ya incluye lo nacido y vivo hasta su fecha: sólo se suman los partes diarios posteriores a ese recuento.",
-        "registered_born": null,
-        "registered_born_status": "SIN_RECUENTO",
+        "reconciliation": "El recuento de corderos vivos es la base de vivos y se mantiene hasta que se realice un recuento nuevo. Los corderos muertos acumulados de la campaña se suman siempre, sin importar en qué fecha se registraron.",
+        "registered_born": 1,
+        "registered_born_status": "EXACTO",
         "registered_born_is_minimum": false,
-        "registered_born_basis": "SIN_RECUENTO",
+        "registered_born_basis": "RECUENTO_TOTAL_INFORMADO",
         "confirmed_live": null,
         "stillborn_status": "NO_INFORMADO",
         "stillborn_message": "Nacidos muertos al parto: no informados.",
-        "progress_percent": null,
+        "progress_percent": 0.8,
         "progress": {
-          "registered": 69,
+          "registered": 70,
           "expected": 129,
-          "percent": 53.5,
+          "percent": 54.3,
           "status": "SEGUN_REGISTROS",
           "is_estimate": true,
           "basis": "Corderos nacidos acumulados estimados sobre corderos esperados."
         },
         "last_count_date": "2026-07-27",
         "remaining": {
-          "value": null,
-          "status": "SIN_RECUENTO",
-          "reason": "Sin recuento confirmado de corderos nacidos de INTENSIVO.",
-          "compatible": null
+          "value": 128,
+          "status": "OK",
+          "reason": null,
+          "compatible": true
         },
         "remaining_estimated": {
-          "value": 60,
+          "value": 59,
           "status": "SEGUN_REGISTROS",
           "is_estimate": true,
           "basis": "Corderos esperados menos corderos nacidos acumulados estimados.",
@@ -326,19 +327,51 @@
         }
       },
       "mortality": {
-        "lamb_deaths_accumulated": 6,
-        "ewe_deaths_accumulated": 1,
+        "lamb_deaths_accumulated": 7,
+        "ewe_deaths_accumulated": 2,
         "deaths_last_24h": null,
-        "last_report_date": "2026-08-01",
+        "last_report_date": "2026-08-05",
         "detail": [
+          {
+            "date": "2026-08-05",
+            "animal_type": "OVEJA",
+            "quantity": 1,
+            "cause_code": "CAUSA_NO_DETERMINADA",
+            "cause_label": "Causa no determinada",
+            "has_private_media": true,
+            "private_media_count": 1,
+            "cases": [],
+            "undescribed_quantity": 1
+          },
+          {
+            "date": "2026-08-05",
+            "animal_type": "CORDERO",
+            "quantity": 1,
+            "cause_code": "OTRA",
+            "cause_label": "Otra causa informada",
+            "has_private_media": false,
+            "private_media_count": 0,
+            "cases": [
+              {
+                "case_number": 1,
+                "animal_type": "CORDERO",
+                "quantity": 1,
+                "cause_code": "CAUSA_NO_DETERMINADA",
+                "cause_label": "Causa no determinada",
+                "has_private_media": false,
+                "private_media_count": 0
+              }
+            ],
+            "undescribed_quantity": 0
+          },
           {
             "date": "2026-08-01",
             "animal_type": "CORDERO",
             "quantity": 1,
             "cause_code": "MALFORMACION_CONGENITA",
             "cause_label": "Malformación congénita",
-            "has_private_media": false,
-            "private_media_count": 0,
+            "has_private_media": true,
+            "private_media_count": 1,
             "cases": [],
             "undescribed_quantity": 1
           },
@@ -411,11 +444,11 @@
       },
       "field_control": {
         "variable": "ovejas_paridas",
-        "calculated": null,
+        "calculated": 1,
         "reported_accumulated": 44,
         "reported_date": "2026-07-27",
-        "difference": null,
-        "status": "SIN_CONTROL_RECIENTE"
+        "difference": 43,
+        "status": "DIFERENCIA"
       }
     },
     {
@@ -500,14 +533,14 @@
           "numerator": 0,
           "denominator": null,
           "status": "SIN_CALCULO",
-          "missing": "corderos muertos acumulados o corderos nacidos estimados"
+          "missing": "corderos muertos acumulados o corderos nacidos acumulados"
         },
         "lamb_survival_ratio": {
           "value": null,
           "numerator": null,
           "denominator": null,
           "status": "SIN_CALCULO",
-          "missing": "corderos vivos contabilizados o corderos nacidos estimados"
+          "missing": "corderos vivos contabilizados o corderos nacidos acumulados"
         },
         "data_cutoff": null,
         "reconciliation": null,
@@ -637,14 +670,14 @@
           "numerator": 0,
           "denominator": null,
           "status": "SIN_CALCULO",
-          "missing": "corderos muertos acumulados o corderos nacidos estimados"
+          "missing": "corderos muertos acumulados o corderos nacidos acumulados"
         },
         "lamb_survival_ratio": {
           "value": null,
           "numerator": null,
           "denominator": null,
           "status": "SIN_CALCULO",
-          "missing": "corderos vivos contabilizados o corderos nacidos estimados"
+          "missing": "corderos vivos contabilizados o corderos nacidos acumulados"
         },
         "data_cutoff": null,
         "reconciliation": null,
@@ -1641,20 +1674,28 @@
           "remaining_lambs": null,
           "method": "normalizacion_pesos_futuros_v1",
           "source": "WHATSAPP",
-          "age_days": 10,
+          "age_days": 12,
           "warnings": []
         },
         "observed": {
-          "counted_lambed": null,
-          "counted_lambs": null,
+          "counted_lambed": 1,
+          "counted_lambs": 1,
           "born_alive": null,
           "stillborn": null,
-          "lamb_deaths": 6,
-          "ewe_deaths": 1,
-          "last_count_date": null,
-          "last_event_date": "2026-08-01"
+          "lamb_deaths": 7,
+          "ewe_deaths": 2,
+          "last_count_date": "2026-07-26",
+          "last_event_date": "2026-08-05"
         },
-        "observed_series": [],
+        "observed_series": [
+          {
+            "date": "2026-07-26",
+            "lambed_ewes": 1,
+            "born_lambs": 1,
+            "cumulative_ewes": 1,
+            "cumulative_pct": 0.010417
+          }
+        ],
         "observed_checkpoints": [
           {
             "date": "2026-07-27",
@@ -3556,19 +3597,19 @@
         {
           "key": "lamb_mortality_pct",
           "label": "Mortalidad de corderos (muertos acumulados sobre nacidos estimados)",
-          "value": 8.6957,
-          "numerator": 6,
-          "denominator": 69,
+          "value": 10.0,
+          "numerator": 7,
+          "denominator": 70,
           "denominator_label": "corderos nacidos acumulados estimados",
           "status": "OK",
           "unit": "%"
         },
         {
           "key": "lamb_survival_pct",
-          "label": "Sobrevivencia actual (vivos contabilizados sobre nacidos estimados)",
-          "value": 91.3043,
+          "label": "Sobrevivencia al último recuento (vivos contabilizados sobre nacidos estimados)",
+          "value": 90.0,
           "numerator": 63,
-          "denominator": 69,
+          "denominator": 70,
           "denominator_label": "corderos nacidos acumulados estimados",
           "status": "OK",
           "unit": "%"
@@ -3576,8 +3617,8 @@
         {
           "key": "lamb_progress_pct",
           "label": "Avance de corderos (nacidos estimados sobre esperados)",
-          "value": 53.4884,
-          "numerator": 69,
+          "value": 54.2636,
+          "numerator": 70,
           "denominator": 129,
           "denominator_label": "corderos esperados",
           "status": "OK",
@@ -3626,8 +3667,8 @@
         {
           "key": "ewe_mortality_pct",
           "label": "Mortalidad de ovejas (sobre encarneradas)",
-          "value": 0.9709,
-          "numerator": 1,
+          "value": 1.9417,
+          "numerator": 2,
           "denominator": 103,
           "denominator_label": "ovejas encarneradas",
           "status": "OK",
@@ -3707,7 +3748,7 @@
         },
         {
           "key": "lamb_survival_pct",
-          "label": "Sobrevivencia actual (vivos contabilizados sobre nacidos estimados)",
+          "label": "Sobrevivencia al último recuento (vivos contabilizados sobre nacidos estimados)",
           "value": null,
           "numerator": null,
           "denominator": null,
@@ -3849,7 +3890,7 @@
         },
         {
           "key": "lamb_survival_pct",
-          "label": "Sobrevivencia actual (vivos contabilizados sobre nacidos estimados)",
+          "label": "Sobrevivencia al último recuento (vivos contabilizados sobre nacidos estimados)",
           "value": null,
           "numerator": null,
           "denominator": null,
@@ -3983,19 +4024,19 @@
       {
         "key": "lamb_mortality_pct",
         "label": "Mortalidad de corderos (muertos acumulados sobre nacidos estimados)",
-        "value": 8.6957,
-        "numerator": 6,
-        "denominator": 69,
+        "value": 10.0,
+        "numerator": 7,
+        "denominator": 70,
         "denominator_label": "corderos nacidos acumulados estimados",
         "status": "OK",
         "unit": "%"
       },
       {
         "key": "lamb_survival_pct",
-        "label": "Sobrevivencia actual (vivos contabilizados sobre nacidos estimados)",
-        "value": 91.3043,
+        "label": "Sobrevivencia al último recuento (vivos contabilizados sobre nacidos estimados)",
+        "value": 90.0,
         "numerator": 63,
-        "denominator": 69,
+        "denominator": 70,
         "denominator_label": "corderos nacidos acumulados estimados",
         "status": "OK",
         "unit": "%"
@@ -4003,8 +4044,8 @@
       {
         "key": "lamb_progress_pct",
         "label": "Avance de corderos (nacidos estimados sobre esperados)",
-        "value": 7.048,
-        "numerator": 69,
+        "value": 7.1502,
+        "numerator": 70,
         "denominator": 979,
         "denominator_label": "corderos esperados",
         "status": "OK",
@@ -4069,8 +4110,8 @@
       {
         "key": "ewe_mortality_pct",
         "label": "Mortalidad de ovejas (sobre encarneradas)",
-        "value": 0.1126,
-        "numerator": 1,
+        "value": 0.2252,
+        "numerator": 2,
         "denominator": 888,
         "denominator_label": "ovejas encarneradas",
         "status": "OK",
@@ -4078,7 +4119,14 @@
       }
     ]
   },
-  "daily_evolution": [],
+  "daily_evolution": [
+    {
+      "date": "2026-07-26",
+      "lambed_ewes": 1,
+      "born_lambs": 1,
+      "cumulative_lambed": 1
+    }
+  ],
   "chill_public": {
     "title": "Chill Index: riesgo previsto y nacimientos registrados",
     "subtitle": "Estimación basada en la curva prevista de partos",
@@ -4099,35 +4147,9 @@
     "update_status": {
       "state": "ACTUALIZADO",
       "stale": false,
-      "message": "Pronóstico válido importado desde Zapia."
+      "message": "Pronóstico válido del pipeline propio (WRF completo de INIA-GRAS)."
     },
     "daily": [
-      {
-        "date": "2026-08-05",
-        "risk_category": "SIN_RIESGO",
-        "display_risk_category": "SIN_RIESGO",
-        "total_exposed": 8.637,
-        "by_lot": {
-          "INTENSIVO": 8.637,
-          "DOHNE": 0.0,
-          "MA": 0.0
-        },
-        "cohort_72h_complete": true,
-        "cohort_72h_category": "MEDIO"
-      },
-      {
-        "date": "2026-08-06",
-        "risk_category": "MEDIO",
-        "display_risk_category": "MEDIO",
-        "total_exposed": 7.126,
-        "by_lot": {
-          "INTENSIVO": 7.1262,
-          "DOHNE": 0.0,
-          "MA": 0.0
-        },
-        "cohort_72h_complete": true,
-        "cohort_72h_category": "ALTO"
-      },
       {
         "date": "2026-08-07",
         "risk_category": "BAJO",
@@ -4139,20 +4161,20 @@
           "MA": 0.0
         },
         "cohort_72h_complete": true,
-        "cohort_72h_category": "ALTO"
+        "cohort_72h_category": "MEDIO"
       },
       {
         "date": "2026-08-08",
-        "risk_category": "ALTO",
-        "display_risk_category": "ALTO",
+        "risk_category": "BAJO",
+        "display_risk_category": "BAJO",
         "total_exposed": 5.89,
         "by_lot": {
           "INTENSIVO": 5.89,
           "DOHNE": 0.0,
           "MA": 0.0
         },
-        "cohort_72h_complete": false,
-        "cohort_72h_category": "RIESGO_72H_INCOMPLETO"
+        "cohort_72h_complete": true,
+        "cohort_72h_category": "MEDIO"
       },
       {
         "date": "2026-08-09",
@@ -4161,6 +4183,32 @@
         "total_exposed": 5.684,
         "by_lot": {
           "INTENSIVO": 5.684,
+          "DOHNE": 0.0,
+          "MA": 0.0
+        },
+        "cohort_72h_complete": true,
+        "cohort_72h_category": "MEDIO"
+      },
+      {
+        "date": "2026-08-10",
+        "risk_category": "MEDIO",
+        "display_risk_category": "MEDIO",
+        "total_exposed": 5.581,
+        "by_lot": {
+          "INTENSIVO": 5.581,
+          "DOHNE": 0.0,
+          "MA": 0.0
+        },
+        "cohort_72h_complete": false,
+        "cohort_72h_category": "RIESGO_72H_INCOMPLETO"
+      },
+      {
+        "date": "2026-08-11",
+        "risk_category": "MEDIO",
+        "display_risk_category": "MEDIO",
+        "total_exposed": 5.547,
+        "by_lot": {
+          "INTENSIVO": 5.5467,
           "DOHNE": 0.0,
           "MA": 0.0
         },
@@ -4175,18 +4223,18 @@
       "rule": "Cada cohorte prevista para el día D se evalúa en D, D+1 y D+2 y se cuenta una sola vez bajo su categoría máxima.",
       "SIN_RIESGO": 0.0,
       "BAJO": 0.0,
-      "MEDIO": 2.1923,
-      "ALTO": 4.0068,
+      "MEDIO": 5.684,
+      "ALTO": 0.0,
       "CRITICO": 0.0,
-      "RIESGO_72H_INCOMPLETO": 3.7321,
+      "RIESGO_72H_INCOMPLETO": 3.6978,
       "by_module": {
         "INTENSIVO": {
           "SIN_RIESGO": 0.0,
           "BAJO": 0.0,
-          "MEDIO": 2.1923,
-          "ALTO": 4.0068,
+          "MEDIO": 5.684,
+          "ALTO": 0.0,
           "CRITICO": 0.0,
-          "RIESGO_72H_INCOMPLETO": 3.7321
+          "RIESGO_72H_INCOMPLETO": 3.6978
         },
         "DOHNE": {
           "SIN_RIESGO": 0.0,
@@ -4213,50 +4261,6 @@
       "basis": "EXPECTED",
       "daily": [
         {
-          "date": "2026-08-05",
-          "module_code": "INTENSIVO",
-          "module_name": "Intensivo",
-          "service_code": "SERVICIO_1",
-          "service_type": "Servicio natural (carneros)",
-          "expected_lambs": 2.1923,
-          "in_lambing_window": true,
-          "curve": "ADJUSTED",
-          "basis": "EXPECTED",
-          "risk_d": "SIN_RIESGO",
-          "risk_d1": "MEDIO",
-          "risk_d2": "BAJO",
-          "window": [
-            "2026-08-05",
-            "2026-08-06",
-            "2026-08-07"
-          ],
-          "max_risk": "MEDIO",
-          "complete": true,
-          "missing_dates": []
-        },
-        {
-          "date": "2026-08-06",
-          "module_code": "INTENSIVO",
-          "module_name": "Intensivo",
-          "service_code": "SERVICIO_1",
-          "service_type": "Servicio natural (carneros)",
-          "expected_lambs": 2.0549,
-          "in_lambing_window": true,
-          "curve": "ADJUSTED",
-          "basis": "EXPECTED",
-          "risk_d": "MEDIO",
-          "risk_d1": "BAJO",
-          "risk_d2": "ALTO",
-          "window": [
-            "2026-08-06",
-            "2026-08-07",
-            "2026-08-08"
-          ],
-          "max_risk": "ALTO",
-          "complete": true,
-          "missing_dates": []
-        },
-        {
           "date": "2026-08-07",
           "module_code": "INTENSIVO",
           "module_name": "Intensivo",
@@ -4267,14 +4271,14 @@
           "curve": "ADJUSTED",
           "basis": "EXPECTED",
           "risk_d": "BAJO",
-          "risk_d1": "ALTO",
+          "risk_d1": "BAJO",
           "risk_d2": "MEDIO",
           "window": [
             "2026-08-07",
             "2026-08-08",
             "2026-08-09"
           ],
-          "max_risk": "ALTO",
+          "max_risk": "MEDIO",
           "complete": true,
           "missing_dates": []
         },
@@ -4288,19 +4292,17 @@
           "in_lambing_window": true,
           "curve": "ADJUSTED",
           "basis": "EXPECTED",
-          "risk_d": "ALTO",
+          "risk_d": "BAJO",
           "risk_d1": "MEDIO",
-          "risk_d2": null,
+          "risk_d2": "MEDIO",
           "window": [
             "2026-08-08",
             "2026-08-09",
             "2026-08-10"
           ],
-          "max_risk": "RIESGO_72H_INCOMPLETO",
-          "complete": false,
-          "missing_dates": [
-            "2026-08-10"
-          ]
+          "max_risk": "MEDIO",
+          "complete": true,
+          "missing_dates": []
         },
         {
           "date": "2026-08-09",
@@ -4313,63 +4315,65 @@
           "curve": "ADJUSTED",
           "basis": "EXPECTED",
           "risk_d": "MEDIO",
-          "risk_d1": null,
-          "risk_d2": null,
+          "risk_d1": "MEDIO",
+          "risk_d2": "MEDIO",
           "window": [
             "2026-08-09",
             "2026-08-10",
             "2026-08-11"
-          ],
-          "max_risk": "RIESGO_72H_INCOMPLETO",
-          "complete": false,
-          "missing_dates": [
-            "2026-08-10",
-            "2026-08-11"
-          ]
-        },
-        {
-          "date": "2026-08-05",
-          "module_code": "DOHNE",
-          "module_name": "Merino Dohne",
-          "service_code": "SERVICIO_1",
-          "service_type": "IATF + repaso natural",
-          "expected_lambs": 0.0,
-          "in_lambing_window": false,
-          "curve": "ORIGINAL",
-          "basis": "EXPECTED",
-          "risk_d": "SIN_RIESGO",
-          "risk_d1": "MEDIO",
-          "risk_d2": "BAJO",
-          "window": [
-            "2026-08-05",
-            "2026-08-06",
-            "2026-08-07"
           ],
           "max_risk": "MEDIO",
           "complete": true,
           "missing_dates": []
         },
         {
-          "date": "2026-08-06",
-          "module_code": "DOHNE",
-          "module_name": "Merino Dohne",
+          "date": "2026-08-10",
+          "module_code": "INTENSIVO",
+          "module_name": "Intensivo",
           "service_code": "SERVICIO_1",
-          "service_type": "IATF + repaso natural",
-          "expected_lambs": 0.0,
-          "in_lambing_window": false,
-          "curve": "ORIGINAL",
+          "service_type": "Servicio natural (carneros)",
+          "expected_lambs": 1.8489,
+          "in_lambing_window": true,
+          "curve": "ADJUSTED",
           "basis": "EXPECTED",
           "risk_d": "MEDIO",
-          "risk_d1": "BAJO",
-          "risk_d2": "ALTO",
+          "risk_d1": "MEDIO",
+          "risk_d2": null,
           "window": [
-            "2026-08-06",
-            "2026-08-07",
-            "2026-08-08"
+            "2026-08-10",
+            "2026-08-11",
+            "2026-08-12"
           ],
-          "max_risk": "ALTO",
-          "complete": true,
-          "missing_dates": []
+          "max_risk": "RIESGO_72H_INCOMPLETO",
+          "complete": false,
+          "missing_dates": [
+            "2026-08-12"
+          ]
+        },
+        {
+          "date": "2026-08-11",
+          "module_code": "INTENSIVO",
+          "module_name": "Intensivo",
+          "service_code": "SERVICIO_1",
+          "service_type": "Servicio natural (carneros)",
+          "expected_lambs": 1.8489,
+          "in_lambing_window": true,
+          "curve": "ADJUSTED",
+          "basis": "EXPECTED",
+          "risk_d": "MEDIO",
+          "risk_d1": null,
+          "risk_d2": null,
+          "window": [
+            "2026-08-11",
+            "2026-08-12",
+            "2026-08-13"
+          ],
+          "max_risk": "RIESGO_72H_INCOMPLETO",
+          "complete": false,
+          "missing_dates": [
+            "2026-08-12",
+            "2026-08-13"
+          ]
         },
         {
           "date": "2026-08-07",
@@ -4382,14 +4386,14 @@
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
           "risk_d": "BAJO",
-          "risk_d1": "ALTO",
+          "risk_d1": "BAJO",
           "risk_d2": "MEDIO",
           "window": [
             "2026-08-07",
             "2026-08-08",
             "2026-08-09"
           ],
-          "max_risk": "ALTO",
+          "max_risk": "MEDIO",
           "complete": true,
           "missing_dates": []
         },
@@ -4403,19 +4407,17 @@
           "in_lambing_window": false,
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
-          "risk_d": "ALTO",
+          "risk_d": "BAJO",
           "risk_d1": "MEDIO",
-          "risk_d2": null,
+          "risk_d2": "MEDIO",
           "window": [
             "2026-08-08",
             "2026-08-09",
             "2026-08-10"
           ],
-          "max_risk": "RIESGO_72H_INCOMPLETO",
-          "complete": false,
-          "missing_dates": [
-            "2026-08-10"
-          ]
+          "max_risk": "MEDIO",
+          "complete": true,
+          "missing_dates": []
         },
         {
           "date": "2026-08-09",
@@ -4428,46 +4430,21 @@
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
           "risk_d": "MEDIO",
-          "risk_d1": null,
-          "risk_d2": null,
+          "risk_d1": "MEDIO",
+          "risk_d2": "MEDIO",
           "window": [
             "2026-08-09",
             "2026-08-10",
             "2026-08-11"
-          ],
-          "max_risk": "RIESGO_72H_INCOMPLETO",
-          "complete": false,
-          "missing_dates": [
-            "2026-08-10",
-            "2026-08-11"
-          ]
-        },
-        {
-          "date": "2026-08-05",
-          "module_code": "MA",
-          "module_name": "Merino Australiano",
-          "service_code": "SERVICIO_1",
-          "service_type": "IATF + repaso natural",
-          "expected_lambs": 0.0,
-          "in_lambing_window": false,
-          "curve": "ORIGINAL",
-          "basis": "EXPECTED",
-          "risk_d": "SIN_RIESGO",
-          "risk_d1": "MEDIO",
-          "risk_d2": "BAJO",
-          "window": [
-            "2026-08-05",
-            "2026-08-06",
-            "2026-08-07"
           ],
           "max_risk": "MEDIO",
           "complete": true,
           "missing_dates": []
         },
         {
-          "date": "2026-08-06",
-          "module_code": "MA",
-          "module_name": "Merino Australiano",
+          "date": "2026-08-10",
+          "module_code": "DOHNE",
+          "module_name": "Merino Dohne",
           "service_code": "SERVICIO_1",
           "service_type": "IATF + repaso natural",
           "expected_lambs": 0.0,
@@ -4475,16 +4452,43 @@
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
           "risk_d": "MEDIO",
-          "risk_d1": "BAJO",
-          "risk_d2": "ALTO",
+          "risk_d1": "MEDIO",
+          "risk_d2": null,
           "window": [
-            "2026-08-06",
-            "2026-08-07",
-            "2026-08-08"
+            "2026-08-10",
+            "2026-08-11",
+            "2026-08-12"
           ],
-          "max_risk": "ALTO",
-          "complete": true,
-          "missing_dates": []
+          "max_risk": "RIESGO_72H_INCOMPLETO",
+          "complete": false,
+          "missing_dates": [
+            "2026-08-12"
+          ]
+        },
+        {
+          "date": "2026-08-11",
+          "module_code": "DOHNE",
+          "module_name": "Merino Dohne",
+          "service_code": "SERVICIO_1",
+          "service_type": "IATF + repaso natural",
+          "expected_lambs": 0.0,
+          "in_lambing_window": false,
+          "curve": "ORIGINAL",
+          "basis": "EXPECTED",
+          "risk_d": "MEDIO",
+          "risk_d1": null,
+          "risk_d2": null,
+          "window": [
+            "2026-08-11",
+            "2026-08-12",
+            "2026-08-13"
+          ],
+          "max_risk": "RIESGO_72H_INCOMPLETO",
+          "complete": false,
+          "missing_dates": [
+            "2026-08-12",
+            "2026-08-13"
+          ]
         },
         {
           "date": "2026-08-07",
@@ -4497,14 +4501,14 @@
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
           "risk_d": "BAJO",
-          "risk_d1": "ALTO",
+          "risk_d1": "BAJO",
           "risk_d2": "MEDIO",
           "window": [
             "2026-08-07",
             "2026-08-08",
             "2026-08-09"
           ],
-          "max_risk": "ALTO",
+          "max_risk": "MEDIO",
           "complete": true,
           "missing_dates": []
         },
@@ -4518,19 +4522,17 @@
           "in_lambing_window": false,
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
-          "risk_d": "ALTO",
+          "risk_d": "BAJO",
           "risk_d1": "MEDIO",
-          "risk_d2": null,
+          "risk_d2": "MEDIO",
           "window": [
             "2026-08-08",
             "2026-08-09",
             "2026-08-10"
           ],
-          "max_risk": "RIESGO_72H_INCOMPLETO",
-          "complete": false,
-          "missing_dates": [
-            "2026-08-10"
-          ]
+          "max_risk": "MEDIO",
+          "complete": true,
+          "missing_dates": []
         },
         {
           "date": "2026-08-09",
@@ -4543,18 +4545,64 @@
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
           "risk_d": "MEDIO",
-          "risk_d1": null,
-          "risk_d2": null,
+          "risk_d1": "MEDIO",
+          "risk_d2": "MEDIO",
           "window": [
             "2026-08-09",
             "2026-08-10",
             "2026-08-11"
           ],
+          "max_risk": "MEDIO",
+          "complete": true,
+          "missing_dates": []
+        },
+        {
+          "date": "2026-08-10",
+          "module_code": "MA",
+          "module_name": "Merino Australiano",
+          "service_code": "SERVICIO_1",
+          "service_type": "IATF + repaso natural",
+          "expected_lambs": 0.0,
+          "in_lambing_window": false,
+          "curve": "ORIGINAL",
+          "basis": "EXPECTED",
+          "risk_d": "MEDIO",
+          "risk_d1": "MEDIO",
+          "risk_d2": null,
+          "window": [
+            "2026-08-10",
+            "2026-08-11",
+            "2026-08-12"
+          ],
           "max_risk": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-10",
-            "2026-08-11"
+            "2026-08-12"
+          ]
+        },
+        {
+          "date": "2026-08-11",
+          "module_code": "MA",
+          "module_name": "Merino Australiano",
+          "service_code": "SERVICIO_1",
+          "service_type": "IATF + repaso natural",
+          "expected_lambs": 0.0,
+          "in_lambing_window": false,
+          "curve": "ORIGINAL",
+          "basis": "EXPECTED",
+          "risk_d": "MEDIO",
+          "risk_d1": null,
+          "risk_d2": null,
+          "window": [
+            "2026-08-11",
+            "2026-08-12",
+            "2026-08-13"
+          ],
+          "max_risk": "RIESGO_72H_INCOMPLETO",
+          "complete": false,
+          "missing_dates": [
+            "2026-08-12",
+            "2026-08-13"
           ]
         }
       ],
@@ -4568,13 +4616,43 @@
     },
     "observed": {
       "title": "Nacimientos registrados y condiciones ambientales durante sus primeras 72 horas",
-      "status": "SIN_REGISTROS_DIARIOS",
+      "status": "DISPONIBLE",
       "basis": "DAILY",
-      "daily": [],
-      "lots_with_daily_records": [],
-      "lots_with_accumulated_only": [
+      "daily": [
+        {
+          "date": "2026-07-26",
+          "module_code": "INTENSIVO",
+          "module_name": "Intensivo",
+          "service_code": null,
+          "service_type": null,
+          "ewes_lambed": 1,
+          "born_lambs": 1,
+          "born_alive": null,
+          "stillborn": null,
+          "basis": "DAILY",
+          "validation_status": "CONFIRMED",
+          "revision": 1,
+          "risk_d": null,
+          "risk_d1": null,
+          "risk_d2": null,
+          "window": [
+            "2026-07-26",
+            "2026-07-27",
+            "2026-07-28"
+          ],
+          "max_risk": "RIESGO_72H_INCOMPLETO",
+          "complete": false,
+          "missing_dates": [
+            "2026-07-26",
+            "2026-07-27",
+            "2026-07-28"
+          ]
+        }
+      ],
+      "lots_with_daily_records": [
         "INTENSIVO"
       ],
+      "lots_with_accumulated_only": [],
       "risk_summary": {
         "by_risk": {
           "SIN_RIESGO": 0,
@@ -4582,37 +4660,36 @@
           "MEDIO": 0,
           "ALTO": 0,
           "CRITICO": 0,
-          "RIESGO_72H_INCOMPLETO": 0
+          "RIESGO_72H_INCOMPLETO": 1
         },
-        "lambs_counted": 0,
+        "lambs_counted": 1,
         "rule": "Cada cordero registrado se cuenta una sola vez, bajo el nivel de riesgo más alto de sus primeras 72 horas."
       },
-      "incomplete_windows": 0,
+      "incomplete_windows": 1,
       "superseded_records": 0,
       "excluded_by_basis": {},
-      "registered_born_lambs": 69,
+      "registered_born_lambs": 70,
       "confirmed_live_lambs": 63,
       "messages": [
-        "Sin registros diarios de nacimientos para este lote.",
-        "Existe un recuento acumulado, pero no se informó su distribución diaria."
+        "La evaluación ambiental de las primeras 72 horas todavía está incompleta."
       ],
-      "message": "Sin registros diarios de nacimientos para este lote."
+      "message": "La evaluación ambiental de las primeras 72 horas todavía está incompleta."
     },
     "coverage": {
-      "classified": 6.1991,
-      "incomplete": 3.7321,
-      "evaluated": 9.9312,
+      "classified": 5.684,
+      "incomplete": 3.6978,
+      "evaluated": 9.3818,
       "expected_total": 979,
-      "pending": 969.0688,
+      "pending": 969.6182,
       "incomplete_reason": "El pronóstico ambiental disponible todavía no cubre los tres días posteriores a esas fechas de nacimiento previstas.",
       "pending_reason": "El resto de los corderos esperados nace en fechas que el pronóstico ambiental disponible todavía no alcanza.",
       "by_module": {
         "INTENSIVO": {
-          "classified": 6.1991,
-          "incomplete": 3.7321,
-          "evaluated": 9.9312,
+          "classified": 5.684,
+          "incomplete": 3.6978,
+          "evaluated": 9.3818,
           "expected_total": 129,
-          "pending": 119.0688,
+          "pending": 119.6182,
           "incomplete_reason": "El pronóstico ambiental disponible todavía no cubre los tres días posteriores a esas fechas de nacimiento previstas.",
           "pending_reason": "El resto de los corderos esperados nace en fechas que el pronóstico ambiental disponible todavía no alcanza."
         },
@@ -4637,20 +4714,20 @@
       }
     },
     "accumulated_notice": {
-      "status": "SIN_DISTRIBUCION_DIARIA",
-      "registered_born_lambs": 69,
+      "status": "DISPONIBLE",
+      "registered_born_lambs": 70,
       "confirmed_live_lambs": 63,
-      "message": "Se contabilizaron 63 corderos vivos en forma acumulada. Como el recuento no indica cuántos nacieron cada día, todavía no es posible asignarles el riesgo climático real correspondiente a sus primeras 72 horas."
+      "message": "Riesgo climático de los corderos nacidos registrados, según su distribución diaria informada."
     }
   },
   "field_controls": {
     "INTENSIVO": {
       "variable": "ovejas_paridas",
-      "calculated": null,
+      "calculated": 1,
       "reported_accumulated": 44,
       "reported_date": "2026-07-27",
-      "difference": null,
-      "status": "SIN_CONTROL_RECIENTE"
+      "difference": 43,
+      "status": "DIFERENCIA"
     },
     "DOHNE": {
       "variable": "ovejas_paridas",
@@ -4670,9 +4747,9 @@
     }
   },
   "mortality_summary": {
-    "total_deaths": 7,
-    "lamb_deaths": 6,
-    "ewe_deaths": 1,
+    "total_deaths": 9,
+    "lamb_deaths": 7,
+    "ewe_deaths": 2,
     "by_date": [
       {
         "date": "2026-07-19",
@@ -4698,33 +4775,44 @@
         "date": "2026-08-01",
         "lamb": 1,
         "ewe": 0
+      },
+      {
+        "date": "2026-08-05",
+        "lamb": 1,
+        "ewe": 1
       }
     ],
     "by_lot": {
       "INTENSIVO": {
-        "CORDERO": 6,
-        "OVEJA": 1
+        "CORDERO": 7,
+        "OVEJA": 2
       }
     },
     "by_animal": {
-      "CORDERO": 6,
-      "OVEJA": 1
+      "CORDERO": 7,
+      "OVEJA": 2
     },
     "by_cause": [
       {
         "cause_code": "CAUSA_NO_DETERMINADA",
         "cause_label": "Causa no determinada",
-        "count": 5,
-        "pct": 71.4
+        "count": 6,
+        "pct": 66.7
       },
       {
         "cause_code": "MALFORMACION_CONGENITA",
         "cause_label": "Malformación congénita",
         "count": 2,
-        "pct": 28.6
+        "pct": 22.2
+      },
+      {
+        "cause_code": "OTRA",
+        "cause_label": "Otra causa informada",
+        "count": 1,
+        "pct": 11.1
       }
     ],
-    "undetermined": 5
+    "undetermined": 6
   },
   "mortality_daily": [
     {
@@ -4798,6 +4886,30 @@
       "death_moment_label": "Posterior al nacimiento",
       "service_code": null,
       "service_label": "Sin servicio asociado"
+    },
+    {
+      "date": "2026-08-05",
+      "module_code": "INTENSIVO",
+      "animal_type": "OVEJA",
+      "quantity": 1,
+      "cause_code": "CAUSA_NO_DETERMINADA",
+      "cause_label": "Causa no determinada",
+      "death_moment": "NO_DETERMINADO",
+      "death_moment_label": "Momento no determinado",
+      "service_code": null,
+      "service_label": "Sin servicio asociado"
+    },
+    {
+      "date": "2026-08-05",
+      "module_code": "INTENSIVO",
+      "animal_type": "CORDERO",
+      "quantity": 1,
+      "cause_code": "OTRA",
+      "cause_label": "Otra causa informada",
+      "death_moment": "NO_DETERMINADO",
+      "death_moment_label": "Momento no determinado",
+      "service_code": null,
+      "service_label": "Sin servicio asociado"
     }
   ],
   "stillborn_daily": {
@@ -4807,9 +4919,39 @@
   },
   "campaign_milestones": {
     "status": "OK",
-    "total": 9,
-    "shown": 9,
+    "total": 11,
+    "shown": 11,
     "items": [
+      {
+        "date": "2026-08-05",
+        "module_code": "INTENSIVO",
+        "module_name": "Intensivo",
+        "kind": "MORTALIDAD_DE_OVEJAS",
+        "kind_label": "Mortalidad de ovejas",
+        "subtype": null,
+        "subtype_label": null,
+        "quantity": 1,
+        "animal_type": "OVEJA",
+        "animal_label": "oveja",
+        "cause_code": "CAUSA_NO_DETERMINADA",
+        "cause_label": "Causa no determinada",
+        "affects_counts": false
+      },
+      {
+        "date": "2026-08-05",
+        "module_code": "INTENSIVO",
+        "module_name": "Intensivo",
+        "kind": "MORTALIDAD_DE_CORDEROS",
+        "kind_label": "Mortalidad de corderos",
+        "subtype": null,
+        "subtype_label": null,
+        "quantity": 1,
+        "animal_type": "CORDERO",
+        "animal_label": "cordero",
+        "cause_code": "OTRA",
+        "cause_label": "Otra causa informada",
+        "affects_counts": false
+      },
       {
         "date": "2026-08-01",
         "module_code": "INTENSIVO",
@@ -4955,8 +5097,8 @@
     "status": "OK",
     "source": {
       "name": "INIA-GRAS",
-      "interpreted_by": "Zapia",
-      "label": "INIA-GRAS interpretada por Zapia",
+      "interpreted_by": "CICOMA (pipeline determinístico)",
+      "label": "INIA-GRAS, clasificación determinística propia",
       "official_url": "https://inia.uy/gras/Aplicaciones_y_recursos/Prevision%20Corderos"
     },
     "location": {
@@ -4964,14 +5106,14 @@
       "latitude": null,
       "longitude": null
     },
-    "analyzed_at": "2026-08-05T22:10:56.929394+00:00",
-    "forecast_run_date": "2026-08-04",
-    "imported_at": "2026-08-05T19:27:28.765522-03:00",
-    "forecast_age_hours": 19.32,
+    "analyzed_at": "2026-08-07T15:15:23.255996+00:00",
+    "forecast_run_date": "2026-08-07",
+    "imported_at": "2026-08-07T13:25:13.236192-03:00",
+    "forecast_age_hours": 11.23,
     "update_status": {
       "state": "ACTUALIZADO",
       "stale": false,
-      "message": "Pronóstico válido importado desde Zapia."
+      "message": "Pronóstico válido del pipeline propio (WRF completo de INIA-GRAS)."
     },
     "product_cross": {
       "status": "OK",
@@ -4987,9 +5129,9 @@
           "name": "INTENSIVO",
           "expected_to_lamb": 96,
           "expected_lambs": 129,
-          "counted_lambed": null,
-          "counted_lambs": null,
-          "last_count_date": null
+          "counted_lambed": 1,
+          "counted_lambs": 1,
+          "last_count_date": "2026-07-26"
         },
         {
           "code": "DOHNE",
@@ -5013,8 +5155,8 @@
       "totals": {
         "expected_to_lamb": 832,
         "expected_lambs": 979,
-        "counted_lambed": null,
-        "counted_lambs": null
+        "counted_lambed": 1,
+        "counted_lambs": 1
       }
     },
     "module_options": [
@@ -5036,116 +5178,6 @@
       }
     ],
     "days": [
-      {
-        "date": "2026-08-05",
-        "risk_category": "SIN_RIESGO",
-        "display_risk_category": "SIN_RIESGO",
-        "ci_min": null,
-        "ci_max": 900.0,
-        "ci_interval": "< 900",
-        "ci_unit": "kJ/m2/h",
-        "confidence": 0.9,
-        "requires_review": false,
-        "automatic_use": true,
-        "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260805.png",
-        "expected_ewes_lambing": 1.5502,
-        "expected_lambs_born": 2.1923,
-        "lambs_in_first_72h_on_date": 8.637,
-        "modules": [
-          {
-            "code": "INTENSIVO",
-            "name": "INTENSIVO",
-            "expected_ewes_lambing": 1.5502,
-            "expected_lambs_born": 2.1923,
-            "lambs_in_first_72h_on_date": 8.637,
-            "in_lambing_window": true
-          },
-          {
-            "code": "DOHNE",
-            "name": "MERINO DOHNE",
-            "expected_ewes_lambing": null,
-            "expected_lambs_born": null,
-            "lambs_in_first_72h_on_date": 0.0,
-            "in_lambing_window": false
-          },
-          {
-            "code": "MA",
-            "name": "MERINO AUSTRALIANO",
-            "expected_ewes_lambing": null,
-            "expected_lambs_born": null,
-            "lambs_in_first_72h_on_date": 0.0,
-            "in_lambing_window": false
-          }
-        ],
-        "cohort_72h": {
-          "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
-          "window": [
-            "2026-08-05",
-            "2026-08-06",
-            "2026-08-07"
-          ],
-          "category": "MEDIO",
-          "complete": true,
-          "missing_dates": [],
-          "lambs": 2.1923
-        },
-        "cross_status": "OK"
-      },
-      {
-        "date": "2026-08-06",
-        "risk_category": "MEDIO",
-        "display_risk_category": "MEDIO",
-        "ci_min": 1000.0,
-        "ci_max": 1100.0,
-        "ci_interval": "1000–1100",
-        "ci_unit": "kJ/m2/h",
-        "confidence": 0.9,
-        "requires_review": false,
-        "automatic_use": true,
-        "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260806.png",
-        "expected_ewes_lambing": 1.4531,
-        "expected_lambs_born": 2.0549,
-        "lambs_in_first_72h_on_date": 7.1262,
-        "modules": [
-          {
-            "code": "INTENSIVO",
-            "name": "INTENSIVO",
-            "expected_ewes_lambing": 1.4531,
-            "expected_lambs_born": 2.0549,
-            "lambs_in_first_72h_on_date": 7.1262,
-            "in_lambing_window": true
-          },
-          {
-            "code": "DOHNE",
-            "name": "MERINO DOHNE",
-            "expected_ewes_lambing": null,
-            "expected_lambs_born": null,
-            "lambs_in_first_72h_on_date": 0.0,
-            "in_lambing_window": false
-          },
-          {
-            "code": "MA",
-            "name": "MERINO AUSTRALIANO",
-            "expected_ewes_lambing": null,
-            "expected_lambs_born": null,
-            "lambs_in_first_72h_on_date": 0.0,
-            "in_lambing_window": false
-          }
-        ],
-        "cohort_72h": {
-          "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
-          "window": [
-            "2026-08-06",
-            "2026-08-07",
-            "2026-08-08"
-          ],
-          "category": "ALTO",
-          "complete": true,
-          "missing_dates": [],
-          "lambs": 2.0549
-        },
-        "cross_status": "OK"
-      },
       {
         "date": "2026-08-07",
         "risk_category": "BAJO",
@@ -5194,7 +5226,7 @@
             "2026-08-08",
             "2026-08-09"
           ],
-          "category": "ALTO",
+          "category": "MEDIO",
           "complete": true,
           "missing_dates": [],
           "lambs": 1.9519
@@ -5203,11 +5235,11 @@
       },
       {
         "date": "2026-08-08",
-        "risk_category": "ALTO",
-        "display_risk_category": "ALTO",
-        "ci_min": 1100.0,
-        "ci_max": 1200.0,
-        "ci_interval": "1100–1200",
+        "risk_category": "BAJO",
+        "display_risk_category": "BAJO",
+        "ci_min": 900.0,
+        "ci_max": 1000.0,
+        "ci_interval": "900–1000",
         "ci_unit": "kJ/m2/h",
         "confidence": 0.9,
         "requires_review": false,
@@ -5249,11 +5281,9 @@
             "2026-08-09",
             "2026-08-10"
           ],
-          "category": "RIESGO_72H_INCOMPLETO",
-          "complete": false,
-          "missing_dates": [
-            "2026-08-10"
-          ],
+          "category": "MEDIO",
+          "complete": true,
+          "missing_dates": [],
           "lambs": 1.8832
         },
         "cross_status": "OK"
@@ -5306,11 +5336,123 @@
             "2026-08-10",
             "2026-08-11"
           ],
+          "category": "MEDIO",
+          "complete": true,
+          "missing_dates": [],
+          "lambs": 1.8489
+        },
+        "cross_status": "OK"
+      },
+      {
+        "date": "2026-08-10",
+        "risk_category": "MEDIO",
+        "display_risk_category": "MEDIO",
+        "ci_min": 1000.0,
+        "ci_max": 1100.0,
+        "ci_interval": "1000–1100",
+        "ci_unit": "kJ/m2/h",
+        "confidence": 0.9,
+        "requires_review": false,
+        "automatic_use": true,
+        "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260810.png",
+        "expected_ewes_lambing": 1.3075,
+        "expected_lambs_born": 1.8489,
+        "lambs_in_first_72h_on_date": 5.581,
+        "modules": [
+          {
+            "code": "INTENSIVO",
+            "name": "INTENSIVO",
+            "expected_ewes_lambing": 1.3075,
+            "expected_lambs_born": 1.8489,
+            "lambs_in_first_72h_on_date": 5.581,
+            "in_lambing_window": true
+          },
+          {
+            "code": "DOHNE",
+            "name": "MERINO DOHNE",
+            "expected_ewes_lambing": null,
+            "expected_lambs_born": null,
+            "lambs_in_first_72h_on_date": 0.0,
+            "in_lambing_window": false
+          },
+          {
+            "code": "MA",
+            "name": "MERINO AUSTRALIANO",
+            "expected_ewes_lambing": null,
+            "expected_lambs_born": null,
+            "lambs_in_first_72h_on_date": 0.0,
+            "in_lambing_window": false
+          }
+        ],
+        "cohort_72h": {
+          "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
+          "window": [
+            "2026-08-10",
+            "2026-08-11",
+            "2026-08-12"
+          ],
           "category": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-10",
-            "2026-08-11"
+            "2026-08-12"
+          ],
+          "lambs": 1.8489
+        },
+        "cross_status": "OK"
+      },
+      {
+        "date": "2026-08-11",
+        "risk_category": "MEDIO",
+        "display_risk_category": "MEDIO",
+        "ci_min": 1000.0,
+        "ci_max": 1100.0,
+        "ci_interval": "1000–1100",
+        "ci_unit": "kJ/m2/h",
+        "confidence": 0.9,
+        "requires_review": false,
+        "automatic_use": true,
+        "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260811.png",
+        "expected_ewes_lambing": 1.3075,
+        "expected_lambs_born": 1.8489,
+        "lambs_in_first_72h_on_date": 5.5467,
+        "modules": [
+          {
+            "code": "INTENSIVO",
+            "name": "INTENSIVO",
+            "expected_ewes_lambing": 1.3075,
+            "expected_lambs_born": 1.8489,
+            "lambs_in_first_72h_on_date": 5.5467,
+            "in_lambing_window": true
+          },
+          {
+            "code": "DOHNE",
+            "name": "MERINO DOHNE",
+            "expected_ewes_lambing": null,
+            "expected_lambs_born": null,
+            "lambs_in_first_72h_on_date": 0.0,
+            "in_lambing_window": false
+          },
+          {
+            "code": "MA",
+            "name": "MERINO AUSTRALIANO",
+            "expected_ewes_lambing": null,
+            "expected_lambs_born": null,
+            "lambs_in_first_72h_on_date": 0.0,
+            "in_lambing_window": false
+          }
+        ],
+        "cohort_72h": {
+          "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
+          "window": [
+            "2026-08-11",
+            "2026-08-12",
+            "2026-08-13"
+          ],
+          "category": "RIESGO_72H_INCOMPLETO",
+          "complete": false,
+          "missing_dates": [
+            "2026-08-12",
+            "2026-08-13"
           ],
           "lambs": 1.8489
         },
@@ -5324,18 +5466,18 @@
       "rule": "Cada cohorte prevista para el día D se evalúa en D, D+1 y D+2 y se cuenta una sola vez bajo su categoría máxima.",
       "SIN_RIESGO": 0.0,
       "BAJO": 0.0,
-      "MEDIO": 2.1923,
-      "ALTO": 4.0068,
+      "MEDIO": 5.684,
+      "ALTO": 0.0,
       "CRITICO": 0.0,
-      "RIESGO_72H_INCOMPLETO": 3.7321,
+      "RIESGO_72H_INCOMPLETO": 3.6978,
       "by_module": {
         "INTENSIVO": {
           "SIN_RIESGO": 0.0,
           "BAJO": 0.0,
-          "MEDIO": 2.1923,
-          "ALTO": 4.0068,
+          "MEDIO": 5.684,
+          "ALTO": 0.0,
           "CRITICO": 0.0,
-          "RIESGO_72H_INCOMPLETO": 3.7321
+          "RIESGO_72H_INCOMPLETO": 3.6978
         },
         "DOHNE": {
           "SIN_RIESGO": 0.0,
@@ -5362,22 +5504,12 @@
     }
   },
   "chill_pariciones_summary": {
-    "source": "INIA-GRAS interpretada por Zapia",
-    "analyzed_at": "2026-08-05T22:10:56.929394+00:00",
-    "imported_at": "2026-08-05T19:27:28.765522-03:00",
+    "source": "INIA-GRAS, clasificación determinística propia",
+    "analyzed_at": "2026-08-07T15:15:23.255996+00:00",
+    "imported_at": "2026-08-07T13:25:13.236192-03:00",
     "update_status": "ACTUALIZADO",
     "product_cross_status": "OK",
     "dates": [
-      {
-        "date": "2026-08-05",
-        "risk_category": "SIN_RIESGO",
-        "confidence": 0.9
-      },
-      {
-        "date": "2026-08-06",
-        "risk_category": "MEDIO",
-        "confidence": 0.9
-      },
       {
         "date": "2026-08-07",
         "risk_category": "BAJO",
@@ -5385,17 +5517,49 @@
       },
       {
         "date": "2026-08-08",
-        "risk_category": "ALTO",
+        "risk_category": "BAJO",
         "confidence": 0.9
       },
       {
         "date": "2026-08-09",
         "risk_category": "MEDIO",
         "confidence": 0.9
+      },
+      {
+        "date": "2026-08-10",
+        "risk_category": "MEDIO",
+        "confidence": 0.9
+      },
+      {
+        "date": "2026-08-11",
+        "risk_category": "MEDIO",
+        "confidence": 0.9
       }
     ]
   },
   "recent_records": [
+    {
+      "date": "2026-08-05",
+      "module_code": "INTENSIVO",
+      "event_type": "EWE_DEATH",
+      "event_label": "Muerte de oveja",
+      "quantity": 1,
+      "cause_code": "CAUSA_NO_DETERMINADA",
+      "cause_label": "Causa no determinada",
+      "validation_status": "CONFIRMED",
+      "source": "CONFIRMADO_LOCAL"
+    },
+    {
+      "date": "2026-08-05",
+      "module_code": "INTENSIVO",
+      "event_type": "LAMB_DEATH",
+      "event_label": "Muerte de cordero",
+      "quantity": 1,
+      "cause_code": "OTRA",
+      "cause_label": "Otra causa informada",
+      "validation_status": "CONFIRMED",
+      "source": "CONFIRMADO_LOCAL"
+    },
     {
       "date": "2026-08-01",
       "module_code": "INTENSIVO",
@@ -5417,6 +5581,20 @@
       "cause_label": "Causa no determinada",
       "validation_status": "CONFIRMED",
       "source": "ZAPIA_VALIDADO"
+    },
+    {
+      "date": "2026-07-26",
+      "module_code": "INTENSIVO",
+      "event_type": "LAMBING",
+      "event_label": "Parición",
+      "quantity": 1,
+      "ewes_lambed": 1,
+      "born_alive": null,
+      "stillborn": null,
+      "cause_code": null,
+      "cause_label": null,
+      "validation_status": "CONFIRMED",
+      "source": "MANUAL"
     },
     {
       "date": "2026-07-26",
@@ -5487,17 +5665,17 @@
   ],
   "automatic_provisional": {
     "notice": "Los datos pueden ajustarse si se recibe una corrección posterior.",
-    "pending_count": 2,
+    "pending_count": 0,
     "records": []
   },
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-08-06T19:13:15.164103Z",
+      "processed_at": "2026-08-08T02:29:20.097096Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-08-06T16:13:18.269671-03:00",
-    "pending_operations": 2,
+    "last_sync_at": "2026-08-07T23:29:24.079142-03:00",
+    "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
 }
