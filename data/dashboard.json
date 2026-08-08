@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-08T08:05:05.787107-03:00",
+  "generated_at": "2026-08-08T08:05:55.863104-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -28,7 +28,7 @@
       "unclassified": 3,
       "total": 4
     },
-    "generated_at": "2026-08-08T08:05:05.787107-03:00",
+    "generated_at": "2026-08-08T08:05:55.863104-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -3576,13 +3576,13 @@
         },
         {
           "key": "prolificacy",
-          "label": "Prolificidad (corderos esperados sobre preñadas)",
-          "value": 134.375,
+          "label": "Prolificidad",
+          "value": 1.3438,
           "numerator": 129,
           "denominator": 96,
           "denominator_label": "ovejas preñadas",
           "status": "OK",
-          "unit": "%"
+          "unit": "corderos por oveja preñada"
         },
         {
           "key": "marking_potential_pct_of_served",
@@ -3596,41 +3596,21 @@
         },
         {
           "key": "lamb_mortality_pct",
-          "label": "Mortalidad de corderos (muertos acumulados sobre nacidos estimados)",
+          "label": "Mortalidad de corderos (muertos acumulados sobre nacidos acumulados)",
           "value": 10.0,
           "numerator": 7,
           "denominator": 70,
-          "denominator_label": "corderos nacidos acumulados estimados",
-          "status": "OK",
-          "unit": "%"
-        },
-        {
-          "key": "lamb_survival_pct",
-          "label": "Sobrevivencia al último recuento (vivos contabilizados sobre nacidos estimados)",
-          "value": 90.0,
-          "numerator": 63,
-          "denominator": 70,
-          "denominator_label": "corderos nacidos acumulados estimados",
+          "denominator_label": "corderos nacidos acumulados",
           "status": "OK",
           "unit": "%"
         },
         {
           "key": "lamb_progress_pct",
-          "label": "Avance de corderos (nacidos estimados sobre esperados)",
+          "label": "Avance de corderos (nacidos acumulados sobre esperados)",
           "value": 54.2636,
           "numerator": 70,
           "denominator": 129,
           "denominator_label": "corderos esperados",
-          "status": "OK",
-          "unit": "%"
-        },
-        {
-          "key": "lambing_pct_of_served",
-          "label": "Parición (ovejas paridas sobre encarneradas)",
-          "value": 42.7184,
-          "numerator": 44,
-          "denominator": 103,
-          "denominator_label": "ovejas encarneradas",
           "status": "OK",
           "unit": "%"
         },
@@ -3718,13 +3698,13 @@
         },
         {
           "key": "prolificacy",
-          "label": "Prolificidad (corderos esperados sobre preñadas)",
-          "value": 125.0,
+          "label": "Prolificidad",
+          "value": 1.25,
           "numerator": 180,
           "denominator": 144,
           "denominator_label": "ovejas preñadas",
           "status": "OK",
-          "unit": "%"
+          "unit": "corderos por oveja preñada"
         },
         {
           "key": "marking_potential_pct_of_served",
@@ -3738,41 +3718,21 @@
         },
         {
           "key": "lamb_mortality_pct",
-          "label": "Mortalidad de corderos (muertos acumulados sobre nacidos estimados)",
+          "label": "Mortalidad de corderos (muertos acumulados sobre nacidos acumulados)",
           "value": null,
           "numerator": null,
           "denominator": null,
-          "denominator_label": "corderos nacidos acumulados estimados",
-          "status": "SIN_RECUENTO",
-          "unit": "%"
-        },
-        {
-          "key": "lamb_survival_pct",
-          "label": "Sobrevivencia al último recuento (vivos contabilizados sobre nacidos estimados)",
-          "value": null,
-          "numerator": null,
-          "denominator": null,
-          "denominator_label": "corderos nacidos acumulados estimados",
+          "denominator_label": "corderos nacidos acumulados",
           "status": "SIN_RECUENTO",
           "unit": "%"
         },
         {
           "key": "lamb_progress_pct",
-          "label": "Avance de corderos (nacidos estimados sobre esperados)",
+          "label": "Avance de corderos (nacidos acumulados sobre esperados)",
           "value": null,
           "numerator": null,
           "denominator": 180,
           "denominator_label": "corderos esperados",
-          "status": "SIN_RECUENTO",
-          "unit": "%"
-        },
-        {
-          "key": "lambing_pct_of_served",
-          "label": "Parición (ovejas paridas sobre encarneradas)",
-          "value": null,
-          "numerator": null,
-          "denominator": 155,
-          "denominator_label": "ovejas encarneradas",
           "status": "SIN_RECUENTO",
           "unit": "%"
         },
@@ -3860,13 +3820,13 @@
         },
         {
           "key": "prolificacy",
-          "label": "Prolificidad (corderos esperados sobre preñadas)",
-          "value": 113.1757,
+          "label": "Prolificidad",
+          "value": 1.1318,
           "numerator": 670,
           "denominator": 592,
           "denominator_label": "ovejas preñadas",
           "status": "OK",
-          "unit": "%"
+          "unit": "corderos por oveja preñada"
         },
         {
           "key": "marking_potential_pct_of_served",
@@ -3880,41 +3840,21 @@
         },
         {
           "key": "lamb_mortality_pct",
-          "label": "Mortalidad de corderos (muertos acumulados sobre nacidos estimados)",
+          "label": "Mortalidad de corderos (muertos acumulados sobre nacidos acumulados)",
           "value": null,
           "numerator": null,
           "denominator": null,
-          "denominator_label": "corderos nacidos acumulados estimados",
-          "status": "SIN_RECUENTO",
-          "unit": "%"
-        },
-        {
-          "key": "lamb_survival_pct",
-          "label": "Sobrevivencia al último recuento (vivos contabilizados sobre nacidos estimados)",
-          "value": null,
-          "numerator": null,
-          "denominator": null,
-          "denominator_label": "corderos nacidos acumulados estimados",
+          "denominator_label": "corderos nacidos acumulados",
           "status": "SIN_RECUENTO",
           "unit": "%"
         },
         {
           "key": "lamb_progress_pct",
-          "label": "Avance de corderos (nacidos estimados sobre esperados)",
+          "label": "Avance de corderos (nacidos acumulados sobre esperados)",
           "value": null,
           "numerator": null,
           "denominator": 670,
           "denominator_label": "corderos esperados",
-          "status": "SIN_RECUENTO",
-          "unit": "%"
-        },
-        {
-          "key": "lambing_pct_of_served",
-          "label": "Parición (ovejas paridas sobre encarneradas)",
-          "value": null,
-          "numerator": null,
-          "denominator": 630,
-          "denominator_label": "ovejas encarneradas",
           "status": "SIN_RECUENTO",
           "unit": "%"
         },
@@ -4003,13 +3943,13 @@
       },
       {
         "key": "prolificacy",
-        "label": "Prolificidad (corderos esperados sobre preñadas)",
-        "value": 117.6683,
+        "label": "Prolificidad",
+        "value": 1.1767,
         "numerator": 979,
         "denominator": 832,
         "denominator_label": "ovejas preñadas",
         "status": "OK",
-        "unit": "%"
+        "unit": "corderos por oveja preñada"
       },
       {
         "key": "marking_potential_pct_of_served",
@@ -4023,51 +3963,23 @@
       },
       {
         "key": "lamb_mortality_pct",
-        "label": "Mortalidad de corderos (muertos acumulados sobre nacidos estimados)",
+        "label": "Mortalidad de corderos (muertos acumulados sobre nacidos acumulados)",
         "value": 10.0,
         "numerator": 7,
         "denominator": 70,
-        "denominator_label": "corderos nacidos acumulados estimados",
-        "status": "OK",
-        "unit": "%"
-      },
-      {
-        "key": "lamb_survival_pct",
-        "label": "Sobrevivencia al último recuento (vivos contabilizados sobre nacidos estimados)",
-        "value": 90.0,
-        "numerator": 63,
-        "denominator": 70,
-        "denominator_label": "corderos nacidos acumulados estimados",
+        "denominator_label": "corderos nacidos acumulados",
         "status": "OK",
         "unit": "%"
       },
       {
         "key": "lamb_progress_pct",
-        "label": "Avance de corderos (nacidos estimados sobre esperados)",
+        "label": "Avance de corderos (nacidos acumulados sobre esperados)",
         "value": 7.1502,
         "numerator": 70,
         "denominator": 979,
         "denominator_label": "corderos esperados",
         "status": "OK",
         "unit": "%"
-      },
-      {
-        "key": "lambing_pct_of_served",
-        "label": "Parición (ovejas paridas sobre encarneradas)",
-        "value": null,
-        "numerator": null,
-        "denominator": 888,
-        "denominator_label": "ovejas encarneradas",
-        "status": "PARCIAL",
-        "unit": "%",
-        "reason": "Recuento parcial de lambed_ewes: informado en INTENSIVO y falta DOHNE, MA. Un total parcial no produce un indicador.",
-        "lots_included": [
-          "INTENSIVO"
-        ],
-        "lots_missing": [
-          "DOHNE",
-          "MA"
-        ]
       },
       {
         "key": "lambing_progress_pct",
@@ -5687,10 +5599,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-08-08T11:05:02.718376Z",
+      "processed_at": "2026-08-08T11:05:52.348817Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-08-08T08:05:05.787107-03:00",
+    "last_sync_at": "2026-08-08T08:05:55.863104-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
