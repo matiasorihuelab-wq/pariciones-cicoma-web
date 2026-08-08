@@ -2,12 +2,17 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-08T20:11:46.580967-03:00",
+  "generated_at": "2026-08-08T20:16:37.036983-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
-    "headline": "Hay archivos multimedia pendientes de revisión.",
+    "headline": "Hay un reporte pendiente de contabilizar.",
     "reasons": [
+      {
+        "code": "PENDING_EVENT",
+        "message": "Hay un reporte pendiente de contabilizar.",
+        "severity": "OJO"
+      },
       {
         "code": "PENDING_MEDIA",
         "message": "Hay archivos multimedia pendientes de revisión.",
@@ -20,15 +25,15 @@
       }
     ],
     "pending_actions": {
-      "reports": 0,
+      "reports": 1,
       "links": 0,
       "media": 1,
       "technical": 0,
       "packages": 0,
       "unclassified": 3,
-      "total": 4
+      "total": 5
     },
-    "generated_at": "2026-08-08T20:11:46.580967-03:00",
+    "generated_at": "2026-08-08T20:16:37.036983-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -5588,17 +5593,17 @@
   ],
   "automatic_provisional": {
     "notice": "Los datos pueden ajustarse si se recibe una corrección posterior.",
-    "pending_count": 0,
+    "pending_count": 1,
     "records": []
   },
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-08-08T23:11:43.532335Z",
+      "processed_at": "2026-08-08T23:16:33.968598Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-08-08T20:11:46.580967-03:00",
-    "pending_operations": 0,
+    "last_sync_at": "2026-08-08T20:16:37.036983-03:00",
+    "pending_operations": 1,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
 }
