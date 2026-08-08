@@ -646,10 +646,14 @@ h3 {
   font-size: 0.72rem;
 }
 
-/* Estados de ausencia: notablemente menores que los números */
+/* Estados de ausencia: notablemente menores que los números. Cada contexto
+ * con tipografía propia de número necesita su selector acá, o su regla más
+ * específica le gana a `.is-absent` y un «SIN REGISTROS» se dibuja a tamaño
+ * de cifra (en móvil desbordaba la tarjeta de Mortalidad). */
 .is-absent,
 .stat__value.is-absent,
 .lot-card__stats dd.is-absent,
+.mort-tile strong.is-absent,
 .control-grid dd.is-absent {
   font-size: 0.8rem;
   font-weight: 600;
@@ -974,6 +978,59 @@ h3 {
   font-variant-numeric: tabular-nums;
 }
 
+/* Sólo las cifras con detalle real son botones: se ven tocables y lo son. */
+.mort-tile--link {
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+
+.mort-tile--link:hover,
+.mort-tile--link:focus-visible {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+
+.mort-tile--link.is-active {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.mort-tile__hint {
+  color: var(--ink-500);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.mort-drawer__filter {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  margin: var(--s3) var(--s4) 0;
+  color: var(--ink-500);
+  font-size: 0.78rem;
+}
+
+.mort-drawer__all {
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--surface-2);
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.74rem;
+  padding: 2px 8px;
+}
+
+.mort-drawer__all:hover,
+.mort-drawer__all:focus-visible {
+  border-color: var(--accent);
+}
+
 .mort-drawer {
   border: 1px solid var(--border);
   border-radius: var(--r);
@@ -1111,15 +1168,9 @@ h3 {
   font-variant-numeric: tabular-nums;
 }
 
-.control-status {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--s3);
-  margin: var(--s4) 0 0;
-  color: var(--ink-500);
-  font-size: 0.82rem;
-}
+/* `.control-status` se eliminó con el bloque público «Control acumulado de
+ * campo». `.control-grid` NO se toca: la reutilizan el detalle del bloque de
+ * 72 h y el detalle diario de la curva. */
 
 /* --------------------------------------------------------------- footer --- */
 
@@ -1371,11 +1422,6 @@ h3 {
   background: var(--surface-2);
   color: var(--ink-600);
   font-size: 0.82rem;
-}
-
-.stat__note--basis {
-  color: var(--ink-400);
-  font-size: 0.68rem;
 }
 
 /* ------------------------------------------ hitos y observaciones (§5) --- */

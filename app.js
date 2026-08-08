@@ -36,6 +36,8 @@ const CHART_STATE = {};
 
 const integerFormatter = new Intl.NumberFormat("es-UY", { maximumFractionDigits: 0 });
 const decimalFormatter = new Intl.NumberFormat("es-UY", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+// Cocientes por animal (prolificidad): dos decimales. No se usa para porcentajes.
+const ratioFormatter = new Intl.NumberFormat("es-UY", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 function byId(id) {
   return document.getElementById(id);
@@ -487,93 +489,6 @@ function lotNames(codes) {
   return (codes || []).map((code) => LOT_LABEL[code] || code).join(", ");
 }
 
-// Presentación de un total observado estructurado (COMPLETE/PARTIAL/NOT_REPORTED).
-// Un total parcial se identifica con los lotes incluidos y los que faltan; los
-// lotes sin recuento nunca se muestran como cero.
-function totalDisplay(total) {
-  if (!total || total.status === "NOT_REPORTED" || total.value === null) {
-    return { value: "SIN REGISTROS", note: null, partial: false };
-  }
-  if (total.status === "PARTIAL") {
-    return {
-      value: formatInteger(total.value),
-      note: `registrado en ${lotNames(total.lots_included)} · falta ${lotNames(total.lots_missing)}`,
-      partial: true,
-    };
-  }
-  return { value: formatInteger(total.value), note: "los tres lotes informados", partial: false };
-}
-
-// Tarjeta de un acumulado registrado. La cobertura se comunica en la nota
-// discreta al pie de la tarjeta, NO con una etiqueta amarilla grande.
-function registeredCard(label, total, opts = {}) {
-  const shown = totalDisplay(total);
-  const cls = ["stat"];
-  if (opts.kpi) cls.push("stat--kpi");
-  if (opts.accent) cls.push("stat--accent");
-  const note = opts.note !== undefined ? opts.note : shown.note;
-  return `
-    <article class="${cls.join(" ")}">
-      <span class="stat__label">${escapeHtml(label)}</span>
-      <strong class="${valueClass("stat__value", shown.value)}">${escapeHtml(shown.value)}</strong>
-      ${note ? `<span class="stat__note">${escapeHtml(note)}</span>` : ""}
-    </article>`;
-}
-
-// Avance publicado por el backend: registrado / esperado, con su base.
-function progressCard(label, block, opts = {}) {
-  if (!block) return metricCard(label, "SIN REGISTROS");
-  const cls = ["stat"];
-  if (opts.kpi) cls.push("stat--kpi");
-  if (opts.accent) cls.push("stat--accent");
-  const value =
-    block.percent === null || block.percent === undefined ? "SIN REGISTROS" : formatPercent(block.percent);
-  const fraction =
-    block.registered === null || block.expected === null
-      ? null
-      : `${formatInteger(block.registered)} de ${formatInteger(block.expected)}`;
-  return `
-    <article class="${cls.join(" ")}">
-      <span class="stat__label">${escapeHtml(label)}</span>
-      <strong class="${valueClass("stat__value", value)}">${escapeHtml(value)}</strong>
-      ${fraction ? `<span class="stat__note">${escapeHtml(fraction)}</span>` : ""}
-      ${opts.hideBasis ? "" : `<span class="stat__note stat__note--basis">${escapeHtml(block.basis || "")}</span>`}
-    </article>`;
-}
-
-// Cantidad restante validada por el backend: el frontend nunca hace la resta.
-function remainingCard(label, remaining) {
-  if (!remaining) return metricCard(label, "SIN RECUENTO");
-  if (remaining.status === "OK") {
-    return metricCard(label, formatInteger(remaining.value));
-  }
-  const stateText =
-    remaining.status === "ERROR"
-      ? "ERROR"
-      : remaining.status === "PARCIAL"
-        ? "PARCIAL"
-        : remaining.status === "NO_INFORMADO"
-          ? "NO INFORMADO"
-          : "SIN RECUENTO";
-  return metricCard(label, stateText, remaining.reason || null);
-}
-
-// Restante estimado según los registros. Se muestra siempre con su base para
-// que no se confunda con un valor confirmado.
-function estimatedRemainingCard(label, block) {
-  if (!block) return metricCard(label, "SIN REGISTROS");
-  if (block.status === "OK" || block.status === "SEGUN_REGISTROS") {
-    return metricCard(label, formatInteger(block.value), block.basis || null);
-  }
-  const stateText =
-    block.status === "ERROR"
-      ? "ERROR"
-      : block.status === "NO_INFORMADO"
-        ? "NO INFORMADO"
-        : "SIN REGISTROS";
-  return metricCard(label, stateText, block.reason || block.basis || null);
-}
-
 // Tabla de indicadores productivos generados por el backend: nombre, valor,
 // numerador/denominador y estado. Nada se recalcula en JavaScript; un
 // indicador no calculable muestra su estado real, nunca cero.
@@ -592,12 +507,20 @@ function indicatorTable(items, caption) {
     SIN_RECUENTO: "SIN RECUENTO",
   };
   const stateText = (item) => STATE_TEXT[item.status] || "SIN RECUENTO";
+  // Un porcentaje se lee bien con un decimal (91,3 %). Un cociente por animal
+  // no: la prolificidad es 1,34 corderos por oveja preñada, y redondeada a
+  // 1,3 pierde justo la precisión que la vuelve útil para comparar lotes.
+  //
+  // El «%» acompaña al número porque sin él la cifra cambia de significado. La
+  // unidad de un cociente, en cambio, ya está dicha en el nombre del indicador
+  // —«Prolificidad»— y repetirla en la columna sólo alarga la celda. Sigue
+  // publicada en el contrato (`unit`) para quien la necesite.
   const fmtValue = (item) => {
     if (item.status !== "OK" || item.value === null || item.value === undefined) {
       return stateText(item);
     }
-    const value = decimalFormatter.format(item.value);
-    return item.unit === "%" ? `${value} %` : `${value} ${item.unit}`;
+    if (item.unit === "%") return `${decimalFormatter.format(item.value)} %`;
+    return ratioFormatter.format(item.value);
   };
   const fmtFraction = (item) => {
     const num = item.numerator === null || item.numerator === undefined ? "—" : formatNumberShort(item.numerator);
@@ -701,20 +624,43 @@ function lastPhysicalCountDate(module) {
 
 function distributionCard(lot) {
   const module = moduleByCode(lot.code);
+  // La ausencia se dice con palabras, no con un guión: la misma convención que
+  // el resto del tablero. Antes convivían en la MISMA tarjeta «SIN RECUENTO»
+  // (paridas, vivos) y «—» (muertes, avances, fechas), y el guión se pintaba
+  // como si fuera un valor. Cada celda usa el término canónico de SU dato: sin
+  // eventos es SIN REGISTROS, sin recuento es SIN RECUENTO, y lo que se deriva
+  // del recuento inexistente queda SIN CÁLCULO. Un cero conocido sigue siendo
+  // «0»: esto sólo cubre null.
+  const conPalabra = (value, formatter, ausente) =>
+    value === null || value === undefined ? ausente : formatter(value);
   const previsto = module ? formatInteger(module.ewe_counts.expected_to_lamb) : "—";
   const paridas = module ? absentOr(module.ewe_counts.counted_lambed, formatInteger) : "—";
   // El stock vivo y la reconstrucción son dos cifras distintas: la tarjeta
   // muestra las dos y no llama «nacidos» a los corderos que están vivos.
   const vivos = module ? absentOr(module.lamb_counts.current_stock_lambs, formatInteger) : "—";
-  const nacidos = module ? absentOr(module.lamb_counts.estimated_born_lambs, formatInteger) : "—";
-  const muertos = module ? formatInteger(module.mortality.lamb_deaths_accumulated) : "—";
-  const ovejasMuertas = module ? formatInteger(module.mortality.ewe_deaths_accumulated) : "—";
-  const progress = module ? formatPercent(module.ewe_counts.progress?.percent) : "—";
-  const lambProgress = module ? formatPercent(module.lamb_counts.progress?.percent) : "—";
-  const mortalityReportDate = formatDayMonthYear(lastMortalityReportDate(module));
-  const physicalCountDate = formatDayMonthYear(lastPhysicalCountDate(module));
+  const nacidos = module
+    ? conPalabra(module.lamb_counts.estimated_born_lambs, formatInteger, "SIN CÁLCULO")
+    : "—";
+  const muertos = module
+    ? conPalabra(module.mortality.lamb_deaths_accumulated, formatInteger, "SIN REGISTROS")
+    : "—";
+  const ovejasMuertas = module
+    ? conPalabra(module.mortality.ewe_deaths_accumulated, formatInteger, "SIN REGISTROS")
+    : "—";
+  const progress = module
+    ? conPalabra(module.ewe_counts.progress?.percent, formatPercent, "SIN RECUENTO")
+    : "—";
+  const lambProgress = module
+    ? conPalabra(module.lamb_counts.progress?.percent, formatPercent, "SIN CÁLCULO")
+    : "—";
+  const mortalityReportDate = conPalabra(
+    lastMortalityReportDate(module), formatDayMonthYear, "SIN REGISTROS",
+  );
+  const physicalCountDate = conPalabra(
+    lastPhysicalCountDate(module), formatDayMonthYear, "SIN RECUENTO",
+  );
   const bornEstimateHelp =
-    "Valor estimado a partir del último recuento físico de corderos vivos más las muertes acumuladas.";
+    "Último recuento físico de corderos vivos más todos los corderos muertos acumulados de la campaña.";
   const cell = (label, value, help = null) =>
     `<div><dt${help ? ` title="${escapeHtml(help)}"` : ""}>${escapeHtml(label)}${
       help ? `<span class="sr-only">. ${escapeHtml(help)}</span>` : ""
@@ -736,11 +682,11 @@ function distributionCard(lot) {
       <dl class="lot-card__dates">
         <div>
           <dt>Último reporte de mortandad:</dt>
-          <dd>${escapeHtml(mortalityReportDate)}</dd>
+          <dd class="${absentClass(mortalityReportDate)}">${escapeHtml(mortalityReportDate)}</dd>
         </div>
         <div>
           <dt>Último recuento:</dt>
-          <dd>${escapeHtml(physicalCountDate)}</dd>
+          <dd class="${absentClass(physicalCountDate)}">${escapeHtml(physicalCountDate)}</dd>
         </div>
       </dl>
     </a>`;
@@ -762,7 +708,13 @@ function milestoneLine(item) {
       pieces.push(`${formatInteger(item.counted_ewes_lambed)} ovejas paridas`);
     }
     if (item.counted_live_lambs !== null && item.counted_live_lambs !== undefined) {
-      pieces.push(`${formatInteger(item.counted_live_lambs)} corderos nacidos vivos`);
+      // «Contabilizados», no «nacidos»: un CONTROL_DE_CAMPO es un recuento
+      // FÍSICO de los animales vivos presentes ese día. No son nacimientos
+      // registrados uno por uno, y describirlos así prometía una trazabilidad
+      // individual que el recuento no tiene. El resto de los hitos —mortalidad,
+      // incidencias, inicio de parición— sí viene de eventos individuales y
+      // conserva su terminología: acá no se reemplaza nada en bloque.
+      pieces.push(`${formatInteger(item.counted_live_lambs)} corderos vivos contabilizados`);
     }
     if (pieces.length) text = `${title}: ${pieces.join(" y ")}`;
   } else if (item.quantity !== null && item.quantity !== undefined) {
@@ -894,18 +846,39 @@ function dayRelative(dateString) {
 
 /* --- B. Bloque OBSERVADO --------------------------------------------- */
 
+/* Único módulo habilitado para el bloque de 72 h.
+ *
+ * Decisión del responsable (2026-08-07): Merino Australiano es el ÚNICO lote
+ * que puede mostrarlo. Intensivo y Merino Dohne no lo muestran NUNCA, tengan o
+ * no registros diarios algún día.
+ *
+ * La condición anterior era sólo «¿hay filas?». Alcanzaba para que hoy ninguno
+ * lo dibujara, pero era demasiado genérica: el primer parte diario de Intensivo
+ * o de Dohne lo habría hecho aparecer sin que nadie lo decidiera. */
+const CHILL_72H_MODULE = "MA";
+
+/* Filas del bloque de 72 h: las del lote en foco Y del módulo habilitado.
+ *
+ * Las dos condiciones son necesarias y ninguna reemplaza a la otra:
+ *   - el módulo, porque la funcionalidad es exclusiva de Merino Australiano;
+ *   - las filas, porque el bloque cruza cada cordero con el riesgo climático de
+ *     los tres días siguientes a su nacimiento y para eso necesita la
+ *     distribución diaria. Un recuento acumulado dice cuántos hay, no cuándo
+ *     nacieron: sin distribución no hay nada que cruzar. */
+function chillObserved72hRows(state) {
+  return chillObservedRows(state).filter((row) => row.module_code === CHILL_72H_MODULE);
+}
+
+/* Nacimientos registrados y sus primeras 72 horas.
+ *
+ * Antes, sin filas, se dibujaba igual el título y dos avisos explicando que no
+ * había datos. Ocupaba una sección entera para decir que no tenía nada que
+ * decir. Ahora el bloque simplemente no existe salvo que Merino Australiano
+ * tenga registros diarios reales, y entonces se arma con esos datos. */
 function chillObservedSection(viewKey, state) {
   const observed = (DASH.chill_public || {}).observed || {};
-  const rows = chillObservedRows(state);
-  if (!rows.length) {
-    const messages = Array.isArray(observed.messages) ? observed.messages : [];
-    const notes = messages.length ? messages : ["Sin registros diarios de nacimientos para este lote."];
-    return `
-    <section class="chill-section chill-section--observed">
-      <h3 class="chill-section__title">${escapeHtml(observed.title || "")}</h3>
-      ${notes.map((text) => `<p class="empty-note">${escapeHtml(text)}</p>`).join("")}
-    </section>`;
-  }
+  const rows = chillObserved72hRows(state);
+  if (!rows.length) return "";
 
   // Visualización simple por fecha: altura proporcional a los nacidos y color
   // según el riesgo máximo de sus primeras 72 horas.
@@ -1231,6 +1204,10 @@ function renderLot(lot) {
     ? curve.expected_original[curve.expected_original.length - 1].date
     : null;
 
+  // Orden: primero la base del lote —de dónde sale todo lo demás—, después el
+  // avance, después la mortalidad, y al final los anexos. Los indicadores
+  // productivos van últimos: son la trazabilidad con numerador y denominador,
+  // no la lectura operativa.
   view.innerHTML = `
     <header class="view__head lot-head">
       <div>
@@ -1244,15 +1221,23 @@ function renderLot(lot) {
       </dl>
     </header>
 
+    <section class="panel panel--flat">
+      <div class="panel__head">
+        <div><p class="eyebrow">Base del lote</p><h2>Composición reproductiva</h2></div>
+        <p>Carga fetal confirmada de la base productiva vigente.</p>
+      </div>
+      ${lotEcografia(module)}
+    </section>
+
     <section class="panel">
-      <div class="panel__head"><h2>Recuentos registrados del lote</h2><p>${escapeHtml(DASH.overview.summary_label || "")}</p></div>
+      <div class="panel__head"><h2>Ovejas paridas y corderos registrados</h2><p>${escapeHtml(DASH.overview.summary_label || "")}</p></div>
       <div class="stat-grid">${lotCounts(module)}</div>
       ${lotCountsNote(module)}
     </section>
 
     <section class="panel">
-      <div class="panel__head"><h2>Indicadores productivos</h2><p>Generados por el sistema con numerador y denominador explícitos.</p></div>
-      ${indicatorTable(((DASH.productive_indicators || {}).by_module || {})[lot.code], `Indicadores de ${lot.name}`)}
+      <div class="panel__head"><h2>Mortalidad</h2>${mortalityHint(module)}</div>
+      ${lotMortality(lot, module)}
     </section>
 
     <section class="panel">
@@ -1263,31 +1248,18 @@ function renderLot(lot) {
       ${curvePanel(lot.section, lot.code)}
     </section>
 
-    ${servicesPanel(curve)}
-
-    ${milestonesPanel(lot.code)}
-
     <section class="panel">
       ${chillHead(lot.code)}
       ${chillPanel(lot.section, lot.code)}
     </section>
 
-    <section class="panel">
-      <div class="panel__head"><h2>Mortalidad</h2><p>Tocá una cifra para ver el detalle por evento.</p></div>
-      ${lotMortality(lot, module)}
-    </section>
+    ${servicesPanel(curve)}
+
+    ${milestonesPanel(lot.code)}
 
     <section class="panel">
-      <div class="panel__head"><h2>Control acumulado de campo</h2><p>Ovejas paridas: calculado desde los eventos frente al control informado.</p></div>
-      ${lotControl(module)}
-    </section>
-
-    <section class="panel panel--flat">
-      <div class="panel__head">
-        <div><p class="eyebrow">Ecografía</p><h2>Composición reproductiva</h2></div>
-        <p>Carga fetal confirmada de la base productiva vigente.</p>
-      </div>
-      ${lotEcografia(module)}
+      <div class="panel__head"><h2>Indicadores productivos</h2><p>Generados por el sistema con numerador y denominador explícitos.</p></div>
+      ${indicatorTable(((DASH.productive_indicators || {}).by_module || {})[lot.code], `Indicadores de ${lot.name}`)}
     </section>`;
 }
 
@@ -1310,62 +1282,114 @@ function lotEcografia(module) {
     <p class="chart-note">Preñadas = únicas + dobles + triples · Corderos esperados = únicas + 2×dobles + 3×triples.</p>`;
 }
 
+/* Las cuatro cifras que sólo viven acá. Todo lo demás que había en este panel
+ * —la base del lote, los porcentajes, la mortalidad, los nacidos muertos— ya
+ * estaba en su propio panel: repetirlo no agregaba información y hacía que
+ * ninguna posición fuera la autoritativa.
+ *
+ * El orden es la cadena de reconstrucción, y hay que poder leerla seguida:
+ *
+ *     corderos vivos contabilizados + corderos muertos acumulados
+ *       = corderos nacidos acumulados
+ *
+ * El recuento de vivos es una fotografía de su fecha: no se actualiza restando
+ * las muertes cargadas después, sólo lo reemplaza un recuento nuevo.
+ */
 function lotCounts(module) {
-  const iv = module.initial_values;
   const ec = module.ewe_counts;
   const lc = module.lamb_counts;
   const mort = module.mortality;
+
+  // --- ovejas paridas -----------------------------------------------------
   const paridas =
-    ec.counted_lambed === null
+    ec.counted_lambed === null || ec.counted_lambed === undefined
       ? "SIN RECUENTO"
       : `${formatInteger(ec.counted_lambed)} de ${formatInteger(ec.expected_to_lamb)}`;
-  // «Nacidos» es una ESTIMACIÓN: vivos contabilizados más las bajas
-  // acumuladas hasta la fecha del recuento.
-  const nacidos =
-    lc.estimated_born_lambs === null || lc.estimated_born_lambs === undefined
-      ? "SIN CÁLCULO"
-      : `${formatInteger(lc.estimated_born_lambs)} de ${formatInteger(lc.expected_total)}`;
-  const ratio = (block, label) => {
-    if (!block || block.value === null || block.value === undefined) {
-      return metricCard(label, "SIN CÁLCULO", block && block.missing ? `Falta: ${block.missing}` : null);
-    }
-    return metricCard(
-      label,
-      formatPercent(block.value),
-      `${formatInteger(block.numerator)} / ${formatInteger(block.denominator)}`,
-    );
-  };
-  // Los restantes vienen validados por el backend (valor/estado/motivo):
-  // el frontend no resta y jamás muestra un restante negativo.
+  const paridasNota = notaDeAvance(
+    ec.progress,
+    ec.remaining,
+    "por parir",
+    "Ovejas paridas sobre ovejas previstas a parir.",
+  );
+
+  // --- recuento físico de corderos vivos ----------------------------------
   const stock =
     lc.current_stock_lambs === null || lc.current_stock_lambs === undefined
       ? "SIN RECUENTO"
       : formatInteger(lc.current_stock_lambs);
+  // La fecha va en la tarjeta, no sólo al pie: es lo que convierte el número en
+  // una fotografía fechada en vez de un stock vivo continuo.
   const stockNota = lc.current_stock_count_date
-    ? `Último recuento: ${formatDate(lc.current_stock_count_date)}`
+    ? `Recuento del ${formatDayMonthYear(lc.current_stock_count_date)}`
     : null;
+
+  // --- muertes acumuladas de cordero --------------------------------------
+  // `mortality.lamb_deaths_accumulated` es `null` cuando el lote no tiene
+  // registros; `lamb_counts.accumulated_lamb_deaths` vale 0 en ese mismo caso.
+  // Son campos distintos: acá se usa el primero para no mostrar «0 muertes»
+  // donde lo que pasa es que nadie informó nada todavía.
+  const muertos =
+    mort.lamb_deaths_accumulated === null || mort.lamb_deaths_accumulated === undefined
+      ? "SIN REGISTROS"
+      : formatInteger(mort.lamb_deaths_accumulated);
+
+  // --- reconstrucción de nacidos ------------------------------------------
+  const nacidos =
+    lc.estimated_born_lambs === null || lc.estimated_born_lambs === undefined
+      ? "SIN CÁLCULO"
+      : `${formatInteger(lc.estimated_born_lambs)} de ${formatInteger(lc.expected_total)}`;
+  const nacidosNota = notaDeNacidos(lc);
+
   return [
-    metricCard("Encarneradas", formatInteger(iv.served)),
-    metricCard("Preñadas", formatInteger(iv.expected_to_lamb)),
-    metricCard("Corderos esperados", formatInteger(iv.expected_lambs)),
-    metricCard("Ovejas paridas registradas", paridas),
-    // 1 · lo efectivamente contado en la recorrida
+    metricCard("Ovejas paridas registradas", paridas, paridasNota),
     metricCard(lc.current_stock_label || "Corderos vivos contabilizados", stock, stockNota),
-    // 2 · bajas acumuladas
-    metricCard("Corderos muertos acumulados", formatInteger(mort.lamb_deaths_accumulated)),
-    // 3 · reconstrucción
-    metricCard("Corderos nacidos acumulados estimados", nacidos, lc.estimated_born_basis),
-    // 4 · restantes
-    remainingCard("Ovejas restantes", ec.remaining),
-    estimatedRemainingCard("Corderos restantes estimados", lc.remaining_estimated),
-    // 5, 6 y 7 · avance, mortalidad y sobrevivencia, con numerador/denominador
-    progressCard("Avance de ovejas paridas", ec.progress, { hideBasis: true }),
-    ratio(lc.lamb_progress_ratio, "Avance de corderos"),
-    ratio(lc.lamb_mortality_ratio, "Mortalidad de corderos"),
-    ratio(lc.lamb_survival_ratio, "Sobrevivencia actual"),
-    metricCard("Nacidos muertos al parto", lc.stillborn === null || lc.stillborn === undefined ? "NO INFORMADO" : formatInteger(lc.stillborn)),
-    metricCard("Muertes de oveja", formatInteger(mort.ewe_deaths_accumulated)),
+    metricCard("Corderos muertos acumulados", muertos),
+    metricCard("Corderos nacidos acumulados", nacidos, nacidosNota),
   ].join("");
+}
+
+/* Porcentaje y restantes como NOTA, no como tarjetas propias: son la misma
+ * cifra dicha de otra forma. Los dos vienen validados por el backend —el
+ * frontend no resta ni calcula porcentajes— y un restante nunca se muestra si
+ * el backend no lo dio por bueno. */
+function notaDeAvance(progress, remaining, sufijo, respaldo) {
+  const partes = [];
+  if (progress && progress.percent !== null && progress.percent !== undefined) {
+    partes.push(formatPercent(progress.percent));
+  }
+  if (remaining && remaining.value !== null && remaining.value !== undefined) {
+    partes.push(`faltan ${formatInteger(remaining.value)} ${sufijo}`);
+  }
+  return partes.length ? partes.join(" · ") : respaldo;
+}
+
+/* La nota hace visible la cadena que produjo el número:
+ *
+ *     último recuento físico de vivos + TODAS las muertes de la campaña
+ *
+ * No es una estimación ni una conjetura: el recuento es un dato de campo y las
+ * muertes son eventos registrados. Es el acumulado operativo con los datos
+ * disponibles. */
+function notaDeNacidos(lc) {
+  if (lc.estimated_born_lambs === null || lc.estimated_born_lambs === undefined) {
+    return lc.estimated_born_basis || null;
+  }
+  const partes = [];
+  if (lc.current_stock_lambs !== null && lc.current_stock_lambs !== undefined) {
+    partes.push(
+      `${formatInteger(lc.current_stock_lambs)} vivos + ` +
+        `${formatInteger(lc.accumulated_lamb_deaths)} muertos`,
+    );
+  }
+  const avance = lc.lamb_progress_ratio;
+  if (avance && avance.value !== null && avance.value !== undefined) {
+    partes.push(formatPercent(avance.value));
+  }
+  const restantes = lc.remaining_estimated;
+  if (restantes && restantes.value !== null && restantes.value !== undefined) {
+    partes.push(`faltarían ${formatInteger(restantes.value)}`);
+  }
+  return partes.length ? partes.join(" · ") : null;
 }
 
 function lotCountsNote(module) {
@@ -1374,11 +1398,11 @@ function lotCountsNote(module) {
   const fecha = lc.current_stock_count_date ? formatDate(lc.current_stock_count_date) : "—";
   return `<p class="chart-note">${escapeHtml(
     `Corderos vivos contabilizados el ${fecha}: ${formatInteger(lc.current_stock_lambs)}. ` +
-      `Ese número es el del recuento y no cambia con las muertes cargadas después: ` +
-      `sólo lo reemplaza un recuento nuevo. ` +
-      `Sumándole ${formatInteger(lc.accumulated_lamb_deaths)} corderos muertos acumulados, ` +
-      `se estiman ${formatInteger(lc.estimated_born_lambs)} corderos nacidos acumulados. ` +
-      `Es una estimación, no un total exacto.`,
+      `Ese valor corresponde al último recuento físico y se mantiene hasta que ` +
+      `se realice un nuevo recuento. ` +
+      `Sumándole los ${formatInteger(lc.accumulated_lamb_deaths)} corderos muertos ` +
+      `acumulados de la campaña, se registran ` +
+      `${formatInteger(lc.estimated_born_lambs)} corderos nacidos acumulados.`,
   )}</p>`;
 }
 
@@ -1453,12 +1477,41 @@ function chartState(viewKey, lotCode) {
   return CHART_STATE[viewKey];
 }
 
+/* Qué series tiene REALMENTE el lote, para no ofrecer interruptores vacíos.
+ *
+ * Un lote que todavía no parió mostraba los cinco controles con los cinco
+ * marcados, y cuatro no encendían nada: la curva ajustada nace de un recuento
+ * de campo, la evolución real de partos registrados y las dos mortalidades de
+ * eventos informados. Prometían una serie que no existe.
+ *
+ * La disponibilidad se pregunta a `chartData` —la misma fuente que dibuja— pero
+ * SIN el filtro de fechas: los controles dependen del lote, no del rango que el
+ * usuario esté mirando. Si dependieran del rango, acotar las fechas haría
+ * desaparecer el interruptor y ya no habría forma de volver a encender la
+ * serie. Y al reutilizar `chartData` no se duplica ninguna regla: los puntos de
+ * control acumulados cuentan como «observada» porque es ese interruptor el que
+ * los dibuja.
+ *
+ * No hay ningún código de lote acá: cuando aparezcan los datos, aparece el
+ * control solo. */
+function seriesDisponibles(state) {
+  const data = chartData({ ...state, from: "", to: "" });
+  const hayMuertes = (animal) => data.mortality.some((row) => row.animal_type === animal);
+  return {
+    adjusted: data.adjusted.size > 0,
+    observed: data.observed.size > 0 || data.checkpoints.length > 0,
+    lamb: hayMuertes("CORDERO"),
+    ewe: hayMuertes("OVEJA"),
+  };
+}
+
 function curvePanel(viewKey, lotCode) {
   const curves = DASH.lambing_curves || {};
   if (!Array.isArray(curves.lots) || !curves.lots.length) {
     return `<p class="empty-note">SIN CURVA CARGADA — el gráfico se habilita cuando exista curva de partos.</p>`;
   }
   const state = chartState(viewKey, lotCode);
+  const hay = seriesDisponibles(state);
   const lotOptions = lotCode
     ? ""
     : `
@@ -1493,10 +1546,10 @@ function curvePanel(viewKey, lotCode) {
     </div>
     <div class="chart-toggles" role="group" aria-label="Series visibles">
       ${toggle(viewKey, "series", "original", "Curva prevista original", state.series.original, CURVE_COLORS.original)}
-      ${toggle(viewKey, "series", "adjusted", "Curva prevista ajustada", state.series.adjusted, CURVE_COLORS.adjusted)}
-      ${toggle(viewKey, "series", "observed", "Evolución real observada", state.series.observed, CURVE_COLORS.observed)}
-      ${toggle(viewKey, "mortality", "lamb", "Mortalidad de corderos", state.mortality.lamb, CURVE_COLORS.lambDeath)}
-      ${toggle(viewKey, "mortality", "ewe", "Mortalidad de ovejas", state.mortality.ewe, CURVE_COLORS.eweDeath)}
+      ${hay.adjusted ? toggle(viewKey, "series", "adjusted", "Curva prevista ajustada", state.series.adjusted, CURVE_COLORS.adjusted) : ""}
+      ${hay.observed ? toggle(viewKey, "series", "observed", "Evolución real observada", state.series.observed, CURVE_COLORS.observed) : ""}
+      ${hay.lamb ? toggle(viewKey, "mortality", "lamb", "Mortalidad de corderos", state.mortality.lamb, CURVE_COLORS.lambDeath) : ""}
+      ${hay.ewe ? toggle(viewKey, "mortality", "ewe", "Mortalidad de ovejas", state.mortality.ewe, CURVE_COLORS.eweDeath) : ""}
     </div>
     <div class="chart-wrap chart-wrap--integral">
       <canvas id="curve-${escapeHtml(viewKey)}" role="img" aria-label="Curva prevista, evolución real y mortalidad"></canvas>
@@ -1552,11 +1605,15 @@ function chartData(state) {
       if (state.lot !== "TOTAL") bucket.cumulative = point.cumulative_pct;
       observed.set(point.date, bucket);
     }
-    if (state.lot === "INTENSIVO") {
-      for (const point of lot.observed_checkpoints || []) {
-        if (!inRange(point.date)) continue;
-        checkpoints.push({ ...point, module_code: lot.code });
-      }
+    // Un punto de control acumulado se dibuja para CUALQUIER lote que lo traiga
+    // en el contrato. Antes había un candado por nombre —`state.lot ===
+    // "INTENSIVO"`— que era el único lote con recuento cuando se escribió: si
+    // Merino Dohne o Merino Australiano informaban uno, el punto quedaba
+    // invisible sin que nada lo avisara. Lo decide el DATO, no el lote.
+    for (const point of lot.observed_checkpoints || []) {
+      // Sin fecha no hay dónde ubicarlo: no se inventa una columna.
+      if (!point.date || !inRange(point.date)) continue;
+      checkpoints.push({ ...point, module_code: lot.code });
     }
   }
   // Acumulado del total: viene consolidado del backend (no se suman %).
@@ -1802,10 +1859,15 @@ function drawIntegralChart(viewKey, lotCode) {
 
 function curveNote(state, data) {
   const notes = [];
+  // La nota describe lo que se ve. Sin mortalidad no hay barras inferiores que
+  // explicar, así que esa frase se omite en vez de anunciar un elemento
+  // ausente. No se la reemplaza por un «sin datos»: lo que no está, no se
+  // nombra.
+  const barras = data.mortality.length ? " Barras inferiores: mortalidad diaria informada." : "";
   if (state.mode === "cumulative") {
-    notes.push("Líneas: avance acumulado de cada serie. Barras inferiores: mortalidad diaria informada.");
+    notes.push(`Líneas: avance acumulado de cada serie.${barras}`);
   } else {
-    notes.push("Barras: valores diarios de cada serie. Barras inferiores: mortalidad diaria informada.");
+    notes.push(`Barras: valores diarios de cada serie.${barras}`);
   }
   for (const point of data.checkpoints) {
     notes.push(
@@ -2027,15 +2089,61 @@ function renderDayDetail(viewKey, state, data) {
     }`;
 }
 
+/* El subtítulo sólo promete la interacción cuando existe: sin eventos en el
+ * detalle, ninguna cifra es tocable y decirlo sería mentir. */
+function mortalityHint(module) {
+  const detail = Array.isArray(module.mortality.detail) ? module.mortality.detail : [];
+  if (!detail.length) return "";
+  return "<p>Tocá una cifra para ver el detalle por evento.</p>";
+}
+
+/* Un dato que nadie informó se dice con palabras, no con un guión.
+ *
+ * Antes cada tarjeta resolvía la ausencia por su cuenta: las de muertes y la
+ * del último parte caían en el «—» que devuelven `formatInteger`/`formatDate`,
+ * y sólo la de nacidos muertos recibía un texto propio. Quedaban dos
+ * convenciones en el mismo bloque, y encima los guiones se pintaban con el
+ * estilo de un valor real, porque la clase de ausencia se pasaba a mano.
+ *
+ * Se ve únicamente en lotes sin registros —Merino Dohne y Merino Australiano
+ * hoy—; en Intensivo, con todas las cifras cargadas, era invisible. */
+function mortValue(value, formatter, absent) {
+  return value === null || value === undefined ? absent : formatter(value);
+}
+
+/* Una cifra sólo se ofrece como tocable si hay eventos de ESE animal en el
+ * detalle. Antes el panel prometía «Tocá una cifra» sin que ninguna lo fuera:
+ * el detalle existía, pero únicamente se abría desde el desplegable. */
+function mortTile(label, value, opts = {}) {
+  // La clase la decide el propio texto: `absentClass` ya reconoce «NO
+  // INFORMADO» y cualquier «SIN …», así que ninguna tarjeta puede olvidarse de
+  // marcar su ausencia ni marcarla cuando tiene dato.
+  const cuerpo =
+    `<span>${escapeHtml(label)}</span>` +
+    `<strong class="${absentClass(value)}">${escapeHtml(value)}</strong>`;
+  if (!opts.filter) return `<div class="mort-tile">${cuerpo}</div>`;
+  return (
+    `<button type="button" class="mort-tile mort-tile--link" data-mort="${escapeHtml(opts.filter)}"` +
+    ` aria-label="${escapeHtml(`Ver el detalle de ${label.toLowerCase()}`)}">${cuerpo}` +
+    `<span class="mort-tile__hint">Ver detalle</span></button>`
+  );
+}
+
 function lotMortality(lot, module) {
   const mort = module.mortality;
   const detail = Array.isArray(mort.detail) ? mort.detail : [];
+  const conEventos = (tipo) => detail.some((event) => event.animal_type === tipo);
+  const stillborn = module.lamb_counts.stillborn;
   const summary = `
     <div class="mort-summary">
-      <div class="mort-tile"><span>Muertes de cordero</span><strong>${escapeHtml(formatInteger(mort.lamb_deaths_accumulated))}</strong></div>
-      <div class="mort-tile"><span>Muertes de oveja</span><strong>${escapeHtml(formatInteger(mort.ewe_deaths_accumulated))}</strong></div>
-      <div class="mort-tile"><span>Nacidos muertos al parto</span><strong class="${absentClass(module.lamb_counts.stillborn === null ? "NO INFORMADO" : "")}">${escapeHtml(module.lamb_counts.stillborn === null || module.lamb_counts.stillborn === undefined ? "NO INFORMADO" : formatInteger(module.lamb_counts.stillborn))}</strong></div>
-      <div class="mort-tile"><span>Último parte</span><strong>${escapeHtml(formatDate(mort.last_report_date))}</strong></div>
+      ${mortTile("Muertes de cordero", mortValue(mort.lamb_deaths_accumulated, formatInteger, "SIN REGISTROS"), {
+        filter: conEventos("CORDERO") ? "CORDERO" : null,
+      })}
+      ${mortTile("Muertes de oveja", mortValue(mort.ewe_deaths_accumulated, formatInteger, "SIN REGISTROS"), {
+        filter: conEventos("OVEJA") ? "OVEJA" : null,
+      })}
+      ${mortTile("Nacidos muertos al parto", mortValue(stillborn, formatInteger, "NO INFORMADO"))}
+      ${mortTile("Último parte", mortValue(mort.last_report_date, formatDate, "SIN REGISTROS"))}
     </div>`;
 
   if (!detail.length) {
@@ -2059,7 +2167,7 @@ function lotMortality(lot, module) {
       const animal = event.animal_type === "OVEJA" ? "Oveja" : "Cordero";
       const cases = Array.isArray(event.cases) ? event.cases : [];
       const parent = `
-        <tr>
+        <tr data-animal="${escapeHtml(event.animal_type || "")}">
           <td>${escapeHtml(formatDate(event.date))}</td>
           <td>${animal}</td>
           <td class="num">${escapeHtml(formatInteger(event.quantity))}</td>
@@ -2069,7 +2177,7 @@ function lotMortality(lot, module) {
         .map((detailCase) => {
           const a = detailCase.animal_type === "OVEJA" ? "oveja" : "cordero";
           return `
-        <tr class="mort-case">
+        <tr class="mort-case" data-animal="${escapeHtml(event.animal_type || "")}">
           <td aria-hidden="true"></td>
           <td colspan="3"><span class="mort-case__mark">detalle</span> ${escapeHtml(formatInteger(detailCase.quantity))} ${a} · ${escapeHtml(detailCase.cause_label)} ${mediaChip(detailCase)}</td>
         </tr>`;
@@ -2078,7 +2186,7 @@ function lotMortality(lot, module) {
       const undescribed = Number(event.undescribed_quantity) || 0;
       const undescribedRow =
         cases.length && undescribed > 0
-          ? `<tr class="mort-case"><td aria-hidden="true"></td><td colspan="3"><span class="mort-case__mark">detalle</span> ${escapeHtml(formatInteger(undescribed))} sin detalle individual de causa.</td></tr>`
+          ? `<tr class="mort-case" data-animal="${escapeHtml(event.animal_type || "")}"><td aria-hidden="true"></td><td colspan="3"><span class="mort-case__mark">detalle</span> ${escapeHtml(formatInteger(undescribed))} sin detalle individual de causa.</td></tr>`
           : "";
       return parent + caseRows + undescribedRow;
     })
@@ -2090,8 +2198,12 @@ function lotMortality(lot, module) {
 
   return `
     ${summary}
-    <details class="mort-drawer">
+    <details class="mort-drawer" data-mort-drawer>
       <summary>Ver detalle de mortalidad (${detail.length})</summary>
+      <p class="mort-drawer__filter" hidden>
+        Mostrando sólo <b data-mort-filter-label></b>.
+        <button type="button" class="mort-drawer__all">Ver todo</button>
+      </p>
       <div class="table-wrap">
         <table class="data-table">
           <thead><tr><th>Fecha</th><th>Animal</th><th class="num">Cant.</th><th>Causa</th></tr></thead>
@@ -2102,31 +2214,22 @@ function lotMortality(lot, module) {
     </details>`;
 }
 
-function lotControl(module) {
-  const control = module.field_control;
-  if (!control) return `<p class="empty-note">SIN CONTROL DISPONIBLE.</p>`;
-  const statusLabels = {
-    COINCIDE: "Coincide",
-    DIFERENCIA: "Diferencia",
-    SIN_CONTROL_RECIENTE: "Sin control reciente",
-    CONCILIADO: "Conciliado",
-  };
-  const tone = control.status === "DIFERENCIA" ? "ojo" : control.status === "COINCIDE" || control.status === "CONCILIADO" ? "ok" : "pending";
-  const calculated = control.calculated === null ? "SIN RECUENTO" : formatInteger(control.calculated);
-  const reported =
-    control.reported_accumulated === null ? "SIN CONTROL" : formatInteger(control.reported_accumulated);
-  const difference = control.difference === null ? "—" : formatInteger(control.difference);
-  const lastControl = formatDate(control.reported_date);
-  return `
-    <div class="control-grid">
-      <div><dt>Calculado desde eventos</dt><dd class="${absentClass(calculated)}">${escapeHtml(calculated)}</dd></div>
-      <div><dt>Control informado</dt><dd class="${absentClass(reported)}">${escapeHtml(reported)}</dd></div>
-      <div><dt>Diferencia</dt><dd class="${absentClass(difference)}">${escapeHtml(difference)}</dd></div>
-      <div><dt>Último control</dt><dd class="${absentClass(lastControl)}">${escapeHtml(lastControl)}</dd></div>
-    </div>
-    <p class="control-status"><span class="tag tag--${tone}">${escapeHtml(statusLabels[control.status] || control.status)}</span>
-    El acumulado informado es un control, no un incremento diario.</p>`;
-}
+/* El panel de conciliación de ovejas paridas se retiró de la vista PÚBLICA
+ * (responsable, 2026-08-07). Enfrentaba el acumulado derivado de los eventos
+ * con el recuento informado desde el campo, su diferencia y la fecha del
+ * último control: material de conciliación interna, no lectura operativa del
+ * tablero. Ni su encabezado ni sus rótulos sobreviven en este archivo —hay
+ * pruebas que lo verifican por texto—, así que acá se lo nombra por lo que
+ * hacía, no por cómo se titulaba.
+ *
+ * Se retiró la PRESENTACIÓN, no el dato. La conciliación sigue entera y viva:
+ *   - `build_field_controls` la calcula (services/field_controls.py);
+ *   - se publica en la raíz del contrato como `field_controls` y por módulo
+ *     como `field_control` (services/web_dashboard.py), y `assertDashboard`
+ *     sigue exigiendo esa clave;
+ *   - alimenta el motivo de salud FIELD_CONTROL_DIFF (services/system_status.py)
+ *     y `lastPhysicalCountDate`, que fecha el recuento en la tarjeta del lote.
+ * Sigue disponible para gestión y auditoría; sólo dejó de dibujarse acá. */
 
 /* --------------------------------------------------------- navegación --- */
 
@@ -2170,12 +2273,44 @@ function initRouter() {
     const button = event.target && event.target.closest && event.target.closest("[data-obsdate]");
     if (button) onChillControl({ target: button });
   });
+  document.addEventListener("click", onMortalityTile);
   let resizeFrame = null;
   window.addEventListener("resize", () => {
     if (resizeFrame) cancelAnimationFrame(resizeFrame);
     resizeFrame = requestAnimationFrame(() => drawSectionCharts(currentSection()));
   });
   showSection(currentSection());
+}
+
+/* Tocar una cifra de mortalidad abre el detalle que YA existe y lo acota a ese
+ * animal. No se dibuja una tabla nueva ni se recalcula nada: sólo se ocultan
+ * las filas del otro animal, y «Ver todo» las devuelve. */
+function onMortalityTile(event) {
+  const target = event.target && event.target.closest && event.target.closest("[data-mort]");
+  const volver = event.target && event.target.closest && event.target.closest(".mort-drawer__all");
+  if (!target && !volver) return;
+
+  const panel = (target || volver).closest("section");
+  const drawer = panel && panel.querySelector("[data-mort-drawer]");
+  if (!drawer) return;
+
+  const tabla = drawer.querySelector("tbody");
+  const aviso = drawer.querySelector(".mort-drawer__filter");
+  const etiqueta = drawer.querySelector("[data-mort-filter-label]");
+  const filtro = volver ? null : target.dataset.mort;
+
+  drawer.open = true;
+  for (const fila of tabla ? tabla.querySelectorAll("tr") : []) {
+    fila.hidden = Boolean(filtro) && fila.dataset.animal !== filtro;
+  }
+  if (aviso) aviso.hidden = !filtro;
+  if (etiqueta && filtro) {
+    etiqueta.textContent = filtro === "OVEJA" ? "muertes de oveja" : "muertes de cordero";
+  }
+  for (const tile of panel.querySelectorAll("[data-mort]")) {
+    tile.classList.toggle("is-active", Boolean(filtro) && tile.dataset.mort === filtro);
+  }
+  if (!volver) drawer.scrollIntoView({ block: "nearest" });
 }
 
 function onChartFilterChange(event) {
