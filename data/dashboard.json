@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-10T08:55:31.032481-03:00",
+  "generated_at": "2026-08-10T08:59:39.634902-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -23,7 +23,7 @@
       "unclassified": 2,
       "total": 3
     },
-    "generated_at": "2026-08-10T08:55:31.032481-03:00",
+    "generated_at": "2026-08-10T08:59:39.634902-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -4722,8 +4722,8 @@
         "pct": 22.2
       },
       {
-        "cause_code": "OTRA",
-        "cause_label": "Otra causa informada",
+        "cause_code": "PREDACION_CARANCHO",
+        "cause_label": "Predación por carancho",
         "count": 1,
         "pct": 11.1
       }
@@ -4734,10 +4734,10 @@
     {
       "date": "2026-07-19",
       "module_code": "INTENSIVO",
-      "animal_type": "OVEJA",
+      "animal_type": "CORDERO",
       "quantity": 1,
-      "cause_code": "CAUSA_NO_DETERMINADA",
-      "cause_label": "Causa no determinada",
+      "cause_code": "MALFORMACION_CONGENITA",
+      "cause_label": "Malformación congénita",
       "death_moment": "NO_DETERMINADO",
       "death_moment_label": "Momento no determinado",
       "service_code": null,
@@ -4746,10 +4746,10 @@
     {
       "date": "2026-07-19",
       "module_code": "INTENSIVO",
-      "animal_type": "CORDERO",
+      "animal_type": "OVEJA",
       "quantity": 1,
-      "cause_code": "MALFORMACION_CONGENITA",
-      "cause_label": "Malformación congénita",
+      "cause_code": "CAUSA_NO_DETERMINADA",
+      "cause_label": "Causa no determinada",
       "death_moment": "NO_DETERMINADO",
       "death_moment_label": "Momento no determinado",
       "service_code": null,
@@ -4771,9 +4771,21 @@
       "date": "2026-07-24",
       "module_code": "INTENSIVO",
       "animal_type": "CORDERO",
-      "quantity": 2,
+      "quantity": 1,
       "cause_code": "CAUSA_NO_DETERMINADA",
       "cause_label": "Causa no determinada",
+      "death_moment": "NO_DETERMINADO",
+      "death_moment_label": "Momento no determinado",
+      "service_code": null,
+      "service_label": "Sin servicio asociado"
+    },
+    {
+      "date": "2026-07-24",
+      "module_code": "INTENSIVO",
+      "animal_type": "CORDERO",
+      "quantity": 1,
+      "cause_code": "PREDACION_CARANCHO",
+      "cause_label": "Predación por carancho",
       "death_moment": "NO_DETERMINADO",
       "death_moment_label": "Momento no determinado",
       "service_code": null,
@@ -4806,7 +4818,7 @@
     {
       "date": "2026-08-05",
       "module_code": "INTENSIVO",
-      "animal_type": "OVEJA",
+      "animal_type": "CORDERO",
       "quantity": 1,
       "cause_code": "CAUSA_NO_DETERMINADA",
       "cause_label": "Causa no determinada",
@@ -4818,10 +4830,10 @@
     {
       "date": "2026-08-05",
       "module_code": "INTENSIVO",
-      "animal_type": "CORDERO",
+      "animal_type": "OVEJA",
       "quantity": 1,
-      "cause_code": "OTRA",
-      "cause_label": "Otra causa informada",
+      "cause_code": "CAUSA_NO_DETERMINADA",
+      "cause_label": "Causa no determinada",
       "death_moment": "NO_DETERMINADO",
       "death_moment_label": "Momento no determinado",
       "service_code": null,
@@ -5603,10 +5615,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-08-10T11:55:27.941922Z",
+      "processed_at": "2026-08-10T11:56:24.274256Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-08-10T08:55:31.032481-03:00",
+    "last_sync_at": "2026-08-10T08:59:39.634902-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
