@@ -1030,13 +1030,41 @@ const ERROR_REASON = {
   PUBLICATION_ERROR: "No se pudo publicar el resultado",
 };
 
+//: Reintentos de la lectura del contrato del Chill. El publicador hace varios
+//: commits por ciclo y CADA uno dispara una reconstrucción de GitHub Pages, así
+//: que una petición puede caer justo en el cambio de despliegue y fallar sola:
+//: el `?t=` la vuelve única, con lo que nunca la sirve la caché de borde y
+//: siempre depende del origen. Tres intentos cortos cubren esa ventana. No
+//: enmascaran nada: si los tres fallan, se dice, y el motivo queda a la vista.
+const CHILL_FETCH_ATTEMPTS = 3;
+const CHILL_RETRY_DELAY_MS = 400;
+
+//: Motivo del último fallo de carga, para no confundir «no pudimos leerlo» con
+//: «no hay pronóstico»: son cosas distintas y sólo la primera es un problema
+//: nuestro.
+let CHILL_INDEX_ERROR = null;
+
+function chillRetryPause(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function loadChillIndex() {
-  try {
-    const response = await fetch(`${CHILL_INDEX_URL}?t=${Date.now()}`, { cache: "no-store" });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    CHILL_INDEX = await response.json();
-  } catch (_error) {
-    CHILL_INDEX = null;
+  CHILL_INDEX = null;
+  CHILL_INDEX_ERROR = null;
+  for (let intento = 1; intento <= CHILL_FETCH_ATTEMPTS; intento += 1) {
+    try {
+      const response = await fetch(`${CHILL_INDEX_URL}?t=${Date.now()}`, { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      CHILL_INDEX = await response.json();
+      CHILL_INDEX_ERROR = null;
+      return;
+    } catch (error) {
+      // El error se conserva y se registra en consola: un fallo silencioso deja
+      // el bloque en rojo sin ninguna pista de por qué.
+      CHILL_INDEX_ERROR = error;
+      console.error(`Chill Index: intento ${intento}/${CHILL_FETCH_ATTEMPTS} falló`, error);
+      if (intento < CHILL_FETCH_ATTEMPTS) await chillRetryPause(CHILL_RETRY_DELAY_MS * intento);
+    }
   }
 }
 
@@ -1126,11 +1154,16 @@ function chillFreshness(d) {
 
 function chillIndexSection() {
   if (!CHILL_INDEX) {
+    // El motivo se muestra: sin él, un 404 de despliegue y una caída de red se
+    // ven iguales, y nadie puede saber si el dato existe.
+    const motivo = CHILL_INDEX_ERROR
+      ? ` (${CHILL_INDEX_ERROR.message || String(CHILL_INDEX_ERROR)})`
+      : "";
     return `
       <section class="chill-index" aria-labelledby="chill-index-title">
         <h3 id="chill-index-title">Chill Index diario</h3>
         <p class="chill-index__status chill-index__status--bad">
-          No se pudo leer el pronóstico publicado por el pipeline.
+          No se pudo leer el pronóstico publicado por el pipeline${escapeHtml(motivo)}.
         </p>
       </section>`;
   }
