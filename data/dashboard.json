@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-10T01:54:26.844396-03:00",
+  "generated_at": "2026-08-10T02:13:03.961601-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -23,7 +23,7 @@
       "unclassified": 2,
       "total": 3
     },
-    "generated_at": "2026-08-10T01:54:26.844396-03:00",
+    "generated_at": "2026-08-10T02:13:03.961601-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -5007,7 +5007,7 @@
     "analyzed_at": "2026-08-09T14:59:48.824364+00:00",
     "forecast_run_date": "2026-08-08",
     "imported_at": "2026-08-09T12:01:22.930329-03:00",
-    "forecast_age_hours": 11.16,
+    "forecast_age_hours": 14.22,
     "update_status": {
       "state": "ACTUALIZADO",
       "stale": false,
@@ -5027,9 +5027,9 @@
           "name": "INTENSIVO",
           "expected_to_lamb": 96,
           "expected_lambs": 129,
-          "counted_lambed": 1,
-          "counted_lambs": 1,
-          "last_count_date": "2026-07-26"
+          "counted_lambed": null,
+          "counted_lambs": null,
+          "last_count_date": null
         },
         {
           "code": "DOHNE",
@@ -5053,8 +5053,8 @@
       "totals": {
         "expected_to_lamb": 832,
         "expected_lambs": 979,
-        "counted_lambed": 1,
-        "counted_lambs": 1
+        "counted_lambed": null,
+        "counted_lambs": null
       }
     },
     "module_options": [
@@ -5562,7 +5562,7 @@
       "processed_at": "2026-08-10T04:39:31.439042Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-08-10T01:54:26.844396-03:00",
+    "last_sync_at": "2026-08-10T02:13:03.961601-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
