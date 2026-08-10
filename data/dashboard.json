@@ -2,33 +2,22 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-10T11:15:40.354713-03:00",
+  "generated_at": "2026-08-10T11:20:26.761027-03:00",
   "max_age_minutes": 60,
   "system_health": {
-    "state": "OJO",
-    "headline": "Hay un reporte pendiente de contabilizar.",
-    "reasons": [
-      {
-        "code": "PENDING_EVENT",
-        "message": "Hay un reporte pendiente de contabilizar.",
-        "severity": "OJO"
-      },
-      {
-        "code": "PENDING_MEDIA",
-        "message": "Hay archivos multimedia pendientes de revisión.",
-        "severity": "OJO"
-      }
-    ],
+    "state": "OK",
+    "headline": "Todo actualizado",
+    "reasons": [],
     "pending_actions": {
-      "reports": 1,
+      "reports": 0,
       "links": 0,
-      "media": 1,
+      "media": 0,
       "technical": 0,
       "packages": 0,
       "unclassified": 2,
-      "total": 4
+      "total": 2
     },
-    "generated_at": "2026-08-10T11:15:40.354713-03:00",
+    "generated_at": "2026-08-10T11:20:26.761027-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -102,9 +91,9 @@
     "current_stock_label": "Corderos vivos contabilizados",
     "accumulated_lamb_deaths_total": 7,
     "ewe_progress": {
-      "registered": 44,
+      "registered": 82,
       "expected": 832,
-      "percent": 5.3,
+      "percent": 9.9,
       "status": "SEGUN_REGISTROS",
       "is_estimate": true,
       "basis": "Ovejas paridas registradas sobre ovejas previstas a parir."
@@ -118,7 +107,7 @@
       "basis": "Corderos nacidos acumulados estimados sobre corderos esperados."
     },
     "remaining_ewes_estimated": {
-      "value": 788,
+      "value": 750,
       "status": "SEGUN_REGISTROS",
       "is_estimate": true,
       "basis": "Ovejas previstas a parir menos ovejas paridas registradas.",
@@ -132,7 +121,7 @@
       "reason": null
     },
     "lambed_ewes": {
-      "value": 44,
+      "value": 82,
       "status": "PARTIAL",
       "lots_included": [
         "INTENSIVO"
@@ -212,40 +201,40 @@
       },
       "ewe_counts": {
         "expected_to_lamb": 96,
-        "counted_lambed": 44,
+        "counted_lambed": 82,
         "counted_from_events": null,
         "count_source": "RECUENTO_ACUMULADO",
         "reconciliation": {
-          "value": 44,
+          "value": 82,
           "status": "OK",
           "basis": "ACCUMULATED",
           "subject": "ovejas paridas",
-          "baseline_value": 44,
-          "baseline_date": "2026-07-27",
+          "baseline_value": 82,
+          "baseline_date": "2026-08-07",
           "daily_after_total": 0,
           "daily_after_count": 0,
           "daily_included_total": null,
           "daily_included_count": 0,
           "reconciliation": "El recuento acumulado es la línea base de su fecha: sólo se suman los partes diarios posteriores. Los anteriores ya están contenidos en él."
         },
-        "progress_percent": 45.8,
+        "progress_percent": 85.4,
         "progress": {
-          "registered": 44,
+          "registered": 82,
           "expected": 96,
-          "percent": 45.8,
+          "percent": 85.4,
           "status": "OK",
           "is_estimate": false,
           "basis": "Ovejas paridas registradas sobre ovejas previstas a parir."
         },
-        "last_count_date": "2026-07-27",
+        "last_count_date": "2026-08-07",
         "remaining": {
-          "value": 52,
+          "value": 14,
           "status": "OK",
           "reason": null,
           "compatible": true
         },
         "remaining_estimated": {
-          "value": 52,
+          "value": 14,
           "status": "OK",
           "is_estimate": false,
           "basis": "Ovejas previstas a parir menos ovejas paridas registradas.",
@@ -274,10 +263,6 @@
           {
             "count": 108,
             "counted_on": "2026-08-05"
-          },
-          {
-            "count": 63,
-            "counted_on": "2026-07-27"
           }
         ],
         "lamb_progress_ratio": {
@@ -319,7 +304,7 @@
           "is_estimate": true,
           "basis": "Corderos nacidos acumulados estimados sobre corderos esperados."
         },
-        "last_count_date": "2026-07-27",
+        "last_count_date": "2026-08-07",
         "remaining": {
           "value": null,
           "status": "SIN_RECUENTO",
@@ -357,8 +342,8 @@
             "quantity": 1,
             "cause_code": "OTRA",
             "cause_label": "Otra causa informada",
-            "has_private_media": false,
-            "private_media_count": 0,
+            "has_private_media": true,
+            "private_media_count": 1,
             "cases": [
               {
                 "case_number": 1,
@@ -453,8 +438,8 @@
       "field_control": {
         "variable": "ovejas_paridas",
         "calculated": null,
-        "reported_accumulated": 44,
-        "reported_date": "2026-07-27",
+        "reported_accumulated": 82,
+        "reported_date": "2026-08-07",
         "difference": null,
         "status": "DATOS_PARCIALES"
       }
@@ -1277,412 +1262,412 @@
             "date": "2026-07-12",
             "expected_ewes": 0.0393,
             "expected_lambs": 0.0528,
-            "daily_pct": 0.0004213216635451699,
-            "cumulative_pct": 0.0004213216635451699
+            "daily_pct": 0.0004517402344221461,
+            "cumulative_pct": 0.0004517402344221461
           },
           {
             "date": "2026-07-13",
             "expected_ewes": 0.1179,
             "expected_lambs": 0.1585,
-            "daily_pct": 0.0012639649906355096,
-            "cumulative_pct": 0.0016852866541806795
+            "daily_pct": 0.0013552207032664382,
+            "cumulative_pct": 0.0018069609376885844
           },
           {
             "date": "2026-07-14",
             "expected_ewes": 0.2359,
             "expected_lambs": 0.317,
-            "daily_pct": 0.002529002046572661,
-            "cumulative_pct": 0.00421428870075334
+            "daily_pct": 0.0027115908727782254,
+            "cumulative_pct": 0.00451855181046681
           },
           {
             "date": "2026-07-15",
             "expected_ewes": 0.3931,
             "expected_lambs": 0.5283,
-            "daily_pct": 0.00421428870075334,
-            "cumulative_pct": 0.00842857740150668
+            "daily_pct": 0.00451855181046681,
+            "cumulative_pct": 0.00903710362093362
           },
           {
             "date": "2026-07-16",
             "expected_ewes": 1.1794,
             "expected_lambs": 1.5848,
-            "daily_pct": 0.012643938167561663,
-            "cumulative_pct": 0.021072515569068345
+            "daily_pct": 0.013556804897645778,
+            "cumulative_pct": 0.022593908518579398
           },
           {
             "date": "2026-07-17",
             "expected_ewes": 1.9656,
             "expected_lambs": 2.6413,
-            "daily_pct": 0.021072515569068345,
-            "cumulative_pct": 0.04214503113813669
+            "daily_pct": 0.022593908518579398,
+            "cumulative_pct": 0.045187817037158795
           },
           {
             "date": "2026-07-18",
             "expected_ewes": 2.7518,
             "expected_lambs": 3.6978,
-            "daily_pct": 0.029501092970575023,
-            "cumulative_pct": 0.07164612410871171
+            "daily_pct": 0.03163101213951302,
+            "cumulative_pct": 0.07681882917667181
           },
           {
             "date": "2026-07-19",
             "expected_ewes": 3.5381,
             "expected_lambs": 4.7543,
-            "daily_pct": 0.03793074243738335,
-            "cumulative_pct": 0.10957686654609505
+            "daily_pct": 0.04066926522669199,
+            "cumulative_pct": 0.1174880944033638
           },
           {
             "date": "2026-07-20",
             "expected_ewes": 3.6953,
             "expected_lambs": 4.9656,
-            "daily_pct": 0.039616029091564024,
-            "cumulative_pct": 0.14919289563765908
+            "daily_pct": 0.04247622616438057,
+            "cumulative_pct": 0.15996432056774437
           },
           {
             "date": "2026-07-21",
             "expected_ewes": 3.8133,
             "expected_lambs": 5.1241,
-            "daily_pct": 0.04088106614750118,
-            "cumulative_pct": 0.19007396178516026
+            "daily_pct": 0.04383259633389236,
+            "cumulative_pct": 0.20379691690163673
           },
           {
             "date": "2026-07-22",
             "expected_ewes": 3.8919,
             "expected_lambs": 5.2297,
-            "daily_pct": 0.04172370947459152,
-            "cumulative_pct": 0.2317976712597518
+            "daily_pct": 0.04473607680273665,
+            "cumulative_pct": 0.24853299370437337
           },
           {
             "date": "2026-07-23",
             "expected_ewes": 3.9313,
             "expected_lambs": 5.2823,
-            "daily_pct": 0.042146103203438326,
-            "cumulative_pct": 0.2739437744631901
+            "daily_pct": 0.04518896650340414,
+            "cumulative_pct": 0.2937219602077775
           },
           {
             "date": "2026-07-24",
             "expected_ewes": 3.9312,
             "expected_lambs": 5.2826,
-            "daily_pct": 0.04214503113813669,
-            "cumulative_pct": 0.3160888056013268
+            "daily_pct": 0.045187817037158795,
+            "cumulative_pct": 0.3389097772449363
           },
           {
             "date": "2026-07-25",
             "expected_ewes": 3.9312,
             "expected_lambs": 5.2826,
-            "daily_pct": 0.04214503113813669,
-            "cumulative_pct": 0.35823383673946346
+            "daily_pct": 0.045187817037158795,
+            "cumulative_pct": 0.3840975942820951
           },
           {
             "date": "2026-07-26",
             "expected_ewes": 3.9312,
             "expected_lambs": 5.2826,
-            "daily_pct": 0.04214503113813669,
-            "cumulative_pct": 0.4003788678776002
+            "daily_pct": 0.045187817037158795,
+            "cumulative_pct": 0.4292854113192539
           },
           {
             "date": "2026-07-27",
             "expected_ewes": 3.9312,
             "expected_lambs": 5.2826,
-            "daily_pct": 0.04214503113813669,
-            "cumulative_pct": 0.44252389901573685
+            "daily_pct": 0.045187817037158795,
+            "cumulative_pct": 0.4744732283564127
           },
           {
             "date": "2026-07-28",
-            "expected_ewes": 3.7356,
+            "expected_ewes": 3.9312,
             "expected_lambs": 5.2826,
-            "daily_pct": 0.040048071408125614,
-            "cumulative_pct": 0.48257197042386246
+            "daily_pct": 0.045187817037158795,
+            "cumulative_pct": 0.5196610453935715
           },
           {
             "date": "2026-07-29",
-            "expected_ewes": 3.7114,
+            "expected_ewes": 3.9057,
             "expected_lambs": 5.2482,
-            "daily_pct": 0.039788631605128334,
-            "cumulative_pct": 0.5223606020289908
+            "daily_pct": 0.04489470314459481,
+            "cumulative_pct": 0.5645557485381663
           },
           {
             "date": "2026-07-30",
-            "expected_ewes": 3.6627,
+            "expected_ewes": 3.8545,
             "expected_lambs": 5.1795,
-            "daily_pct": 0.03926653580322885,
-            "cumulative_pct": 0.5616271378322196
+            "daily_pct": 0.04430617642697613,
+            "cumulative_pct": 0.6088619249651425
           },
           {
             "date": "2026-07-31",
-            "expected_ewes": 3.59,
+            "expected_ewes": 3.7779,
             "expected_lambs": 5.0765,
-            "daily_pct": 0.038487144328935366,
-            "cumulative_pct": 0.600114282161155
+            "daily_pct": 0.04342568528303882,
+            "cumulative_pct": 0.6522876102481813
           },
           {
             "date": "2026-08-01",
-            "expected_ewes": 3.4928,
+            "expected_ewes": 3.6757,
             "expected_lambs": 4.9392,
-            "daily_pct": 0.03744509685573968,
-            "cumulative_pct": 0.6375593790168946
+            "daily_pct": 0.04225093078029217,
+            "cumulative_pct": 0.6945385410284735
           },
           {
             "date": "2026-08-02",
-            "expected_ewes": 3.0072,
+            "expected_ewes": 3.1646,
             "expected_lambs": 4.2525,
-            "daily_pct": 0.032239147750967805,
-            "cumulative_pct": 0.6697985267678624
+            "daily_pct": 0.036376008800313574,
+            "cumulative_pct": 0.730914549828787
           },
           {
             "date": "2026-08-03",
-            "expected_ewes": 2.5216,
+            "expected_ewes": 2.6536,
             "expected_lambs": 3.5657,
-            "daily_pct": 0.02703319864619594,
-            "cumulative_pct": 0.6968317254140585
+            "daily_pct": 0.030502236286580327,
+            "cumulative_pct": 0.7614167861153673
           },
           {
             "date": "2026-08-04",
-            "expected_ewes": 2.0359,
+            "expected_ewes": 2.1425,
             "expected_lambs": 2.879,
-            "daily_pct": 0.021826177476122425,
-            "cumulative_pct": 0.7186579028901808
+            "daily_pct": 0.02462731430660173,
+            "cumulative_pct": 0.786044100421969
           },
           {
             "date": "2026-08-05",
-            "expected_ewes": 1.5502,
+            "expected_ewes": 1.6314,
             "expected_lambs": 2.1923,
-            "daily_pct": 0.016619156306048915,
-            "cumulative_pct": 0.7352770591962298
+            "daily_pct": 0.01875239232662313,
+            "cumulative_pct": 0.8047964927485922
           },
           {
             "date": "2026-08-06",
-            "expected_ewes": 1.4531,
+            "expected_ewes": 1.5292,
             "expected_lambs": 2.0549,
-            "daily_pct": 0.015578180898154869,
-            "cumulative_pct": 0.7508552400943846
+            "daily_pct": 0.017577637823876485,
+            "cumulative_pct": 0.8223741305724687
           },
           {
             "date": "2026-08-07",
-            "expected_ewes": 1.3803,
+            "expected_ewes": 1.4526,
             "expected_lambs": 1.9519,
-            "daily_pct": 0.014797717358559745,
-            "cumulative_pct": 0.7656529574529444
+            "daily_pct": 0.01669714667993917,
+            "cumulative_pct": 0.8390712772524078
           },
           {
             "date": "2026-08-08",
-            "expected_ewes": 1.3318,
+            "expected_ewes": 0.853,
             "expected_lambs": 1.8832,
-            "daily_pct": 0.014277765687263543,
-            "cumulative_pct": 0.779930723140208
+            "daily_pct": 0.009804947072826732,
+            "cumulative_pct": 0.8488762243252346
           },
           {
             "date": "2026-08-09",
-            "expected_ewes": 1.3075,
+            "expected_ewes": 0.8374,
             "expected_lambs": 1.8489,
-            "daily_pct": 0.01401725381896462,
-            "cumulative_pct": 0.7939479769591725
+            "daily_pct": 0.009625630338552293,
+            "cumulative_pct": 0.8585018546637869
           },
           {
             "date": "2026-08-10",
-            "expected_ewes": 1.3075,
+            "expected_ewes": 0.8374,
             "expected_lambs": 1.8489,
-            "daily_pct": 0.01401725381896462,
-            "cumulative_pct": 0.8079652307781372
+            "daily_pct": 0.009625630338552293,
+            "cumulative_pct": 0.8681274850023392
           },
           {
             "date": "2026-08-11",
-            "expected_ewes": 1.3075,
+            "expected_ewes": 0.8374,
             "expected_lambs": 1.8489,
-            "daily_pct": 0.01401725381896462,
-            "cumulative_pct": 0.8219824845971018
+            "daily_pct": 0.009625630338552293,
+            "cumulative_pct": 0.8777531153408915
           },
           {
             "date": "2026-08-12",
-            "expected_ewes": 1.3075,
+            "expected_ewes": 0.8374,
             "expected_lambs": 1.8489,
-            "daily_pct": 0.01401725381896462,
-            "cumulative_pct": 0.8359997384160665
+            "daily_pct": 0.009625630338552293,
+            "cumulative_pct": 0.8873787456794437
           },
           {
             "date": "2026-08-13",
-            "expected_ewes": 1.3075,
+            "expected_ewes": 0.8374,
             "expected_lambs": 1.8489,
-            "daily_pct": 0.01401725381896462,
-            "cumulative_pct": 0.850016992235031
+            "daily_pct": 0.009625630338552293,
+            "cumulative_pct": 0.8970043760179961
           },
           {
             "date": "2026-08-14",
-            "expected_ewes": 1.3075,
+            "expected_ewes": 0.8374,
             "expected_lambs": 1.8489,
-            "daily_pct": 0.01401725381896462,
-            "cumulative_pct": 0.8640342460539956
+            "daily_pct": 0.009625630338552293,
+            "cumulative_pct": 0.9066300063565483
           },
           {
             "date": "2026-08-15",
-            "expected_ewes": 1.299,
+            "expected_ewes": 0.832,
             "expected_lambs": 1.8369,
-            "daily_pct": 0.01392612826832508,
-            "cumulative_pct": 0.8779603743223208
+            "daily_pct": 0.009563559161303449,
+            "cumulative_pct": 0.9161935655178518
           },
           {
             "date": "2026-08-16",
-            "expected_ewes": 1.282,
+            "expected_ewes": 0.8211,
             "expected_lambs": 1.8128,
-            "daily_pct": 0.013743877167045998,
-            "cumulative_pct": 0.8917042514893667
+            "daily_pct": 0.00943826734056041,
+            "cumulative_pct": 0.9256318328584122
           },
           {
             "date": "2026-08-17",
-            "expected_ewes": 1.2565,
+            "expected_ewes": 0.8048,
             "expected_lambs": 1.7768,
-            "daily_pct": 0.013470500515127378,
-            "cumulative_pct": 0.905174752004494
+            "daily_pct": 0.009250904342568528,
+            "cumulative_pct": 0.9348827372009807
           },
           {
             "date": "2026-08-18",
-            "expected_ewes": 1.2225,
+            "expected_ewes": 0.783,
             "expected_lambs": 1.7287,
-            "daily_pct": 0.013105998312569216,
-            "cumulative_pct": 0.9182807503170634
+            "daily_pct": 0.009000320701082452,
+            "cumulative_pct": 0.9438830579020632
           },
           {
             "date": "2026-08-19",
-            "expected_ewes": 1.0525,
+            "expected_ewes": 0.6741,
             "expected_lambs": 1.4884,
-            "daily_pct": 0.011283487299778404,
-            "cumulative_pct": 0.9295642376168417
+            "daily_pct": 0.007748551959897421,
+            "cumulative_pct": 0.9516316098619606
           },
           {
             "date": "2026-08-20",
-            "expected_ewes": 0.8825,
+            "expected_ewes": 0.5652,
             "expected_lambs": 1.248,
-            "daily_pct": 0.009460976286987593,
-            "cumulative_pct": 0.9390252139038293
+            "daily_pct": 0.006496783218712391,
+            "cumulative_pct": 0.958128393080673
           },
           {
             "date": "2026-08-21",
-            "expected_ewes": 0.7126,
+            "expected_ewes": 0.4564,
             "expected_lambs": 1.0076,
-            "daily_pct": 0.007639537339498423,
-            "cumulative_pct": 0.9466647512433277
+            "daily_pct": 0.005246163943772709,
+            "cumulative_pct": 0.9633745570244457
           },
           {
             "date": "2026-08-22",
-            "expected_ewes": 0.5426,
+            "expected_ewes": 0.3475,
             "expected_lambs": 0.7673,
-            "daily_pct": 0.005817026326707613,
-            "cumulative_pct": 0.9524817775700354
+            "daily_pct": 0.003994395202587679,
+            "cumulative_pct": 0.9673689522270333
           },
           {
             "date": "2026-08-23",
-            "expected_ewes": 0.5086,
+            "expected_ewes": 0.3257,
             "expected_lambs": 0.7192,
-            "daily_pct": 0.0054525241241494505,
-            "cumulative_pct": 0.9579343016941848
+            "daily_pct": 0.0037438115611016023,
+            "cumulative_pct": 0.9711127637881349
           },
           {
             "date": "2026-08-24",
-            "expected_ewes": 0.4831,
+            "expected_ewes": 0.3094,
             "expected_lambs": 0.6832,
-            "daily_pct": 0.0051791474722308285,
-            "cumulative_pct": 0.9631134491664156
+            "daily_pct": 0.00355644856310972,
+            "cumulative_pct": 0.9746692123512447
           },
           {
             "date": "2026-08-25",
-            "expected_ewes": 0.4661,
+            "expected_ewes": 0.2985,
             "expected_lambs": 0.6591,
-            "daily_pct": 0.004996896370951747,
-            "cumulative_pct": 0.9681103455373674
+            "daily_pct": 0.003431156742366682,
+            "cumulative_pct": 0.9781003690936114
           },
           {
             "date": "2026-08-26",
-            "expected_ewes": 0.4576,
+            "expected_ewes": 0.2931,
             "expected_lambs": 0.6471,
-            "daily_pct": 0.0049057708203122065,
-            "cumulative_pct": 0.9730161163576796
+            "daily_pct": 0.0033690855651178375,
+            "cumulative_pct": 0.9814694546587293
           },
           {
             "date": "2026-08-27",
-            "expected_ewes": 0.4531,
+            "expected_ewes": 0.2902,
             "expected_lambs": 0.6406,
-            "daily_pct": 0.004857527881738332,
-            "cumulative_pct": 0.9778736442394179
+            "daily_pct": 0.0033357510440027173,
+            "cumulative_pct": 0.9848052057027319
           },
           {
             "date": "2026-08-28",
-            "expected_ewes": 0.4439,
+            "expected_ewes": 0.2843,
             "expected_lambs": 0.6277,
-            "daily_pct": 0.004758897873987301,
-            "cumulative_pct": 0.9826325421134052
+            "daily_pct": 0.003267932535527128,
+            "cumulative_pct": 0.988073138238259
           },
           {
             "date": "2026-08-29",
-            "expected_ewes": 0.4302,
+            "expected_ewes": 0.2755,
             "expected_lambs": 0.6083,
-            "daily_pct": 0.004612024927662394,
-            "cumulative_pct": 0.9872445670410676
+            "daily_pct": 0.0031667795059364184,
+            "cumulative_pct": 0.9912399177441955
           },
           {
             "date": "2026-08-30",
-            "expected_ewes": 0.4118,
+            "expected_ewes": 0.2638,
             "expected_lambs": 0.5824,
-            "daily_pct": 0.00441476491216033,
-            "cumulative_pct": 0.991659331953228
+            "daily_pct": 0.0030322919552305885,
+            "cumulative_pct": 0.9942722096994261
           },
           {
             "date": "2026-08-31",
-            "expected_ewes": 0.3203,
+            "expected_ewes": 0.2052,
             "expected_lambs": 0.453,
-            "daily_pct": 0.0034338251611582163,
-            "cumulative_pct": 0.9950931571143862
+            "daily_pct": 0.002358704735456091,
+            "cumulative_pct": 0.9966309144348822
           },
           {
             "date": "2026-09-01",
-            "expected_ewes": 0.2288,
+            "expected_ewes": 0.1466,
             "expected_lambs": 0.3236,
-            "daily_pct": 0.0024528854101561032,
-            "cumulative_pct": 0.9975460425245423
+            "daily_pct": 0.0016851175156815932,
+            "cumulative_pct": 0.9983160319505637
           },
           {
             "date": "2026-09-02",
-            "expected_ewes": 0.1373,
+            "expected_ewes": 0.0879,
             "expected_lambs": 0.1941,
-            "daily_pct": 0.0014719456591539904,
-            "cumulative_pct": 0.9990179881836962
+            "daily_pct": 0.0010103808296617466,
+            "cumulative_pct": 0.9993264127802255
           },
           {
             "date": "2026-09-03",
-            "expected_ewes": 0.0458,
+            "expected_ewes": 0.0293,
             "expected_lambs": 0.0647,
-            "daily_pct": 0.0004910059081518774,
-            "cumulative_pct": 0.9995089940918481
+            "daily_pct": 0.00033679360988724883,
+            "cumulative_pct": 0.9996632063901127
           },
           {
             "date": "2026-09-04",
-            "expected_ewes": 0.0275,
+            "expected_ewes": 0.0176,
             "expected_lambs": 0.0388,
-            "daily_pct": 0.0002948179579514547,
-            "cumulative_pct": 0.9998038120497996
+            "daily_pct": 0.00020230605918141912,
+            "cumulative_pct": 0.9998655124492942
           },
           {
             "date": "2026-09-05",
-            "expected_ewes": 0.0137,
+            "expected_ewes": 0.0088,
             "expected_lambs": 0.0194,
-            "daily_pct": 0.00014687294632490655,
-            "cumulative_pct": 0.9999506849961245
+            "daily_pct": 0.00010115302959070956,
+            "cumulative_pct": 0.9999666654788849
           },
           {
             "date": "2026-09-06",
-            "expected_ewes": 0.0046,
+            "expected_ewes": 0.0029,
             "expected_lambs": 0.0065,
-            "daily_pct": 4.931500387551606e-05,
+            "daily_pct": 3.3334521115120195e-05,
             "cumulative_pct": 1.0
           }
         ],
         "adjustment": {
-          "count_date": "2026-07-27",
-          "effective_from": "2026-07-28",
-          "counted_ewes_lambed": 44,
+          "count_date": "2026-08-07",
+          "effective_from": "2026-08-08",
+          "counted_ewes_lambed": 82,
           "counted_lambs": null,
-          "remaining_ewes": 52.0,
+          "remaining_ewes": 14.0,
           "remaining_lambs": null,
           "method": "normalizacion_pesos_futuros_v1",
           "source": "WHATSAPP",
-          "age_days": 14,
+          "age_days": 3,
           "warnings": []
         },
         "observed": {
@@ -1708,6 +1693,19 @@
             "stillborn_status": "NO_INFORMADO",
             "cumulative_ewes_pct": 0.458333,
             "cumulative_lambs_pct": 0.488372,
+            "message": "Recuento acumulado informado en esta fecha. Sin distribución diaria de nacimientos."
+          },
+          {
+            "date": "2026-08-07",
+            "basis": "ACCUMULATED",
+            "lambed_ewes": 82,
+            "registered_born_lambs": null,
+            "registered_born_status": "SIN_RECUENTO",
+            "confirmed_live_lambs": null,
+            "stillborn": null,
+            "stillborn_status": "NO_INFORMADO",
+            "cumulative_ewes_pct": 0.854167,
+            "cumulative_lambs_pct": null,
             "message": "Recuento acumulado informado en esta fecha. Sin distribución diaria de nacimientos."
           }
         ],
@@ -3617,8 +3615,8 @@
         {
           "key": "lambing_progress_pct",
           "label": "Avance de ovejas (paridas sobre previstas a parir)",
-          "value": 45.8333,
-          "numerator": 44,
+          "value": 85.4167,
+          "numerator": 82,
           "denominator": 96,
           "denominator_label": "ovejas previstas a parir",
           "status": "OK",
@@ -4645,8 +4643,8 @@
     "INTENSIVO": {
       "variable": "ovejas_paridas",
       "calculated": null,
-      "reported_accumulated": 44,
-      "reported_date": "2026-07-27",
+      "reported_accumulated": 82,
+      "reported_date": "2026-08-07",
       "difference": null,
       "status": "DATOS_PARCIALES"
     },
@@ -4852,9 +4850,26 @@
   },
   "campaign_milestones": {
     "status": "OK",
-    "total": 12,
+    "total": 13,
     "shown": 12,
     "items": [
+      {
+        "date": "2026-08-07",
+        "module_code": "INTENSIVO",
+        "module_name": "Intensivo",
+        "kind": "CONTROL_DE_CAMPO",
+        "kind_label": "Control de campo",
+        "subtype": "RECUENTO_ACUMULADO",
+        "subtype_label": "Recuento acumulado informado",
+        "quantity": null,
+        "animal_type": null,
+        "animal_label": null,
+        "cause_code": null,
+        "cause_label": null,
+        "affects_counts": false,
+        "counted_ewes_lambed": 82,
+        "counted_live_lambs": null
+      },
       {
         "date": "2026-08-05",
         "module_code": "INTENSIVO",
@@ -5020,21 +5035,6 @@
         "animal_label": "cordero",
         "cause_code": "MALFORMACION_CONGENITA",
         "cause_label": "Malformación congénita",
-        "affects_counts": false
-      },
-      {
-        "date": "2026-07-18",
-        "module_code": "INTENSIVO",
-        "module_name": "Intensivo",
-        "kind": "HITO_DE_CAMPANA",
-        "kind_label": "Hito de campaña",
-        "subtype": "INICIO_DE_PARICION",
-        "subtype_label": "Inicio de parición",
-        "quantity": null,
-        "animal_type": null,
-        "animal_label": null,
-        "cause_code": null,
-        "cause_label": null,
         "affects_counts": false
       }
     ],
@@ -5614,17 +5614,17 @@
   ],
   "automatic_provisional": {
     "notice": "Los datos pueden ajustarse si se recibe una corrección posterior.",
-    "pending_count": 1,
+    "pending_count": 0,
     "records": []
   },
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-08-10T14:15:37.246069Z",
+      "processed_at": "2026-08-10T14:20:23.675745Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-08-10T11:15:40.354713-03:00",
-    "pending_operations": 1,
+    "last_sync_at": "2026-08-10T11:20:26.761027-03:00",
+    "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
 }
