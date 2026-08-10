@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-10T00:03:47.696277-03:00",
+  "generated_at": "2026-08-10T00:08:33.103920-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -11,11 +11,6 @@
       {
         "code": "PENDING_MEDIA",
         "message": "Hay archivos multimedia pendientes de revisión.",
-        "severity": "OJO"
-      },
-      {
-        "code": "FIELD_CONTROL_DIFF",
-        "message": "Existe una diferencia con el control de campo.",
         "severity": "OJO"
       }
     ],
@@ -28,7 +23,7 @@
       "unclassified": 2,
       "total": 3
     },
-    "generated_at": "2026-08-10T00:03:47.696277-03:00",
+    "generated_at": "2026-08-10T00:08:33.103920-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -145,13 +140,12 @@
     "progress_percent": null,
     "expected_lambs": 979,
     "born_lambs": {
-      "value": 1,
-      "status": "PARTIAL",
-      "lots_included": [
-        "INTENSIVO"
-      ],
+      "value": null,
+      "status": "NOT_REPORTED",
+      "lots_included": [],
       "lots_missing": [
         "DOHNE",
+        "INTENSIVO",
         "MA"
       ]
     },
@@ -186,9 +180,9 @@
     },
     "remaining_lambs": {
       "value": null,
-      "status": "PARCIAL",
-      "reason": "Recuento parcial de corderos nacidos: falta el recuento de DOHNE, MA. No se calculan restantes sobre un parcial.",
-      "compatible": false
+      "status": "SIN_RECUENTO",
+      "reason": "Sin recuento confirmado de corderos nacidos.",
+      "compatible": null
     }
   },
   "modules": [
@@ -214,7 +208,7 @@
       "ewe_counts": {
         "expected_to_lamb": 96,
         "counted_lambed": 44,
-        "counted_from_events": 1,
+        "counted_from_events": null,
         "count_source": "RECUENTO_ACUMULADO",
         "reconciliation": {
           "value": 44,
@@ -225,8 +219,8 @@
           "baseline_date": "2026-07-27",
           "daily_after_total": 0,
           "daily_after_count": 0,
-          "daily_included_total": 1,
-          "daily_included_count": 1,
+          "daily_included_total": null,
+          "daily_included_count": 0,
           "reconciliation": "El recuento acumulado es la línea base de su fecha: sólo se suman los partes diarios posteriores. Los anteriores ya están contenidos en él."
         },
         "progress_percent": 45.8,
@@ -255,7 +249,7 @@
       },
       "lamb_counts": {
         "expected_total": 129,
-        "counted": 1,
+        "counted": null,
         "born_alive": null,
         "stillborn": null,
         "current_stock_lambs": 108,
@@ -304,14 +298,14 @@
         },
         "data_cutoff": "2026-08-05",
         "reconciliation": "El recuento de corderos vivos es la base de vivos y se mantiene hasta que se realice un recuento nuevo. Los corderos muertos acumulados de la campaña se suman siempre, sin importar en qué fecha se registraron.",
-        "registered_born": 1,
-        "registered_born_status": "EXACTO",
+        "registered_born": null,
+        "registered_born_status": "SIN_RECUENTO",
         "registered_born_is_minimum": false,
-        "registered_born_basis": "RECUENTO_TOTAL_INFORMADO",
+        "registered_born_basis": "SIN_RECUENTO",
         "confirmed_live": null,
         "stillborn_status": "NO_INFORMADO",
         "stillborn_message": "Nacidos muertos al parto: no informados.",
-        "progress_percent": 0.8,
+        "progress_percent": null,
         "progress": {
           "registered": 115,
           "expected": 129,
@@ -322,10 +316,10 @@
         },
         "last_count_date": "2026-07-27",
         "remaining": {
-          "value": 128,
-          "status": "OK",
-          "reason": null,
-          "compatible": true
+          "value": null,
+          "status": "SIN_RECUENTO",
+          "reason": "Sin recuento confirmado de corderos nacidos de INTENSIVO.",
+          "compatible": null
         },
         "remaining_estimated": {
           "value": 14,
@@ -453,11 +447,11 @@
       },
       "field_control": {
         "variable": "ovejas_paridas",
-        "calculated": 1,
+        "calculated": null,
         "reported_accumulated": 44,
         "reported_date": "2026-07-27",
-        "difference": 43,
-        "status": "DIFERENCIA"
+        "difference": null,
+        "status": "SIN_CONTROL_RECIENTE"
       }
     },
     {
@@ -1687,24 +1681,16 @@
           "warnings": []
         },
         "observed": {
-          "counted_lambed": 1,
-          "counted_lambs": 1,
+          "counted_lambed": null,
+          "counted_lambs": null,
           "born_alive": null,
           "stillborn": null,
           "lamb_deaths": 7,
           "ewe_deaths": 2,
-          "last_count_date": "2026-07-26",
+          "last_count_date": null,
           "last_event_date": "2026-08-05"
         },
-        "observed_series": [
-          {
-            "date": "2026-07-26",
-            "lambed_ewes": 1,
-            "born_lambs": 1,
-            "cumulative_ewes": 1,
-            "cumulative_pct": 0.010417
-          }
-        ],
+        "observed_series": [],
         "observed_checkpoints": [
           {
             "date": "2026-07-27",
@@ -4040,14 +4026,7 @@
       }
     ]
   },
-  "daily_evolution": [
-    {
-      "date": "2026-07-26",
-      "lambed_ewes": 1,
-      "born_lambs": 1,
-      "cumulative_lambed": 1
-    }
-  ],
+  "daily_evolution": [],
   "chill_public": {
     "title": "Chill Index: riesgo previsto y nacimientos registrados",
     "subtitle": "Estimación basada en la curva prevista de partos",
@@ -4549,43 +4528,13 @@
     },
     "observed": {
       "title": "Nacimientos registrados y condiciones ambientales durante sus primeras 72 horas",
-      "status": "DISPONIBLE",
+      "status": "SIN_REGISTROS_DIARIOS",
       "basis": "DAILY",
-      "daily": [
-        {
-          "date": "2026-07-26",
-          "module_code": "INTENSIVO",
-          "module_name": "Intensivo",
-          "service_code": null,
-          "service_type": null,
-          "ewes_lambed": 1,
-          "born_lambs": 1,
-          "born_alive": null,
-          "stillborn": null,
-          "basis": "DAILY",
-          "validation_status": "CONFIRMED",
-          "revision": 1,
-          "risk_d": null,
-          "risk_d1": null,
-          "risk_d2": null,
-          "window": [
-            "2026-07-26",
-            "2026-07-27",
-            "2026-07-28"
-          ],
-          "max_risk": "RIESGO_72H_INCOMPLETO",
-          "complete": false,
-          "missing_dates": [
-            "2026-07-26",
-            "2026-07-27",
-            "2026-07-28"
-          ]
-        }
-      ],
-      "lots_with_daily_records": [
+      "daily": [],
+      "lots_with_daily_records": [],
+      "lots_with_accumulated_only": [
         "INTENSIVO"
       ],
-      "lots_with_accumulated_only": [],
       "risk_summary": {
         "by_risk": {
           "SIN_RIESGO": 0,
@@ -4593,20 +4542,21 @@
           "MEDIO": 0,
           "ALTO": 0,
           "CRITICO": 0,
-          "RIESGO_72H_INCOMPLETO": 1
+          "RIESGO_72H_INCOMPLETO": 0
         },
-        "lambs_counted": 1,
+        "lambs_counted": 0,
         "rule": "Cada cordero registrado se cuenta una sola vez, bajo el nivel de riesgo más alto de sus primeras 72 horas."
       },
-      "incomplete_windows": 1,
+      "incomplete_windows": 0,
       "superseded_records": 0,
       "excluded_by_basis": {},
       "registered_born_lambs": 115,
       "confirmed_live_lambs": 108,
       "messages": [
-        "La evaluación ambiental de las primeras 72 horas todavía está incompleta."
+        "Sin registros diarios de nacimientos para este lote.",
+        "Existe un recuento acumulado, pero no se informó su distribución diaria."
       ],
-      "message": "La evaluación ambiental de las primeras 72 horas todavía está incompleta."
+      "message": "Sin registros diarios de nacimientos para este lote."
     },
     "coverage": {
       "classified": 3.6978,
@@ -4647,20 +4597,20 @@
       }
     },
     "accumulated_notice": {
-      "status": "DISPONIBLE",
+      "status": "SIN_DISTRIBUCION_DIARIA",
       "registered_born_lambs": 115,
       "confirmed_live_lambs": 108,
-      "message": "Riesgo climático de los corderos nacidos registrados, según su distribución diaria informada."
+      "message": "Se contabilizaron 108 corderos vivos en forma acumulada. Como el recuento no indica cuántos nacieron cada día, todavía no es posible asignarles el riesgo climático real correspondiente a sus primeras 72 horas."
     }
   },
   "field_controls": {
     "INTENSIVO": {
       "variable": "ovejas_paridas",
-      "calculated": 1,
+      "calculated": null,
       "reported_accumulated": 44,
       "reported_date": "2026-07-27",
-      "difference": 43,
-      "status": "DIFERENCIA"
+      "difference": null,
+      "status": "SIN_CONTROL_RECIENTE"
     },
     "DOHNE": {
       "variable": "ovejas_paridas",
@@ -5537,20 +5487,6 @@
     {
       "date": "2026-07-26",
       "module_code": "INTENSIVO",
-      "event_type": "LAMBING",
-      "event_label": "Parición",
-      "quantity": 1,
-      "ewes_lambed": 1,
-      "born_alive": null,
-      "stillborn": null,
-      "cause_code": null,
-      "cause_label": null,
-      "validation_status": "CONFIRMED",
-      "source": "MANUAL"
-    },
-    {
-      "date": "2026-07-26",
-      "module_code": "INTENSIVO",
       "event_type": "INCIDENT",
       "event_label": "Incidencia",
       "quantity": 1,
@@ -5623,10 +5559,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-08-10T03:03:44.626198Z",
+      "processed_at": "2026-08-10T03:08:30.037657Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-08-10T00:03:47.696277-03:00",
+    "last_sync_at": "2026-08-10T00:08:33.103920-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
