@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-14T21:04:12.905245-03:00",
+  "generated_at": "2026-08-14T21:04:43.609095-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OK",
@@ -17,7 +17,7 @@
       "unclassified": 0,
       "total": 0
     },
-    "generated_at": "2026-08-14T21:04:12.905245-03:00",
+    "generated_at": "2026-08-14T21:04:43.609095-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -4101,8 +4101,8 @@
       },
       {
         "date": "2026-08-15",
-        "risk_category": "SIN_RIESGO",
-        "display_risk_category": "SIN_RIESGO",
+        "risk_category": "NO_DETERMINADO",
+        "display_risk_category": "RIESGO PENDIENTE DE REVISIÓN",
         "total_exposed": 5.535,
         "by_lot": {
           "INTENSIVO": 5.5347,
@@ -4114,21 +4114,21 @@
       },
       {
         "date": "2026-08-16",
-        "risk_category": "NO_DETERMINADO",
-        "display_risk_category": "RIESGO PENDIENTE DE REVISIÓN",
+        "risk_category": "SIN_RIESGO",
+        "display_risk_category": "SIN_RIESGO",
         "total_exposed": 6.161,
         "by_lot": {
           "INTENSIVO": 5.4986,
           "DOHNE": 0.6625,
           "MA": 0.0
         },
-        "cohort_72h_complete": false,
-        "cohort_72h_category": "RIESGO_72H_INCOMPLETO"
+        "cohort_72h_complete": true,
+        "cohort_72h_category": "SIN_RIESGO"
       },
       {
         "date": "2026-08-17",
-        "risk_category": "NO_DETERMINADO",
-        "display_risk_category": "RIESGO PENDIENTE DE REVISIÓN",
+        "risk_category": "SIN_RIESGO",
+        "display_risk_category": "SIN_RIESGO",
         "total_exposed": 7.414,
         "by_lot": {
           "INTENSIVO": 5.4265,
@@ -4140,8 +4140,8 @@
       },
       {
         "date": "2026-08-18",
-        "risk_category": "NO_DETERMINADO",
-        "display_risk_category": "RIESGO PENDIENTE DE REVISIÓN",
+        "risk_category": "SIN_RIESGO",
+        "display_risk_category": "SIN_RIESGO",
         "total_exposed": 9.293,
         "by_lot": {
           "INTENSIVO": 5.3183,
@@ -4157,28 +4157,28 @@
       "status": "OK",
       "cohorts_counted": 5,
       "rule": "Cada cohorte prevista para el día D se evalúa en D, D+1 y D+2 y se cuenta una sola vez bajo su categoría máxima.",
-      "SIN_RIESGO": 0.0,
+      "SIN_RIESGO": 2.4753,
       "BAJO": 0.0,
       "MEDIO": 0.0,
       "ALTO": 0.0,
       "CRITICO": 0.0,
-      "RIESGO_72H_INCOMPLETO": 12.9791,
+      "RIESGO_72H_INCOMPLETO": 10.5038,
       "by_module": {
         "INTENSIVO": {
-          "SIN_RIESGO": 0.0,
+          "SIN_RIESGO": 1.8128,
           "BAJO": 0.0,
           "MEDIO": 0.0,
           "ALTO": 0.0,
           "CRITICO": 0.0,
-          "RIESGO_72H_INCOMPLETO": 9.0041
+          "RIESGO_72H_INCOMPLETO": 7.1913
         },
         "DOHNE": {
-          "SIN_RIESGO": 0.0,
+          "SIN_RIESGO": 0.6625,
           "BAJO": 0.0,
           "MEDIO": 0.0,
           "ALTO": 0.0,
           "CRITICO": 0.0,
-          "RIESGO_72H_INCOMPLETO": 3.975
+          "RIESGO_72H_INCOMPLETO": 3.3125
         },
         "MA": {
           "SIN_RIESGO": 0.0,
@@ -4207,8 +4207,8 @@
           "curve": "ADJUSTED",
           "basis": "EXPECTED",
           "risk_d": "BAJO",
-          "risk_d1": "SIN_RIESGO",
-          "risk_d2": null,
+          "risk_d1": null,
+          "risk_d2": "SIN_RIESGO",
           "window": [
             "2026-08-14",
             "2026-08-15",
@@ -4217,7 +4217,7 @@
           "max_risk": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-16"
+            "2026-08-15"
           ]
         },
         {
@@ -4230,9 +4230,9 @@
           "in_lambing_window": true,
           "curve": "ADJUSTED",
           "basis": "EXPECTED",
-          "risk_d": "SIN_RIESGO",
-          "risk_d1": null,
-          "risk_d2": null,
+          "risk_d": null,
+          "risk_d1": "SIN_RIESGO",
+          "risk_d2": "SIN_RIESGO",
           "window": [
             "2026-08-15",
             "2026-08-16",
@@ -4241,8 +4241,7 @@
           "max_risk": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-16",
-            "2026-08-17"
+            "2026-08-15"
           ]
         },
         {
@@ -4255,21 +4254,17 @@
           "in_lambing_window": true,
           "curve": "ADJUSTED",
           "basis": "EXPECTED",
-          "risk_d": null,
-          "risk_d1": null,
-          "risk_d2": null,
+          "risk_d": "SIN_RIESGO",
+          "risk_d1": "SIN_RIESGO",
+          "risk_d2": "SIN_RIESGO",
           "window": [
             "2026-08-16",
             "2026-08-17",
             "2026-08-18"
           ],
-          "max_risk": "RIESGO_72H_INCOMPLETO",
-          "complete": false,
-          "missing_dates": [
-            "2026-08-16",
-            "2026-08-17",
-            "2026-08-18"
-          ]
+          "max_risk": "SIN_RIESGO",
+          "complete": true,
+          "missing_dates": []
         },
         {
           "date": "2026-08-17",
@@ -4281,8 +4276,8 @@
           "in_lambing_window": true,
           "curve": "ADJUSTED",
           "basis": "EXPECTED",
-          "risk_d": null,
-          "risk_d1": null,
+          "risk_d": "SIN_RIESGO",
+          "risk_d1": "SIN_RIESGO",
           "risk_d2": null,
           "window": [
             "2026-08-17",
@@ -4292,8 +4287,6 @@
           "max_risk": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-17",
-            "2026-08-18",
             "2026-08-19"
           ]
         },
@@ -4307,7 +4300,7 @@
           "in_lambing_window": true,
           "curve": "ADJUSTED",
           "basis": "EXPECTED",
-          "risk_d": null,
+          "risk_d": "SIN_RIESGO",
           "risk_d1": null,
           "risk_d2": null,
           "window": [
@@ -4318,7 +4311,6 @@
           "max_risk": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-18",
             "2026-08-19",
             "2026-08-20"
           ]
@@ -4334,8 +4326,8 @@
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
           "risk_d": "BAJO",
-          "risk_d1": "SIN_RIESGO",
-          "risk_d2": null,
+          "risk_d1": null,
+          "risk_d2": "SIN_RIESGO",
           "window": [
             "2026-08-14",
             "2026-08-15",
@@ -4344,7 +4336,7 @@
           "max_risk": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-16"
+            "2026-08-15"
           ]
         },
         {
@@ -4357,9 +4349,9 @@
           "in_lambing_window": false,
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
-          "risk_d": "SIN_RIESGO",
-          "risk_d1": null,
-          "risk_d2": null,
+          "risk_d": null,
+          "risk_d1": "SIN_RIESGO",
+          "risk_d2": "SIN_RIESGO",
           "window": [
             "2026-08-15",
             "2026-08-16",
@@ -4368,8 +4360,7 @@
           "max_risk": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-16",
-            "2026-08-17"
+            "2026-08-15"
           ]
         },
         {
@@ -4382,21 +4373,17 @@
           "in_lambing_window": true,
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
-          "risk_d": null,
-          "risk_d1": null,
-          "risk_d2": null,
+          "risk_d": "SIN_RIESGO",
+          "risk_d1": "SIN_RIESGO",
+          "risk_d2": "SIN_RIESGO",
           "window": [
             "2026-08-16",
             "2026-08-17",
             "2026-08-18"
           ],
-          "max_risk": "RIESGO_72H_INCOMPLETO",
-          "complete": false,
-          "missing_dates": [
-            "2026-08-16",
-            "2026-08-17",
-            "2026-08-18"
-          ]
+          "max_risk": "SIN_RIESGO",
+          "complete": true,
+          "missing_dates": []
         },
         {
           "date": "2026-08-17",
@@ -4408,8 +4395,8 @@
           "in_lambing_window": true,
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
-          "risk_d": null,
-          "risk_d1": null,
+          "risk_d": "SIN_RIESGO",
+          "risk_d1": "SIN_RIESGO",
           "risk_d2": null,
           "window": [
             "2026-08-17",
@@ -4419,8 +4406,6 @@
           "max_risk": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-17",
-            "2026-08-18",
             "2026-08-19"
           ]
         },
@@ -4434,7 +4419,7 @@
           "in_lambing_window": true,
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
-          "risk_d": null,
+          "risk_d": "SIN_RIESGO",
           "risk_d1": null,
           "risk_d2": null,
           "window": [
@@ -4445,7 +4430,6 @@
           "max_risk": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-18",
             "2026-08-19",
             "2026-08-20"
           ]
@@ -4461,8 +4445,8 @@
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
           "risk_d": "BAJO",
-          "risk_d1": "SIN_RIESGO",
-          "risk_d2": null,
+          "risk_d1": null,
+          "risk_d2": "SIN_RIESGO",
           "window": [
             "2026-08-14",
             "2026-08-15",
@@ -4471,7 +4455,7 @@
           "max_risk": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-16"
+            "2026-08-15"
           ]
         },
         {
@@ -4484,9 +4468,9 @@
           "in_lambing_window": false,
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
-          "risk_d": "SIN_RIESGO",
-          "risk_d1": null,
-          "risk_d2": null,
+          "risk_d": null,
+          "risk_d1": "SIN_RIESGO",
+          "risk_d2": "SIN_RIESGO",
           "window": [
             "2026-08-15",
             "2026-08-16",
@@ -4495,8 +4479,7 @@
           "max_risk": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-16",
-            "2026-08-17"
+            "2026-08-15"
           ]
         },
         {
@@ -4509,21 +4492,17 @@
           "in_lambing_window": false,
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
-          "risk_d": null,
-          "risk_d1": null,
-          "risk_d2": null,
+          "risk_d": "SIN_RIESGO",
+          "risk_d1": "SIN_RIESGO",
+          "risk_d2": "SIN_RIESGO",
           "window": [
             "2026-08-16",
             "2026-08-17",
             "2026-08-18"
           ],
-          "max_risk": "RIESGO_72H_INCOMPLETO",
-          "complete": false,
-          "missing_dates": [
-            "2026-08-16",
-            "2026-08-17",
-            "2026-08-18"
-          ]
+          "max_risk": "SIN_RIESGO",
+          "complete": true,
+          "missing_dates": []
         },
         {
           "date": "2026-08-17",
@@ -4535,8 +4514,8 @@
           "in_lambing_window": false,
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
-          "risk_d": null,
-          "risk_d1": null,
+          "risk_d": "SIN_RIESGO",
+          "risk_d1": "SIN_RIESGO",
           "risk_d2": null,
           "window": [
             "2026-08-17",
@@ -4546,8 +4525,6 @@
           "max_risk": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-17",
-            "2026-08-18",
             "2026-08-19"
           ]
         },
@@ -4561,7 +4538,7 @@
           "in_lambing_window": false,
           "curve": "ORIGINAL",
           "basis": "EXPECTED",
-          "risk_d": null,
+          "risk_d": "SIN_RIESGO",
           "risk_d1": null,
           "risk_d2": null,
           "window": [
@@ -4572,7 +4549,6 @@
           "max_risk": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-18",
             "2026-08-19",
             "2026-08-20"
           ]
@@ -4619,8 +4595,8 @@
       "message": "Sin registros diarios de nacimientos para este lote."
     },
     "coverage": {
-      "classified": 0.0,
-      "incomplete": 12.9791,
+      "classified": 2.4753,
+      "incomplete": 10.5038,
       "evaluated": 12.9791,
       "expected_total": 979,
       "pending": 966.0209,
@@ -4628,8 +4604,8 @@
       "pending_reason": "El resto de los corderos esperados nace en fechas que el pronóstico ambiental disponible todavía no alcanza.",
       "by_module": {
         "INTENSIVO": {
-          "classified": 0.0,
-          "incomplete": 9.0041,
+          "classified": 1.8128,
+          "incomplete": 7.1913,
           "evaluated": 9.0041,
           "expected_total": 129,
           "pending": 119.9959,
@@ -4637,8 +4613,8 @@
           "pending_reason": "El resto de los corderos esperados nace en fechas que el pronóstico ambiental disponible todavía no alcanza."
         },
         "DOHNE": {
-          "classified": 0.0,
-          "incomplete": 3.975,
+          "classified": 0.6625,
+          "incomplete": 3.3125,
           "evaluated": 3.975,
           "expected_total": 180,
           "pending": 176.025,
@@ -5124,10 +5100,10 @@
       "latitude": null,
       "longitude": null
     },
-    "analyzed_at": "2026-08-14T11:13:14.959427+00:00",
+    "analyzed_at": "2026-08-14T22:07:15.151545+00:00",
     "forecast_run_date": "2026-08-14",
-    "imported_at": "2026-08-14T08:19:28.159643-03:00",
-    "forecast_age_hours": 0.1,
+    "imported_at": "2026-08-14T21:04:43.561513-03:00",
+    "forecast_age_hours": 1.96,
     "update_status": {
       "state": "ACTUALIZADO",
       "stale": false,
@@ -5247,7 +5223,7 @@
           "category": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-16"
+            "2026-08-15"
           ],
           "lambs": 1.8489
         },
@@ -5255,15 +5231,15 @@
       },
       {
         "date": "2026-08-15",
-        "risk_category": "SIN_RIESGO",
-        "display_risk_category": "SIN_RIESGO",
+        "risk_category": "NO_DETERMINADO",
+        "display_risk_category": "RIESGO PENDIENTE DE REVISIÓN",
         "ci_min": null,
-        "ci_max": 900.0,
-        "ci_interval": "< 900",
+        "ci_max": null,
+        "ci_interval": "NO DETERMINADO",
         "ci_unit": "kJ/m2/h",
-        "confidence": 0.9,
-        "requires_review": false,
-        "automatic_use": true,
+        "confidence": 0.0,
+        "requires_review": true,
+        "automatic_use": false,
         "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260815.png",
         "expected_ewes_lambing": 0.832,
         "expected_lambs_born": 1.8369,
@@ -5304,8 +5280,7 @@
           "category": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-16",
-            "2026-08-17"
+            "2026-08-15"
           ],
           "lambs": 1.8369
         },
@@ -5313,15 +5288,15 @@
       },
       {
         "date": "2026-08-16",
-        "risk_category": "NO_DETERMINADO",
-        "display_risk_category": "RIESGO PENDIENTE DE REVISIÓN",
+        "risk_category": "SIN_RIESGO",
+        "display_risk_category": "SIN_RIESGO",
         "ci_min": null,
-        "ci_max": null,
-        "ci_interval": "NO DETERMINADO",
+        "ci_max": 900.0,
+        "ci_interval": "< 900",
         "ci_unit": "kJ/m2/h",
-        "confidence": 0.0,
-        "requires_review": true,
-        "automatic_use": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "automatic_use": true,
         "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260816.png",
         "expected_ewes_lambing": 1.3511,
         "expected_lambs_born": 2.4753,
@@ -5359,28 +5334,24 @@
             "2026-08-17",
             "2026-08-18"
           ],
-          "category": "RIESGO_72H_INCOMPLETO",
-          "complete": false,
-          "missing_dates": [
-            "2026-08-16",
-            "2026-08-17",
-            "2026-08-18"
-          ],
+          "category": "SIN_RIESGO",
+          "complete": true,
+          "missing_dates": [],
           "lambs": 2.4753
         },
         "cross_status": "OK"
       },
       {
         "date": "2026-08-17",
-        "risk_category": "NO_DETERMINADO",
-        "display_risk_category": "RIESGO PENDIENTE DE REVISIÓN",
+        "risk_category": "SIN_RIESGO",
+        "display_risk_category": "SIN_RIESGO",
         "ci_min": null,
-        "ci_max": null,
-        "ci_interval": "NO DETERMINADO",
+        "ci_max": 900.0,
+        "ci_interval": "< 900",
         "ci_unit": "kJ/m2/h",
-        "confidence": 0.0,
-        "requires_review": true,
-        "automatic_use": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "automatic_use": true,
         "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260817.png",
         "expected_ewes_lambing": 1.8648,
         "expected_lambs_born": 3.1018,
@@ -5421,8 +5392,6 @@
           "category": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-17",
-            "2026-08-18",
             "2026-08-19"
           ],
           "lambs": 3.1018
@@ -5431,16 +5400,16 @@
       },
       {
         "date": "2026-08-18",
-        "risk_category": "NO_DETERMINADO",
-        "display_risk_category": "RIESGO PENDIENTE DE REVISIÓN",
+        "risk_category": "SIN_RIESGO",
+        "display_risk_category": "SIN_RIESGO",
         "ci_min": null,
-        "ci_max": null,
-        "ci_interval": "NO DETERMINADO",
+        "ci_max": 900.0,
+        "ci_interval": "< 900",
         "ci_unit": "kJ/m2/h",
-        "confidence": 0.0,
-        "requires_review": true,
-        "automatic_use": false,
-        "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260818.png",
+        "confidence": 0.75,
+        "requires_review": false,
+        "automatic_use": true,
+        "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF_mini/Min_4.png",
         "expected_ewes_lambing": 2.373,
         "expected_lambs_born": 3.7162,
         "lambs_in_first_72h_on_date": 9.2933,
@@ -5480,7 +5449,6 @@
           "category": "RIESGO_72H_INCOMPLETO",
           "complete": false,
           "missing_dates": [
-            "2026-08-18",
             "2026-08-19",
             "2026-08-20"
           ],
@@ -5494,28 +5462,28 @@
       "status": "OK",
       "cohorts_counted": 5,
       "rule": "Cada cohorte prevista para el día D se evalúa en D, D+1 y D+2 y se cuenta una sola vez bajo su categoría máxima.",
-      "SIN_RIESGO": 0.0,
+      "SIN_RIESGO": 2.4753,
       "BAJO": 0.0,
       "MEDIO": 0.0,
       "ALTO": 0.0,
       "CRITICO": 0.0,
-      "RIESGO_72H_INCOMPLETO": 12.9791,
+      "RIESGO_72H_INCOMPLETO": 10.5038,
       "by_module": {
         "INTENSIVO": {
-          "SIN_RIESGO": 0.0,
+          "SIN_RIESGO": 1.8128,
           "BAJO": 0.0,
           "MEDIO": 0.0,
           "ALTO": 0.0,
           "CRITICO": 0.0,
-          "RIESGO_72H_INCOMPLETO": 9.0041
+          "RIESGO_72H_INCOMPLETO": 7.1913
         },
         "DOHNE": {
-          "SIN_RIESGO": 0.0,
+          "SIN_RIESGO": 0.6625,
           "BAJO": 0.0,
           "MEDIO": 0.0,
           "ALTO": 0.0,
           "CRITICO": 0.0,
-          "RIESGO_72H_INCOMPLETO": 3.975
+          "RIESGO_72H_INCOMPLETO": 3.3125
         },
         "MA": {
           "SIN_RIESGO": 0.0,
@@ -5535,8 +5503,8 @@
   },
   "chill_pariciones_summary": {
     "source": "INIA-GRAS, clasificación determinística propia",
-    "analyzed_at": "2026-08-14T11:13:14.959427+00:00",
-    "imported_at": "2026-08-14T08:19:28.159643-03:00",
+    "analyzed_at": "2026-08-14T22:07:15.151545+00:00",
+    "imported_at": "2026-08-14T21:04:43.561513-03:00",
     "update_status": "ACTUALIZADO",
     "product_cross_status": "OK",
     "dates": [
@@ -5547,23 +5515,23 @@
       },
       {
         "date": "2026-08-15",
+        "risk_category": "NO_DETERMINADO",
+        "confidence": 0.0
+      },
+      {
+        "date": "2026-08-16",
         "risk_category": "SIN_RIESGO",
         "confidence": 0.9
       },
       {
-        "date": "2026-08-16",
-        "risk_category": "NO_DETERMINADO",
-        "confidence": 0.0
-      },
-      {
         "date": "2026-08-17",
-        "risk_category": "NO_DETERMINADO",
-        "confidence": 0.0
+        "risk_category": "SIN_RIESGO",
+        "confidence": 0.9
       },
       {
         "date": "2026-08-18",
-        "risk_category": "NO_DETERMINADO",
-        "confidence": 0.0
+        "risk_category": "SIN_RIESGO",
+        "confidence": 0.75
       }
     ]
   },
@@ -5723,7 +5691,7 @@
       "processed_at": "2026-08-14T11:10:22.855919Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-08-14T21:04:12.905245-03:00",
+    "last_sync_at": "2026-08-14T21:04:43.609095-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
