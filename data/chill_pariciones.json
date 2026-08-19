@@ -13,7 +13,7 @@
   "analyzed_at": "2026-08-18T10:51:14.373677+00:00",
   "forecast_run_date": "2026-08-17",
   "imported_at": "2026-08-18T09:09:15.713084-03:00",
-  "forecast_age_hours": 1.3,
+  "forecast_age_hours": 37.13,
   "update_status": {
     "state": "ACTUALIZADO",
     "stale": false,
@@ -33,9 +33,9 @@
         "name": "INTENSIVO",
         "expected_to_lamb": 96,
         "expected_lambs": 129,
-        "counted_lambed": null,
-        "counted_lambs": null,
-        "last_count_date": null
+        "counted_lambed": 1,
+        "counted_lambs": 1,
+        "last_count_date": "2026-08-16"
       },
       {
         "code": "DOHNE",
@@ -59,8 +59,8 @@
     "totals": {
       "expected_to_lamb": 832,
       "expected_lambs": 979,
-      "counted_lambed": null,
-      "counted_lambs": null
+      "counted_lambed": 1,
+      "counted_lambs": 1
     }
   },
   "module_options": [

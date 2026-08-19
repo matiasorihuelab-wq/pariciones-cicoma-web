@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-18T10:47:29.242394-03:00",
+  "generated_at": "2026-08-19T20:58:46.017291-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -17,6 +17,11 @@
         "code": "PENDING_MEDIA",
         "message": "Hay archivos multimedia pendientes de revisión.",
         "severity": "OJO"
+      },
+      {
+        "code": "INPUT_PENDING",
+        "message": "Hay un reporte en la carpeta de entrada sin registrar.",
+        "severity": "OJO"
       }
     ],
     "pending_actions": {
@@ -28,7 +33,7 @@
       "unclassified": 1,
       "total": 3
     },
-    "generated_at": "2026-08-18T10:47:29.242394-03:00",
+    "generated_at": "2026-08-19T20:58:46.017291-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -1735,7 +1740,7 @@
           "remaining_lambs": null,
           "method": "normalizacion_pesos_futuros_v1",
           "source": "WHATSAPP",
-          "age_days": 11,
+          "age_days": 12,
           "warnings": []
         },
         "observed": {
@@ -5219,7 +5224,7 @@
     "analyzed_at": "2026-08-18T10:51:14.373677+00:00",
     "forecast_run_date": "2026-08-17",
     "imported_at": "2026-08-18T09:09:15.713084-03:00",
-    "forecast_age_hours": 1.3,
+    "forecast_age_hours": 37.13,
     "update_status": {
       "state": "ACTUALIZADO",
       "stale": false,
@@ -5239,9 +5244,9 @@
           "name": "INTENSIVO",
           "expected_to_lamb": 96,
           "expected_lambs": 129,
-          "counted_lambed": null,
-          "counted_lambs": null,
-          "last_count_date": null
+          "counted_lambed": 1,
+          "counted_lambs": 1,
+          "last_count_date": "2026-08-16"
         },
         {
           "code": "DOHNE",
@@ -5265,8 +5270,8 @@
       "totals": {
         "expected_to_lamb": 832,
         "expected_lambs": 979,
-        "counted_lambed": null,
-        "counted_lambs": null
+        "counted_lambed": 1,
+        "counted_lambs": 1
       }
     },
     "module_options": [
@@ -5843,7 +5848,7 @@
       "processed_at": "2026-08-18T13:41:38.654189Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-08-18T10:47:29.242394-03:00",
+    "last_sync_at": "2026-08-19T20:58:46.017291-03:00",
     "pending_operations": 1,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
