@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-19T21:00:56.623666-03:00",
+  "generated_at": "2026-08-19T21:02:23.823237-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -17,11 +17,6 @@
         "code": "PENDING_MEDIA",
         "message": "Hay archivos multimedia pendientes de revisión.",
         "severity": "OJO"
-      },
-      {
-        "code": "INPUT_PENDING",
-        "message": "Hay un reporte en la carpeta de entrada sin registrar.",
-        "severity": "OJO"
       }
     ],
     "pending_actions": {
@@ -33,7 +28,7 @@
       "unclassified": 1,
       "total": 3
     },
-    "generated_at": "2026-08-19T21:00:56.623666-03:00",
+    "generated_at": "2026-08-19T21:02:23.823237-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -82,7 +77,7 @@
       "message": "Datos registrados actualmente: Intensivo. Merino Dohne y Merino Australiano todavía sin registros de parición."
     },
     "registered_born_lambs": {
-      "value": 118,
+      "value": 119,
       "status": "PARTIAL",
       "lots_included": [
         "INTENSIVO"
@@ -105,7 +100,7 @@
     },
     "current_stock_count_date": "2026-08-05",
     "current_stock_label": "Corderos vivos contabilizados",
-    "accumulated_lamb_deaths_total": 10,
+    "accumulated_lamb_deaths_total": 11,
     "ewe_progress": {
       "registered": 83,
       "expected": 832,
@@ -115,9 +110,9 @@
       "basis": "Ovejas paridas registradas sobre ovejas previstas a parir."
     },
     "lamb_progress": {
-      "registered": 118,
+      "registered": 119,
       "expected": 979,
-      "percent": 12.1,
+      "percent": 12.2,
       "status": "SEGUN_REGISTROS",
       "is_estimate": true,
       "basis": "Corderos nacidos acumulados estimados sobre corderos esperados."
@@ -130,7 +125,7 @@
       "reason": null
     },
     "remaining_lambs_estimated": {
-      "value": 861,
+      "value": 860,
       "status": "SEGUN_REGISTROS",
       "is_estimate": true,
       "basis": "Corderos esperados menos corderos nacidos acumulados estimados.",
@@ -180,7 +175,7 @@
         "MA"
       ]
     },
-    "lamb_deaths": 10,
+    "lamb_deaths": 11,
     "ewe_deaths": 4,
     "deaths_last_24h": null,
     "remaining_ewes": {
@@ -266,12 +261,12 @@
         "current_stock_lambs": 108,
         "current_stock_count_date": "2026-08-05",
         "current_stock_label": "Corderos vivos contabilizados",
-        "accumulated_lamb_deaths": 10,
-        "estimated_born_lambs": 118,
+        "accumulated_lamb_deaths": 11,
+        "estimated_born_lambs": 119,
         "estimated_born_basis": "Último recuento físico de corderos vivos más todos los corderos muertos acumulados de la campaña.",
         "estimated_born_is_estimate": true,
         "estimated_remaining_lambs": {
-          "value": 11,
+          "value": 10,
           "status": "ESTIMADO",
           "basis": "Corderos esperados menos corderos nacidos acumulados.",
           "reason": null
@@ -283,23 +278,23 @@
           }
         ],
         "lamb_progress_ratio": {
-          "value": 91.5,
-          "numerator": 118,
+          "value": 92.2,
+          "numerator": 119,
           "denominator": 129,
           "status": "ESTIMADO",
           "missing": null
         },
         "lamb_mortality_ratio": {
-          "value": 8.5,
-          "numerator": 10,
-          "denominator": 118,
+          "value": 9.2,
+          "numerator": 11,
+          "denominator": 119,
           "status": "ESTIMADO",
           "missing": null
         },
         "lamb_survival_ratio": {
-          "value": 91.5,
+          "value": 90.8,
           "numerator": 108,
-          "denominator": 118,
+          "denominator": 119,
           "status": "ESTIMADO",
           "missing": null
         },
@@ -314,9 +309,9 @@
         "stillborn_message": "Nacidos muertos al parto: no informados.",
         "progress_percent": 0.8,
         "progress": {
-          "registered": 118,
+          "registered": 119,
           "expected": 129,
-          "percent": 91.5,
+          "percent": 92.2,
           "status": "SEGUN_REGISTROS",
           "is_estimate": true,
           "basis": "Corderos nacidos acumulados estimados sobre corderos esperados."
@@ -329,7 +324,7 @@
           "compatible": true
         },
         "remaining_estimated": {
-          "value": 11,
+          "value": 10,
           "status": "SEGUN_REGISTROS",
           "is_estimate": true,
           "basis": "Corderos esperados menos corderos nacidos acumulados estimados.",
@@ -337,11 +332,22 @@
         }
       },
       "mortality": {
-        "lamb_deaths_accumulated": 10,
+        "lamb_deaths_accumulated": 11,
         "ewe_deaths_accumulated": 3,
         "deaths_last_24h": null,
-        "last_report_date": "2026-08-16",
+        "last_report_date": "2026-08-18",
         "detail": [
+          {
+            "date": "2026-08-18",
+            "animal_type": "CORDERO",
+            "quantity": 1,
+            "cause_code": "CAUSA_NO_DETERMINADA",
+            "cause_label": "Causa no determinada",
+            "has_private_media": true,
+            "private_media_count": 1,
+            "cases": [],
+            "undescribed_quantity": 1
+          },
           {
             "date": "2026-08-16",
             "animal_type": "OVEJA",
@@ -1748,10 +1754,10 @@
           "counted_lambs": 1,
           "born_alive": null,
           "stillborn": null,
-          "lamb_deaths": 10,
+          "lamb_deaths": 11,
           "ewe_deaths": 3,
           "last_count_date": "2026-08-16",
-          "last_event_date": "2026-08-16"
+          "last_event_date": "2026-08-18"
         },
         "observed_series": [
           {
@@ -3676,9 +3682,9 @@
         {
           "key": "lamb_mortality_pct",
           "label": "Mortalidad de corderos (muertos acumulados sobre nacidos acumulados)",
-          "value": 8.4746,
-          "numerator": 10,
-          "denominator": 118,
+          "value": 9.2437,
+          "numerator": 11,
+          "denominator": 119,
           "denominator_label": "corderos nacidos acumulados",
           "status": "OK",
           "unit": "%"
@@ -3686,8 +3692,8 @@
         {
           "key": "lamb_progress_pct",
           "label": "Avance de corderos (nacidos acumulados sobre esperados)",
-          "value": 91.4729,
-          "numerator": 118,
+          "value": 92.2481,
+          "numerator": 119,
           "denominator": 129,
           "denominator_label": "corderos esperados",
           "status": "OK",
@@ -4043,9 +4049,9 @@
       {
         "key": "lamb_mortality_pct",
         "label": "Mortalidad de corderos (muertos acumulados sobre nacidos acumulados)",
-        "value": 8.4746,
-        "numerator": 10,
-        "denominator": 118,
+        "value": 9.2437,
+        "numerator": 11,
+        "denominator": 119,
         "denominator_label": "corderos nacidos acumulados",
         "status": "OK",
         "unit": "%"
@@ -4053,8 +4059,8 @@
       {
         "key": "lamb_progress_pct",
         "label": "Avance de corderos (nacidos acumulados sobre esperados)",
-        "value": 12.0531,
-        "numerator": 118,
+        "value": 12.1553,
+        "numerator": 119,
         "denominator": 979,
         "denominator_label": "corderos esperados",
         "status": "OK",
@@ -4695,7 +4701,7 @@
       "incomplete_windows": 1,
       "superseded_records": 0,
       "excluded_by_basis": {},
-      "registered_born_lambs": 118,
+      "registered_born_lambs": 119,
       "confirmed_live_lambs": 108,
       "messages": [
         "La evaluación ambiental de las primeras 72 horas todavía está incompleta."
@@ -4742,7 +4748,7 @@
     },
     "accumulated_notice": {
       "status": "DISPONIBLE",
-      "registered_born_lambs": 118,
+      "registered_born_lambs": 119,
       "confirmed_live_lambs": 108,
       "message": "Riesgo climático de los corderos nacidos registrados, según su distribución diaria informada."
     }
@@ -4774,8 +4780,8 @@
     }
   },
   "mortality_summary": {
-    "total_deaths": 14,
-    "lamb_deaths": 10,
+    "total_deaths": 15,
+    "lamb_deaths": 11,
     "ewe_deaths": 4,
     "by_date": [
       {
@@ -4825,13 +4831,13 @@
       },
       {
         "date": "2026-08-18",
-        "lamb": 0,
+        "lamb": 1,
         "ewe": 1
       }
     ],
     "by_lot": {
       "INTENSIVO": {
-        "CORDERO": 10,
+        "CORDERO": 11,
         "OVEJA": 3
       },
       "DOHNE": {
@@ -4840,30 +4846,30 @@
       }
     },
     "by_animal": {
-      "CORDERO": 10,
+      "CORDERO": 11,
       "OVEJA": 4
     },
     "by_cause": [
       {
         "cause_code": "CAUSA_NO_DETERMINADA",
         "cause_label": "Causa no determinada",
-        "count": 11,
-        "pct": 78.6
+        "count": 12,
+        "pct": 80.0
       },
       {
         "cause_code": "MALFORMACION_CONGENITA",
         "cause_label": "Malformación congénita",
         "count": 2,
-        "pct": 14.3
+        "pct": 13.3
       },
       {
         "cause_code": "PREDACION_CARANCHO",
         "cause_label": "Predación por carancho",
         "count": 1,
-        "pct": 7.1
+        "pct": 6.7
       }
     ],
-    "undetermined": 11
+    "undetermined": 12
   },
   "mortality_daily": [
     {
@@ -5033,6 +5039,18 @@
       "death_moment_label": "Momento no determinado",
       "service_code": null,
       "service_label": "Sin servicio asociado"
+    },
+    {
+      "date": "2026-08-18",
+      "module_code": "INTENSIVO",
+      "animal_type": "CORDERO",
+      "quantity": 1,
+      "cause_code": "CAUSA_NO_DETERMINADA",
+      "cause_label": "Causa no determinada",
+      "death_moment": "NO_DETERMINADO",
+      "death_moment_label": "Momento no determinado",
+      "service_code": null,
+      "service_label": "Sin servicio asociado"
     }
   ],
   "stillborn_daily": {
@@ -5042,7 +5060,7 @@
   },
   "campaign_milestones": {
     "status": "OK",
-    "total": 18,
+    "total": 19,
     "shown": 12,
     "items": [
       {
@@ -5056,6 +5074,21 @@
         "quantity": 1,
         "animal_type": "OVEJA",
         "animal_label": "oveja",
+        "cause_code": "CAUSA_NO_DETERMINADA",
+        "cause_label": "Causa no determinada",
+        "affects_counts": false
+      },
+      {
+        "date": "2026-08-18",
+        "module_code": "INTENSIVO",
+        "module_name": "Intensivo",
+        "kind": "MORTALIDAD_DE_CORDEROS",
+        "kind_label": "Mortalidad de corderos",
+        "subtype": null,
+        "subtype_label": null,
+        "quantity": 1,
+        "animal_type": "CORDERO",
+        "animal_label": "cordero",
         "cause_code": "CAUSA_NO_DETERMINADA",
         "cause_label": "Causa no determinada",
         "affects_counts": false
@@ -5211,23 +5244,6 @@
         "cause_code": "CAUSA_NO_DETERMINADA",
         "cause_label": "Causa no determinada",
         "affects_counts": false
-      },
-      {
-        "date": "2026-07-27",
-        "module_code": "INTENSIVO",
-        "module_name": "Intensivo",
-        "kind": "CONTROL_DE_CAMPO",
-        "kind_label": "Control de campo",
-        "subtype": "RECUENTO_ACUMULADO",
-        "subtype_label": "Recuento acumulado informado",
-        "quantity": null,
-        "animal_type": null,
-        "animal_label": null,
-        "cause_code": null,
-        "cause_label": null,
-        "affects_counts": false,
-        "counted_ewes_lambed": 44,
-        "counted_live_lambs": 63
       }
     ],
     "message": "Eventos estructurados de campaña. No modifican los recuentos."
@@ -5692,6 +5708,17 @@
   "recent_records": [
     {
       "date": "2026-08-18",
+      "module_code": "INTENSIVO",
+      "event_type": "LAMB_DEATH",
+      "event_label": "Muerte de cordero",
+      "quantity": 1,
+      "cause_code": "CAUSA_NO_DETERMINADA",
+      "cause_label": "Causa no determinada",
+      "validation_status": "CANDIDATE",
+      "source": "ZAPIA_VALIDADO"
+    },
+    {
+      "date": "2026-08-18",
       "module_code": "DOHNE",
       "event_type": "EWE_DEATH",
       "event_label": "Muerte de oveja",
@@ -5878,10 +5905,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-08-18T13:41:38.654189Z",
-      "status": "YA_PROCESADO"
+      "processed_at": "2026-08-20T00:02:23.787389Z",
+      "status": "COMPLETADO"
     },
-    "last_sync_at": "2026-08-19T21:00:56.623666-03:00",
+    "last_sync_at": "2026-08-19T21:02:23.823237-03:00",
     "pending_operations": 1,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
