@@ -2,33 +2,22 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-19T21:02:23.823237-03:00",
+  "generated_at": "2026-08-19T21:05:56.503552-03:00",
   "max_age_minutes": 60,
   "system_health": {
-    "state": "OJO",
-    "headline": "Hay un reporte pendiente de contabilizar.",
-    "reasons": [
-      {
-        "code": "PENDING_EVENT",
-        "message": "Hay un reporte pendiente de contabilizar.",
-        "severity": "OJO"
-      },
-      {
-        "code": "PENDING_MEDIA",
-        "message": "Hay archivos multimedia pendientes de revisión.",
-        "severity": "OJO"
-      }
-    ],
+    "state": "OK",
+    "headline": "Todo actualizado",
+    "reasons": [],
     "pending_actions": {
-      "reports": 1,
+      "reports": 0,
       "links": 0,
-      "media": 1,
+      "media": 0,
       "technical": 0,
       "packages": 0,
       "unclassified": 1,
-      "total": 3
+      "total": 1
     },
-    "generated_at": "2026-08-19T21:02:23.823237-03:00",
+    "generated_at": "2026-08-19T21:05:56.503552-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -647,8 +636,8 @@
             "quantity": 1,
             "cause_code": "CAUSA_NO_DETERMINADA",
             "cause_label": "Causa no determinada",
-            "has_private_media": false,
-            "private_media_count": 0,
+            "has_private_media": true,
+            "private_media_count": 1,
             "cases": [],
             "undescribed_quantity": 1
           }
@@ -5899,7 +5888,7 @@
   ],
   "automatic_provisional": {
     "notice": "Los datos pueden ajustarse si se recibe una corrección posterior.",
-    "pending_count": 1,
+    "pending_count": 0,
     "records": []
   },
   "update_status": {
@@ -5908,8 +5897,8 @@
       "processed_at": "2026-08-20T00:02:23.787389Z",
       "status": "COMPLETADO"
     },
-    "last_sync_at": "2026-08-19T21:02:23.823237-03:00",
-    "pending_operations": 1,
+    "last_sync_at": "2026-08-19T21:05:56.503552-03:00",
+    "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
 }
