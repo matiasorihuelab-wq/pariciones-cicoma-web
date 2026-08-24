@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-24T07:01:51.652715-03:00",
+  "generated_at": "2026-08-24T07:03:41.098968-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OK",
@@ -17,7 +17,7 @@
       "unclassified": 2,
       "total": 2
     },
-    "generated_at": "2026-08-24T07:01:51.652715-03:00",
+    "generated_at": "2026-08-24T07:03:41.098968-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -165,7 +165,7 @@
       ]
     },
     "lamb_deaths": 12,
-    "ewe_deaths": 4,
+    "ewe_deaths": 5,
     "deaths_last_24h": null,
     "remaining_ewes": {
       "value": null,
@@ -637,10 +637,21 @@
       },
       "mortality": {
         "lamb_deaths_accumulated": null,
-        "ewe_deaths_accumulated": 1,
+        "ewe_deaths_accumulated": 2,
         "deaths_last_24h": null,
-        "last_report_date": "2026-08-18",
+        "last_report_date": "2026-08-21",
         "detail": [
+          {
+            "date": "2026-08-21",
+            "animal_type": "OVEJA",
+            "quantity": 1,
+            "cause_code": "DISTOCIA_PARTO",
+            "cause_label": "Distocia o problema de parto",
+            "has_private_media": false,
+            "private_media_count": 0,
+            "cases": [],
+            "undescribed_quantity": 1
+          },
           {
             "date": "2026-08-18",
             "animal_type": "OVEJA",
@@ -2359,9 +2370,9 @@
           "born_alive": null,
           "stillborn": null,
           "lamb_deaths": null,
-          "ewe_deaths": 1,
+          "ewe_deaths": 2,
           "last_count_date": null,
-          "last_event_date": "2026-08-18"
+          "last_event_date": "2026-08-21"
         },
         "observed_series": [],
         "observed_checkpoints": [],
@@ -3854,8 +3865,8 @@
         {
           "key": "ewe_mortality_pct",
           "label": "Mortalidad de ovejas (sobre encarneradas)",
-          "value": 0.6452,
-          "numerator": 1,
+          "value": 1.2903,
+          "numerator": 2,
           "denominator": 155,
           "denominator_label": "ovejas encarneradas",
           "status": "OK",
@@ -4107,8 +4118,8 @@
       {
         "key": "ewe_mortality_pct",
         "label": "Mortalidad de ovejas (sobre encarneradas)",
-        "value": 0.4505,
-        "numerator": 4,
+        "value": 0.5631,
+        "numerator": 5,
         "denominator": 888,
         "denominator_label": "ovejas encarneradas",
         "status": "OK",
@@ -4789,9 +4800,9 @@
     }
   },
   "mortality_summary": {
-    "total_deaths": 16,
+    "total_deaths": 17,
     "lamb_deaths": 12,
-    "ewe_deaths": 4,
+    "ewe_deaths": 5,
     "by_date": [
       {
         "date": "2026-07-19",
@@ -4846,7 +4857,7 @@
       {
         "date": "2026-08-21",
         "lamb": 1,
-        "ewe": 0
+        "ewe": 1
       }
     ],
     "by_lot": {
@@ -4856,31 +4867,37 @@
       },
       "DOHNE": {
         "CORDERO": 0,
-        "OVEJA": 1
+        "OVEJA": 2
       }
     },
     "by_animal": {
       "CORDERO": 12,
-      "OVEJA": 4
+      "OVEJA": 5
     },
     "by_cause": [
       {
         "cause_code": "CAUSA_NO_DETERMINADA",
         "cause_label": "Causa no determinada",
         "count": 13,
-        "pct": 81.2
+        "pct": 76.5
       },
       {
         "cause_code": "MALFORMACION_CONGENITA",
         "cause_label": "Malformación congénita",
         "count": 2,
-        "pct": 12.5
+        "pct": 11.8
+      },
+      {
+        "cause_code": "DISTOCIA_PARTO",
+        "cause_label": "Distocia o problema de parto",
+        "count": 1,
+        "pct": 5.9
       },
       {
         "cause_code": "PREDACION_CARANCHO",
         "cause_label": "Predación por carancho",
         "count": 1,
-        "pct": 6.2
+        "pct": 5.9
       }
     ],
     "undetermined": 13
@@ -5068,6 +5085,18 @@
     },
     {
       "date": "2026-08-21",
+      "module_code": "DOHNE",
+      "animal_type": "OVEJA",
+      "quantity": 1,
+      "cause_code": "DISTOCIA_PARTO",
+      "cause_label": "Distocia o problema de parto",
+      "death_moment": "NO_DETERMINADO",
+      "death_moment_label": "Momento no determinado",
+      "service_code": null,
+      "service_label": "Sin servicio asociado"
+    },
+    {
+      "date": "2026-08-21",
       "module_code": "INTENSIVO",
       "animal_type": "CORDERO",
       "quantity": 1,
@@ -5086,9 +5115,24 @@
   },
   "campaign_milestones": {
     "status": "OK",
-    "total": 20,
+    "total": 21,
     "shown": 12,
     "items": [
+      {
+        "date": "2026-08-21",
+        "module_code": "DOHNE",
+        "module_name": "Merino Dohne",
+        "kind": "MORTALIDAD_DE_OVEJAS",
+        "kind_label": "Mortalidad de ovejas",
+        "subtype": null,
+        "subtype_label": null,
+        "quantity": 1,
+        "animal_type": "OVEJA",
+        "animal_label": "oveja",
+        "cause_code": "DISTOCIA_PARTO",
+        "cause_label": "Distocia o problema de parto",
+        "affects_counts": false
+      },
       {
         "date": "2026-08-21",
         "module_code": "INTENSIVO",
@@ -5254,21 +5298,6 @@
         "animal_label": "corderos",
         "cause_code": null,
         "cause_label": null,
-        "affects_counts": false
-      },
-      {
-        "date": "2026-08-01",
-        "module_code": "INTENSIVO",
-        "module_name": "Intensivo",
-        "kind": "MORTALIDAD_DE_CORDEROS",
-        "kind_label": "Mortalidad de corderos",
-        "subtype": null,
-        "subtype_label": null,
-        "quantity": 1,
-        "animal_type": "CORDERO",
-        "animal_label": "cordero",
-        "cause_code": "MALFORMACION_CONGENITA",
-        "cause_label": "Malformación congénita",
         "affects_counts": false
       }
     ],
@@ -5737,6 +5766,17 @@
   "recent_records": [
     {
       "date": "2026-08-21",
+      "module_code": "DOHNE",
+      "event_type": "EWE_DEATH",
+      "event_label": "Muerte de oveja",
+      "quantity": 1,
+      "cause_code": "DISTOCIA_PARTO",
+      "cause_label": "Distocia o problema de parto",
+      "validation_status": "CONFIRMED",
+      "source": "CONFIRMADO_LOCAL"
+    },
+    {
+      "date": "2026-08-21",
       "module_code": "INTENSIVO",
       "event_type": "LAMB_DEATH",
       "event_label": "Muerte de cordero",
@@ -5948,7 +5988,7 @@
       "processed_at": "2026-08-24T10:01:51.552206Z",
       "status": "COMPLETADO"
     },
-    "last_sync_at": "2026-08-24T07:01:51.652715-03:00",
+    "last_sync_at": "2026-08-24T07:03:41.098968-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
