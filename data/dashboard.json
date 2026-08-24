@@ -2,12 +2,18 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-19T21:10:56.451897-03:00",
+  "generated_at": "2026-08-24T07:00:05.475177-03:00",
   "max_age_minutes": 60,
   "system_health": {
-    "state": "OK",
-    "headline": "Todo actualizado",
-    "reasons": [],
+    "state": "OJO",
+    "headline": "Hay un reporte en la carpeta de entrada sin registrar.",
+    "reasons": [
+      {
+        "code": "INPUT_PENDING",
+        "message": "Hay un reporte en la carpeta de entrada sin registrar.",
+        "severity": "OJO"
+      }
+    ],
     "pending_actions": {
       "reports": 0,
       "links": 0,
@@ -17,7 +23,7 @@
       "unclassified": 1,
       "total": 1
     },
-    "generated_at": "2026-08-19T21:10:56.451897-03:00",
+    "generated_at": "2026-08-24T07:00:05.475177-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -1735,7 +1741,7 @@
           "remaining_lambs": null,
           "method": "normalizacion_pesos_futuros_v1",
           "source": "WHATSAPP",
-          "age_days": 13,
+          "age_days": 17,
           "warnings": []
         },
         "observed": {
@@ -5897,7 +5903,7 @@
       "processed_at": "2026-08-20T00:02:23.787389Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-08-19T21:10:56.451897-03:00",
+    "last_sync_at": "2026-08-24T07:00:05.475177-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
