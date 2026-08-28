@@ -2,17 +2,12 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-28T20:45:02.630209-03:00",
+  "generated_at": "2026-08-28T20:47:15.771053-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
-    "headline": "Hay un reporte pendiente de contabilizar.",
+    "headline": "Hay archivos multimedia pendientes de revisión.",
     "reasons": [
-      {
-        "code": "PENDING_EVENT",
-        "message": "Hay un reporte pendiente de contabilizar.",
-        "severity": "OJO"
-      },
       {
         "code": "PENDING_MEDIA",
         "message": "Hay archivos multimedia pendientes de revisión.",
@@ -20,15 +15,15 @@
       }
     ],
     "pending_actions": {
-      "reports": 1,
+      "reports": 0,
       "links": 0,
       "media": 1,
       "technical": 0,
       "packages": 0,
       "unclassified": 1,
-      "total": 3
+      "total": 2
     },
-    "generated_at": "2026-08-28T20:45:02.630209-03:00",
+    "generated_at": "2026-08-28T20:47:15.771053-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -176,7 +171,7 @@
       ]
     },
     "lamb_deaths": 15,
-    "ewe_deaths": 5,
+    "ewe_deaths": 6,
     "deaths_last_24h": null,
     "remaining_ewes": {
       "value": null,
@@ -337,7 +332,7 @@
       },
       "mortality": {
         "lamb_deaths_accumulated": 15,
-        "ewe_deaths_accumulated": 3,
+        "ewe_deaths_accumulated": 4,
         "deaths_last_24h": null,
         "last_report_date": "2026-08-28",
         "detail": [
@@ -371,6 +366,17 @@
             "cause_label": "Causa no determinada",
             "has_private_media": true,
             "private_media_count": 1,
+            "cases": [],
+            "undescribed_quantity": 1
+          },
+          {
+            "date": "2026-08-24",
+            "animal_type": "OVEJA",
+            "quantity": 1,
+            "cause_code": "OTRA",
+            "cause_label": "Otra causa informada",
+            "has_private_media": false,
+            "private_media_count": 0,
             "cases": [],
             "undescribed_quantity": 1
           },
@@ -1814,7 +1820,7 @@
           "born_alive": null,
           "stillborn": null,
           "lamb_deaths": 15,
-          "ewe_deaths": 3,
+          "ewe_deaths": 4,
           "last_count_date": "2026-08-16",
           "last_event_date": "2026-08-28"
         },
@@ -3799,8 +3805,8 @@
         {
           "key": "ewe_mortality_pct",
           "label": "Mortalidad de ovejas (sobre encarneradas)",
-          "value": 2.9126,
-          "numerator": 3,
+          "value": 3.8835,
+          "numerator": 4,
           "denominator": 103,
           "denominator_label": "ovejas encarneradas",
           "status": "OK",
@@ -4174,8 +4180,8 @@
       {
         "key": "ewe_mortality_pct",
         "label": "Mortalidad de ovejas (sobre encarneradas)",
-        "value": 0.5631,
-        "numerator": 5,
+        "value": 0.6757,
+        "numerator": 6,
         "denominator": 888,
         "denominator_label": "ovejas encarneradas",
         "status": "OK",
@@ -4847,9 +4853,9 @@
     }
   },
   "mortality_summary": {
-    "total_deaths": 20,
+    "total_deaths": 21,
     "lamb_deaths": 15,
-    "ewe_deaths": 5,
+    "ewe_deaths": 6,
     "by_date": [
       {
         "date": "2026-07-19",
@@ -4907,6 +4913,11 @@
         "ewe": 1
       },
       {
+        "date": "2026-08-24",
+        "lamb": 0,
+        "ewe": 1
+      },
+      {
         "date": "2026-08-27",
         "lamb": 1,
         "ewe": 0
@@ -4920,7 +4931,7 @@
     "by_lot": {
       "INTENSIVO": {
         "CORDERO": 15,
-        "OVEJA": 3
+        "OVEJA": 4
       },
       "DOHNE": {
         "CORDERO": 0,
@@ -4929,32 +4940,38 @@
     },
     "by_animal": {
       "CORDERO": 15,
-      "OVEJA": 5
+      "OVEJA": 6
     },
     "by_cause": [
       {
         "cause_code": "CAUSA_NO_DETERMINADA",
         "cause_label": "Causa no determinada",
         "count": 16,
-        "pct": 80.0
+        "pct": 76.2
       },
       {
         "cause_code": "MALFORMACION_CONGENITA",
         "cause_label": "Malformación congénita",
         "count": 2,
-        "pct": 10.0
+        "pct": 9.5
       },
       {
         "cause_code": "DISTOCIA_PARTO",
         "cause_label": "Distocia o problema de parto",
         "count": 1,
-        "pct": 5.0
+        "pct": 4.8
+      },
+      {
+        "cause_code": "OTRA",
+        "cause_label": "Otra causa informada",
+        "count": 1,
+        "pct": 4.8
       },
       {
         "cause_code": "PREDACION_CARANCHO",
         "cause_label": "Predación por carancho",
         "count": 1,
-        "pct": 5.0
+        "pct": 4.8
       }
     ],
     "undetermined": 16
@@ -5165,6 +5182,18 @@
       "service_label": "Sin servicio asociado"
     },
     {
+      "date": "2026-08-24",
+      "module_code": "INTENSIVO",
+      "animal_type": "OVEJA",
+      "quantity": 1,
+      "cause_code": "OTRA",
+      "cause_label": "Otra causa informada",
+      "death_moment": "NO_DETERMINADO",
+      "death_moment_label": "Momento no determinado",
+      "service_code": null,
+      "service_label": "Sin servicio asociado"
+    },
+    {
       "date": "2026-08-27",
       "module_code": "INTENSIVO",
       "animal_type": "CORDERO",
@@ -5196,7 +5225,7 @@
   },
   "campaign_milestones": {
     "status": "OK",
-    "total": 26,
+    "total": 27,
     "shown": 12,
     "items": [
       {
@@ -5272,6 +5301,21 @@
         "animal_label": "cordero",
         "cause_code": "CAUSA_NO_DETERMINADA",
         "cause_label": "Causa no determinada",
+        "affects_counts": false
+      },
+      {
+        "date": "2026-08-24",
+        "module_code": "INTENSIVO",
+        "module_name": "Intensivo",
+        "kind": "MORTALIDAD_DE_OVEJAS",
+        "kind_label": "Mortalidad de ovejas",
+        "subtype": null,
+        "subtype_label": null,
+        "quantity": 1,
+        "animal_type": "OVEJA",
+        "animal_label": "oveja",
+        "cause_code": "OTRA",
+        "cause_label": "Otra causa informada",
         "affects_counts": false
       },
       {
@@ -5351,21 +5395,6 @@
       },
       {
         "date": "2026-08-13",
-        "module_code": "INTENSIVO",
-        "module_name": "Intensivo",
-        "kind": "MORTALIDAD_DE_CORDEROS",
-        "kind_label": "Mortalidad de corderos",
-        "subtype": null,
-        "subtype_label": null,
-        "quantity": 1,
-        "animal_type": "CORDERO",
-        "animal_label": "cordero",
-        "cause_code": "CAUSA_NO_DETERMINADA",
-        "cause_label": "Causa no determinada",
-        "affects_counts": false
-      },
-      {
-        "date": "2026-08-07",
         "module_code": "INTENSIVO",
         "module_name": "Intensivo",
         "kind": "MORTALIDAD_DE_CORDEROS",
@@ -5862,6 +5891,17 @@
       "source": "ZAPIA_VALIDADO"
     },
     {
+      "date": "2026-08-24",
+      "module_code": "INTENSIVO",
+      "event_type": "EWE_DEATH",
+      "event_label": "Muerte de oveja",
+      "quantity": 1,
+      "cause_code": "OTRA",
+      "cause_label": "Otra causa informada",
+      "validation_status": "CONFIRMED",
+      "source": "CONFIRMADO_LOCAL"
+    },
+    {
       "date": "2026-08-21",
       "module_code": "DOHNE",
       "event_type": "LAMBING",
@@ -6042,22 +6082,11 @@
       "cause_label": "Causa no determinada",
       "validation_status": "CANDIDATE",
       "source": "ZAPIA_VALIDADO"
-    },
-    {
-      "date": "2026-07-23",
-      "module_code": "INTENSIVO",
-      "event_type": "LAMB_DEATH",
-      "event_label": "Muerte de cordero",
-      "quantity": 1,
-      "cause_code": "CAUSA_NO_DETERMINADA",
-      "cause_label": "Causa no determinada",
-      "validation_status": "CANDIDATE",
-      "source": "ZAPIA_VALIDADO"
     }
   ],
   "automatic_provisional": {
     "notice": "Los datos pueden ajustarse si se recibe una corrección posterior.",
-    "pending_count": 1,
+    "pending_count": 0,
     "records": []
   },
   "update_status": {
@@ -6066,8 +6095,8 @@
       "processed_at": "2026-08-28T23:33:38.825971Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-08-28T20:45:02.630209-03:00",
-    "pending_operations": 1,
+    "last_sync_at": "2026-08-28T20:47:15.771053-03:00",
+    "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
 }
