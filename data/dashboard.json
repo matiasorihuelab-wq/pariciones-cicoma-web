@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-28T20:43:53.729313-03:00",
+  "generated_at": "2026-08-28T20:45:02.630209-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -20,15 +20,15 @@
       }
     ],
     "pending_actions": {
-      "reports": 5,
+      "reports": 1,
       "links": 0,
       "media": 1,
       "technical": 0,
       "packages": 0,
       "unclassified": 1,
-      "total": 7
+      "total": 3
     },
-    "generated_at": "2026-08-28T20:43:53.729313-03:00",
+    "generated_at": "2026-08-28T20:45:02.630209-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -68,22 +68,22 @@
     "coverage": {
       "status": "PARCIAL",
       "lots_with_records": [
+        "DOHNE",
         "INTENSIVO"
       ],
       "lots_without_records": [
-        "DOHNE",
         "MA"
       ],
-      "message": "Datos registrados actualmente: Intensivo. Merino Dohne y Merino Australiano todavía sin registros de parición."
+      "message": "Datos registrados actualmente: Merino Dohne y Intensivo. Merino Australiano todavía sin registros de parición."
     },
     "registered_born_lambs": {
-      "value": 133,
+      "value": 134,
       "status": "PARTIAL",
       "lots_included": [
+        "DOHNE",
         "INTENSIVO"
       ],
       "lots_missing": [
-        "DOHNE",
         "MA"
       ]
     },
@@ -102,56 +102,56 @@
     "current_stock_label": "Corderos vivos contabilizados",
     "accumulated_lamb_deaths_total": 15,
     "ewe_progress": {
-      "registered": 83,
+      "registered": 84,
       "expected": 832,
-      "percent": 10.0,
+      "percent": 10.1,
       "status": "SEGUN_REGISTROS",
       "is_estimate": true,
       "basis": "Ovejas paridas registradas sobre ovejas previstas a parir."
     },
     "lamb_progress": {
-      "registered": 133,
+      "registered": 134,
       "expected": 979,
-      "percent": 13.6,
+      "percent": 13.7,
       "status": "SEGUN_REGISTROS",
       "is_estimate": true,
       "basis": "Corderos nacidos acumulados estimados sobre corderos esperados."
     },
     "remaining_ewes_estimated": {
-      "value": 749,
+      "value": 748,
       "status": "SEGUN_REGISTROS",
       "is_estimate": true,
       "basis": "Ovejas previstas a parir menos ovejas paridas registradas.",
       "reason": null
     },
     "remaining_lambs_estimated": {
-      "value": 846,
+      "value": 845,
       "status": "SEGUN_REGISTROS",
       "is_estimate": true,
       "basis": "Corderos esperados menos corderos nacidos acumulados estimados.",
       "reason": null
     },
     "lambed_ewes": {
-      "value": 83,
+      "value": 84,
       "status": "PARTIAL",
       "lots_included": [
+        "DOHNE",
         "INTENSIVO"
       ],
       "lots_missing": [
-        "DOHNE",
         "MA"
       ]
     },
     "progress_percent": null,
     "expected_lambs": 979,
     "born_lambs": {
-      "value": 1,
+      "value": 2,
       "status": "PARTIAL",
       "lots_included": [
+        "DOHNE",
         "INTENSIVO"
       ],
       "lots_missing": [
-        "DOHNE",
         "MA"
       ]
     },
@@ -181,13 +181,13 @@
     "remaining_ewes": {
       "value": null,
       "status": "PARCIAL",
-      "reason": "Recuento parcial de ovejas paridas: falta el recuento de DOHNE, MA. No se calculan restantes sobre un parcial.",
+      "reason": "Recuento parcial de ovejas paridas: falta el recuento de MA. No se calculan restantes sobre un parcial.",
       "compatible": false
     },
     "remaining_lambs": {
       "value": null,
       "status": "PARCIAL",
-      "reason": "Recuento parcial de corderos nacidos: falta el recuento de DOHNE, MA. No se calculan restantes sobre un parcial.",
+      "reason": "Recuento parcial de corderos nacidos: falta el recuento de MA. No se calculan restantes sobre un parcial.",
       "compatible": false
     }
   },
@@ -582,105 +582,105 @@
       },
       "ewe_counts": {
         "expected_to_lamb": 144,
-        "counted_lambed": null,
-        "counted_from_events": null,
-        "count_source": null,
+        "counted_lambed": 1,
+        "counted_from_events": 1,
+        "count_source": "EVENTOS",
         "reconciliation": null,
-        "progress_percent": null,
+        "progress_percent": 0.7,
         "progress": {
-          "registered": null,
+          "registered": 1,
           "expected": 144,
-          "percent": null,
-          "status": "SIN_RECUENTO",
+          "percent": 0.7,
+          "status": "OK",
           "is_estimate": false,
           "basis": "Ovejas paridas registradas sobre ovejas previstas a parir."
         },
-        "last_count_date": null,
+        "last_count_date": "2026-08-21",
         "remaining": {
-          "value": null,
-          "status": "SIN_RECUENTO",
-          "reason": "Sin recuento confirmado de ovejas paridas de DOHNE.",
-          "compatible": null
+          "value": 143,
+          "status": "OK",
+          "reason": null,
+          "compatible": true
         },
         "remaining_estimated": {
-          "value": null,
-          "status": "SIN_RECUENTO",
+          "value": 143,
+          "status": "OK",
           "is_estimate": false,
           "basis": "Ovejas previstas a parir menos ovejas paridas registradas.",
-          "reason": "Sin registros de ovejas paridas de DOHNE."
+          "reason": null
         }
       },
       "lamb_counts": {
         "expected_total": 180,
-        "counted": null,
+        "counted": 1,
         "born_alive": null,
         "stillborn": null,
         "current_stock_lambs": null,
         "current_stock_count_date": null,
         "current_stock_label": "Corderos vivos contabilizados",
         "accumulated_lamb_deaths": 0,
-        "estimated_born_lambs": null,
-        "estimated_born_basis": null,
+        "estimated_born_lambs": 1,
+        "estimated_born_basis": "Suma de los partes diarios confirmados.",
         "estimated_born_is_estimate": false,
         "estimated_remaining_lambs": {
-          "value": null,
-          "status": "SIN_CALCULO",
-          "basis": "Sin base: falta el recuento.",
-          "reason": "Falta el recuento de corderos vivos o los corderos esperados."
+          "value": 179,
+          "status": "OK",
+          "basis": "Corderos esperados menos corderos nacidos acumulados.",
+          "reason": null
         },
         "stock_history": [],
         "lamb_progress_ratio": {
-          "value": null,
-          "numerator": null,
+          "value": 0.6,
+          "numerator": 1,
           "denominator": 180,
-          "status": "SIN_CALCULO",
-          "missing": "corderos vivos contabilizados o corderos esperados"
+          "status": "OK",
+          "missing": null
         },
         "lamb_mortality_ratio": {
-          "value": null,
+          "value": 0.0,
           "numerator": 0,
-          "denominator": null,
-          "status": "SIN_CALCULO",
-          "missing": "corderos muertos acumulados o corderos nacidos acumulados"
+          "denominator": 1,
+          "status": "OK",
+          "missing": null
         },
         "lamb_survival_ratio": {
           "value": null,
           "numerator": null,
-          "denominator": null,
+          "denominator": 1,
           "status": "SIN_CALCULO",
           "missing": "corderos vivos contabilizados o corderos nacidos acumulados"
         },
         "data_cutoff": null,
         "reconciliation": null,
-        "registered_born": null,
-        "registered_born_status": "SIN_RECUENTO",
+        "registered_born": 1,
+        "registered_born_status": "EXACTO",
         "registered_born_is_minimum": false,
-        "registered_born_basis": "SIN_RECUENTO",
+        "registered_born_basis": "RECUENTO_TOTAL_INFORMADO",
         "confirmed_live": null,
         "stillborn_status": "NO_INFORMADO",
         "stillborn_message": "Nacidos muertos al parto: no informados.",
-        "progress_percent": null,
+        "progress_percent": 0.6,
         "progress": {
-          "registered": null,
+          "registered": 1,
           "expected": 180,
-          "percent": null,
-          "status": "SIN_RECUENTO",
+          "percent": 0.6,
+          "status": "OK",
           "is_estimate": false,
           "basis": "Corderos nacidos acumulados estimados sobre corderos esperados."
         },
-        "last_count_date": null,
+        "last_count_date": "2026-08-21",
         "remaining": {
-          "value": null,
-          "status": "SIN_RECUENTO",
-          "reason": "Sin recuento confirmado de corderos nacidos de DOHNE.",
-          "compatible": null
+          "value": 179,
+          "status": "OK",
+          "reason": null,
+          "compatible": true
         },
         "remaining_estimated": {
-          "value": null,
-          "status": "SIN_RECUENTO",
+          "value": 179,
+          "status": "OK",
           "is_estimate": false,
           "basis": "Corderos esperados menos corderos nacidos acumulados estimados.",
-          "reason": "Sin registros de corderos nacidos de DOHNE."
+          "reason": null
         }
       },
       "mortality": {
@@ -715,7 +715,7 @@
       },
       "field_control": {
         "variable": "ovejas_paridas",
-        "calculated": null,
+        "calculated": 1,
         "reported_accumulated": null,
         "reported_date": null,
         "difference": null,
@@ -2413,16 +2413,24 @@
         "expected_adjusted": [],
         "adjustment": null,
         "observed": {
-          "counted_lambed": null,
-          "counted_lambs": null,
+          "counted_lambed": 1,
+          "counted_lambs": 1,
           "born_alive": null,
           "stillborn": null,
           "lamb_deaths": null,
           "ewe_deaths": 2,
-          "last_count_date": null,
+          "last_count_date": "2026-08-21",
           "last_event_date": "2026-08-21"
         },
-        "observed_series": [],
+        "observed_series": [
+          {
+            "date": "2026-08-21",
+            "lambed_ewes": 1,
+            "born_lambs": 1,
+            "cumulative_ewes": 1,
+            "cumulative_pct": 0.006944
+          }
+        ],
         "observed_checkpoints": [],
         "services": [
           {
@@ -3865,7 +3873,7 @@
           "label": "Mortalidad de corderos (muertos acumulados sobre nacidos acumulados)",
           "value": null,
           "numerator": null,
-          "denominator": null,
+          "denominator": 1,
           "denominator_label": "corderos nacidos acumulados",
           "status": "SIN_RECUENTO",
           "unit": "%"
@@ -3873,21 +3881,21 @@
         {
           "key": "lamb_progress_pct",
           "label": "Avance de corderos (nacidos acumulados sobre esperados)",
-          "value": null,
-          "numerator": null,
+          "value": 0.5556,
+          "numerator": 1,
           "denominator": 180,
           "denominator_label": "corderos esperados",
-          "status": "SIN_RECUENTO",
+          "status": "OK",
           "unit": "%"
         },
         {
           "key": "lambing_progress_pct",
           "label": "Avance de ovejas (paridas sobre previstas a parir)",
-          "value": null,
-          "numerator": null,
+          "value": 0.6944,
+          "numerator": 1,
           "denominator": 144,
           "denominator_label": "ovejas previstas a parir",
-          "status": "SIN_RECUENTO",
+          "status": "OK",
           "unit": "%"
         },
         {
@@ -4108,9 +4116,9 @@
       {
         "key": "lamb_mortality_pct",
         "label": "Mortalidad de corderos (muertos acumulados sobre nacidos acumulados)",
-        "value": 11.2782,
+        "value": 11.194,
         "numerator": 15,
-        "denominator": 133,
+        "denominator": 134,
         "denominator_label": "corderos nacidos acumulados",
         "status": "OK",
         "unit": "%"
@@ -4118,8 +4126,8 @@
       {
         "key": "lamb_progress_pct",
         "label": "Avance de corderos (nacidos acumulados sobre esperados)",
-        "value": 13.5853,
-        "numerator": 133,
+        "value": 13.6874,
+        "numerator": 134,
         "denominator": 979,
         "denominator_label": "corderos esperados",
         "status": "OK",
@@ -4134,12 +4142,12 @@
         "denominator_label": "ovejas previstas a parir",
         "status": "PARCIAL",
         "unit": "%",
-        "reason": "Recuento parcial de lambed_ewes: informado en INTENSIVO y falta DOHNE, MA. Un total parcial no produce un indicador.",
+        "reason": "Recuento parcial de lambed_ewes: informado en DOHNE, INTENSIVO y falta MA. Un total parcial no produce un indicador.",
         "lots_included": [
+          "DOHNE",
           "INTENSIVO"
         ],
         "lots_missing": [
-          "DOHNE",
           "MA"
         ]
       },
@@ -4181,6 +4189,12 @@
       "lambed_ewes": 1,
       "born_lambs": 1,
       "cumulative_lambed": 1
+    },
+    {
+      "date": "2026-08-21",
+      "lambed_ewes": 1,
+      "born_lambs": 1,
+      "cumulative_lambed": 2
     }
   ],
   "chill_public": {
@@ -4703,9 +4717,39 @@
             "2026-08-17",
             "2026-08-18"
           ]
+        },
+        {
+          "date": "2026-08-21",
+          "module_code": "DOHNE",
+          "module_name": "Merino Dohne",
+          "service_code": null,
+          "service_type": null,
+          "ewes_lambed": 1,
+          "born_lambs": 1,
+          "born_alive": null,
+          "stillborn": null,
+          "basis": "DAILY",
+          "validation_status": "CONFIRMED",
+          "revision": 1,
+          "risk_d": null,
+          "risk_d1": null,
+          "risk_d2": null,
+          "window": [
+            "2026-08-21",
+            "2026-08-22",
+            "2026-08-23"
+          ],
+          "max_risk": "RIESGO_72H_INCOMPLETO",
+          "complete": false,
+          "missing_dates": [
+            "2026-08-21",
+            "2026-08-22",
+            "2026-08-23"
+          ]
         }
       ],
       "lots_with_daily_records": [
+        "DOHNE",
         "INTENSIVO"
       ],
       "lots_with_accumulated_only": [],
@@ -4716,15 +4760,15 @@
           "MEDIO": 0,
           "ALTO": 0,
           "CRITICO": 0,
-          "RIESGO_72H_INCOMPLETO": 1
+          "RIESGO_72H_INCOMPLETO": 2
         },
-        "lambs_counted": 1,
+        "lambs_counted": 2,
         "rule": "Cada cordero registrado se cuenta una sola vez, bajo el nivel de riesgo más alto de sus primeras 72 horas."
       },
-      "incomplete_windows": 1,
+      "incomplete_windows": 2,
       "superseded_records": 0,
       "excluded_by_basis": {},
-      "registered_born_lambs": 133,
+      "registered_born_lambs": 134,
       "confirmed_live_lambs": 118,
       "messages": [
         "La evaluación ambiental de las primeras 72 horas todavía está incompleta."
@@ -4771,7 +4815,7 @@
     },
     "accumulated_notice": {
       "status": "DISPONIBLE",
-      "registered_born_lambs": 133,
+      "registered_born_lambs": 134,
       "confirmed_live_lambs": 118,
       "message": "Riesgo climático de los corderos nacidos registrados, según su distribución diaria informada."
     }
@@ -4787,7 +4831,7 @@
     },
     "DOHNE": {
       "variable": "ovejas_paridas",
-      "calculated": null,
+      "calculated": 1,
       "reported_accumulated": null,
       "reported_date": null,
       "difference": null,
@@ -5820,6 +5864,20 @@
     {
       "date": "2026-08-21",
       "module_code": "DOHNE",
+      "event_type": "LAMBING",
+      "event_label": "Parición",
+      "quantity": 1,
+      "ewes_lambed": 1,
+      "born_alive": null,
+      "stillborn": null,
+      "cause_code": null,
+      "cause_label": null,
+      "validation_status": "CONFIRMED",
+      "source": "MANUAL"
+    },
+    {
+      "date": "2026-08-21",
+      "module_code": "DOHNE",
       "event_type": "EWE_DEATH",
       "event_label": "Muerte de oveja",
       "quantity": 1,
@@ -5995,22 +6053,11 @@
       "cause_label": "Causa no determinada",
       "validation_status": "CANDIDATE",
       "source": "ZAPIA_VALIDADO"
-    },
-    {
-      "date": "2026-07-19",
-      "module_code": "INTENSIVO",
-      "event_type": "EWE_DEATH",
-      "event_label": "Muerte de oveja",
-      "quantity": 1,
-      "cause_code": "CAUSA_NO_DETERMINADA",
-      "cause_label": "Causa no determinada",
-      "validation_status": "CONFIRMED",
-      "source": "ZAPIA_VALIDADO"
     }
   ],
   "automatic_provisional": {
     "notice": "Los datos pueden ajustarse si se recibe una corrección posterior.",
-    "pending_count": 5,
+    "pending_count": 1,
     "records": []
   },
   "update_status": {
@@ -6019,8 +6066,8 @@
       "processed_at": "2026-08-28T23:33:38.825971Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-08-28T20:43:53.729313-03:00",
-    "pending_operations": 5,
+    "last_sync_at": "2026-08-28T20:45:02.630209-03:00",
+    "pending_operations": 1,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
 }
