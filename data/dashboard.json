@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-28T23:40:08.035127-03:00",
+  "generated_at": "2026-08-28T23:40:15.743118-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OK",
@@ -17,7 +17,7 @@
       "unclassified": 0,
       "total": 0
     },
-    "generated_at": "2026-08-28T23:40:08.035127-03:00",
+    "generated_at": "2026-08-28T23:40:15.743118-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -5435,7 +5435,7 @@
     "analyzed_at": "2026-08-29T01:17:27.115230+00:00",
     "forecast_run_date": "2026-08-28",
     "imported_at": "2026-08-28T23:05:15.359170-03:00",
-    "forecast_age_hours": 0.8,
+    "forecast_age_hours": 1.38,
     "update_status": {
       "state": "ACTUALIZADO",
       "stale": false,
@@ -5453,8 +5453,8 @@
         {
           "code": "INTENSIVO",
           "name": "INTENSIVO",
-          "expected_to_lamb": 96,
-          "expected_lambs": 129,
+          "expected_to_lamb": 97,
+          "expected_lambs": 130,
           "counted_lambed": 1,
           "counted_lambs": 1,
           "last_count_date": "2026-08-16"
@@ -5479,8 +5479,8 @@
         }
       ],
       "totals": {
-        "expected_to_lamb": 832,
-        "expected_lambs": 979,
+        "expected_to_lamb": 833,
+        "expected_lambs": 980,
         "counted_lambed": 2,
         "counted_lambs": 2
       }
@@ -6102,7 +6102,7 @@
       "processed_at": "2026-08-28T23:33:38.825971Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-08-28T23:40:08.035127-03:00",
+    "last_sync_at": "2026-08-28T23:40:15.743118-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
