@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-28T20:48:45.348190-03:00",
+  "generated_at": "2026-08-28T21:03:44.653187-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OK",
@@ -17,7 +17,7 @@
       "unclassified": 0,
       "total": 0
     },
-    "generated_at": "2026-08-28T20:48:45.348190-03:00",
+    "generated_at": "2026-08-28T21:03:44.653187-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -1805,7 +1805,7 @@
           "remaining_lambs": null,
           "method": "normalizacion_pesos_futuros_v1",
           "source": "WHATSAPP",
-          "age_days": 21,
+          "age_days": 22,
           "warnings": []
         },
         "observed": {
@@ -6089,7 +6089,7 @@
       "processed_at": "2026-08-28T23:33:38.825971Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-08-28T20:48:45.348190-03:00",
+    "last_sync_at": "2026-08-28T21:03:44.653187-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
