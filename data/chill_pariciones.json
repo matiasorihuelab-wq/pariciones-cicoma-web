@@ -10,10 +10,10 @@
   "location": {
     "name": "CICOMA"
   },
-  "analyzed_at": "2026-08-28T21:17:27.374011+00:00",
-  "forecast_run_date": "2026-08-27",
-  "imported_at": "2026-08-28T18:28:02.299160-03:00",
-  "forecast_age_hours": 0.18,
+  "analyzed_at": "2026-08-29T01:17:27.115230+00:00",
+  "forecast_run_date": "2026-08-28",
+  "imported_at": "2026-08-28T23:05:15.359170-03:00",
+  "forecast_age_hours": 0.8,
   "update_status": {
     "state": "ACTUALIZADO",
     "stale": false,
@@ -42,9 +42,9 @@
         "name": "MERINO DOHNE",
         "expected_to_lamb": 144,
         "expected_lambs": 180,
-        "counted_lambed": null,
-        "counted_lambs": null,
-        "last_count_date": null
+        "counted_lambed": 1,
+        "counted_lambs": 1,
+        "last_count_date": "2026-08-21"
       },
       {
         "code": "MA",
@@ -59,8 +59,8 @@
     "totals": {
       "expected_to_lamb": 832,
       "expected_lambs": 979,
-      "counted_lambed": 1,
-      "counted_lambs": 1
+      "counted_lambed": 2,
+      "counted_lambs": 2
     }
   },
   "module_options": [
@@ -90,10 +90,10 @@
       "ci_max": 900.0,
       "ci_interval": "< 900",
       "ci_unit": "kJ/m2/h",
-      "confidence": 0.9,
+      "confidence": 0.75,
       "requires_review": false,
       "automatic_use": true,
-      "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260828.png",
+      "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF_mini/Min_0.png",
       "expected_ewes_lambing": 0.402,
       "expected_lambs_born": 0.7748,
       "lambs_in_first_72h_on_date": 4.099,
