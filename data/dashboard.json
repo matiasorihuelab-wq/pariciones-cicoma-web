@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-08-28T21:03:44.653187-03:00",
+  "generated_at": "2026-08-28T23:05:08.867427-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OK",
@@ -17,7 +17,7 @@
       "unclassified": 0,
       "total": 0
     },
-    "generated_at": "2026-08-28T21:03:44.653187-03:00",
+    "generated_at": "2026-08-28T23:05:08.867427-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -91,9 +91,9 @@
     "current_stock_label": "Corderos vivos contabilizados",
     "accumulated_lamb_deaths_total": 15,
     "ewe_progress": {
-      "registered": 84,
+      "registered": 94,
       "expected": 832,
-      "percent": 10.1,
+      "percent": 11.3,
       "status": "SEGUN_REGISTROS",
       "is_estimate": true,
       "basis": "Ovejas paridas registradas sobre ovejas previstas a parir."
@@ -107,7 +107,7 @@
       "basis": "Corderos nacidos acumulados estimados sobre corderos esperados."
     },
     "remaining_ewes_estimated": {
-      "value": 748,
+      "value": 738,
       "status": "SEGUN_REGISTROS",
       "is_estimate": true,
       "basis": "Ovejas previstas a parir menos ovejas paridas registradas.",
@@ -121,7 +121,7 @@
       "reason": null
     },
     "lambed_ewes": {
-      "value": 84,
+      "value": 94,
       "status": "PARTIAL",
       "lots_included": [
         "DOHNE",
@@ -202,40 +202,40 @@
       },
       "ewe_counts": {
         "expected_to_lamb": 96,
-        "counted_lambed": 83,
+        "counted_lambed": 93,
         "counted_from_events": 1,
-        "count_source": "RECUENTO_ACUMULADO_MAS_DIARIOS",
+        "count_source": "RECUENTO_ACUMULADO",
         "reconciliation": {
-          "value": 83,
+          "value": 93,
           "status": "OK",
-          "basis": "ACCUMULATED_MAS_DIARIOS",
+          "basis": "ACCUMULATED",
           "subject": "ovejas paridas",
-          "baseline_value": 82,
-          "baseline_date": "2026-08-07",
-          "daily_after_total": 1,
-          "daily_after_count": 1,
-          "daily_included_total": null,
-          "daily_included_count": 0,
+          "baseline_value": 93,
+          "baseline_date": "2026-08-28",
+          "daily_after_total": 0,
+          "daily_after_count": 0,
+          "daily_included_total": 1,
+          "daily_included_count": 1,
           "reconciliation": "El recuento acumulado es la línea base de su fecha: sólo se suman los partes diarios posteriores. Los anteriores ya están contenidos en él."
         },
-        "progress_percent": 86.5,
+        "progress_percent": 96.9,
         "progress": {
-          "registered": 83,
+          "registered": 93,
           "expected": 96,
-          "percent": 86.5,
+          "percent": 96.9,
           "status": "OK",
           "is_estimate": false,
           "basis": "Ovejas paridas registradas sobre ovejas previstas a parir."
         },
-        "last_count_date": "2026-08-16",
+        "last_count_date": "2026-08-28",
         "remaining": {
-          "value": 13,
+          "value": 3,
           "status": "OK",
           "reason": null,
           "compatible": true
         },
         "remaining_estimated": {
-          "value": 13,
+          "value": 3,
           "status": "OK",
           "is_estimate": false,
           "basis": "Ovejas previstas a parir menos ovejas paridas registradas.",
@@ -309,7 +309,7 @@
           "is_estimate": true,
           "basis": "Corderos nacidos acumulados estimados sobre corderos esperados."
         },
-        "last_count_date": "2026-08-16",
+        "last_count_date": "2026-08-28",
         "remaining": {
           "value": 128,
           "status": "OK",
@@ -552,10 +552,10 @@
       },
       "field_control": {
         "variable": "ovejas_paridas",
-        "calculated": null,
-        "reported_accumulated": 82,
-        "reported_date": "2026-08-07",
-        "difference": null,
+        "calculated": 1,
+        "reported_accumulated": 93,
+        "reported_date": "2026-08-28",
+        "difference": 92,
         "status": "DATOS_PARCIALES"
       }
     },
@@ -1852,6 +1852,19 @@
             "stillborn_status": "NO_INFORMADO",
             "cumulative_ewes_pct": 0.854167,
             "cumulative_lambs_pct": null,
+            "message": "Recuento acumulado informado en esta fecha. Sin distribución diaria de nacimientos."
+          },
+          {
+            "date": "2026-08-28",
+            "basis": "ACCUMULATED",
+            "lambed_ewes": 93,
+            "registered_born_lambs": 118,
+            "registered_born_status": "MINIMO_CONFIRMADO",
+            "confirmed_live_lambs": 118,
+            "stillborn": null,
+            "stillborn_status": "NO_INFORMADO",
+            "cumulative_ewes_pct": 0.96875,
+            "cumulative_lambs_pct": 0.914729,
             "message": "Recuento acumulado informado en esta fecha. Sin distribución diaria de nacimientos."
           }
         ],
@@ -3769,8 +3782,8 @@
         {
           "key": "lambing_progress_pct",
           "label": "Avance de ovejas (paridas sobre previstas a parir)",
-          "value": 86.4583,
-          "numerator": 83,
+          "value": 96.875,
+          "numerator": 93,
           "denominator": 96,
           "denominator_label": "ovejas previstas a parir",
           "status": "OK",
@@ -4823,10 +4836,10 @@
   "field_controls": {
     "INTENSIVO": {
       "variable": "ovejas_paridas",
-      "calculated": null,
-      "reported_accumulated": 82,
-      "reported_date": "2026-08-07",
-      "difference": null,
+      "calculated": 1,
+      "reported_accumulated": 93,
+      "reported_date": "2026-08-28",
+      "difference": 92,
       "status": "DATOS_PARCIALES"
     },
     "DOHNE": {
@@ -6089,7 +6102,7 @@
       "processed_at": "2026-08-28T23:33:38.825971Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-08-28T21:03:44.653187-03:00",
+    "last_sync_at": "2026-08-28T23:05:08.867427-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
