@@ -13,7 +13,7 @@
   "analyzed_at": "2026-09-03T14:38:23.876334+00:00",
   "forecast_run_date": "2026-09-02",
   "imported_at": "2026-09-03T13:02:35.047799-03:00",
-  "forecast_age_hours": 1.4,
+  "forecast_age_hours": 3.54,
   "update_status": {
     "state": "ACTUALIZADO",
     "stale": false,
@@ -51,16 +51,16 @@
         "name": "MERINO AUSTRALIANO",
         "expected_to_lamb": 592,
         "expected_lambs": 670,
-        "counted_lambed": null,
-        "counted_lambs": null,
-        "last_count_date": null
+        "counted_lambed": 1,
+        "counted_lambs": 1,
+        "last_count_date": "2026-09-02"
       }
     ],
     "totals": {
       "expected_to_lamb": 833,
       "expected_lambs": 980,
-      "counted_lambed": 2,
-      "counted_lambs": 2
+      "counted_lambed": 3,
+      "counted_lambs": 3
     }
   },
   "module_options": [
@@ -94,9 +94,9 @@
       "requires_review": false,
       "automatic_use": true,
       "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260903.png",
-      "expected_ewes_lambing": 72.8766,
-      "expected_lambs_born": 83.2118,
-      "lambs_in_first_72h_on_date": 117.1711,
+      "expected_ewes_lambing": 73.8467,
+      "expected_lambs_born": 84.8806,
+      "lambs_in_first_72h_on_date": 120.1379,
       "modules": [
         {
           "code": "INTENSIVO",
@@ -109,9 +109,9 @@
         {
           "code": "DOHNE",
           "name": "MERINO DOHNE",
-          "expected_ewes_lambing": 3.5309,
-          "expected_lambs_born": 4.4137,
-          "lambs_in_first_72h_on_date": 10.2986,
+          "expected_ewes_lambing": 4.501,
+          "expected_lambs_born": 6.0825,
+          "lambs_in_first_72h_on_date": 13.2654,
           "in_lambing_window": true
         },
         {
@@ -133,7 +133,7 @@
         "category": "BAJO",
         "complete": true,
         "missing_dates": [],
-        "lambs": 83.2118
+        "lambs": 84.8806
       },
       "cross_status": "OK"
     },
@@ -149,9 +149,9 @@
       "requires_review": false,
       "automatic_use": true,
       "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260904.png",
-      "expected_ewes_lambing": 73.0155,
-      "expected_lambs_born": 83.3819,
-      "lambs_in_first_72h_on_date": 185.9674,
+      "expected_ewes_lambing": 74.0287,
+      "expected_lambs_born": 85.1248,
+      "lambs_in_first_72h_on_date": 190.6771,
       "modules": [
         {
           "code": "INTENSIVO",
@@ -164,9 +164,9 @@
         {
           "code": "DOHNE",
           "name": "MERINO DOHNE",
-          "expected_ewes_lambing": 3.6879,
-          "expected_lambs_born": 4.6098,
-          "lambs_in_first_72h_on_date": 12.4564,
+          "expected_ewes_lambing": 4.7011,
+          "expected_lambs_born": 6.3527,
+          "lambs_in_first_72h_on_date": 17.1661,
           "in_lambing_window": true
         },
         {
@@ -188,7 +188,7 @@
         "category": "MEDIO",
         "complete": true,
         "missing_dates": [],
-        "lambs": 83.3819
+        "lambs": 85.1248
       },
       "cross_status": "OK"
     },
@@ -204,9 +204,9 @@
       "requires_review": false,
       "automatic_use": true,
       "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260905.png",
-      "expected_ewes_lambing": 73.1193,
-      "expected_lambs_born": 83.5099,
-      "lambs_in_first_72h_on_date": 250.1036,
+      "expected_ewes_lambing": 74.1648,
+      "expected_lambs_born": 85.3085,
+      "lambs_in_first_72h_on_date": 255.3139,
       "modules": [
         {
           "code": "INTENSIVO",
@@ -219,9 +219,9 @@
         {
           "code": "DOHNE",
           "name": "MERINO DOHNE",
-          "expected_ewes_lambing": 3.8056,
-          "expected_lambs_born": 4.757,
-          "lambs_in_first_72h_on_date": 13.7805,
+          "expected_ewes_lambing": 4.8511,
+          "expected_lambs_born": 6.5556,
+          "lambs_in_first_72h_on_date": 18.9908,
           "in_lambing_window": true
         },
         {
@@ -245,7 +245,7 @@
         "missing_dates": [
           "2026-09-07"
         ],
-        "lambs": 83.5099
+        "lambs": 85.3085
       },
       "cross_status": "OK"
     },
@@ -261,9 +261,9 @@
       "requires_review": false,
       "automatic_use": true,
       "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260906.png",
-      "expected_ewes_lambing": 73.1886,
-      "expected_lambs_born": 83.595,
-      "lambs_in_first_72h_on_date": 250.4868,
+      "expected_ewes_lambing": 74.2557,
+      "expected_lambs_born": 85.4306,
+      "lambs_in_first_72h_on_date": 255.8639,
       "modules": [
         {
           "code": "INTENSIVO",
@@ -276,9 +276,9 @@
         {
           "code": "DOHNE",
           "name": "MERINO DOHNE",
-          "expected_ewes_lambing": 3.884,
-          "expected_lambs_born": 4.855,
-          "lambs_in_first_72h_on_date": 14.2218,
+          "expected_ewes_lambing": 4.9511,
+          "expected_lambs_born": 6.6906,
+          "lambs_in_first_72h_on_date": 19.5989,
           "in_lambing_window": true
         },
         {
@@ -303,7 +303,7 @@
           "2026-09-07",
           "2026-09-08"
         ],
-        "lambs": 83.595
+        "lambs": 85.4306
       },
       "cross_status": "OK"
     },
@@ -319,9 +319,9 @@
       "requires_review": true,
       "automatic_use": false,
       "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260907.png",
-      "expected_ewes_lambing": 17.7833,
-      "expected_lambs_born": 20.6508,
-      "lambs_in_first_72h_on_date": 187.7557,
+      "expected_ewes_lambing": 18.8612,
+      "expected_lambs_born": 22.505,
+      "lambs_in_first_72h_on_date": 193.2441,
       "modules": [
         {
           "code": "INTENSIVO",
@@ -334,9 +334,9 @@
         {
           "code": "DOHNE",
           "name": "MERINO DOHNE",
-          "expected_ewes_lambing": 3.9233,
-          "expected_lambs_born": 4.9041,
-          "lambs_in_first_72h_on_date": 14.5161,
+          "expected_ewes_lambing": 5.0012,
+          "expected_lambs_born": 6.7583,
+          "lambs_in_first_72h_on_date": 20.0045,
           "in_lambing_window": true
         },
         {
@@ -362,7 +362,7 @@
           "2026-09-08",
           "2026-09-09"
         ],
-        "lambs": 20.6508
+        "lambs": 22.505
       },
       "cross_status": "OK"
     }
@@ -373,11 +373,11 @@
     "cohorts_counted": 5,
     "rule": "Cada cohorte prevista para el día D se evalúa en D, D+1 y D+2 y se cuenta una sola vez bajo su categoría máxima.",
     "SIN_RIESGO": 0.0,
-    "BAJO": 83.2118,
-    "MEDIO": 83.3819,
+    "BAJO": 84.8806,
+    "MEDIO": 85.1248,
     "ALTO": 0.0,
     "CRITICO": 0.0,
-    "RIESGO_72H_INCOMPLETO": 187.7557,
+    "RIESGO_72H_INCOMPLETO": 193.2441,
     "by_module": {
       "INTENSIVO": {
         "SIN_RIESGO": 0.0,
@@ -389,11 +389,11 @@
       },
       "DOHNE": {
         "SIN_RIESGO": 0.0,
-        "BAJO": 4.4137,
-        "MEDIO": 4.6098,
+        "BAJO": 6.0825,
+        "MEDIO": 6.3527,
         "ALTO": 0.0,
         "CRITICO": 0.0,
-        "RIESGO_72H_INCOMPLETO": 14.5161
+        "RIESGO_72H_INCOMPLETO": 20.0045
       },
       "MA": {
         "SIN_RIESGO": 0.0,
