@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-09-03T15:10:45.991147-03:00",
+  "generated_at": "2026-09-03T15:11:16.693493-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -28,7 +28,7 @@
       "unclassified": 0,
       "total": 4
     },
-    "generated_at": "2026-09-03T15:10:45.991147-03:00",
+    "generated_at": "2026-09-03T15:11:16.693493-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -5969,10 +5969,10 @@
       "latitude": null,
       "longitude": null
     },
-    "analyzed_at": "2026-09-03T14:38:23.876334+00:00",
+    "analyzed_at": "2026-09-03T17:58:29.568483+00:00",
     "forecast_run_date": "2026-09-02",
-    "imported_at": "2026-09-03T13:02:35.047799-03:00",
-    "forecast_age_hours": 3.54,
+    "imported_at": "2026-09-03T15:11:16.629912-03:00",
+    "forecast_age_hours": 0.21,
     "update_status": {
       "state": "ACTUALIZADO",
       "stale": false,
@@ -6372,8 +6372,8 @@
   },
   "chill_pariciones_summary": {
     "source": "INIA-GRAS, clasificación determinística propia",
-    "analyzed_at": "2026-09-03T14:38:23.876334+00:00",
-    "imported_at": "2026-09-03T13:02:35.047799-03:00",
+    "analyzed_at": "2026-09-03T17:58:29.568483+00:00",
+    "imported_at": "2026-09-03T15:11:16.629912-03:00",
     "update_status": "ACTUALIZADO",
     "product_cross_status": "OK",
     "dates": [
@@ -6646,7 +6646,7 @@
       "processed_at": "2026-09-03T16:04:16.618200Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-09-03T15:10:45.991147-03:00",
+    "last_sync_at": "2026-09-03T15:11:16.693493-03:00",
     "pending_operations": 3,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
