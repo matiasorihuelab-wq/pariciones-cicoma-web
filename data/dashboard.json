@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-09-03T19:43:06.815807-03:00",
+  "generated_at": "2026-09-03T19:44:07.772405-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -28,7 +28,7 @@
       "unclassified": 0,
       "total": 2
     },
-    "generated_at": "2026-09-03T19:43:06.815807-03:00",
+    "generated_at": "2026-09-03T19:44:07.772405-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -98,7 +98,7 @@
     },
     "current_stock_count_date": "2026-08-28",
     "current_stock_label": "Corderos vivos contabilizados",
-    "accumulated_lamb_deaths_total": 14,
+    "accumulated_lamb_deaths_total": 15,
     "ewe_progress": {
       "registered": 134,
       "expected": 833,
@@ -171,7 +171,7 @@
         "MA"
       ]
     },
-    "lamb_deaths": 14,
+    "lamb_deaths": 15,
     "ewe_deaths": 7,
     "deaths_last_24h": null,
     "remaining_ewes": {
@@ -790,7 +790,7 @@
         "current_stock_lambs": null,
         "current_stock_count_date": null,
         "current_stock_label": "Corderos vivos contabilizados",
-        "accumulated_lamb_deaths": 1,
+        "accumulated_lamb_deaths": 2,
         "estimated_born_lambs": 4,
         "estimated_born_basis": "Suma de los partes diarios confirmados.",
         "estimated_born_is_estimate": false,
@@ -809,8 +809,8 @@
           "missing": null
         },
         "lamb_mortality_ratio": {
-          "value": 25.0,
-          "numerator": 1,
+          "value": 50.0,
+          "numerator": 2,
           "denominator": 4,
           "status": "OK",
           "missing": null
@@ -856,11 +856,22 @@
         }
       },
       "mortality": {
-        "lamb_deaths_accumulated": 1,
+        "lamb_deaths_accumulated": 2,
         "ewe_deaths_accumulated": 1,
         "deaths_last_24h": null,
         "last_report_date": "2026-09-01",
         "detail": [
+          {
+            "date": "2026-09-01",
+            "animal_type": "CORDERO",
+            "quantity": 1,
+            "cause_code": "MALFORMACION_CONGENITA",
+            "cause_label": "Malformación congénita",
+            "has_private_media": false,
+            "private_media_count": 0,
+            "cases": [],
+            "undescribed_quantity": 1
+          },
           {
             "date": "2026-09-01",
             "animal_type": "OVEJA",
@@ -3484,7 +3495,7 @@
           "counted_lambs": 4,
           "born_alive": null,
           "stillborn": null,
-          "lamb_deaths": 1,
+          "lamb_deaths": 2,
           "ewe_deaths": 1,
           "last_count_date": "2026-09-02",
           "last_event_date": "2026-09-01"
@@ -4482,8 +4493,8 @@
         {
           "key": "lamb_mortality_pct",
           "label": "Mortalidad de corderos (muertos acumulados sobre nacidos acumulados)",
-          "value": 25.0,
-          "numerator": 1,
+          "value": 50.0,
+          "numerator": 2,
           "denominator": 4,
           "denominator_label": "corderos nacidos acumulados",
           "status": "OK",
@@ -4605,8 +4616,8 @@
       {
         "key": "lamb_mortality_pct",
         "label": "Mortalidad de corderos (muertos acumulados sobre nacidos acumulados)",
-        "value": 8.2353,
-        "numerator": 14,
+        "value": 8.8235,
+        "numerator": 15,
         "denominator": 170,
         "denominator_label": "corderos nacidos acumulados",
         "status": "OK",
@@ -5374,8 +5385,8 @@
     }
   },
   "mortality_summary": {
-    "total_deaths": 21,
-    "lamb_deaths": 14,
+    "total_deaths": 22,
+    "lamb_deaths": 15,
     "ewe_deaths": 7,
     "by_date": [
       {
@@ -5445,7 +5456,7 @@
       },
       {
         "date": "2026-09-01",
-        "lamb": 1,
+        "lamb": 2,
         "ewe": 1
       }
     ],
@@ -5459,12 +5470,12 @@
         "OVEJA": 2
       },
       "MA": {
-        "CORDERO": 1,
+        "CORDERO": 2,
         "OVEJA": 1
       }
     },
     "by_animal": {
-      "CORDERO": 14,
+      "CORDERO": 15,
       "OVEJA": 7
     },
     "by_cause": [
@@ -5472,31 +5483,31 @@
         "cause_code": "CAUSA_NO_DETERMINADA",
         "cause_label": "Causa no determinada",
         "count": 16,
-        "pct": 76.2
+        "pct": 72.7
       },
       {
         "cause_code": "MALFORMACION_CONGENITA",
         "cause_label": "Malformación congénita",
-        "count": 2,
-        "pct": 9.5
+        "count": 3,
+        "pct": 13.6
       },
       {
         "cause_code": "DISTOCIA_PARTO",
         "cause_label": "Distocia o problema de parto",
         "count": 1,
-        "pct": 4.8
+        "pct": 4.5
       },
       {
         "cause_code": "OTRA",
         "cause_label": "Otra causa informada",
         "count": 1,
-        "pct": 4.8
+        "pct": 4.5
       },
       {
         "cause_code": "PREDACION_CARANCHO",
         "cause_label": "Predación por carancho",
         "count": 1,
-        "pct": 4.8
+        "pct": 4.5
       }
     ],
     "undetermined": 16
@@ -5745,6 +5756,18 @@
     {
       "date": "2026-09-01",
       "module_code": "MA",
+      "animal_type": "CORDERO",
+      "quantity": 1,
+      "cause_code": "MALFORMACION_CONGENITA",
+      "cause_label": "Malformación congénita",
+      "death_moment": "NO_DETERMINADO",
+      "death_moment_label": "Momento no determinado",
+      "service_code": null,
+      "service_label": "Sin servicio asociado"
+    },
+    {
+      "date": "2026-09-01",
+      "module_code": "MA",
       "animal_type": "OVEJA",
       "quantity": 1,
       "cause_code": "CAUSA_NO_DETERMINADA",
@@ -5762,7 +5785,7 @@
   },
   "campaign_milestones": {
     "status": "OK",
-    "total": 30,
+    "total": 31,
     "shown": 12,
     "items": [
       {
@@ -5778,6 +5801,21 @@
         "animal_label": "oveja",
         "cause_code": "CAUSA_NO_DETERMINADA",
         "cause_label": "Causa no determinada",
+        "affects_counts": false
+      },
+      {
+        "date": "2026-09-01",
+        "module_code": "MA",
+        "module_name": "Merino Australiano",
+        "kind": "MORTALIDAD_DE_CORDEROS",
+        "kind_label": "Mortalidad de corderos",
+        "subtype": null,
+        "subtype_label": null,
+        "quantity": 1,
+        "animal_type": "CORDERO",
+        "animal_label": "cordero",
+        "cause_code": "MALFORMACION_CONGENITA",
+        "cause_label": "Malformación congénita",
         "affects_counts": false
       },
       {
@@ -5928,21 +5966,6 @@
         "quantity": 1,
         "animal_type": "CORDERO",
         "animal_label": "cordero",
-        "cause_code": "CAUSA_NO_DETERMINADA",
-        "cause_label": "Causa no determinada",
-        "affects_counts": false
-      },
-      {
-        "date": "2026-08-18",
-        "module_code": "DOHNE",
-        "module_name": "Merino Dohne",
-        "kind": "MORTALIDAD_DE_OVEJAS",
-        "kind_label": "Mortalidad de ovejas",
-        "subtype": null,
-        "subtype_label": null,
-        "quantity": 1,
-        "animal_type": "OVEJA",
-        "animal_label": "oveja",
         "cause_code": "CAUSA_NO_DETERMINADA",
         "cause_label": "Causa no determinada",
         "affects_counts": false
@@ -6459,6 +6482,17 @@
     {
       "date": "2026-09-01",
       "module_code": "MA",
+      "event_type": "LAMB_DEATH",
+      "event_label": "Muerte de cordero",
+      "quantity": 1,
+      "cause_code": "MALFORMACION_CONGENITA",
+      "cause_label": "Malformación congénita",
+      "validation_status": "CONFIRMED",
+      "source": "CONFIRMADO_LOCAL"
+    },
+    {
+      "date": "2026-09-01",
+      "module_code": "MA",
       "event_type": "EWE_DEATH",
       "event_label": "Muerte de oveja",
       "quantity": 1,
@@ -6626,17 +6660,6 @@
       "cause_label": "Causa no determinada",
       "validation_status": "CONFIRMED",
       "source": "CONFIRMADO_LOCAL"
-    },
-    {
-      "date": "2026-08-05",
-      "module_code": "INTENSIVO",
-      "event_type": "EWE_DEATH",
-      "event_label": "Muerte de oveja",
-      "quantity": 1,
-      "cause_code": "CAUSA_NO_DETERMINADA",
-      "cause_label": "Causa no determinada",
-      "validation_status": "CONFIRMED",
-      "source": "CONFIRMADO_LOCAL"
     }
   ],
   "automatic_provisional": {
@@ -6650,7 +6673,7 @@
       "processed_at": "2026-09-03T22:29:44.172180Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-09-03T19:43:06.815807-03:00",
+    "last_sync_at": "2026-09-03T19:44:07.772405-03:00",
     "pending_operations": 1,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
