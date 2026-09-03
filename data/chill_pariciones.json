@@ -10,10 +10,10 @@
   "location": {
     "name": "CICOMA"
   },
-  "analyzed_at": "2026-08-29T03:29:22.070549+00:00",
-  "forecast_run_date": "2026-08-28",
-  "imported_at": "2026-08-29T00:34:31.940472-03:00",
-  "forecast_age_hours": 0.09,
+  "analyzed_at": "2026-09-02T14:33:40.578826+00:00",
+  "forecast_run_date": "2026-09-02",
+  "imported_at": "2026-09-03T07:33:55.758623-03:00",
+  "forecast_age_hours": 20.0,
   "update_status": {
     "state": "ACTUALIZADO",
     "stale": false,
@@ -83,250 +83,25 @@
   ],
   "days": [
     {
-      "date": "2026-08-29",
-      "risk_category": "BAJO",
-      "display_risk_category": "BAJO",
-      "ci_min": 900.0,
-      "ci_max": 1000.0,
-      "ci_interval": "900–1000",
-      "ci_unit": "kJ/m2/h",
-      "confidence": 0.9,
-      "requires_review": false,
-      "automatic_use": true,
-      "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260829.png",
-      "expected_ewes_lambing": 0.5109,
-      "expected_lambs_born": 0.9025,
-      "lambs_in_first_72h_on_date": 3.0294,
-      "modules": [
-        {
-          "code": "INTENSIVO",
-          "name": "INTENSIVO",
-          "expected_ewes_lambing": 0.2755,
-          "expected_lambs_born": 0.6083,
-          "lambs_in_first_72h_on_date": 1.8766,
-          "in_lambing_window": true
-        },
-        {
-          "code": "DOHNE",
-          "name": "MERINO DOHNE",
-          "expected_ewes_lambing": 0.2354,
-          "expected_lambs_born": 0.2942,
-          "lambs_in_first_72h_on_date": 1.1528,
-          "in_lambing_window": true
-        },
-        {
-          "code": "MA",
-          "name": "MERINO AUSTRALIANO",
-          "expected_ewes_lambing": null,
-          "expected_lambs_born": null,
-          "lambs_in_first_72h_on_date": 0.0,
-          "in_lambing_window": false
-        }
-      ],
-      "cohort_72h": {
-        "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
-        "window": [
-          "2026-08-29",
-          "2026-08-30",
-          "2026-08-31"
-        ],
-        "category": "BAJO",
-        "complete": true,
-        "missing_dates": [],
-        "lambs": 0.9025
-      },
-      "cross_status": "OK"
-    },
-    {
-      "date": "2026-08-30",
-      "risk_category": "BAJO",
-      "display_risk_category": "BAJO",
-      "ci_min": 900.0,
-      "ci_max": 1000.0,
-      "ci_interval": "900–1000",
-      "ci_unit": "kJ/m2/h",
-      "confidence": 0.9,
-      "requires_review": false,
-      "automatic_use": true,
-      "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260830.png",
-      "expected_ewes_lambing": 4.1211,
-      "expected_lambs_born": 5.0095,
-      "lambs_in_first_72h_on_date": 6.6868,
-      "modules": [
-        {
-          "code": "INTENSIVO",
-          "name": "INTENSIVO",
-          "expected_ewes_lambing": 0.2638,
-          "expected_lambs_born": 0.5824,
-          "lambs_in_first_72h_on_date": 1.8184,
-          "in_lambing_window": true
-        },
-        {
-          "code": "DOHNE",
-          "name": "MERINO DOHNE",
-          "expected_ewes_lambing": 0.3923,
-          "expected_lambs_born": 0.4904,
-          "lambs_in_first_72h_on_date": 0.9317,
-          "in_lambing_window": true
-        },
-        {
-          "code": "MA",
-          "name": "MERINO AUSTRALIANO",
-          "expected_ewes_lambing": 3.465,
-          "expected_lambs_born": 3.9367,
-          "lambs_in_first_72h_on_date": 3.9367,
-          "in_lambing_window": true
-        }
-      ],
-      "cohort_72h": {
-        "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
-        "window": [
-          "2026-08-30",
-          "2026-08-31",
-          "2026-09-01"
-        ],
-        "category": "BAJO",
-        "complete": true,
-        "missing_dates": [],
-        "lambs": 5.0095
-      },
-      "cross_status": "OK"
-    },
-    {
-      "date": "2026-08-31",
-      "risk_category": "BAJO",
-      "display_risk_category": "BAJO",
-      "ci_min": 900.0,
-      "ci_max": 1000.0,
-      "ci_interval": "900–1000",
-      "ci_unit": "kJ/m2/h",
-      "confidence": 0.9,
-      "requires_review": false,
-      "automatic_use": true,
-      "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260831.png",
-      "expected_ewes_lambing": 8.3122,
-      "expected_lambs_born": 9.7976,
-      "lambs_in_first_72h_on_date": 15.7096,
-      "modules": [
-        {
-          "code": "INTENSIVO",
-          "name": "INTENSIVO",
-          "expected_ewes_lambing": 0.2052,
-          "expected_lambs_born": 0.453,
-          "lambs_in_first_72h_on_date": 1.6437,
-          "in_lambing_window": true
-        },
-        {
-          "code": "DOHNE",
-          "name": "MERINO DOHNE",
-          "expected_ewes_lambing": 1.177,
-          "expected_lambs_born": 1.4712,
-          "lambs_in_first_72h_on_date": 2.2558,
-          "in_lambing_window": true
-        },
-        {
-          "code": "MA",
-          "name": "MERINO AUSTRALIANO",
-          "expected_ewes_lambing": 6.93,
-          "expected_lambs_born": 7.8734,
-          "lambs_in_first_72h_on_date": 11.8101,
-          "in_lambing_window": true
-        }
-      ],
-      "cohort_72h": {
-        "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
-        "window": [
-          "2026-08-31",
-          "2026-09-01",
-          "2026-09-02"
-        ],
-        "category": "RIESGO_72H_INCOMPLETO",
-        "complete": false,
-        "missing_dates": [
-          "2026-09-02"
-        ],
-        "lambs": 9.7976
-      },
-      "cross_status": "OK"
-    },
-    {
-      "date": "2026-09-01",
-      "risk_category": "BAJO",
-      "display_risk_category": "BAJO",
-      "ci_min": 900.0,
-      "ci_max": 1000.0,
-      "ci_interval": "900–1000",
-      "ci_unit": "kJ/m2/h",
-      "confidence": 0.9,
-      "requires_review": false,
-      "automatic_use": true,
-      "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260901.png",
-      "expected_ewes_lambing": 12.5032,
-      "expected_lambs_born": 14.5856,
-      "lambs_in_first_72h_on_date": 29.3927,
-      "modules": [
-        {
-          "code": "INTENSIVO",
-          "name": "INTENSIVO",
-          "expected_ewes_lambing": 0.1466,
-          "expected_lambs_born": 0.3236,
-          "lambs_in_first_72h_on_date": 1.359,
-          "in_lambing_window": true
-        },
-        {
-          "code": "DOHNE",
-          "name": "MERINO DOHNE",
-          "expected_ewes_lambing": 1.9616,
-          "expected_lambs_born": 2.452,
-          "lambs_in_first_72h_on_date": 4.4136,
-          "in_lambing_window": true
-        },
-        {
-          "code": "MA",
-          "name": "MERINO AUSTRALIANO",
-          "expected_ewes_lambing": 10.395,
-          "expected_lambs_born": 11.81,
-          "lambs_in_first_72h_on_date": 23.6201,
-          "in_lambing_window": true
-        }
-      ],
-      "cohort_72h": {
-        "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
-        "window": [
-          "2026-09-01",
-          "2026-09-02",
-          "2026-09-03"
-        ],
-        "category": "RIESGO_72H_INCOMPLETO",
-        "complete": false,
-        "missing_dates": [
-          "2026-09-02",
-          "2026-09-03"
-        ],
-        "lambs": 14.5856
-      },
-      "cross_status": "OK"
-    },
-    {
       "date": "2026-09-02",
-      "risk_category": "NO_DETERMINADO",
-      "display_risk_category": "RIESGO PENDIENTE DE REVISIÓN",
+      "risk_category": "SIN_RIESGO",
+      "display_risk_category": "SIN_RIESGO",
       "ci_min": null,
-      "ci_max": null,
-      "ci_interval": "NO DETERMINADO",
+      "ci_max": 900.0,
+      "ci_interval": "< 900",
       "ci_unit": "kJ/m2/h",
-      "confidence": 0.0,
-      "requires_review": true,
-      "automatic_use": false,
+      "confidence": 0.9,
+      "requires_review": false,
+      "automatic_use": true,
       "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260902.png",
-      "expected_ewes_lambing": 16.6942,
+      "expected_ewes_lambing": 16.7436,
       "expected_lambs_born": 19.3737,
       "lambs_in_first_72h_on_date": 43.7569,
       "modules": [
         {
           "code": "INTENSIVO",
           "name": "INTENSIVO",
-          "expected_ewes_lambing": 0.0879,
+          "expected_ewes_lambing": 0.1373,
           "expected_lambs_born": 0.1941,
           "lambs_in_first_72h_on_date": 0.9707,
           "in_lambing_window": true
@@ -355,14 +130,235 @@
           "2026-09-03",
           "2026-09-04"
         ],
+        "category": "BAJO",
+        "complete": true,
+        "missing_dates": [],
+        "lambs": 19.3737
+      },
+      "cross_status": "OK"
+    },
+    {
+      "date": "2026-09-03",
+      "risk_category": "SIN_RIESGO",
+      "display_risk_category": "SIN_RIESGO",
+      "ci_min": null,
+      "ci_max": 900.0,
+      "ci_interval": "< 900",
+      "ci_unit": "kJ/m2/h",
+      "confidence": 0.9,
+      "requires_review": false,
+      "automatic_use": true,
+      "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260903.png",
+      "expected_ewes_lambing": 72.8766,
+      "expected_lambs_born": 83.2118,
+      "lambs_in_first_72h_on_date": 117.1711,
+      "modules": [
+        {
+          "code": "INTENSIVO",
+          "name": "INTENSIVO",
+          "expected_ewes_lambing": 0.0458,
+          "expected_lambs_born": 0.0647,
+          "lambs_in_first_72h_on_date": 0.5824,
+          "in_lambing_window": true
+        },
+        {
+          "code": "DOHNE",
+          "name": "MERINO DOHNE",
+          "expected_ewes_lambing": 3.5309,
+          "expected_lambs_born": 4.4137,
+          "lambs_in_first_72h_on_date": 10.2986,
+          "in_lambing_window": true
+        },
+        {
+          "code": "MA",
+          "name": "MERINO AUSTRALIANO",
+          "expected_ewes_lambing": 69.2999,
+          "expected_lambs_born": 78.7334,
+          "lambs_in_first_72h_on_date": 106.2901,
+          "in_lambing_window": true
+        }
+      ],
+      "cohort_72h": {
+        "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
+        "window": [
+          "2026-09-03",
+          "2026-09-04",
+          "2026-09-05"
+        ],
+        "category": "BAJO",
+        "complete": true,
+        "missing_dates": [],
+        "lambs": 83.2118
+      },
+      "cross_status": "OK"
+    },
+    {
+      "date": "2026-09-04",
+      "risk_category": "BAJO",
+      "display_risk_category": "BAJO",
+      "ci_min": 900.0,
+      "ci_max": 1000.0,
+      "ci_interval": "900–1000",
+      "ci_unit": "kJ/m2/h",
+      "confidence": 0.9,
+      "requires_review": false,
+      "automatic_use": true,
+      "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260904.png",
+      "expected_ewes_lambing": 73.0155,
+      "expected_lambs_born": 83.3819,
+      "lambs_in_first_72h_on_date": 185.9674,
+      "modules": [
+        {
+          "code": "INTENSIVO",
+          "name": "INTENSIVO",
+          "expected_ewes_lambing": 0.0275,
+          "expected_lambs_born": 0.0388,
+          "lambs_in_first_72h_on_date": 0.2976,
+          "in_lambing_window": true
+        },
+        {
+          "code": "DOHNE",
+          "name": "MERINO DOHNE",
+          "expected_ewes_lambing": 3.6879,
+          "expected_lambs_born": 4.6098,
+          "lambs_in_first_72h_on_date": 12.4564,
+          "in_lambing_window": true
+        },
+        {
+          "code": "MA",
+          "name": "MERINO AUSTRALIANO",
+          "expected_ewes_lambing": 69.3001,
+          "expected_lambs_born": 78.7333,
+          "lambs_in_first_72h_on_date": 173.2134,
+          "in_lambing_window": true
+        }
+      ],
+      "cohort_72h": {
+        "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
+        "window": [
+          "2026-09-04",
+          "2026-09-05",
+          "2026-09-06"
+        ],
+        "category": "MEDIO",
+        "complete": true,
+        "missing_dates": [],
+        "lambs": 83.3819
+      },
+      "cross_status": "OK"
+    },
+    {
+      "date": "2026-09-05",
+      "risk_category": "BAJO",
+      "display_risk_category": "BAJO",
+      "ci_min": 900.0,
+      "ci_max": 1000.0,
+      "ci_interval": "900–1000",
+      "ci_unit": "kJ/m2/h",
+      "confidence": 0.9,
+      "requires_review": false,
+      "automatic_use": true,
+      "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260905.png",
+      "expected_ewes_lambing": 73.1193,
+      "expected_lambs_born": 83.5099,
+      "lambs_in_first_72h_on_date": 250.1036,
+      "modules": [
+        {
+          "code": "INTENSIVO",
+          "name": "INTENSIVO",
+          "expected_ewes_lambing": 0.0137,
+          "expected_lambs_born": 0.0194,
+          "lambs_in_first_72h_on_date": 0.1229,
+          "in_lambing_window": true
+        },
+        {
+          "code": "DOHNE",
+          "name": "MERINO DOHNE",
+          "expected_ewes_lambing": 3.8056,
+          "expected_lambs_born": 4.757,
+          "lambs_in_first_72h_on_date": 13.7805,
+          "in_lambing_window": true
+        },
+        {
+          "code": "MA",
+          "name": "MERINO AUSTRALIANO",
+          "expected_ewes_lambing": 69.3,
+          "expected_lambs_born": 78.7335,
+          "lambs_in_first_72h_on_date": 236.2002,
+          "in_lambing_window": true
+        }
+      ],
+      "cohort_72h": {
+        "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
+        "window": [
+          "2026-09-05",
+          "2026-09-06",
+          "2026-09-07"
+        ],
         "category": "RIESGO_72H_INCOMPLETO",
         "complete": false,
         "missing_dates": [
-          "2026-09-02",
-          "2026-09-03",
-          "2026-09-04"
+          "2026-09-07"
         ],
-        "lambs": 19.3737
+        "lambs": 83.5099
+      },
+      "cross_status": "OK"
+    },
+    {
+      "date": "2026-09-06",
+      "risk_category": "MEDIO",
+      "display_risk_category": "MEDIO",
+      "ci_min": 1000.0,
+      "ci_max": 1100.0,
+      "ci_interval": "1000–1100",
+      "ci_unit": "kJ/m2/h",
+      "confidence": 0.9,
+      "requires_review": false,
+      "automatic_use": true,
+      "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260906.png",
+      "expected_ewes_lambing": 73.1886,
+      "expected_lambs_born": 83.595,
+      "lambs_in_first_72h_on_date": 250.4868,
+      "modules": [
+        {
+          "code": "INTENSIVO",
+          "name": "INTENSIVO",
+          "expected_ewes_lambing": 0.0046,
+          "expected_lambs_born": 0.0065,
+          "lambs_in_first_72h_on_date": 0.0647,
+          "in_lambing_window": true
+        },
+        {
+          "code": "DOHNE",
+          "name": "MERINO DOHNE",
+          "expected_ewes_lambing": 3.884,
+          "expected_lambs_born": 4.855,
+          "lambs_in_first_72h_on_date": 14.2218,
+          "in_lambing_window": true
+        },
+        {
+          "code": "MA",
+          "name": "MERINO AUSTRALIANO",
+          "expected_ewes_lambing": 69.3,
+          "expected_lambs_born": 78.7335,
+          "lambs_in_first_72h_on_date": 236.2003,
+          "in_lambing_window": true
+        }
+      ],
+      "cohort_72h": {
+        "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
+        "window": [
+          "2026-09-06",
+          "2026-09-07",
+          "2026-09-08"
+        ],
+        "category": "RIESGO_72H_INCOMPLETO",
+        "complete": false,
+        "missing_dates": [
+          "2026-09-07",
+          "2026-09-08"
+        ],
+        "lambs": 83.595
       },
       "cross_status": "OK"
     }
@@ -373,35 +369,35 @@
     "cohorts_counted": 5,
     "rule": "Cada cohorte prevista para el día D se evalúa en D, D+1 y D+2 y se cuenta una sola vez bajo su categoría máxima.",
     "SIN_RIESGO": 0.0,
-    "BAJO": 5.912,
-    "MEDIO": 0.0,
+    "BAJO": 102.5855,
+    "MEDIO": 83.3819,
     "ALTO": 0.0,
     "CRITICO": 0.0,
-    "RIESGO_72H_INCOMPLETO": 43.7569,
+    "RIESGO_72H_INCOMPLETO": 167.1049,
     "by_module": {
       "INTENSIVO": {
         "SIN_RIESGO": 0.0,
-        "BAJO": 1.1907,
-        "MEDIO": 0.0,
+        "BAJO": 0.2588,
+        "MEDIO": 0.0388,
         "ALTO": 0.0,
         "CRITICO": 0.0,
-        "RIESGO_72H_INCOMPLETO": 0.9707
+        "RIESGO_72H_INCOMPLETO": 0.0259
       },
       "DOHNE": {
         "SIN_RIESGO": 0.0,
-        "BAJO": 0.7846,
-        "MEDIO": 0.0,
+        "BAJO": 7.8466,
+        "MEDIO": 4.6098,
         "ALTO": 0.0,
         "CRITICO": 0.0,
-        "RIESGO_72H_INCOMPLETO": 7.3561
+        "RIESGO_72H_INCOMPLETO": 9.612
       },
       "MA": {
         "SIN_RIESGO": 0.0,
-        "BAJO": 3.9367,
-        "MEDIO": 0.0,
+        "BAJO": 94.4801,
+        "MEDIO": 78.7333,
         "ALTO": 0.0,
         "CRITICO": 0.0,
-        "RIESGO_72H_INCOMPLETO": 35.4301
+        "RIESGO_72H_INCOMPLETO": 157.467
       }
     }
   },
