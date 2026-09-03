@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-09-03T19:44:07.772405-03:00",
+  "generated_at": "2026-09-03T19:44:30.458681-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -12,23 +12,18 @@
         "code": "PENDING_EVENT",
         "message": "Hay un reporte pendiente de contabilizar.",
         "severity": "OJO"
-      },
-      {
-        "code": "PENDING_MEDIA",
-        "message": "Hay archivos multimedia pendientes de revisión.",
-        "severity": "OJO"
       }
     ],
     "pending_actions": {
       "reports": 1,
       "links": 0,
-      "media": 1,
+      "media": 0,
       "technical": 0,
       "packages": 0,
       "unclassified": 0,
-      "total": 2
+      "total": 1
     },
-    "generated_at": "2026-09-03T19:44:07.772405-03:00",
+    "generated_at": "2026-09-03T19:44:30.458681-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -889,8 +884,8 @@
             "quantity": 1,
             "cause_code": "CAUSA_NO_DETERMINADA",
             "cause_label": "Causa no determinada",
-            "has_private_media": false,
-            "private_media_count": 0,
+            "has_private_media": true,
+            "private_media_count": 1,
             "cases": [],
             "undescribed_quantity": 1
           }
@@ -6673,7 +6668,7 @@
       "processed_at": "2026-09-03T22:29:44.172180Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-09-03T19:44:07.772405-03:00",
+    "last_sync_at": "2026-09-03T19:44:30.458681-03:00",
     "pending_operations": 1,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
