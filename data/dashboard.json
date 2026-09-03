@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-09-03T18:31:51.130343-03:00",
+  "generated_at": "2026-09-03T18:41:36.598468-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -28,7 +28,7 @@
       "unclassified": 0,
       "total": 4
     },
-    "generated_at": "2026-09-03T18:31:51.130343-03:00",
+    "generated_at": "2026-09-03T18:41:36.598468-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -4679,9 +4679,9 @@
     },
     {
       "date": "2026-09-02",
-      "lambed_ewes": 1,
-      "born_lambs": 1,
-      "cumulative_lambed": 3
+      "lambed_ewes": 3,
+      "born_lambs": 3,
+      "cumulative_lambed": 5
     }
   ],
   "chill_public": {
@@ -6415,6 +6415,34 @@
       "source": "WHATSAPP"
     },
     {
+      "date": "2026-09-02",
+      "module_code": "MA",
+      "event_type": "LAMBING",
+      "event_label": "Parición",
+      "quantity": 1,
+      "ewes_lambed": 1,
+      "born_alive": null,
+      "stillborn": null,
+      "cause_code": null,
+      "cause_label": null,
+      "validation_status": "CONFIRMED",
+      "source": "WHATSAPP"
+    },
+    {
+      "date": "2026-09-02",
+      "module_code": "MA",
+      "event_type": "LAMBING",
+      "event_label": "Parición",
+      "quantity": 1,
+      "ewes_lambed": 1,
+      "born_alive": null,
+      "stillborn": null,
+      "cause_code": null,
+      "cause_label": null,
+      "validation_status": "CONFIRMED",
+      "source": "WHATSAPP"
+    },
+    {
       "date": "2026-09-01",
       "module_code": "MA",
       "event_type": "EWE_DEATH",
@@ -6606,28 +6634,6 @@
       "cause_label": "Otra causa informada",
       "validation_status": "CONFIRMED",
       "source": "CONFIRMADO_LOCAL"
-    },
-    {
-      "date": "2026-08-01",
-      "module_code": "INTENSIVO",
-      "event_type": "LAMB_DEATH",
-      "event_label": "Muerte de cordero",
-      "quantity": 1,
-      "cause_code": "MALFORMACION_CONGENITA",
-      "cause_label": "Malformación congénita",
-      "validation_status": "CONFIRMED",
-      "source": "ZAPIA_VALIDADO"
-    },
-    {
-      "date": "2026-07-27",
-      "module_code": "INTENSIVO",
-      "event_type": "LAMB_DEATH",
-      "event_label": "Muerte de cordero",
-      "quantity": 1,
-      "cause_code": "CAUSA_NO_DETERMINADA",
-      "cause_label": "Causa no determinada",
-      "validation_status": "CONFIRMED",
-      "source": "ZAPIA_VALIDADO"
     }
   ],
   "automatic_provisional": {
@@ -6641,7 +6647,7 @@
       "processed_at": "2026-09-03T16:04:16.618200Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-09-03T18:31:51.130343-03:00",
+    "last_sync_at": "2026-09-03T18:41:36.598468-03:00",
     "pending_operations": 3,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
