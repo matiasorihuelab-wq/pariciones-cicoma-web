@@ -765,10 +765,17 @@ function milestonesPanel(lotCode) {
  *   B. lo REGISTRADO por fecha   (base DAILY)
  * El Chill Index no predice muertes: acá no se habla de mortalidad. */
 
-//: Titulo del bloque. NO se usa `chill_public.title` del contrato porque
-//: anuncia «riesgo previsto», que es justamente lo que dejo de mostrarse: el
-//: bloque publica el pronostico diario y los nacimientos registrados.
-const CHILL_TITLE = "Chill Index diario y nacimientos registrados";
+/* Título del bloque. NO se usa `chill_public.title` del contrato porque anuncia
+ * «riesgo previsto», que es justamente lo que dejó de mostrarse.
+ *
+ * Tiene DOS formas y no es cosmético cuál se usa: el título anuncia el
+ * contenido del panel. El bloque de nacimientos sólo se dibuja para el lote de
+ * `CHILL_72H_MODULE` y sólo si tiene distribución diaria; en Intensivo y en
+ * Dohne no se dibuja nunca. Prometerlo ahí dejaba el panel con un título que
+ * hablaba de nacimientos y un cuerpo vacío debajo: no faltaba un dato, faltaba
+ * el bloque entero, y desde afuera se leía como una pantalla rota. */
+const CHILL_TITLE = "Chill Index diario";
+const CHILL_TITLE_CON_NACIMIENTOS = "Chill Index diario y nacimientos registrados";
 
 const CHILL_STATE = {};
 
@@ -799,13 +806,23 @@ function chillObservedRows(state) {
 // explicativos describen la ESTIMACIÓN por curva, no el pronóstico diario: se
 // muestran junto al bloque previsto, para que las tarjetas diarias queden
 // primero.
+/* Se mira el dato publicado, no el estado del filtro: el título se dibuja una
+ * vez y el cuerpo se redibuja al filtrar. Si dependiera del filtro, filtrar por
+ * fecha cambiaría el título del panel. */
+function chillAnunciaNacimientos(lotCode) {
+  if (lotCode && lotCode !== CHILL_72H_MODULE) return false;
+  const daily = ((DASH.chill_public || {}).observed || {}).daily || [];
+  return daily.some((row) => row.module_code === CHILL_72H_MODULE);
+}
+
 function chillHead(lotCode) {
   const scope = lotCode ? ` — ${LOT_FULL_NAME[lotCode] || lotCode}` : "";
+  const title = chillAnunciaNacimientos(lotCode) ? CHILL_TITLE_CON_NACIMIENTOS : CHILL_TITLE;
   return `
       <div class="panel__head">
         <div>
           <p class="eyebrow">Chill Index</p>
-          <h2>${escapeHtml(CHILL_TITLE)}${escapeHtml(scope)}</h2>
+          <h2>${escapeHtml(title)}${escapeHtml(scope)}</h2>
         </div>
       </div>`;
 }
@@ -874,7 +891,11 @@ function chillObserved72hRows(state) {
  * Antes, sin filas, se dibujaba igual el título y dos avisos explicando que no
  * había datos. Ocupaba una sección entera para decir que no tenía nada que
  * decir. Ahora el bloque simplemente no existe salvo que Merino Australiano
- * tenga registros diarios reales, y entonces se arma con esos datos. */
+ * tenga registros diarios reales, y entonces se arma con esos datos.
+ *
+ * Quien decide si el panel ANUNCIA este bloque es `chillAnunciaNacimientos`: el
+ * título no puede prometer «y nacimientos registrados» en un lote donde este
+ * bloque no se dibuja. */
 function chillObservedSection(viewKey, state) {
   const observed = (DASH.chill_public || {}).observed || {};
   const rows = chillObserved72hRows(state);
