@@ -10,10 +10,10 @@
   "location": {
     "name": "CICOMA"
   },
-  "analyzed_at": "2026-09-03T17:58:29.568483+00:00",
-  "forecast_run_date": "2026-09-02",
-  "imported_at": "2026-09-03T15:11:16.629912-03:00",
-  "forecast_age_hours": 0.21,
+  "analyzed_at": "2026-09-03T20:14:11.327733+00:00",
+  "forecast_run_date": "2026-09-03",
+  "imported_at": "2026-09-03T18:31:51.079360-03:00",
+  "forecast_age_hours": 1.29,
   "update_status": {
     "state": "ACTUALIZADO",
     "stale": false,
