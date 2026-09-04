@@ -1377,10 +1377,16 @@ function maChartSection(tracking) {
         serie === "ovejas" ? "Ovejas paridas acumuladas" : "Corderos nacidos acumulados",
       )}
       ${
-        maExpectedCumulative(
-          tracking,
-          (tracking.daily || []).map((f) => f.date),
-        )
+        // La leyenda sólo aparece si hay al menos un valor previsto DIBUJABLE.
+        // Con todas las fechas observadas anteriores al inicio de la curva, el
+        // arreglo existe pero está lleno de nulos: anunciarla dejaría una
+        // leyenda apuntando a algo que no está en la gráfica.
+        (
+          maExpectedCumulative(
+            tracking,
+            (tracking.daily || []).map((f) => f.date),
+          ) || []
+        ).some((v) => v !== null && v !== undefined)
           ? `<span class="ma-legend ma-legend--expected"></span> ${escapeHtml("Previsto por la curva del lote (referencia)")}`
           : ""
       }
@@ -1524,6 +1530,19 @@ function drawMaChart() {
       } else context.lineTo(x, y);
     });
     context.stroke();
+    // Con una sola fecha, `stroke()` de un punto no dibuja NADA: la leyenda
+    // anunciaría una referencia invisible. Cada punto lleva además su propia
+    // marca, así que el primer día ya se ve dónde está lo previsto.
+    context.setLineDash([]);
+    puntos.forEach((punto, index) => {
+      if (punto.expected === null || punto.expected === undefined) return;
+      const x = padding.left + slot * index + slot / 2;
+      const y = padding.top + plotHeight - (punto.expected / maxCumulative) * plotHeight;
+      context.beginPath();
+      context.moveTo(x - 5, y);
+      context.lineTo(x + 5, y);
+      context.stroke();
+    });
     context.restore();
   }
 
