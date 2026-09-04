@@ -1318,6 +1318,14 @@ function maIndicators(tracking) {
     maIndicatorCard("Paridas hoy", ind.ewes_today, hoy ? `Al ${hoy}` : null),
     maIndicatorCard("Nacidos hoy", ind.born_today, hoy ? `Al ${hoy}` : null),
     maIndicatorCard("Pendientes de revisión", ind.pending, "No suman al acumulado"),
+    // Dos números que NO son lo mismo y que confundidos llevan a creer que no
+    // falta nada: éste dice si hay fotos que nadie miró todavía; el de arriba,
+    // si hay filas ya leídas esperando una decisión.
+    maIndicatorCard(
+      "Fotos pendientes de lectura",
+      ind.pending_images,
+      "Esperan procesamiento asistido",
+    ),
   ].join("");
 
   // Dos fechas distintas que se confunden con facilidad: cuándo se cargó el
@@ -1694,7 +1702,17 @@ function maRecordCard(registro) {
  * misma cola vista desde el lote. */
 function maPendingSection(tracking) {
   const filas = tracking.pending_rows || [];
-  if (!filas.length) return `<p class="ma-ok">No hay registros esperando revisión.</p>`;
+  const fotos = (tracking.indicators || {}).pending_images || 0;
+  // Aunque no haya nada que decidir, puede haber material sin leer. Decir sólo
+  // «no hay pendientes» ahí sería cierto y engañoso a la vez.
+  const aviso = fotos
+    ? `<p class="ma-pending__hint">${escapeHtml(
+        `Además hay ${formatInteger(fotos)} foto(s) esperando lectura: todavía no se sabe qué traen.`,
+      )}</p>`
+    : "";
+  if (!filas.length) {
+    return `<p class="ma-ok">No hay registros esperando revisión.</p>${aviso}`;
+  }
   const items = filas
     .map((fila) => {
       const meta = [
@@ -1715,7 +1733,8 @@ function maPendingSection(tracking) {
   return `
     <p class="ma-pending__count">${formatInteger(filas.length)} registro(s) esperando revisión. No suman a los acumulados hasta confirmarse.</p>
     <div class="ma-pending">${items}</div>
-    <p class="ma-pending__hint">Se revisan en Gestión → Bandeja de revisión, con la foto a la vista.</p>`;
+    <p class="ma-pending__hint">Se revisan en Gestión → Bandeja de revisión, con la foto a la vista.</p>
+    ${aviso}`;
 }
 
 /* ------------------------------------------------- registro completo --- */
