@@ -2324,3 +2324,22 @@ h3 {
   border-top: 2px dashed var(--ink-400);
   border-radius: 0;
 }
+
+/* Carga progresiva del registro: la tanda siguiente se pide, no se adivina por
+   scroll. Un botón explícito es más predecible en móvil que un infinite scroll,
+   y no pelea con el desplazamiento de la página. */
+.ma-more {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 10px;
+  padding: 10px 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  background: var(--surface-2);
+  color: var(--ink-700);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.ma-more:hover { background: var(--green-pale); }

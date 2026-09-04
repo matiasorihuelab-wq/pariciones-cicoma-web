@@ -1263,11 +1263,20 @@ function onChillControl(event) {
 
 //: Estado de la vista MA. Vive fuera del render porque el bloque se redibuja al
 //: filtrar y no puede perder lo que la persona eligió.
+//: Fichas por tanda. La lista se redibuja entera en cada tecla de la búsqueda,
+//: y con la campaña entera eso es medio megabyte de HTML por pulsación: a 500
+//: corderos son 323 KB y ~5000 nodos entre los que hay que rehacer el layout.
+//: Con una tanda el costo por tecla deja de depender del tamaño de la campaña.
+const MA_PAGINA = 60;
+
 const MA_STATE = {
   serie: "corderos", // corderos | ovejas
   dias: {}, // fecha -> abierto
   busqueda: "",
   filtro: "TODOS",
+  // Cuántas fichas se PINTAN. La búsqueda y los filtros siguen operando sobre
+  // la lista completa: esto limita lo que se dibuja, no lo que se considera.
+  visibles: MA_PAGINA,
 };
 
 function maTracking() {
@@ -1742,14 +1751,19 @@ function maFilteredRecords(tracking) {
 function maRecordsSection(tracking) {
   const registros = maFilteredRecords(tracking);
   const total = (tracking.records || []).length;
+  const pintados = registros.slice(0, MA_STATE.visibles);
   const filtros = MA_FILTERS.map(
     ([clave, texto]) =>
       `<button type="button" class="ma-chip${MA_STATE.filtro === clave ? " is-active" : ""}" data-ma-filter="${clave}" aria-pressed="${MA_STATE.filtro === clave}">${escapeHtml(texto)}</button>`,
   ).join("");
-  const conteo =
+  const alcance =
     registros.length === total
       ? `${formatInteger(total)} cordero(s) identificado(s).`
       : `${formatInteger(registros.length)} de ${formatInteger(total)} cordero(s).`;
+  const conteo =
+    pintados.length < registros.length
+      ? `${alcance} Se muestran ${formatInteger(pintados.length)}.`
+      : alcance;
   return `
     <div class="ma-search">
       <label class="ma-search__label" for="ma-search-input">Buscar por Nº de cordero o de madre</label>
@@ -1759,7 +1773,16 @@ function maRecordsSection(tracking) {
     <p class="ma-records__count">${escapeHtml(conteo)}</p>
     ${
       registros.length
-        ? `<div class="ma-records">${registros.map(maRecordCard).join("")}</div>`
+        ? `<div class="ma-records">${pintados.map(maRecordCard).join("")}</div>
+           ${
+             registros.length > pintados.length
+               ? `<button type="button" class="ma-more" data-ma-more="1">Mostrar ${escapeHtml(
+                   formatInteger(Math.min(MA_PAGINA, registros.length - pintados.length)),
+                 )} más · quedan ${escapeHtml(
+                   formatInteger(registros.length - pintados.length),
+                 )}</button>`
+               : ""
+           }`
         : `<p class="empty-note">${escapeHtml(
             MA_STATE.busqueda.trim()
               ? "Ningún cordero coincide con la búsqueda."
@@ -1895,6 +1918,12 @@ function onMaClick(event) {
   const filtro = event.target.closest("[data-ma-filter]");
   if (filtro) {
     MA_STATE.filtro = filtro.dataset.maFilter;
+    MA_STATE.visibles = MA_PAGINA;
+    renderMaRecords();
+    return;
+  }
+  if (event.target.closest("[data-ma-more]")) {
+    MA_STATE.visibles += MA_PAGINA;
     renderMaRecords();
   }
 }
@@ -1902,6 +1931,7 @@ function onMaClick(event) {
 function onMaInput(event) {
   if (event.target && event.target.id === "ma-search-input") {
     MA_STATE.busqueda = event.target.value;
+    MA_STATE.visibles = MA_PAGINA;
     renderMaRecords();
   }
 }
