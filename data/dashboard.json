@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-09-04T06:58:51.654485-03:00",
+  "generated_at": "2026-09-04T07:53:08.205861-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -23,7 +23,7 @@
       "unclassified": 0,
       "total": 1
     },
-    "generated_at": "2026-09-04T06:58:51.654485-03:00",
+    "generated_at": "2026-09-04T07:53:08.205861-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -5394,8 +5394,8 @@
         "date": "2026-09-02",
         "sex": "MACHO",
         "birth_type": 1,
-        "weight_kg": null,
-        "has_notes": false,
+        "weight_kg": "3.705",
+        "has_notes": true,
         "status": "CONFIRMED",
         "source": "WHATSAPP",
         "photo": {
@@ -5413,8 +5413,8 @@
         "date": "2026-09-02",
         "sex": "MACHO",
         "birth_type": 1,
-        "weight_kg": null,
-        "has_notes": false,
+        "weight_kg": "2.915",
+        "has_notes": true,
         "status": "CONFIRMED",
         "source": "WHATSAPP",
         "photo": {
@@ -5432,7 +5432,7 @@
         "date": "2026-09-02",
         "sex": "MACHO",
         "birth_type": 1,
-        "weight_kg": null,
+        "weight_kg": "3.075",
         "has_notes": false,
         "status": "CONFIRMED",
         "source": "WHATSAPP",
@@ -6780,7 +6780,7 @@
       "processed_at": "2026-09-03T22:29:44.172180Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-09-04T06:58:51.654485-03:00",
+    "last_sync_at": "2026-09-04T07:53:08.205861-03:00",
     "pending_operations": 1,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
