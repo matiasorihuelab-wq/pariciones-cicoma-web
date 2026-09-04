@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-09-03T21:11:38.734225-03:00",
+  "generated_at": "2026-09-04T06:58:51.654485-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -23,7 +23,7 @@
       "unclassified": 0,
       "total": 1
     },
-    "generated_at": "2026-09-03T21:11:38.734225-03:00",
+    "generated_at": "2026-09-04T06:58:51.654485-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -5353,6 +5353,118 @@
       "message": "Riesgo climático de los corderos nacidos registrados, según su distribución diaria informada."
     }
   },
+  "ma_tracking": {
+    "module_code": "MA",
+    "generated_from": "LAMBING_LAMB",
+    "today": "2026-09-04",
+    "indicators": {
+      "ewes_lambed": 4,
+      "born_lambs": 4,
+      "individualized_lambs": 4,
+      "ewes_today": 0,
+      "born_today": 0,
+      "pending": 0,
+      "last_record_at": "2026-09-03T22:42:38.827182Z",
+      "last_birth_date": "2026-09-02"
+    },
+    "daily": [
+      {
+        "date": "2026-09-02",
+        "ewes": 4,
+        "born": 4,
+        "simple": 4,
+        "multiple": 0,
+        "individualized": 4,
+        "males": 4,
+        "females": 0,
+        "sex_unknown": 0,
+        "pending": 0,
+        "cumulative_ewes": 4,
+        "cumulative_born": 4,
+        "identification_complete": true
+      }
+    ],
+    "records": [
+      {
+        "lamb_id": 1,
+        "lambing_id": 4,
+        "code": "0104",
+        "canonical_code": "104",
+        "ewe_identifier": "172",
+        "date": "2026-09-02",
+        "sex": "MACHO",
+        "birth_type": 1,
+        "weight_kg": null,
+        "has_notes": false,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 43,
+          "sha256_short": "8bb8ff38f9cc",
+          "candidate_id": 58
+        }
+      },
+      {
+        "lamb_id": 3,
+        "lambing_id": 6,
+        "code": "0103",
+        "canonical_code": "103",
+        "ewe_identifier": "54",
+        "date": "2026-09-02",
+        "sex": "MACHO",
+        "birth_type": 1,
+        "weight_kg": null,
+        "has_notes": false,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 43,
+          "sha256_short": "8bb8ff38f9cc",
+          "candidate_id": 57
+        }
+      },
+      {
+        "lamb_id": 2,
+        "lambing_id": 5,
+        "code": "0102",
+        "canonical_code": "102",
+        "ewe_identifier": "105",
+        "date": "2026-09-02",
+        "sex": "MACHO",
+        "birth_type": 1,
+        "weight_kg": null,
+        "has_notes": false,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 43,
+          "sha256_short": "8bb8ff38f9cc",
+          "candidate_id": 56
+        }
+      },
+      {
+        "lamb_id": 4,
+        "lambing_id": 7,
+        "code": "0101",
+        "canonical_code": "101",
+        "ewe_identifier": "128",
+        "date": "2026-09-02",
+        "sex": "MACHO",
+        "birth_type": 1,
+        "weight_kg": "3.500",
+        "has_notes": false,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 43,
+          "sha256_short": "8bb8ff38f9cc",
+          "candidate_id": 55
+        }
+      }
+    ],
+    "pending_rows": [],
+    "consistency": []
+  },
   "field_controls": {
     "INTENSIVO": {
       "variable": "ovejas_paridas",
@@ -6668,7 +6780,7 @@
       "processed_at": "2026-09-03T22:29:44.172180Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-09-03T21:11:38.734225-03:00",
+    "last_sync_at": "2026-09-04T06:58:51.654485-03:00",
     "pending_operations": 1,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }

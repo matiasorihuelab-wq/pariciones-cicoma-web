@@ -1883,3 +1883,444 @@ h3 {
   .forecast-grid { grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); }
   .forecast-card__value { font-size: 1.15rem; }
 }
+
+/* ===================================================================
+ * MERINO AUSTRALIANO — tablero de parición
+ * ===================================================================
+ *
+ * Se diseña para el teléfono primero porque ahí es donde se consulta: en el
+ * campo, con una mano, mirando una libreta. Todo lo que en escritorio es una
+ * tabla, acá es una ficha; las tablas anchas obligan a desplazarse en
+ * horizontal y en un celular eso es perder la columna que se estaba leyendo.
+ * En pantallas grandes las mismas fichas se acomodan en grilla, sin cambiar la
+ * jerarquía de la información. */
+
+/* --- Indicadores ------------------------------------------------------ */
+
+.ma-kpis {
+  display: grid;
+  /* Dos por fila en teléfono: con tres, el número queda demasiado chico para
+     leerlo de un vistazo, que es justamente para lo que está. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.ma-kpi {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.ma-kpi__label {
+  margin: 0;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-500);
+}
+
+.ma-kpi__value {
+  margin: 4px 0 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--ink-900);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Un dato ausente no se ve como un número: si «SIN INFORMAR» tuviera el mismo
+   peso tipográfico que un 4, se leería como una cifra más. */
+.ma-kpi--empty .ma-kpi__value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink-400);
+}
+
+.ma-kpi__hint {
+  margin: 4px 0 0;
+  font-size: 0.72rem;
+  color: var(--ink-500);
+}
+
+.ma-meta {
+  margin: 10px 0 0;
+  font-size: 0.78rem;
+  color: var(--ink-600);
+}
+
+.ma-alert {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-left: 3px solid var(--amber);
+  background: var(--amber-soft);
+  border-radius: 0 8px 8px 0;
+  font-size: 0.82rem;
+  color: var(--ink-800);
+}
+
+.ma-ok {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--ok);
+}
+
+/* --- Gráfica ---------------------------------------------------------- */
+
+.ma-toggles {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.ma-toggle,
+.ma-chip {
+  /* 44px de alto: el mínimo cómodo para el pulgar. Un filtro que hay que
+     apuntar dos veces es un filtro que no se usa. */
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-700);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.ma-toggle.is-active,
+.ma-chip.is-active {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+
+.ma-chart-wrap {
+  width: 100%;
+  overflow: hidden;
+}
+
+.ma-chart-wrap canvas {
+  display: block;
+  max-width: 100%;
+}
+
+.ma-chart-legend {
+  margin: 8px 0 0;
+  font-size: 0.78rem;
+  color: var(--ink-600);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.ma-legend {
+  display: inline-block;
+  width: 14px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.ma-legend--bar { background: #8fbf9f; }
+
+.ma-legend--line {
+  height: 3px;
+  background: #1f6f5c;
+}
+
+.ma-legend--line + * { margin-left: 0; }
+
+.ma-chart-empty {
+  padding: 20px 0;
+  color: var(--ink-500);
+}
+
+.ma-chart-empty__hint {
+  font-size: 0.8rem;
+  color: var(--ink-400);
+}
+
+/* --- Día a día -------------------------------------------------------- */
+
+.ma-day {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.ma-day__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 0;
+  background: var(--surface-2);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ma-day__date {
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.ma-day__totals {
+  flex: 1;
+  font-size: 0.85rem;
+  color: var(--ink-600);
+}
+
+.ma-day__chevron {
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--ink-500);
+  border-bottom: 2px solid var(--ink-500);
+  transform: rotate(45deg);
+  transition: transform 0.15s ease;
+}
+
+.ma-day.is-open .ma-day__chevron { transform: rotate(-135deg); }
+
+.ma-day__meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 12px;
+  margin: 0;
+  padding: 10px 12px;
+}
+
+.ma-day__meta div { margin: 0; }
+
+.ma-day__meta dt {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-500);
+}
+
+.ma-day__meta dd {
+  margin: 2px 0 0;
+  font-size: 0.85rem;
+  color: var(--ink-800);
+}
+
+.ma-day__warn {
+  margin: 0;
+  padding: 8px 12px;
+  background: var(--amber-soft);
+  font-size: 0.78rem;
+  color: var(--ink-800);
+}
+
+.ma-day__rows {
+  padding: 0 12px 12px;
+  display: grid;
+  gap: 8px;
+}
+
+/* --- Ficha de cordero ------------------------------------------------- */
+
+.ma-record {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: var(--surface);
+}
+
+.ma-record__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.ma-record__code {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--green-dark);
+  font-variant-numeric: tabular-nums;
+}
+
+.ma-record__mother {
+  font-size: 0.85rem;
+  color: var(--ink-600);
+}
+
+.ma-record__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 12px;
+  margin: 0;
+}
+
+.ma-record__grid div { margin: 0; }
+
+.ma-record__grid dt {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-500);
+}
+
+.ma-record__grid dd {
+  margin: 2px 0 0;
+  font-size: 0.85rem;
+  color: var(--ink-800);
+}
+
+.ma-record__photo {
+  margin: 8px 0 0;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-500);
+}
+
+/* --- Pendientes ------------------------------------------------------- */
+
+.ma-pending__count {
+  margin: 0 0 10px;
+  font-size: 0.85rem;
+  color: var(--ink-700);
+}
+
+.ma-pending {
+  display: grid;
+  gap: 8px;
+}
+
+.ma-pending__item {
+  border: 1px solid var(--amber);
+  border-left-width: 3px;
+  border-radius: 0 8px 8px 0;
+  background: var(--amber-soft);
+  padding: 10px 12px;
+}
+
+.ma-pending__code {
+  margin: 0;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.ma-pending__reason {
+  margin: 2px 0 0;
+  font-size: 0.85rem;
+  color: var(--ink-800);
+}
+
+.ma-pending__meta {
+  margin: 4px 0 0;
+  font-size: 0.75rem;
+  color: var(--ink-600);
+}
+
+.ma-pending__hint {
+  margin: 10px 0 0;
+  font-size: 0.78rem;
+  color: var(--ink-500);
+}
+
+/* --- Registro completo ------------------------------------------------ */
+
+.ma-search__label {
+  display: block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-500);
+  margin-bottom: 4px;
+}
+
+.ma-search__input {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  font: inherit;
+  font-size: 1rem; /* 16px: por debajo, iOS hace zoom al enfocar el campo. */
+  color: var(--ink-900);
+}
+
+.ma-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0;
+}
+
+.ma-records__count {
+  margin: 0 0 10px;
+  font-size: 0.8rem;
+  color: var(--ink-500);
+}
+
+.ma-records {
+  display: grid;
+  gap: 8px;
+}
+
+/* --- Consistencia ----------------------------------------------------- */
+
+.panel--warn { border-left: 3px solid var(--amber); }
+
+.ma-consistency {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.ma-consistency li {
+  padding: 8px 10px;
+  background: var(--amber-soft);
+  border-radius: 8px;
+}
+
+.ma-consistency__code {
+  display: block;
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-600);
+}
+
+.ma-consistency__detail {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.85rem;
+  color: var(--ink-800);
+}
+
+/* --- Escritorio ------------------------------------------------------- */
+
+/* La jerarquía no cambia: se aprovecha el ancho para ver más de una ficha a la
+   vez, no para reordenar la página. */
+@media (min-width: 720px) {
+  .ma-kpis { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .ma-records { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ma-day__rows { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ma-pending { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ma-record__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1100px) {
+  .ma-records { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* Referencia prevista: punteada y en gris, para que se lea como referencia y no
+   como un segundo resultado observado. */
+.ma-legend--expected {
+  height: 0;
+  border-top: 2px dashed var(--ink-400);
+  border-radius: 0;
+}

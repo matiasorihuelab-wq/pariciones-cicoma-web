@@ -1244,6 +1244,649 @@ function onChillControl(event) {
 
 /* ------------------------------------------------------------ por lote --- */
 
+/* ===================================================================
+ * MERINO AUSTRALIANO — tablero operativo de parición
+ * ===================================================================
+ *
+ * MA no se sigue como Intensivo y Dohne. Los otros dos lotes se informan por
+ * partes agregados —«nacieron 6 corderos»— y su vista publica totales. En MA se
+ * fotografía la libreta de nacimientos y cada fila es un animal con caravana,
+ * así que acá se puede publicar lo que en los otros no existe: quién nació, de
+ * qué madre y qué día.
+ *
+ * Todo lo que se dibuja sale de `DASH.ma_tracking`, que el backend reconstruye
+ * en cada corrida desde `Lambing` y `Lamb`. Este archivo NO calcula acumulados
+ * ni totaliza series: si lo hiciera habría dos verdades —la de la base y la del
+ * navegador— y tarde o temprano dejarían de coincidir. Acá sólo se ordena y se
+ * dibuja lo que ya viene calculado.
+ */
+
+//: Estado de la vista MA. Vive fuera del render porque el bloque se redibuja al
+//: filtrar y no puede perder lo que la persona eligió.
+const MA_STATE = {
+  serie: "corderos", // corderos | ovejas
+  dias: {}, // fecha -> abierto
+  busqueda: "",
+  filtro: "TODOS",
+};
+
+function maTracking() {
+  return DASH.ma_tracking || null;
+}
+
+//: ¿Este lote tiene seguimiento individual publicado? La pregunta es por el
+//: DATO, no por el código del lote: el día que Dohne registre corderos
+//: individuales, su bloque aparece sin tocar esta condición.
+function maTieneSeguimiento(lotCode) {
+  const t = maTracking();
+  return Boolean(t && t.module_code === lotCode);
+}
+
+/* ------------------------------------------------------ indicadores --- */
+
+/* Un valor que no se conoce no se dibuja como cero.
+ *
+ * En un tablero de parición «0 muertos» y «no sabemos cuántos murieron» llevan
+ * a decisiones distintas, y la libreta no tiene columna de nacido muerto. Por
+ * eso los indicadores principales sólo publican lo que se contó de verdad. */
+function maIndicatorCard(label, value, hint) {
+  const vacio = value === null || value === undefined;
+  const texto = vacio ? "SIN INFORMAR" : formatInteger(value);
+  return `
+    <div class="ma-kpi${vacio ? " ma-kpi--empty" : ""}">
+      <p class="ma-kpi__label">${escapeHtml(label)}</p>
+      <p class="ma-kpi__value">${escapeHtml(texto)}</p>
+      ${hint ? `<p class="ma-kpi__hint">${escapeHtml(hint)}</p>` : ""}
+    </div>`;
+}
+
+function maIndicators(tracking) {
+  const ind = tracking.indicators || {};
+  const hoy = tracking.today ? formatDayMonth(tracking.today) : null;
+  const cards = [
+    maIndicatorCard("Ovejas paridas", ind.ewes_lambed, "Acumulado confirmado"),
+    maIndicatorCard("Corderos nacidos", ind.born_lambs, "Acumulado confirmado"),
+    maIndicatorCard("Paridas hoy", ind.ewes_today, hoy ? `Al ${hoy}` : null),
+    maIndicatorCard("Nacidos hoy", ind.born_today, hoy ? `Al ${hoy}` : null),
+    maIndicatorCard("Pendientes de revisión", ind.pending, "No suman al acumulado"),
+  ].join("");
+
+  // Dos fechas distintas que se confunden con facilidad: cuándo se cargó el
+  // último registro y de qué día es la última parición. Se rotulan las dos.
+  const meta = [];
+  if (ind.last_birth_date) {
+    meta.push(`Última parición registrada: ${formatDate(ind.last_birth_date, { short: true })}`);
+  }
+  if (ind.last_record_at) {
+    meta.push(`Última incorporación: ${formatDateTime(ind.last_record_at, DASH.timezone)}`);
+  }
+  const identificados = ind.individualized_lambs || 0;
+  const faltan = (ind.born_lambs || 0) - identificados;
+  return `
+    <div class="ma-kpis">${cards}</div>
+    ${meta.length ? `<p class="ma-meta">${escapeHtml(meta.join(" · "))}</p>` : ""}
+    ${
+      faltan > 0
+        ? `<p class="ma-alert">IDENTIFICACIÓN INDIVIDUAL INCOMPLETA — se declararon ${formatInteger(
+            ind.born_lambs,
+          )} nacidos y hay ${formatInteger(
+            identificados,
+          )} cordero(s) con caravana registrada. Los ${formatInteger(
+            faltan,
+          )} restantes no se inventan: falta identificarlos.</p>`
+        : ""
+    }`;
+}
+
+/* ---------------------------------------------------------- gráfica --- */
+
+/* Barras del día y línea del acumulado, en el mismo par de ejes.
+ *
+ * Son dos magnitudes de escalas muy distintas —4 nacimientos en un día contra
+ * 400 acumulados— así que comparten el eje horizontal y NO el vertical: cada
+ * serie tiene su propia escala, rotulada de su lado. Dibujarlas contra un eje
+ * común aplastaría las barras hasta volverlas invisibles.
+ *
+ * El selector CORDEROS/OVEJAS cambia la magnitud, no el tipo de gráfico: en
+ * móvil dos gráficos apilados obligan a recordar el primero mientras se mira el
+ * segundo, y son la misma pregunta hecha sobre otra unidad. */
+function maChartSection(tracking) {
+  if (!(tracking.daily || []).length) {
+    return `
+      <div class="ma-chart-empty">
+        <p>Todavía no hay pariciones registradas en este lote.</p>
+        <p class="ma-chart-empty__hint">La gráfica aparece con el primer nacimiento confirmado.</p>
+      </div>`;
+  }
+  const serie = MA_STATE.serie;
+  const boton = (clave, texto) =>
+    `<button type="button" class="ma-toggle${serie === clave ? " is-active" : ""}" data-ma-serie="${clave}" aria-pressed="${serie === clave}">${escapeHtml(texto)}</button>`;
+  return `
+    <div class="ma-toggles" role="group" aria-label="Magnitud de la gráfica">
+      ${boton("corderos", "Corderos")}
+      ${boton("ovejas", "Ovejas")}
+    </div>
+    <div class="ma-chart-wrap">
+      <canvas id="ma-chart" role="img" aria-label="Nacimientos por día y acumulado de la parición de Merino Australiano"></canvas>
+    </div>
+    <p class="ma-chart-legend">
+      <span class="ma-legend ma-legend--bar"></span> ${escapeHtml(
+        serie === "ovejas" ? "Ovejas paridas por día" : "Corderos nacidos por día",
+      )}
+      <span class="ma-legend ma-legend--line"></span> ${escapeHtml(
+        serie === "ovejas" ? "Ovejas paridas acumuladas" : "Corderos nacidos acumulados",
+      )}
+      ${
+        maExpectedCumulative(
+          tracking,
+          (tracking.daily || []).map((f) => f.date),
+        )
+          ? `<span class="ma-legend ma-legend--expected"></span> ${escapeHtml("Previsto por la curva del lote (referencia)")}`
+          : ""
+      }
+    </p>`;
+}
+
+/* Acumulado PREVISTO en cada fecha observada, como referencia.
+ *
+ * La curva prevista del lote publica, por día, cuántas ovejas se esperaba que
+ * parieran y cuántos corderos nacieran: las MISMAS magnitudes que la serie
+ * observada, así que la comparación no engaña. Lo que sí engañaría es dibujar
+ * la curva prevista entera —de agosto a octubre— junto a dos días observados:
+ * el eje se estiraría hasta aplastar las barras. Por eso la referencia se
+ * evalúa sólo en las fechas que la serie observada ya tiene, que es donde la
+ * pregunta «¿vamos adelantados o atrasados?» tiene respuesta.
+ *
+ * Si el lote no tiene curva, no se dibuja nada: una referencia inventada sería
+ * peor que ninguna. */
+function maExpectedCumulative(tracking, fechas) {
+  const lote = ((DASH.lambing_curves || {}).lots || []).find(
+    (l) => l.code === tracking.module_code,
+  );
+  const puntos = (lote && lote.expected_original) || [];
+  if (!puntos.length || !fechas.length) return null;
+  const ovejas = MA_STATE.serie === "ovejas";
+  const hasta = new Map();
+  let acumulado = 0;
+  for (const punto of puntos) {
+    acumulado += Number(ovejas ? punto.expected_ewes : punto.expected_lambs) || 0;
+    hasta.set(punto.date, acumulado);
+  }
+  // Una fecha observada anterior al inicio de la curva no tiene previsto: se
+  // deja en blanco en vez de arrastrar el último valor conocido.
+  let ultimo = null;
+  const ordenadas = [...hasta.keys()].sort();
+  return fechas.map((fecha) => {
+    for (const clave of ordenadas) {
+      if (clave <= fecha) ultimo = hasta.get(clave);
+    }
+    return fecha < ordenadas[0] ? null : Math.round(ultimo);
+  });
+}
+
+function maChartSeries(tracking) {
+  const ovejas = MA_STATE.serie === "ovejas";
+  const filas = tracking.daily || [];
+  const previsto = maExpectedCumulative(
+    tracking,
+    filas.map((f) => f.date),
+  );
+  return filas.map((fila, index) => ({
+    date: fila.date,
+    daily: ovejas ? fila.ewes : fila.born,
+    cumulative: ovejas ? fila.cumulative_ewes : fila.cumulative_born,
+    expected: previsto ? previsto[index] : null,
+  }));
+}
+
+function drawMaChart() {
+  const tracking = maTracking();
+  const canvas = byId("ma-chart");
+  if (!tracking || !canvas) return;
+  const puntos = maChartSeries(tracking);
+  const wrap = canvas.parentElement;
+  if (!wrap || !puntos.length) return;
+
+  const context = canvas.getContext("2d");
+  const style = window.getComputedStyle(wrap);
+  const inset = parseFloat(style.paddingLeft || "0") + parseFloat(style.paddingRight || "0");
+  const width = Math.max(240, Math.floor(wrap.clientWidth - inset));
+  // Más baja en móvil: una gráfica que no entra en pantalla obliga a hacer
+  // scroll para leer el eje, y entonces no se lee.
+  const height = width < 480 ? 240 : 320;
+  const ratio = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = Math.floor(width * ratio);
+  canvas.height = Math.floor(height * ratio);
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
+  context.setTransform(ratio, 0, 0, ratio, 0, 0);
+  context.clearRect(0, 0, width, height);
+
+  const padding = { top: 18, right: 44, bottom: 34, left: 40 };
+  const plotWidth = width - padding.left - padding.right;
+  const plotHeight = height - padding.top - padding.bottom;
+  const slot = plotWidth / puntos.length;
+  const maxDaily = Math.max(...puntos.map((p) => p.daily || 0), 1);
+  const maxCumulative = Math.max(
+    ...puntos.map((p) => Math.max(p.cumulative || 0, p.expected || 0)),
+    1,
+  );
+
+  context.font = "11px Inter, system-ui, sans-serif";
+  context.strokeStyle = "rgba(135, 135, 134, 0.28)";
+  context.lineWidth = 1;
+  for (let step = 0; step <= 4; step += 1) {
+    const y = padding.top + (plotHeight / 4) * step;
+    context.beginPath();
+    context.moveTo(padding.left, y);
+    context.lineTo(padding.left + plotWidth, y);
+    context.stroke();
+    const proporcion = (4 - step) / 4;
+    context.fillStyle = "#878786";
+    context.textAlign = "right";
+    context.fillText(integerFormatter.format(Math.round(maxDaily * proporcion)), padding.left - 6, y + 4);
+    context.textAlign = "left";
+    context.fillStyle = "#1f6f5c";
+    context.fillText(
+      integerFormatter.format(Math.round(maxCumulative * proporcion)),
+      padding.left + plotWidth + 6,
+      y + 4,
+    );
+  }
+
+  const anchoBarra = Math.max(4, Math.min(28, slot * 0.55));
+  context.fillStyle = "#8fbf9f";
+  puntos.forEach((punto, index) => {
+    const valor = punto.daily || 0;
+    if (valor <= 0) return;
+    const alto = (valor / maxDaily) * plotHeight;
+    const x = padding.left + slot * index + slot / 2 - anchoBarra / 2;
+    context.fillRect(x, padding.top + plotHeight - alto, anchoBarra, alto);
+  });
+
+  // Referencia prevista: punteada y por debajo de la observada, para que se
+  // lea como referencia y no como un segundo resultado.
+  const conPrevisto = puntos.filter((p) => p.expected !== null && p.expected !== undefined);
+  if (conPrevisto.length) {
+    context.save();
+    context.setLineDash([4, 4]);
+    context.strokeStyle = "#8b9086";
+    context.lineWidth = 1.5;
+    context.beginPath();
+    let iniciado = false;
+    puntos.forEach((punto, index) => {
+      if (punto.expected === null || punto.expected === undefined) return;
+      const x = padding.left + slot * index + slot / 2;
+      const y = padding.top + plotHeight - (punto.expected / maxCumulative) * plotHeight;
+      if (!iniciado) {
+        context.moveTo(x, y);
+        iniciado = true;
+      } else context.lineTo(x, y);
+    });
+    context.stroke();
+    context.restore();
+  }
+
+  context.strokeStyle = "#1f6f5c";
+  context.lineWidth = 2;
+  context.beginPath();
+  puntos.forEach((punto, index) => {
+    const x = padding.left + slot * index + slot / 2;
+    const y = padding.top + plotHeight - ((punto.cumulative || 0) / maxCumulative) * plotHeight;
+    if (index === 0) context.moveTo(x, y);
+    else context.lineTo(x, y);
+  });
+  context.stroke();
+  context.fillStyle = "#1f6f5c";
+  puntos.forEach((punto, index) => {
+    const x = padding.left + slot * index + slot / 2;
+    const y = padding.top + plotHeight - ((punto.cumulative || 0) / maxCumulative) * plotHeight;
+    context.beginPath();
+    context.arc(x, y, 3, 0, Math.PI * 2);
+    context.fill();
+  });
+
+  // Con muchas fechas no entran todas las etiquetas: se saltean, pero la
+  // primera y la última siempre se dibujan para que el rango quede claro.
+  const paso = Math.max(1, Math.ceil(puntos.length / (width < 480 ? 4 : 8)));
+  context.fillStyle = "#878786";
+  context.textAlign = "center";
+  puntos.forEach((punto, index) => {
+    if (index % paso !== 0 && index !== puntos.length - 1) return;
+    const x = padding.left + slot * index + slot / 2;
+    context.fillText(formatDayMonth(punto.date), x, height - 12);
+  });
+}
+
+/* ------------------------------------------------------- día a día --- */
+
+function maDaySection(tracking) {
+  const dias = [...(tracking.daily || [])].reverse();
+  if (!dias.length) return `<p class="empty-note">Sin pariciones registradas todavía.</p>`;
+  const registrosPorDia = new Map();
+  for (const registro of tracking.records || []) {
+    if (!registrosPorDia.has(registro.date)) registrosPorDia.set(registro.date, []);
+    registrosPorDia.get(registro.date).push(registro);
+  }
+  return dias
+    .map((dia) => {
+      const abierto = Boolean(MA_STATE.dias[dia.date]);
+      const registros = registrosPorDia.get(dia.date) || [];
+      const partos = [];
+      if (dia.simple) partos.push(`${formatInteger(dia.simple)} simple(s)`);
+      if (dia.multiple) partos.push(`${formatInteger(dia.multiple)} múltiple(s)`);
+      const sexos = [];
+      if (dia.males) sexos.push(`${formatInteger(dia.males)} M`);
+      if (dia.females) sexos.push(`${formatInteger(dia.females)} H`);
+      if (dia.sex_unknown) sexos.push(`${formatInteger(dia.sex_unknown)} sin informar`);
+      return `
+      <article class="ma-day${abierto ? " is-open" : ""}">
+        <button type="button" class="ma-day__head" data-ma-day="${escapeHtml(dia.date)}" aria-expanded="${abierto}">
+          <span class="ma-day__date">${escapeHtml(formatDate(dia.date, { short: true }))}</span>
+          <span class="ma-day__totals">${formatInteger(dia.ewes)} oveja(s) · ${formatInteger(dia.born)} cordero(s)</span>
+          <span class="ma-day__chevron" aria-hidden="true"></span>
+        </button>
+        <dl class="ma-day__meta">
+          ${partos.length ? `<div><dt>Partos</dt><dd>${escapeHtml(partos.join(" · "))}</dd></div>` : ""}
+          ${sexos.length ? `<div><dt>Sexo</dt><dd>${escapeHtml(sexos.join(" · "))}</dd></div>` : ""}
+          ${dia.pending ? `<div><dt>Pendientes</dt><dd>${formatInteger(dia.pending)}</dd></div>` : ""}
+          <div><dt>Acumulado</dt><dd>${formatInteger(dia.cumulative_ewes)} ovejas · ${formatInteger(dia.cumulative_born)} corderos</dd></div>
+        </dl>
+        ${
+          dia.identification_complete
+            ? ""
+            : `<p class="ma-day__warn">IDENTIFICACIÓN INDIVIDUAL INCOMPLETA — este día declara ${formatInteger(dia.born)} nacido(s) y tiene ${formatInteger(dia.individualized)} con caravana.</p>`
+        }
+        ${abierto ? `<div class="ma-day__rows">${registros.map(maRecordCard).join("")}</div>` : ""}
+      </article>`;
+    })
+    .join("");
+}
+
+/* ------------------------------------------------- ficha de cordero --- */
+
+//: Un dato ausente se rotula, no se rellena. `SIN INFORMAR` es una respuesta.
+function maValue(value) {
+  return value === null || value === undefined || value === "" ? "SIN INFORMAR" : String(value);
+}
+
+//: El estado viene del modelo (`ValidationStatus`) y no se publica crudo: quien
+//: lee el tablero no tiene por qué saber qué significa `CORRECTED`.
+const MA_STATUS_LABEL = {
+  CONFIRMED: "Confirmado",
+  CORRECTED: "Confirmado con corrección",
+};
+
+function maStatusLabel(status) {
+  return MA_STATUS_LABEL[status] || maValue(status);
+}
+
+function maSexLabel(sex) {
+  if (sex === "MACHO") return "Macho";
+  if (sex === "HEMBRA") return "Hembra";
+  return "Sexo sin informar";
+}
+
+function maRecordCard(registro) {
+  const tipo = registro.birth_type > 1 ? `Múltiple (${registro.birth_type})` : "Simple";
+  // La fotografía es la evidencia de la fila. NO se publica la imagen: se
+  // publica que existe y con qué huella, para poder pedirla en Gestión, que es
+  // donde además se corrige. Publicar las fotos de la libreta en un sitio
+  // abierto es otra decisión y no se toma acá.
+  const foto = registro.photo
+    ? `<p class="ma-record__photo">FOTO DE LIBRETA · ${escapeHtml(registro.photo.sha256_short)}</p>`
+    : "";
+  const peso =
+    registro.weight_kg === null || registro.weight_kg === undefined
+      ? "SIN INFORMAR"
+      : `${registro.weight_kg} kg`;
+  return `
+    <article class="ma-record">
+      <header class="ma-record__head">
+        <span class="ma-record__code">${escapeHtml(registro.code)}</span>
+        <span class="ma-record__mother">Madre ${escapeHtml(maValue(registro.ewe_identifier))}</span>
+      </header>
+      <dl class="ma-record__grid">
+        <div><dt>Fecha</dt><dd>${escapeHtml(formatDate(registro.date, { short: true }))}</dd></div>
+        <div><dt>Sexo</dt><dd>${escapeHtml(maSexLabel(registro.sex))}</dd></div>
+        <div><dt>Tipo de parto</dt><dd>${escapeHtml(tipo)}</dd></div>
+        <div><dt>Peso al nacer</dt><dd>${escapeHtml(peso)}</dd></div>
+        <div><dt>Observaciones</dt><dd>${escapeHtml(registro.has_notes ? "Registradas (ver en Gestión)" : "SIN INFORMAR")}</dd></div>
+        <div><dt>Estado</dt><dd>${escapeHtml(maStatusLabel(registro.status))}</dd></div>
+      </dl>
+      ${foto}
+    </article>`;
+}
+
+/* --------------------------------------------------------- pendientes --- */
+
+/* Las filas que esperan una decisión se muestran acá TAMBIÉN, no sólo en la
+ * bandeja: quien mira el lote tiene que ver que hay animales leídos que todavía
+ * no cuentan. La revisión sigue siendo una sola, la de Gestión; esto es la
+ * misma cola vista desde el lote. */
+function maPendingSection(tracking) {
+  const filas = tracking.pending_rows || [];
+  if (!filas.length) return `<p class="ma-ok">No hay registros esperando revisión.</p>`;
+  const items = filas
+    .map((fila) => {
+      const meta = [
+        fila.date ? formatDate(fila.date, { short: true }) : "Sin fecha",
+        fila.ewe_identifier ? `madre ${fila.ewe_identifier}` : null,
+        fila.has_photo ? "con foto de libreta" : null,
+      ]
+        .filter(Boolean)
+        .join(" · ");
+      return `
+        <article class="ma-pending__item">
+          <p class="ma-pending__code">${escapeHtml(fila.lamb_code ? `Cordero ${fila.lamb_code}` : "Cordero sin identificar")}</p>
+          <p class="ma-pending__reason">${escapeHtml(fila.reason)}</p>
+          <p class="ma-pending__meta">${escapeHtml(meta)}</p>
+        </article>`;
+    })
+    .join("");
+  return `
+    <p class="ma-pending__count">${formatInteger(filas.length)} registro(s) esperando revisión. No suman a los acumulados hasta confirmarse.</p>
+    <div class="ma-pending">${items}</div>
+    <p class="ma-pending__hint">Se revisan en Gestión → Bandeja de revisión, con la foto a la vista.</p>`;
+}
+
+/* ------------------------------------------------- registro completo --- */
+
+const MA_FILTERS = [
+  ["TODOS", "Todos"],
+  ["HOY", "Hoy"],
+  ["MACHOS", "Machos"],
+  ["HEMBRAS", "Hembras"],
+  ["SIN_SEXO", "Sexo sin informar"],
+];
+
+function maFilteredRecords(tracking) {
+  const texto = MA_STATE.busqueda.trim().toUpperCase();
+  const hoy = tracking.today;
+  const canonicoBuscado = texto.replace(/^0+/, "");
+  return (tracking.records || []).filter((registro) => {
+    if (MA_STATE.filtro === "HOY" && registro.date !== hoy) return false;
+    if (MA_STATE.filtro === "MACHOS" && registro.sex !== "MACHO") return false;
+    if (MA_STATE.filtro === "HEMBRAS" && registro.sex !== "HEMBRA") return false;
+    if (MA_STATE.filtro === "SIN_SEXO" && registro.sex) return false;
+    if (!texto) return true;
+    // Se busca por cordero y por madre a la vez: quien tiene el número en la
+    // mano no siempre sabe cuál de los dos está mirando. La comparación del
+    // cordero usa la identidad canónica, así que «101» encuentra a «0101».
+    const codigo = String(registro.code || "").toUpperCase();
+    const canonico = String(registro.canonical_code || "").toUpperCase();
+    const madre = String(registro.ewe_identifier || "").toUpperCase();
+    return codigo.includes(texto) || canonico.includes(canonicoBuscado) || madre.includes(texto);
+  });
+}
+
+function maRecordsSection(tracking) {
+  const registros = maFilteredRecords(tracking);
+  const total = (tracking.records || []).length;
+  const filtros = MA_FILTERS.map(
+    ([clave, texto]) =>
+      `<button type="button" class="ma-chip${MA_STATE.filtro === clave ? " is-active" : ""}" data-ma-filter="${clave}" aria-pressed="${MA_STATE.filtro === clave}">${escapeHtml(texto)}</button>`,
+  ).join("");
+  const conteo =
+    registros.length === total
+      ? `${formatInteger(total)} cordero(s) identificado(s).`
+      : `${formatInteger(registros.length)} de ${formatInteger(total)} cordero(s).`;
+  return `
+    <div class="ma-search">
+      <label class="ma-search__label" for="ma-search-input">Buscar por Nº de cordero o de madre</label>
+      <input id="ma-search-input" type="search" class="ma-search__input" placeholder="Ej.: 0101 o 128" value="${escapeHtml(MA_STATE.busqueda)}" autocomplete="off" />
+    </div>
+    <div class="ma-chips" role="group" aria-label="Filtros del registro">${filtros}</div>
+    <p class="ma-records__count">${escapeHtml(conteo)}</p>
+    ${
+      registros.length
+        ? `<div class="ma-records">${registros.map(maRecordCard).join("")}</div>`
+        : `<p class="empty-note">${escapeHtml(
+            MA_STATE.busqueda.trim()
+              ? "Ningún cordero coincide con la búsqueda."
+              : "Ningún cordero cumple este filtro.",
+          )}</p>`
+    }`;
+}
+
+/* ------------------------------------------------------ consistencia --- */
+
+/* Diferencias entre registros que alguien tiene que mirar. No se corrigen solas
+ * ni se esconden: elegir cuál de los dos registros está mal es del responsable
+ * del lote, no del tablero. */
+function maConsistencySection(tracking) {
+  const hallazgos = tracking.consistency || [];
+  if (!hallazgos.length) return "";
+  const items = hallazgos
+    .map(
+      (h) =>
+        `<li><span class="ma-consistency__code">${escapeHtml(String(h.code).replace(/_/g, " "))}</span><span class="ma-consistency__detail">${escapeHtml(h.detail)}</span></li>`,
+    )
+    .join("");
+  return `
+    <section class="panel panel--warn">
+      <div class="panel__head">
+        <div>
+          <p class="eyebrow">Control de consistencia</p>
+          <h2>${escapeHtml(formatInteger(hallazgos.length))} punto(s) para revisar</h2>
+        </div>
+      </div>
+      <ul class="ma-consistency">${items}</ul>
+    </section>`;
+}
+
+/* ------------------------------------------------------------ página --- */
+
+/* El orden es el de uso, no el de la base: primero cuánto va, después cómo
+ * viene, después qué pasó cada día, qué falta revisar y por último el detalle
+ * animal por animal. En un teléfono lo que está más abajo se lee menos, y lo
+ * que menos se consulta es el listado completo. */
+function maTrackingPanels(tracking) {
+  return `
+    <section class="panel panel--ma-head">
+      <div class="panel__head">
+        <div>
+          <p class="eyebrow">Seguimiento de parición</p>
+          <h2>Estado actual</h2>
+        </div>
+        <p>Registros individuales confirmados de la libreta de nacimientos.</p>
+      </div>
+      ${maIndicators(tracking)}
+    </section>
+
+    ${maConsistencySection(tracking)}
+
+    <section class="panel">
+      <div class="panel__head">
+        <div><p class="eyebrow">Evolución</p><h2>Nacimientos por día y acumulado</h2></div>
+        <p>Barras: lo del día. Línea: el acumulado de la campaña.</p>
+      </div>
+      <div id="ma-chart-body">${maChartSection(tracking)}</div>
+    </section>
+
+    <section class="panel">
+      <div class="panel__head">
+        <div><p class="eyebrow">Detalle</p><h2>Parición día a día</h2></div>
+        <p>Tocá una fecha para ver los corderos de ese día.</p>
+      </div>
+      <div id="ma-days">${maDaySection(tracking)}</div>
+    </section>
+
+    <section class="panel">
+      <div class="panel__head">
+        <div><p class="eyebrow">Revisión</p><h2>Registros a revisar</h2></div>
+      </div>
+      ${maPendingSection(tracking)}
+    </section>
+
+    <section class="panel">
+      <div class="panel__head">
+        <div><p class="eyebrow">Registro</p><h2>Registro de nacimientos</h2></div>
+        <p>Un cordero por ficha, con su madre y su evidencia.</p>
+      </div>
+      <div id="ma-records-body">${maRecordsSection(tracking)}</div>
+    </section>`;
+}
+
+/* Redibujado parcial: la búsqueda no puede rehacer la página entera o el campo
+ * de texto pierde el foco en cada tecla. */
+function renderMaRecords() {
+  const tracking = maTracking();
+  const body = byId("ma-records-body");
+  if (!tracking || !body) return;
+  const input = byId("ma-search-input");
+  const posicion = input ? input.selectionStart : null;
+  const activo = document.activeElement === input;
+  body.innerHTML = maRecordsSection(tracking);
+  if (!activo) return;
+  const nuevo = byId("ma-search-input");
+  if (!nuevo) return;
+  nuevo.focus();
+  if (posicion !== null) nuevo.setSelectionRange(posicion, posicion);
+}
+
+function renderMaDays() {
+  const tracking = maTracking();
+  const body = byId("ma-days");
+  if (tracking && body) body.innerHTML = maDaySection(tracking);
+}
+
+function renderMaChart() {
+  const tracking = maTracking();
+  const body = byId("ma-chart-body");
+  if (!tracking || !body) return;
+  body.innerHTML = maChartSection(tracking);
+  drawMaChart();
+}
+
+function onMaClick(event) {
+  const serie = event.target.closest("[data-ma-serie]");
+  if (serie) {
+    MA_STATE.serie = serie.dataset.maSerie;
+    renderMaChart();
+    return;
+  }
+  const dia = event.target.closest("[data-ma-day]");
+  if (dia) {
+    const clave = dia.dataset.maDay;
+    MA_STATE.dias[clave] = !MA_STATE.dias[clave];
+    renderMaDays();
+    return;
+  }
+  const filtro = event.target.closest("[data-ma-filter]");
+  if (filtro) {
+    MA_STATE.filtro = filtro.dataset.maFilter;
+    renderMaRecords();
+  }
+}
+
+function onMaInput(event) {
+  if (event.target && event.target.id === "ma-search-input") {
+    MA_STATE.busqueda = event.target.value;
+    renderMaRecords();
+  }
+}
+
 function renderLot(lot) {
   const view = byId(`view-${lot.section}`);
   const module = moduleByCode(lot.code);
@@ -1274,6 +1917,8 @@ function renderLot(lot) {
         <div><dt>Parición prevista</dt><dd>${escapeHtml(first ? `${formatDate(first, { short: true })} → ${formatDate(last, { short: true })}` : "SIN CURVA")}</dd></div>
       </dl>
     </header>
+
+    ${maTieneSeguimiento(lot.code) ? maTrackingPanels(maTracking()) : ""}
 
     <section class="panel panel--flat">
       <div class="panel__head">
@@ -2327,6 +2972,10 @@ function showSection(name) {
 
 function drawSectionCharts(name) {
   drawIntegralChart(name, CODE_BY_SECTION[name] || null);
+  // El canvas de MA sólo existe en la sección de su lote y necesita el ancho
+  // real del contenedor: dibujarlo antes de que la sección se muestre daría
+  // ancho cero.
+  if (maTieneSeguimiento(CODE_BY_SECTION[name])) drawMaChart();
 }
 
 function initRouter() {
@@ -2346,6 +2995,8 @@ function initRouter() {
     if (button) onChillControl({ target: button });
   });
   document.addEventListener("click", onMortalityTile);
+  document.addEventListener("click", onMaClick);
+  document.addEventListener("input", onMaInput);
   let resizeFrame = null;
   window.addEventListener("resize", () => {
     if (resizeFrame) cancelAnimationFrame(resizeFrame);
