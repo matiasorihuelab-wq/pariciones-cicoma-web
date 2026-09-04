@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-09-04T17:48:31.000204-03:00",
+  "generated_at": "2026-09-04T18:15:22.785973-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -28,7 +28,7 @@
       "unclassified": 0,
       "total": 2
     },
-    "generated_at": "2026-09-04T17:48:31.000204-03:00",
+    "generated_at": "2026-09-04T18:15:22.785973-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -6092,7 +6092,7 @@
     "analyzed_at": "2026-09-04T14:25:43.641235+00:00",
     "forecast_run_date": "2026-09-04",
     "imported_at": "2026-09-04T17:44:51.052950-03:00",
-    "forecast_age_hours": 6.32,
+    "forecast_age_hours": 6.83,
     "update_status": {
       "state": "ACTUALIZADO",
       "stale": false,
@@ -6130,16 +6130,16 @@
           "name": "MERINO AUSTRALIANO",
           "expected_to_lamb": 592,
           "expected_lambs": 670,
-          "counted_lambed": 6,
-          "counted_lambs": 6,
-          "last_count_date": "2026-09-03"
+          "counted_lambed": 4,
+          "counted_lambs": 4,
+          "last_count_date": "2026-09-02"
         }
       ],
       "totals": {
         "expected_to_lamb": 833,
         "expected_lambs": 980,
-        "counted_lambed": 8,
-        "counted_lambs": 8
+        "counted_lambed": 6,
+        "counted_lambs": 6
       }
     },
     "module_options": [
@@ -6771,7 +6771,7 @@
       "processed_at": "2026-09-04T13:42:04.210986Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-09-04T17:48:31.000204-03:00",
+    "last_sync_at": "2026-09-04T18:15:22.785973-03:00",
     "pending_operations": 1,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }

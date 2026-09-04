@@ -13,7 +13,7 @@
   "analyzed_at": "2026-09-04T14:25:43.641235+00:00",
   "forecast_run_date": "2026-09-04",
   "imported_at": "2026-09-04T17:44:51.052950-03:00",
-  "forecast_age_hours": 6.32,
+  "forecast_age_hours": 6.83,
   "update_status": {
     "state": "ACTUALIZADO",
     "stale": false,
@@ -51,16 +51,16 @@
         "name": "MERINO AUSTRALIANO",
         "expected_to_lamb": 592,
         "expected_lambs": 670,
-        "counted_lambed": 6,
-        "counted_lambs": 6,
-        "last_count_date": "2026-09-03"
+        "counted_lambed": 4,
+        "counted_lambs": 4,
+        "last_count_date": "2026-09-02"
       }
     ],
     "totals": {
       "expected_to_lamb": 833,
       "expected_lambs": 980,
-      "counted_lambed": 8,
-      "counted_lambs": 8
+      "counted_lambed": 6,
+      "counted_lambs": 6
     }
   },
   "module_options": [
