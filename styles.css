@@ -2343,3 +2343,18 @@ h3 {
 }
 
 .ma-more:hover { background: var(--green-pale); }
+
+/* Nacido muerto: se distingue en la cabecera de la ficha. No es un error ni una
+   alarma —es un nacimiento que cuenta como tal— así que se marca con el ámbar
+   de «prestá atención», no con el rojo de las bajas. */
+.ma-record__flag {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--amber-soft);
+  color: var(--ink-800);
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.ma-record--stillborn { border-left: 3px solid var(--amber); }

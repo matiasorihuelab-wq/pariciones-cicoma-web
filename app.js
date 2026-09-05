@@ -1615,6 +1615,16 @@ function maDaySection(tracking) {
       if (dia.males) sexos.push(`${formatInteger(dia.males)} M`);
       if (dia.females) sexos.push(`${formatInteger(dia.females)} H`);
       if (dia.sex_unknown) sexos.push(`${formatInteger(dia.sex_unknown)} sin informar`);
+      // Estado vital al nacer. Sólo se nombra lo que la fuente informó: el
+      // resto queda como «sin informar», que no es lo mismo que vivo.
+      const vital = [];
+      if (dia.confirmed_live) vital.push(`${formatInteger(dia.confirmed_live)} nacidos vivos`);
+      if (dia.confirmed_stillborn) {
+        vital.push(`${formatInteger(dia.confirmed_stillborn)} nacidos muertos`);
+      }
+      if (dia.unknown_vital_status) {
+        vital.push(`${formatInteger(dia.unknown_vital_status)} sin informar`);
+      }
       return `
       <article class="ma-day${abierto ? " is-open" : ""}">
         <button type="button" class="ma-day__head" data-ma-day="${escapeHtml(dia.date)}" aria-expanded="${abierto}">
@@ -1625,6 +1635,7 @@ function maDaySection(tracking) {
         <dl class="ma-day__meta">
           ${partos.length ? `<div><dt>Partos</dt><dd>${escapeHtml(partos.join(" · "))}</dd></div>` : ""}
           ${sexos.length ? `<div><dt>Sexo</dt><dd>${escapeHtml(sexos.join(" · "))}</dd></div>` : ""}
+          ${vital.length ? `<div><dt>Al nacer</dt><dd>${escapeHtml(vital.join(" · "))}</dd></div>` : ""}
           ${dia.pending ? `<div><dt>Pendientes</dt><dd>${formatInteger(dia.pending)}</dd></div>` : ""}
           <div><dt>Acumulado</dt><dd>${formatInteger(dia.cumulative_ewes)} ovejas · ${formatInteger(dia.cumulative_born)} corderos</dd></div>
         </dl>
@@ -1657,6 +1668,17 @@ function maStatusLabel(status) {
   return MA_STATUS_LABEL[status] || maValue(status);
 }
 
+/* Cómo nació: vivo, muerto o sin informar.
+ *
+ * Las tres son respuestas distintas y `null` NO es «vivo por descarte». La
+ * libreta no tiene columna de nacido muerto, así que la mayoría de las filas no
+ * lo dicen: rotularlas como vivas inventaría un dato que nadie informó. */
+function maVitalLabel(aliveAtBirth) {
+  if (aliveAtBirth === true) return "Nació vivo";
+  if (aliveAtBirth === false) return "Nació muerto";
+  return "SIN INFORMAR";
+}
+
 function maSexLabel(sex) {
   if (sex === "MACHO") return "Macho";
   if (sex === "HEMBRA") return "Hembra";
@@ -1676,11 +1698,18 @@ function maRecordCard(registro) {
     registro.weight_kg === null || registro.weight_kg === undefined
       ? "SIN INFORMAR"
       : `${registro.weight_kg} kg`;
+  // El nacido muerto se marca en la cabecera y no sólo en una fila del detalle:
+  // es lo primero que hay que ver, y decirlo «muerte posterior» sería otra cosa.
+  const nacidoMuerto =
+    registro.alive_at_birth === false
+      ? '<span class="ma-record__flag">Nació muerto</span>'
+      : "";
   return `
-    <article class="ma-record">
+    <article class="ma-record${registro.alive_at_birth === false ? " ma-record--stillborn" : ""}">
       <header class="ma-record__head">
         <span class="ma-record__code">${escapeHtml(registro.code)}</span>
         <span class="ma-record__mother">Madre ${escapeHtml(maValue(registro.ewe_identifier))}</span>
+        ${nacidoMuerto}
       </header>
       <dl class="ma-record__grid">
         <div><dt>Fecha</dt><dd>${escapeHtml(formatDate(registro.date, { short: true }))}</dd></div>
@@ -1688,6 +1717,7 @@ function maRecordCard(registro) {
         <div><dt>Tipo de parto</dt><dd>${escapeHtml(tipo)}</dd></div>
         <div><dt>Peso al nacer</dt><dd>${escapeHtml(peso)}</dd></div>
         <div><dt>Observaciones</dt><dd>${escapeHtml(registro.has_notes ? "Registradas (ver en Gestión)" : "SIN INFORMAR")}</dd></div>
+        <div><dt>Al nacer</dt><dd>${escapeHtml(maVitalLabel(registro.alive_at_birth))}</dd></div>
         <div><dt>Estado</dt><dd>${escapeHtml(maStatusLabel(registro.status))}</dd></div>
       </dl>
       ${foto}
