@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-09-07T00:35:38.422109-03:00",
+  "generated_at": "2026-09-07T01:30:52.509321-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -22,13 +22,14 @@
     "pending_actions": {
       "reports": 8,
       "links": 0,
-      "media": 9,
+      "media": 1,
+      "photos": 0,
       "technical": 0,
       "packages": 0,
       "unclassified": 1,
-      "total": 18
+      "total": 10
     },
-    "generated_at": "2026-09-07T00:35:38.422109-03:00",
+    "generated_at": "2026-09-07T01:30:52.509321-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -162,7 +163,7 @@
       ]
     },
     "stillborn": {
-      "value": 1,
+      "value": 2,
       "status": "PARTIAL",
       "lots_included": [
         "MA"
@@ -787,7 +788,7 @@
         "expected_total": 670,
         "counted": 59,
         "born_alive": null,
-        "stillborn": 1,
+        "stillborn": 2,
         "current_stock_lambs": null,
         "current_stock_count_date": null,
         "current_stock_label": "Corderos vivos contabilizados",
@@ -3495,7 +3496,7 @@
           "counted_lambed": 50,
           "counted_lambs": 59,
           "born_alive": null,
-          "stillborn": 1,
+          "stillborn": 2,
           "lamb_deaths": 2,
           "ewe_deaths": 1,
           "last_count_date": "2026-09-05",
@@ -5397,7 +5398,7 @@
           "ewes_lambed": 12,
           "born_lambs": 17,
           "born_alive": null,
-          "stillborn": null,
+          "stillborn": 1,
           "basis": "DAILY",
           "validation_status": "CONFIRMED",
           "revision": 1,
@@ -7320,6 +7321,13 @@
         "quantity": 1,
         "service_code": null,
         "service_label": "Sin servicio asociado"
+      },
+      {
+        "date": "2026-09-04",
+        "module_code": "MA",
+        "quantity": 1,
+        "service_code": null,
+        "service_label": "Sin servicio asociado"
       }
     ],
     "message": "Nacidos muertos al parto informados por fecha."
@@ -8267,7 +8275,7 @@
       "processed_at": "2026-09-07T01:48:29.233497Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-09-07T00:35:38.422109-03:00",
+    "last_sync_at": "2026-09-07T01:30:52.509321-03:00",
     "pending_operations": 8,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }

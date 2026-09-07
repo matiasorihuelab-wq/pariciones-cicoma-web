@@ -334,13 +334,26 @@ function renderHealth() {
       : `${countReasons} ${countReasons === 1 ? "incidencia" : "incidencias"}`;
   const reasons = byId("health-pop-reasons");
   // Motivos que YA están resumidos en la línea de contadores: no se repiten.
-  const pendingCodes = ["PENDING_EVENT", "PENDING_LINK", "PENDING_MEDIA", "PACKAGE_ERROR"];
+  const pendingCodes = [
+    "PENDING_EVENT",
+    "PENDING_LINK",
+    "PENDING_PHOTO",
+    "PENDING_MEDIA",
+    "PACKAGE_ERROR",
+  ];
   const lines = [];
   if (isOjo && actions && totalActions > 0) {
     const parts = [];
     if (actions.reports) parts.push(`${actions.reports} reporte${actions.reports === 1 ? "" : "s"}`);
     if (actions.links)
       parts.push(`${actions.links} vinculación${actions.links === 1 ? "" : "es"}`);
+    // Dos pendientes de fotografía distintos: uno espera que alguien la mire y
+    // el otro que alguien decida de qué evento es evidencia. Sin esta línea el
+    // contador podía decir «3 acciones pendientes» con el detalle vacío.
+    if (actions.photos)
+      parts.push(
+        `${actions.photos} fotografía${actions.photos === 1 ? "" : "s"} sin interpretar`,
+      );
     if (actions.media)
       parts.push(`${actions.media} archivo${actions.media === 1 ? "" : "s"} multimedia`);
     if (actions.technical)
