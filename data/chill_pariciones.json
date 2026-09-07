@@ -10,10 +10,10 @@
   "location": {
     "name": "CICOMA"
   },
-  "analyzed_at": "2026-09-06T17:11:11.255942+00:00",
-  "forecast_run_date": "2026-09-06",
-  "imported_at": "2026-09-06T22:49:25.808328-03:00",
-  "forecast_age_hours": 17.43,
+  "analyzed_at": "2026-09-07T15:55:47.589133+00:00",
+  "forecast_run_date": "2026-09-07",
+  "imported_at": "2026-09-07T18:57:01.794651-03:00",
+  "forecast_age_hours": 6.02,
   "update_status": {
     "state": "ACTUALIZADO",
     "stale": false,
@@ -83,75 +83,16 @@
   ],
   "days": [
     {
-      "date": "2026-09-06",
-      "risk_category": "NO_DETERMINADO",
-      "display_risk_category": "RIESGO PENDIENTE DE REVISIÓN",
-      "ci_min": null,
-      "ci_max": null,
-      "ci_interval": "NO DETERMINADO",
-      "ci_unit": "kJ/m2/h",
-      "confidence": 0.0,
-      "requires_review": true,
-      "automatic_use": false,
-      "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260906.png",
-      "expected_ewes_lambing": 74.2557,
-      "expected_lambs_born": 85.4306,
-      "lambs_in_first_72h_on_date": 255.8639,
-      "modules": [
-        {
-          "code": "INTENSIVO",
-          "name": "INTENSIVO",
-          "expected_ewes_lambing": 0.0046,
-          "expected_lambs_born": 0.0065,
-          "lambs_in_first_72h_on_date": 0.0647,
-          "in_lambing_window": true
-        },
-        {
-          "code": "DOHNE",
-          "name": "MERINO DOHNE",
-          "expected_ewes_lambing": 4.9511,
-          "expected_lambs_born": 6.6906,
-          "lambs_in_first_72h_on_date": 19.5989,
-          "in_lambing_window": true
-        },
-        {
-          "code": "MA",
-          "name": "MERINO AUSTRALIANO",
-          "expected_ewes_lambing": 69.3,
-          "expected_lambs_born": 78.7335,
-          "lambs_in_first_72h_on_date": 236.2003,
-          "in_lambing_window": true
-        }
-      ],
-      "cohort_72h": {
-        "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
-        "window": [
-          "2026-09-06",
-          "2026-09-07",
-          "2026-09-08"
-        ],
-        "category": "RIESGO_72H_INCOMPLETO",
-        "complete": false,
-        "missing_dates": [
-          "2026-09-06",
-          "2026-09-07",
-          "2026-09-08"
-        ],
-        "lambs": 85.4306
-      },
-      "cross_status": "OK"
-    },
-    {
       "date": "2026-09-07",
-      "risk_category": "NO_DETERMINADO",
-      "display_risk_category": "RIESGO PENDIENTE DE REVISIÓN",
-      "ci_min": null,
-      "ci_max": null,
-      "ci_interval": "NO DETERMINADO",
+      "risk_category": "MEDIO",
+      "display_risk_category": "MEDIO",
+      "ci_min": 1000.0,
+      "ci_max": 1100.0,
+      "ci_interval": "1000–1100",
       "ci_unit": "kJ/m2/h",
-      "confidence": 0.0,
-      "requires_review": true,
-      "automatic_use": false,
+      "confidence": 0.9,
+      "requires_review": false,
+      "automatic_use": true,
       "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260907.png",
       "expected_ewes_lambing": 18.8612,
       "expected_lambs_born": 22.505,
@@ -189,28 +130,24 @@
           "2026-09-08",
           "2026-09-09"
         ],
-        "category": "RIESGO_72H_INCOMPLETO",
-        "complete": false,
-        "missing_dates": [
-          "2026-09-07",
-          "2026-09-08",
-          "2026-09-09"
-        ],
+        "category": "MEDIO",
+        "complete": true,
+        "missing_dates": [],
         "lambs": 22.505
       },
       "cross_status": "OK"
     },
     {
       "date": "2026-09-08",
-      "risk_category": "NO_DETERMINADO",
-      "display_risk_category": "RIESGO PENDIENTE DE REVISIÓN",
-      "ci_min": null,
-      "ci_max": null,
-      "ci_interval": "NO DETERMINADO",
+      "risk_category": "MEDIO",
+      "display_risk_category": "MEDIO",
+      "ci_min": 1000.0,
+      "ci_max": 1100.0,
+      "ci_interval": "1000–1100",
       "ci_unit": "kJ/m2/h",
-      "confidence": 0.0,
-      "requires_review": true,
-      "automatic_use": false,
+      "confidence": 0.9,
+      "requires_review": false,
+      "automatic_use": true,
       "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260908.png",
       "expected_ewes_lambing": 15.3962,
       "expected_lambs_born": 18.5683,
@@ -248,28 +185,24 @@
           "2026-09-09",
           "2026-09-10"
         ],
-        "category": "RIESGO_72H_INCOMPLETO",
-        "complete": false,
-        "missing_dates": [
-          "2026-09-08",
-          "2026-09-09",
-          "2026-09-10"
-        ],
+        "category": "MEDIO",
+        "complete": true,
+        "missing_dates": [],
         "lambs": 18.5683
       },
       "cross_status": "OK"
     },
     {
       "date": "2026-09-09",
-      "risk_category": "NO_DETERMINADO",
-      "display_risk_category": "RIESGO PENDIENTE DE REVISIÓN",
-      "ci_min": null,
-      "ci_max": null,
-      "ci_interval": "NO DETERMINADO",
+      "risk_category": "BAJO",
+      "display_risk_category": "BAJO",
+      "ci_min": 900.0,
+      "ci_max": 1000.0,
+      "ci_interval": "900–1000",
       "ci_unit": "kJ/m2/h",
-      "confidence": 0.0,
-      "requires_review": true,
-      "automatic_use": false,
+      "confidence": 0.9,
+      "requires_review": false,
+      "automatic_use": true,
       "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260909.png",
       "expected_ewes_lambing": 11.9312,
       "expected_lambs_born": 14.6317,
@@ -307,28 +240,24 @@
           "2026-09-10",
           "2026-09-11"
         ],
-        "category": "RIESGO_72H_INCOMPLETO",
-        "complete": false,
-        "missing_dates": [
-          "2026-09-09",
-          "2026-09-10",
-          "2026-09-11"
-        ],
+        "category": "BAJO",
+        "complete": true,
+        "missing_dates": [],
         "lambs": 14.6317
       },
       "cross_status": "OK"
     },
     {
       "date": "2026-09-10",
-      "risk_category": "NO_DETERMINADO",
-      "display_risk_category": "RIESGO PENDIENTE DE REVISIÓN",
-      "ci_min": null,
-      "ci_max": null,
-      "ci_interval": "NO DETERMINADO",
+      "risk_category": "BAJO",
+      "display_risk_category": "BAJO",
+      "ci_min": 900.0,
+      "ci_max": 1000.0,
+      "ci_interval": "900–1000",
       "ci_unit": "kJ/m2/h",
-      "confidence": 0.0,
-      "requires_review": true,
-      "automatic_use": false,
+      "confidence": 0.9,
+      "requires_review": false,
+      "automatic_use": true,
       "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260910.png",
       "expected_ewes_lambing": 8.4662,
       "expected_lambs_born": 10.695,
@@ -369,11 +298,67 @@
         "category": "RIESGO_72H_INCOMPLETO",
         "complete": false,
         "missing_dates": [
-          "2026-09-10",
-          "2026-09-11",
           "2026-09-12"
         ],
         "lambs": 10.695
+      },
+      "cross_status": "OK"
+    },
+    {
+      "date": "2026-09-11",
+      "risk_category": "SIN_RIESGO",
+      "display_risk_category": "SIN_RIESGO",
+      "ci_min": null,
+      "ci_max": 900.0,
+      "ci_interval": "< 900",
+      "ci_unit": "kJ/m2/h",
+      "confidence": 0.9,
+      "requires_review": false,
+      "automatic_use": true,
+      "image_url": "https://www.inia.uy/sites/default/files/gras/contenidogras/Reportes/agroclima/AlertaOvinos/WRF/Chill_wrf20260911.png",
+      "expected_ewes_lambing": 5.0989,
+      "expected_lambs_born": 6.8693,
+      "lambs_in_first_72h_on_date": 32.196,
+      "modules": [
+        {
+          "code": "INTENSIVO",
+          "name": "INTENSIVO",
+          "expected_ewes_lambing": null,
+          "expected_lambs_born": null,
+          "lambs_in_first_72h_on_date": 0.0,
+          "in_lambing_window": false
+        },
+        {
+          "code": "DOHNE",
+          "name": "MERINO DOHNE",
+          "expected_ewes_lambing": 5.0012,
+          "expected_lambs_born": 6.7583,
+          "lambs_in_first_72h_on_date": 20.2749,
+          "in_lambing_window": true
+        },
+        {
+          "code": "MA",
+          "name": "MERINO AUSTRALIANO",
+          "expected_ewes_lambing": 0.0977,
+          "expected_lambs_born": 0.111,
+          "lambs_in_first_72h_on_date": 11.9211,
+          "in_lambing_window": true
+        }
+      ],
+      "cohort_72h": {
+        "description": "Corderos esperados expuestos a condiciones ambientales de riesgo durante sus primeras 72 horas.",
+        "window": [
+          "2026-09-11",
+          "2026-09-12",
+          "2026-09-13"
+        ],
+        "category": "RIESGO_72H_INCOMPLETO",
+        "complete": false,
+        "missing_dates": [
+          "2026-09-12",
+          "2026-09-13"
+        ],
+        "lambs": 6.8693
       },
       "cross_status": "OK"
     }
@@ -384,11 +369,11 @@
     "cohorts_counted": 5,
     "rule": "Cada cohorte prevista para el día D se evalúa en D, D+1 y D+2 y se cuenta una sola vez bajo su categoría máxima.",
     "SIN_RIESGO": 0.0,
-    "BAJO": 0.0,
-    "MEDIO": 0.0,
+    "BAJO": 14.6317,
+    "MEDIO": 41.0733,
     "ALTO": 0.0,
     "CRITICO": 0.0,
-    "RIESGO_72H_INCOMPLETO": 151.8306,
+    "RIESGO_72H_INCOMPLETO": 17.5643,
     "by_module": {
       "INTENSIVO": {
         "SIN_RIESGO": 0.0,
@@ -396,23 +381,23 @@
         "MEDIO": 0.0,
         "ALTO": 0.0,
         "CRITICO": 0.0,
-        "RIESGO_72H_INCOMPLETO": 0.0065
+        "RIESGO_72H_INCOMPLETO": 0.0
       },
       "DOHNE": {
         "SIN_RIESGO": 0.0,
-        "BAJO": 0.0,
-        "MEDIO": 0.0,
+        "BAJO": 6.7583,
+        "MEDIO": 13.5166,
         "ALTO": 0.0,
         "CRITICO": 0.0,
-        "RIESGO_72H_INCOMPLETO": 33.7238
+        "RIESGO_72H_INCOMPLETO": 13.5166
       },
       "MA": {
         "SIN_RIESGO": 0.0,
-        "BAJO": 0.0,
-        "MEDIO": 0.0,
+        "BAJO": 7.8734,
+        "MEDIO": 27.5567,
         "ALTO": 0.0,
         "CRITICO": 0.0,
-        "RIESGO_72H_INCOMPLETO": 118.1003
+        "RIESGO_72H_INCOMPLETO": 4.0477
       }
     }
   },
