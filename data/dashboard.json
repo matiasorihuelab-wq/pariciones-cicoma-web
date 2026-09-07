@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-09-06T22:54:53.948803-03:00",
+  "generated_at": "2026-09-06T22:56:04.703112-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -20,15 +20,15 @@
       }
     ],
     "pending_actions": {
-      "reports": 3,
+      "reports": 2,
       "links": 0,
       "media": 9,
       "technical": 0,
       "packages": 0,
       "unclassified": 1,
-      "total": 13
+      "total": 12
     },
-    "generated_at": "2026-09-06T22:54:53.948803-03:00",
+    "generated_at": "2026-09-06T22:56:04.703112-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -4623,8 +4623,8 @@
       {
         "key": "lamb_mortality_pct",
         "label": "Mortalidad de corderos (muertos acumulados sobre nacidos acumulados)",
-        "value": 8.5714,
-        "numerator": 15,
+        "value": 9.1429,
+        "numerator": 16,
         "denominator": 175,
         "denominator_label": "corderos nacidos acumulados",
         "status": "OK",
@@ -5728,8 +5728,8 @@
     }
   },
   "mortality_summary": {
-    "total_deaths": 22,
-    "lamb_deaths": 15,
+    "total_deaths": 23,
+    "lamb_deaths": 16,
     "ewe_deaths": 7,
     "by_date": [
       {
@@ -5801,6 +5801,11 @@
         "date": "2026-09-01",
         "lamb": 2,
         "ewe": 1
+      },
+      {
+        "date": "2026-09-03",
+        "lamb": 1,
+        "ewe": 0
       }
     ],
     "by_lot": {
@@ -5815,45 +5820,49 @@
       "MA": {
         "CORDERO": 2,
         "OVEJA": 1
+      },
+      "SIN_LOTE": {
+        "CORDERO": 1,
+        "OVEJA": 0
       }
     },
     "by_animal": {
-      "CORDERO": 15,
+      "CORDERO": 16,
       "OVEJA": 7
     },
     "by_cause": [
       {
         "cause_code": "CAUSA_NO_DETERMINADA",
         "cause_label": "Causa no determinada",
-        "count": 16,
-        "pct": 72.7
+        "count": 17,
+        "pct": 73.9
       },
       {
         "cause_code": "MALFORMACION_CONGENITA",
         "cause_label": "Malformación congénita",
         "count": 3,
-        "pct": 13.6
+        "pct": 13.0
       },
       {
         "cause_code": "DISTOCIA_PARTO",
         "cause_label": "Distocia o problema de parto",
         "count": 1,
-        "pct": 4.5
+        "pct": 4.3
       },
       {
         "cause_code": "OTRA",
         "cause_label": "Otra causa informada",
         "count": 1,
-        "pct": 4.5
+        "pct": 4.3
       },
       {
         "cause_code": "PREDACION_CARANCHO",
         "cause_label": "Predación por carancho",
         "count": 1,
-        "pct": 4.5
+        "pct": 4.3
       }
     ],
-    "undetermined": 16
+    "undetermined": 17
   },
   "mortality_daily": [
     {
@@ -6119,6 +6128,18 @@
       "death_moment_label": "Momento no determinado",
       "service_code": null,
       "service_label": "Sin servicio asociado"
+    },
+    {
+      "date": "2026-09-03",
+      "module_code": null,
+      "animal_type": "CORDERO",
+      "quantity": 1,
+      "cause_code": "CAUSA_NO_DETERMINADA",
+      "cause_label": "Causa no determinada",
+      "death_moment": "NO_DETERMINADO",
+      "death_moment_label": "Momento no determinado",
+      "service_code": null,
+      "service_label": "Sin servicio asociado"
     }
   ],
   "stillborn_daily": {
@@ -6128,9 +6149,24 @@
   },
   "campaign_milestones": {
     "status": "OK",
-    "total": 31,
+    "total": 32,
     "shown": 12,
     "items": [
+      {
+        "date": "2026-09-03",
+        "module_code": null,
+        "module_name": null,
+        "kind": "MORTALIDAD_DE_CORDEROS",
+        "kind_label": "Mortalidad de corderos",
+        "subtype": null,
+        "subtype_label": null,
+        "quantity": 1,
+        "animal_type": "CORDERO",
+        "animal_label": "cordero",
+        "cause_code": "CAUSA_NO_DETERMINADA",
+        "cause_label": "Causa no determinada",
+        "affects_counts": false
+      },
       {
         "date": "2026-09-01",
         "module_code": "MA",
@@ -6296,21 +6332,6 @@
         "animal_label": "oveja",
         "cause_code": "DISTOCIA_PARTO",
         "cause_label": "Distocia o problema de parto",
-        "affects_counts": false
-      },
-      {
-        "date": "2026-08-21",
-        "module_code": "INTENSIVO",
-        "module_name": "Intensivo",
-        "kind": "MORTALIDAD_DE_CORDEROS",
-        "kind_label": "Mortalidad de corderos",
-        "subtype": null,
-        "subtype_label": null,
-        "quantity": 1,
-        "animal_type": "CORDERO",
-        "animal_label": "cordero",
-        "cause_code": "CAUSA_NO_DETERMINADA",
-        "cause_label": "Causa no determinada",
         "affects_counts": false
       }
     ],
@@ -6848,6 +6869,17 @@
       "source": "WHATSAPP"
     },
     {
+      "date": "2026-09-03",
+      "module_code": "GENERAL",
+      "event_type": "LAMB_DEATH",
+      "event_label": "Muerte de cordero",
+      "quantity": 1,
+      "cause_code": "CAUSA_NO_DETERMINADA",
+      "cause_label": "Causa no determinada",
+      "validation_status": "CONFIRMED",
+      "source": "ZAPIA_VALIDADO"
+    },
+    {
       "date": "2026-09-02",
       "module_code": "MA",
       "event_type": "LAMBING",
@@ -7015,22 +7047,11 @@
       "cause_label": "Causa no determinada",
       "validation_status": "CANDIDATE",
       "source": "ZAPIA_VALIDADO"
-    },
-    {
-      "date": "2026-08-18",
-      "module_code": "DOHNE",
-      "event_type": "EWE_DEATH",
-      "event_label": "Muerte de oveja",
-      "quantity": 1,
-      "cause_code": "CAUSA_NO_DETERMINADA",
-      "cause_label": "Causa no determinada",
-      "validation_status": "CANDIDATE",
-      "source": "ZAPIA_VALIDADO"
     }
   ],
   "automatic_provisional": {
     "notice": "Los datos pueden ajustarse si se recibe una corrección posterior.",
-    "pending_count": 3,
+    "pending_count": 2,
     "records": []
   },
   "update_status": {
@@ -7039,8 +7060,8 @@
       "processed_at": "2026-09-07T01:48:29.233497Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-09-06T22:54:53.948803-03:00",
-    "pending_operations": 3,
+    "last_sync_at": "2026-09-06T22:56:04.703112-03:00",
+    "pending_operations": 2,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
 }
