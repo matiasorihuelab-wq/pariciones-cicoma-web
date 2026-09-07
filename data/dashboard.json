@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-09-06T23:54:58.222081-03:00",
+  "generated_at": "2026-09-07T00:00:38.277866-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -23,7 +23,7 @@
       "unclassified": 1,
       "total": 10
     },
-    "generated_at": "2026-09-06T23:54:58.222081-03:00",
+    "generated_at": "2026-09-07T00:00:38.277866-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -5434,7 +5434,7 @@
   "ma_tracking": {
     "module_code": "MA",
     "generated_from": "LAMBING_LAMB",
-    "today": "2026-09-06",
+    "today": "2026-09-07",
     "indicators": {
       "ewes_lambed": 11,
       "born_lambs": 11,
@@ -7077,7 +7077,7 @@
       "processed_at": "2026-09-07T01:48:29.233497Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-09-06T23:54:58.222081-03:00",
+    "last_sync_at": "2026-09-07T00:00:38.277866-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
