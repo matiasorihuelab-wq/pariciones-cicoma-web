@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-09-06T23:00:50.897031-03:00",
+  "generated_at": "2026-09-06T23:54:58.222081-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -23,7 +23,7 @@
       "unclassified": 1,
       "total": 10
     },
-    "generated_at": "2026-09-06T23:00:50.897031-03:00",
+    "generated_at": "2026-09-06T23:54:58.222081-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -157,13 +157,14 @@
       ]
     },
     "stillborn": {
-      "value": null,
-      "status": "NOT_REPORTED",
-      "lots_included": [],
+      "value": 1,
+      "status": "PARTIAL",
+      "lots_included": [
+        "MA"
+      ],
       "lots_missing": [
         "DOHNE",
-        "INTENSIVO",
-        "MA"
+        "INTENSIVO"
       ]
     },
     "lamb_deaths": 15,
@@ -781,7 +782,7 @@
         "expected_total": 670,
         "counted": 11,
         "born_alive": null,
-        "stillborn": null,
+        "stillborn": 1,
         "current_stock_lambs": null,
         "current_stock_count_date": null,
         "current_stock_label": "Corderos vivos contabilizados",
@@ -824,8 +825,8 @@
         "registered_born_is_minimum": false,
         "registered_born_basis": "RECUENTO_TOTAL_INFORMADO",
         "confirmed_live": null,
-        "stillborn_status": "NO_INFORMADO",
-        "stillborn_message": "Nacidos muertos al parto: no informados.",
+        "stillborn_status": "INFORMADO",
+        "stillborn_message": null,
         "progress_percent": 1.6,
         "progress": {
           "registered": 11,
@@ -3489,7 +3490,7 @@
           "counted_lambed": 11,
           "counted_lambs": 11,
           "born_alive": null,
-          "stillborn": null,
+          "stillborn": 1,
           "lamb_deaths": 2,
           "ewe_deaths": 1,
           "last_count_date": "2026-09-03",
@@ -5336,7 +5337,7 @@
           "ewes_lambed": 7,
           "born_lambs": 7,
           "born_alive": null,
-          "stillborn": null,
+          "stillborn": 1,
           "basis": "DAILY",
           "validation_status": "CONFIRMED",
           "revision": 1,
@@ -6145,9 +6146,17 @@
     }
   ],
   "stillborn_daily": {
-    "status": "NO_INFORMADO",
-    "series": [],
-    "message": "Nacidos muertos al parto: no informados. No se asume cero."
+    "status": "INFORMADO",
+    "series": [
+      {
+        "date": "2026-09-03",
+        "module_code": "MA",
+        "quantity": 1,
+        "service_code": null,
+        "service_label": "Sin servicio asociado"
+      }
+    ],
+    "message": "Nacidos muertos al parto informados por fecha."
   },
   "campaign_milestones": {
     "status": "OK",
@@ -6356,7 +6365,7 @@
     "analyzed_at": "2026-09-06T17:11:11.255942+00:00",
     "forecast_run_date": "2026-09-06",
     "imported_at": "2026-09-06T22:49:25.808328-03:00",
-    "forecast_age_hours": 8.64,
+    "forecast_age_hours": 9.73,
     "update_status": {
       "state": "ACTUALIZADO",
       "stale": false,
@@ -6394,16 +6403,16 @@
           "name": "MERINO AUSTRALIANO",
           "expected_to_lamb": 592,
           "expected_lambs": 670,
-          "counted_lambed": 9,
-          "counted_lambs": 9,
+          "counted_lambed": 11,
+          "counted_lambs": 11,
           "last_count_date": "2026-09-03"
         }
       ],
       "totals": {
         "expected_to_lamb": 833,
         "expected_lambs": 980,
-        "counted_lambed": 11,
-        "counted_lambs": 11
+        "counted_lambed": 13,
+        "counted_lambs": 13
       }
     },
     "module_options": [
@@ -6835,8 +6844,8 @@
       "event_label": "Parición",
       "quantity": 1,
       "ewes_lambed": 1,
-      "born_alive": null,
-      "stillborn": null,
+      "born_alive": 0,
+      "stillborn": 1,
       "cause_code": null,
       "cause_label": null,
       "validation_status": "CONFIRMED",
@@ -7068,7 +7077,7 @@
       "processed_at": "2026-09-07T01:48:29.233497Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-09-06T23:00:50.897031-03:00",
+    "last_sync_at": "2026-09-06T23:54:58.222081-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
