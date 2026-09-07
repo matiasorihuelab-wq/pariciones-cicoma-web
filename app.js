@@ -1328,6 +1328,17 @@ function maIndicators(tracking) {
   const cards = [
     maIndicatorCard("Ovejas paridas", ind.ewes_lambed, "Acumulado confirmado"),
     maIndicatorCard("Corderos nacidos", ind.born_lambs, "Acumulado confirmado"),
+    // NACIDOS e IDENTIFICADOS coinciden mientras cada cría tenga su número, y
+    // entonces repetirlo sería ruido. En cuanto dejan de coincidir la
+    // diferencia importa: la gráfica de avance usa los NACIDOS y la lista
+    // individual sólo puede mostrar los IDENTIFICADOS.
+    Number(ind.pending_identification) > 0
+      ? maIndicatorCard(
+          "Corderos identificados",
+          ind.individualized_lambs,
+          "Con Nº de cordero en la libreta",
+        )
+      : "",
     maIndicatorCard("Paridas hoy", ind.ewes_today, hoy ? `Al ${hoy}` : null),
     maIndicatorCard("Nacidos hoy", ind.born_today, hoy ? `Al ${hoy}` : null),
     maIndicatorCard("Pendientes de revisión", ind.pending, "No suman al acumulado"),
@@ -1351,7 +1362,10 @@ function maIndicators(tracking) {
     meta.push(`Última incorporación: ${formatDateTime(ind.last_record_at, DASH.timezone)}`);
   }
   const identificados = ind.individualized_lambs || 0;
-  const faltan = (ind.born_lambs || 0) - identificados;
+  // El faltante lo publica el backend y el contrato lo verifica contra nacidos
+  // menos identificados. Recalcularlo acá abriría la puerta a que la web
+  // mostrara una diferencia distinta de la que el contrato validó.
+  const faltan = Number(ind.pending_identification) || 0;
   return `
     <div class="ma-kpis">${cards}</div>
     ${meta.length ? `<p class="ma-meta">${escapeHtml(meta.join(" · "))}</p>` : ""}
