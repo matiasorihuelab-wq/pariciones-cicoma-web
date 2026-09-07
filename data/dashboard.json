@@ -2,12 +2,17 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-09-07T00:00:38.277866-03:00",
+  "generated_at": "2026-09-07T00:30:38.182065-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
-    "headline": "Hay archivos multimedia pendientes de revisión.",
+    "headline": "Hay un reporte pendiente de contabilizar.",
     "reasons": [
+      {
+        "code": "PENDING_EVENT",
+        "message": "Hay un reporte pendiente de contabilizar.",
+        "severity": "OJO"
+      },
       {
         "code": "PENDING_MEDIA",
         "message": "Hay archivos multimedia pendientes de revisión.",
@@ -15,15 +20,15 @@
       }
     ],
     "pending_actions": {
-      "reports": 0,
+      "reports": 8,
       "links": 0,
       "media": 9,
       "technical": 0,
       "packages": 0,
       "unclassified": 1,
-      "total": 10
+      "total": 18
     },
-    "generated_at": "2026-09-07T00:00:38.277866-03:00",
+    "generated_at": "2026-09-07T00:30:38.182065-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -71,7 +76,7 @@
       "message": "Datos registrados actualmente: Merino Dohne, Intensivo y Merino Australiano."
     },
     "registered_born_lambs": {
-      "value": 177,
+      "value": 225,
       "status": "COMPLETE",
       "lots_included": [
         "DOHNE",
@@ -95,37 +100,37 @@
     "current_stock_label": "Corderos vivos contabilizados",
     "accumulated_lamb_deaths_total": 15,
     "ewe_progress": {
-      "registered": 141,
+      "registered": 180,
       "expected": 833,
-      "percent": 16.9,
+      "percent": 21.6,
       "status": "OK",
       "is_estimate": false,
       "basis": "Ovejas paridas registradas sobre ovejas previstas a parir."
     },
     "lamb_progress": {
-      "registered": 177,
+      "registered": 225,
       "expected": 980,
-      "percent": 18.1,
+      "percent": 23.0,
       "status": "OK",
       "is_estimate": false,
       "basis": "Corderos nacidos acumulados estimados sobre corderos esperados."
     },
     "remaining_ewes_estimated": {
-      "value": 692,
+      "value": 653,
       "status": "OK",
       "is_estimate": false,
       "basis": "Ovejas previstas a parir menos ovejas paridas registradas.",
       "reason": null
     },
     "remaining_lambs_estimated": {
-      "value": 803,
+      "value": 755,
       "status": "OK",
       "is_estimate": false,
       "basis": "Corderos esperados menos corderos nacidos acumulados estimados.",
       "reason": null
     },
     "lambed_ewes": {
-      "value": 141,
+      "value": 180,
       "status": "COMPLETE",
       "lots_included": [
         "DOHNE",
@@ -134,10 +139,10 @@
       ],
       "lots_missing": []
     },
-    "progress_percent": 16.9,
+    "progress_percent": 21.6,
     "expected_lambs": 980,
     "born_lambs": {
-      "value": 48,
+      "value": 96,
       "status": "COMPLETE",
       "lots_included": [
         "DOHNE",
@@ -171,13 +176,13 @@
     "ewe_deaths": 7,
     "deaths_last_24h": null,
     "remaining_ewes": {
-      "value": 692,
+      "value": 653,
       "status": "OK",
       "reason": null,
       "compatible": true
     },
     "remaining_lambs": {
-      "value": 932,
+      "value": 884,
       "status": "OK",
       "reason": null,
       "compatible": true
@@ -750,28 +755,28 @@
       },
       "ewe_counts": {
         "expected_to_lamb": 592,
-        "counted_lambed": 11,
-        "counted_from_events": 11,
+        "counted_lambed": 50,
+        "counted_from_events": 50,
         "count_source": "EVENTOS",
         "reconciliation": null,
-        "progress_percent": 1.9,
+        "progress_percent": 8.4,
         "progress": {
-          "registered": 11,
+          "registered": 50,
           "expected": 592,
-          "percent": 1.9,
+          "percent": 8.4,
           "status": "OK",
           "is_estimate": false,
           "basis": "Ovejas paridas registradas sobre ovejas previstas a parir."
         },
-        "last_count_date": "2026-09-03",
+        "last_count_date": "2026-09-05",
         "remaining": {
-          "value": 581,
+          "value": 542,
           "status": "OK",
           "reason": null,
           "compatible": true
         },
         "remaining_estimated": {
-          "value": 581,
+          "value": 542,
           "status": "OK",
           "is_estimate": false,
           "basis": "Ovejas previstas a parir menos ovejas paridas registradas.",
@@ -780,71 +785,71 @@
       },
       "lamb_counts": {
         "expected_total": 670,
-        "counted": 11,
+        "counted": 59,
         "born_alive": null,
         "stillborn": 1,
         "current_stock_lambs": null,
         "current_stock_count_date": null,
         "current_stock_label": "Corderos vivos contabilizados",
         "accumulated_lamb_deaths": 2,
-        "estimated_born_lambs": 11,
+        "estimated_born_lambs": 59,
         "estimated_born_basis": "Suma de los partes diarios confirmados.",
         "estimated_born_is_estimate": false,
         "estimated_remaining_lambs": {
-          "value": 659,
+          "value": 611,
           "status": "OK",
           "basis": "Corderos esperados menos corderos nacidos acumulados.",
           "reason": null
         },
         "stock_history": [],
         "lamb_progress_ratio": {
-          "value": 1.6,
-          "numerator": 11,
+          "value": 8.8,
+          "numerator": 59,
           "denominator": 670,
           "status": "OK",
           "missing": null
         },
         "lamb_mortality_ratio": {
-          "value": 18.2,
+          "value": 3.4,
           "numerator": 2,
-          "denominator": 11,
+          "denominator": 59,
           "status": "OK",
           "missing": null
         },
         "lamb_survival_ratio": {
           "value": null,
           "numerator": null,
-          "denominator": 11,
+          "denominator": 59,
           "status": "SIN_CALCULO",
           "missing": "corderos vivos contabilizados o corderos nacidos acumulados"
         },
         "data_cutoff": null,
         "reconciliation": null,
-        "registered_born": 11,
+        "registered_born": 59,
         "registered_born_status": "EXACTO",
         "registered_born_is_minimum": false,
         "registered_born_basis": "RECUENTO_TOTAL_INFORMADO",
         "confirmed_live": null,
         "stillborn_status": "INFORMADO",
         "stillborn_message": null,
-        "progress_percent": 1.6,
+        "progress_percent": 8.8,
         "progress": {
-          "registered": 11,
+          "registered": 59,
           "expected": 670,
-          "percent": 1.6,
+          "percent": 8.8,
           "status": "OK",
           "is_estimate": false,
           "basis": "Corderos nacidos acumulados estimados sobre corderos esperados."
         },
-        "last_count_date": "2026-09-03",
+        "last_count_date": "2026-09-05",
         "remaining": {
-          "value": 659,
+          "value": 611,
           "status": "OK",
           "reason": null,
           "compatible": true
         },
         "remaining_estimated": {
-          "value": 659,
+          "value": 611,
           "status": "OK",
           "is_estimate": false,
           "basis": "Corderos esperados menos corderos nacidos acumulados estimados.",
@@ -894,7 +899,7 @@
       },
       "field_control": {
         "variable": "ovejas_paridas",
-        "calculated": 11,
+        "calculated": 50,
         "reported_accumulated": null,
         "reported_date": null,
         "difference": null,
@@ -3487,13 +3492,13 @@
         "expected_adjusted": [],
         "adjustment": null,
         "observed": {
-          "counted_lambed": 11,
-          "counted_lambs": 11,
+          "counted_lambed": 50,
+          "counted_lambs": 59,
           "born_alive": null,
           "stillborn": 1,
           "lamb_deaths": 2,
           "ewe_deaths": 1,
-          "last_count_date": "2026-09-03",
+          "last_count_date": "2026-09-05",
           "last_event_date": "2026-09-01"
         },
         "observed_series": [
@@ -3510,6 +3515,20 @@
             "born_lambs": 7,
             "cumulative_ewes": 11,
             "cumulative_pct": 0.018581
+          },
+          {
+            "date": "2026-09-04",
+            "lambed_ewes": 12,
+            "born_lambs": 17,
+            "cumulative_ewes": 23,
+            "cumulative_pct": 0.038851
+          },
+          {
+            "date": "2026-09-05",
+            "lambed_ewes": 27,
+            "born_lambs": 31,
+            "cumulative_ewes": 50,
+            "cumulative_pct": 0.084459
           }
         ],
         "observed_checkpoints": [],
@@ -4496,9 +4515,9 @@
         {
           "key": "lamb_mortality_pct",
           "label": "Mortalidad de corderos (muertos acumulados sobre nacidos acumulados)",
-          "value": 18.1818,
+          "value": 3.3898,
           "numerator": 2,
-          "denominator": 11,
+          "denominator": 59,
           "denominator_label": "corderos nacidos acumulados",
           "status": "OK",
           "unit": "%"
@@ -4506,8 +4525,8 @@
         {
           "key": "lamb_progress_pct",
           "label": "Avance de corderos (nacidos acumulados sobre esperados)",
-          "value": 1.6418,
-          "numerator": 11,
+          "value": 8.806,
+          "numerator": 59,
           "denominator": 670,
           "denominator_label": "corderos esperados",
           "status": "OK",
@@ -4516,8 +4535,8 @@
         {
           "key": "lambing_progress_pct",
           "label": "Avance de ovejas (paridas sobre previstas a parir)",
-          "value": 1.8581,
-          "numerator": 11,
+          "value": 8.4459,
+          "numerator": 50,
           "denominator": 592,
           "denominator_label": "ovejas previstas a parir",
           "status": "OK",
@@ -4619,9 +4638,9 @@
       {
         "key": "lamb_mortality_pct",
         "label": "Mortalidad de corderos (muertos acumulados sobre nacidos acumulados)",
-        "value": 9.0395,
+        "value": 7.1111,
         "numerator": 16,
-        "denominator": 177,
+        "denominator": 225,
         "denominator_label": "corderos nacidos acumulados",
         "status": "OK",
         "unit": "%"
@@ -4629,8 +4648,8 @@
       {
         "key": "lamb_progress_pct",
         "label": "Avance de corderos (nacidos acumulados sobre esperados)",
-        "value": 18.0612,
-        "numerator": 177,
+        "value": 22.9592,
+        "numerator": 225,
         "denominator": 980,
         "denominator_label": "corderos esperados",
         "status": "OK",
@@ -4639,8 +4658,8 @@
       {
         "key": "lambing_progress_pct",
         "label": "Avance de ovejas (paridas sobre previstas a parir)",
-        "value": 16.9268,
-        "numerator": 141,
+        "value": 21.6086,
+        "numerator": 180,
         "denominator": 833,
         "denominator_label": "ovejas previstas a parir",
         "status": "OK",
@@ -4702,6 +4721,18 @@
       "lambed_ewes": 7,
       "born_lambs": 7,
       "cumulative_lambed": 13
+    },
+    {
+      "date": "2026-09-04",
+      "lambed_ewes": 12,
+      "born_lambs": 17,
+      "cumulative_lambed": 25
+    },
+    {
+      "date": "2026-09-05",
+      "lambed_ewes": 27,
+      "born_lambs": 31,
+      "cumulative_lambed": 52
     }
   ],
   "chill_public": {
@@ -5356,6 +5387,64 @@
             "2026-09-04",
             "2026-09-05"
           ]
+        },
+        {
+          "date": "2026-09-04",
+          "module_code": "MA",
+          "module_name": "Merino Australiano",
+          "service_code": null,
+          "service_type": null,
+          "ewes_lambed": 12,
+          "born_lambs": 17,
+          "born_alive": null,
+          "stillborn": null,
+          "basis": "DAILY",
+          "validation_status": "CONFIRMED",
+          "revision": 1,
+          "risk_d": null,
+          "risk_d1": null,
+          "risk_d2": null,
+          "window": [
+            "2026-09-04",
+            "2026-09-05",
+            "2026-09-06"
+          ],
+          "max_risk": "RIESGO_72H_INCOMPLETO",
+          "complete": false,
+          "missing_dates": [
+            "2026-09-04",
+            "2026-09-05",
+            "2026-09-06"
+          ]
+        },
+        {
+          "date": "2026-09-05",
+          "module_code": "MA",
+          "module_name": "Merino Australiano",
+          "service_code": null,
+          "service_type": null,
+          "ewes_lambed": 27,
+          "born_lambs": 31,
+          "born_alive": null,
+          "stillborn": null,
+          "basis": "DAILY",
+          "validation_status": "CONFIRMED",
+          "revision": 1,
+          "risk_d": null,
+          "risk_d1": null,
+          "risk_d2": null,
+          "window": [
+            "2026-09-05",
+            "2026-09-06",
+            "2026-09-07"
+          ],
+          "max_risk": "RIESGO_72H_INCOMPLETO",
+          "complete": false,
+          "missing_dates": [
+            "2026-09-05",
+            "2026-09-06",
+            "2026-09-07"
+          ]
         }
       ],
       "lots_with_daily_records": [
@@ -5371,15 +5460,15 @@
           "MEDIO": 0,
           "ALTO": 0,
           "CRITICO": 0,
-          "RIESGO_72H_INCOMPLETO": 13
+          "RIESGO_72H_INCOMPLETO": 61
         },
-        "lambs_counted": 13,
+        "lambs_counted": 61,
         "rule": "Cada cordero registrado se cuenta una sola vez, bajo el nivel de riesgo más alto de sus primeras 72 horas."
       },
-      "incomplete_windows": 4,
+      "incomplete_windows": 6,
       "superseded_records": 0,
       "excluded_by_basis": {},
-      "registered_born_lambs": 177,
+      "registered_born_lambs": 225,
       "confirmed_live_lambs": 118,
       "messages": [
         "La evaluación ambiental de las primeras 72 horas todavía está incompleta."
@@ -5426,7 +5515,7 @@
     },
     "accumulated_notice": {
       "status": "DISPONIBLE",
-      "registered_born_lambs": 177,
+      "registered_born_lambs": 225,
       "confirmed_live_lambs": 118,
       "message": "Riesgo climático de los corderos nacidos registrados, según su distribución diaria informada."
     }
@@ -5436,18 +5525,18 @@
     "generated_from": "LAMBING_LAMB",
     "today": "2026-09-07",
     "indicators": {
-      "ewes_lambed": 11,
-      "born_lambs": 11,
-      "individualized_lambs": 11,
+      "ewes_lambed": 50,
+      "born_lambs": 59,
+      "individualized_lambs": 59,
       "confirmed_live": 0,
-      "confirmed_stillborn": 1,
-      "unknown_vital_status": 10,
+      "confirmed_stillborn": 2,
+      "unknown_vital_status": 57,
       "ewes_today": 0,
       "born_today": 0,
-      "pending": 0,
-      "pending_images": 7,
-      "last_record_at": "2026-09-07T02:00:50.828227Z",
-      "last_birth_date": "2026-09-03"
+      "pending": 8,
+      "pending_images": 0,
+      "last_record_at": "2026-09-07T03:29:32.048993Z",
+      "last_birth_date": "2026-09-05"
     },
     "daily": [
       {
@@ -5485,9 +5574,1005 @@
         "cumulative_ewes": 11,
         "cumulative_born": 11,
         "identification_complete": true
+      },
+      {
+        "date": "2026-09-04",
+        "ewes": 12,
+        "born": 17,
+        "simple": 7,
+        "multiple": 5,
+        "individualized": 17,
+        "males": 9,
+        "females": 7,
+        "sex_unknown": 1,
+        "confirmed_live": 0,
+        "confirmed_stillborn": 1,
+        "unknown_vital_status": 16,
+        "pending": 1,
+        "cumulative_ewes": 23,
+        "cumulative_born": 28,
+        "identification_complete": true
+      },
+      {
+        "date": "2026-09-05",
+        "ewes": 27,
+        "born": 31,
+        "simple": 23,
+        "multiple": 4,
+        "individualized": 31,
+        "males": 16,
+        "females": 15,
+        "sex_unknown": 0,
+        "confirmed_live": 0,
+        "confirmed_stillborn": 0,
+        "unknown_vital_status": 31,
+        "pending": 6,
+        "cumulative_ewes": 50,
+        "cumulative_born": 59,
+        "identification_complete": true
       }
     ],
     "records": [
+      {
+        "lamb_id": 59,
+        "lambing_id": 53,
+        "code": "167",
+        "canonical_code": "167",
+        "ewe_identifier": "145",
+        "date": "2026-09-05",
+        "sex": "HEMBRA",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "3.405",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 53,
+          "sha256_short": "23f1cd6b73c8",
+          "candidate_id": 122
+        }
+      },
+      {
+        "lamb_id": 58,
+        "lambing_id": 52,
+        "code": "166",
+        "canonical_code": "166",
+        "ewe_identifier": "180",
+        "date": "2026-09-05",
+        "sex": "HEMBRA",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "3.580",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 53,
+          "sha256_short": "23f1cd6b73c8",
+          "candidate_id": 121
+        }
+      },
+      {
+        "lamb_id": 57,
+        "lambing_id": 51,
+        "code": "165",
+        "canonical_code": "165",
+        "ewe_identifier": "210",
+        "date": "2026-09-05",
+        "sex": "HEMBRA",
+        "alive_at_birth": null,
+        "birth_type": 2,
+        "weight_kg": "3.825",
+        "has_notes": false,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 52,
+          "sha256_short": "cf84f6b51537",
+          "candidate_id": 120
+        }
+      },
+      {
+        "lamb_id": 56,
+        "lambing_id": 51,
+        "code": "164",
+        "canonical_code": "164",
+        "ewe_identifier": "210",
+        "date": "2026-09-05",
+        "sex": "HEMBRA",
+        "alive_at_birth": null,
+        "birth_type": 2,
+        "weight_kg": "3.240",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 52,
+          "sha256_short": "cf84f6b51537",
+          "candidate_id": 119
+        }
+      },
+      {
+        "lamb_id": 55,
+        "lambing_id": 50,
+        "code": "163",
+        "canonical_code": "163",
+        "ewe_identifier": "212",
+        "date": "2026-09-05",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 2,
+        "weight_kg": "2.070",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 52,
+          "sha256_short": "cf84f6b51537",
+          "candidate_id": 118
+        }
+      },
+      {
+        "lamb_id": 54,
+        "lambing_id": 50,
+        "code": "162",
+        "canonical_code": "162",
+        "ewe_identifier": "212",
+        "date": "2026-09-05",
+        "sex": "HEMBRA",
+        "alive_at_birth": null,
+        "birth_type": 2,
+        "weight_kg": "2.775",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 52,
+          "sha256_short": "cf84f6b51537",
+          "candidate_id": 117
+        }
+      },
+      {
+        "lamb_id": 53,
+        "lambing_id": 49,
+        "code": "161",
+        "canonical_code": "161",
+        "ewe_identifier": "61",
+        "date": "2026-09-05",
+        "sex": "HEMBRA",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": null,
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 52,
+          "sha256_short": "cf84f6b51537",
+          "candidate_id": 116
+        }
+      },
+      {
+        "lamb_id": 52,
+        "lambing_id": 48,
+        "code": "160",
+        "canonical_code": "160",
+        "ewe_identifier": "29",
+        "date": "2026-09-05",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "3.740",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 52,
+          "sha256_short": "cf84f6b51537",
+          "candidate_id": 115
+        }
+      },
+      {
+        "lamb_id": 51,
+        "lambing_id": 47,
+        "code": "158",
+        "canonical_code": "158",
+        "ewe_identifier": "7",
+        "date": "2026-09-05",
+        "sex": "HEMBRA",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "3.320",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 52,
+          "sha256_short": "cf84f6b51537",
+          "candidate_id": 113
+        }
+      },
+      {
+        "lamb_id": 50,
+        "lambing_id": 46,
+        "code": "157",
+        "canonical_code": "157",
+        "ewe_identifier": "151",
+        "date": "2026-09-05",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "4.960",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 52,
+          "sha256_short": "cf84f6b51537",
+          "candidate_id": 112
+        }
+      },
+      {
+        "lamb_id": 49,
+        "lambing_id": 45,
+        "code": "156",
+        "canonical_code": "156",
+        "ewe_identifier": "122",
+        "date": "2026-09-05",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "3.155",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 52,
+          "sha256_short": "cf84f6b51537",
+          "candidate_id": 111
+        }
+      },
+      {
+        "lamb_id": 48,
+        "lambing_id": 44,
+        "code": "155",
+        "canonical_code": "155",
+        "ewe_identifier": "86",
+        "date": "2026-09-05",
+        "sex": "HEMBRA",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": null,
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 52,
+          "sha256_short": "cf84f6b51537",
+          "candidate_id": 110
+        }
+      },
+      {
+        "lamb_id": 47,
+        "lambing_id": 43,
+        "code": "154",
+        "canonical_code": "154",
+        "ewe_identifier": "57",
+        "date": "2026-09-05",
+        "sex": "HEMBRA",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "4.440",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 52,
+          "sha256_short": "cf84f6b51537",
+          "candidate_id": 109
+        }
+      },
+      {
+        "lamb_id": 46,
+        "lambing_id": 42,
+        "code": "153",
+        "canonical_code": "153",
+        "ewe_identifier": "51",
+        "date": "2026-09-05",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "3.280",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 52,
+          "sha256_short": "cf84f6b51537",
+          "candidate_id": 108
+        }
+      },
+      {
+        "lamb_id": 45,
+        "lambing_id": 41,
+        "code": "152",
+        "canonical_code": "152",
+        "ewe_identifier": "169",
+        "date": "2026-09-05",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "3.915",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 51,
+          "sha256_short": "892ce215aefe",
+          "candidate_id": 107
+        }
+      },
+      {
+        "lamb_id": 44,
+        "lambing_id": 40,
+        "code": "149",
+        "canonical_code": "149",
+        "ewe_identifier": "236",
+        "date": "2026-09-05",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 2,
+        "weight_kg": "3.445",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 51,
+          "sha256_short": "892ce215aefe",
+          "candidate_id": 104
+        }
+      },
+      {
+        "lamb_id": 43,
+        "lambing_id": 40,
+        "code": "148",
+        "canonical_code": "148",
+        "ewe_identifier": "236",
+        "date": "2026-09-05",
+        "sex": "HEMBRA",
+        "alive_at_birth": null,
+        "birth_type": 2,
+        "weight_kg": "3.630",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 51,
+          "sha256_short": "892ce215aefe",
+          "candidate_id": 103
+        }
+      },
+      {
+        "lamb_id": 42,
+        "lambing_id": 39,
+        "code": "145",
+        "canonical_code": "145",
+        "ewe_identifier": "209",
+        "date": "2026-09-05",
+        "sex": "HEMBRA",
+        "alive_at_birth": null,
+        "birth_type": 2,
+        "weight_kg": "2.975",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 51,
+          "sha256_short": "892ce215aefe",
+          "candidate_id": 100
+        }
+      },
+      {
+        "lamb_id": 41,
+        "lambing_id": 39,
+        "code": "144",
+        "canonical_code": "144",
+        "ewe_identifier": "209",
+        "date": "2026-09-05",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 2,
+        "weight_kg": "3.000",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 51,
+          "sha256_short": "892ce215aefe",
+          "candidate_id": 99
+        }
+      },
+      {
+        "lamb_id": 40,
+        "lambing_id": 38,
+        "code": "143",
+        "canonical_code": "143",
+        "ewe_identifier": "102",
+        "date": "2026-09-05",
+        "sex": "HEMBRA",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "2.965",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 51,
+          "sha256_short": "892ce215aefe",
+          "candidate_id": 98
+        }
+      },
+      {
+        "lamb_id": 39,
+        "lambing_id": 37,
+        "code": "142",
+        "canonical_code": "142",
+        "ewe_identifier": "43",
+        "date": "2026-09-05",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "3.360",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 51,
+          "sha256_short": "892ce215aefe",
+          "candidate_id": 97
+        }
+      },
+      {
+        "lamb_id": 38,
+        "lambing_id": 36,
+        "code": "141",
+        "canonical_code": "141",
+        "ewe_identifier": "148",
+        "date": "2026-09-05",
+        "sex": "HEMBRA",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "4.050",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 51,
+          "sha256_short": "892ce215aefe",
+          "candidate_id": 96
+        }
+      },
+      {
+        "lamb_id": 37,
+        "lambing_id": 35,
+        "code": "140",
+        "canonical_code": "140",
+        "ewe_identifier": "82",
+        "date": "2026-09-05",
+        "sex": "HEMBRA",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "4.660",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 51,
+          "sha256_short": "892ce215aefe",
+          "candidate_id": 95
+        }
+      },
+      {
+        "lamb_id": 36,
+        "lambing_id": 34,
+        "code": "139",
+        "canonical_code": "139",
+        "ewe_identifier": "36",
+        "date": "2026-09-05",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "4.350",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 50,
+          "sha256_short": "a68fb55213c9",
+          "candidate_id": 94
+        }
+      },
+      {
+        "lamb_id": 35,
+        "lambing_id": 33,
+        "code": "138",
+        "canonical_code": "138",
+        "ewe_identifier": "178",
+        "date": "2026-09-05",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "3.955",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 50,
+          "sha256_short": "a68fb55213c9",
+          "candidate_id": 93
+        }
+      },
+      {
+        "lamb_id": 34,
+        "lambing_id": 32,
+        "code": "136",
+        "canonical_code": "136",
+        "ewe_identifier": "171",
+        "date": "2026-09-05",
+        "sex": "HEMBRA",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "3.850",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 50,
+          "sha256_short": "a68fb55213c9",
+          "candidate_id": 91
+        }
+      },
+      {
+        "lamb_id": 33,
+        "lambing_id": 31,
+        "code": "135",
+        "canonical_code": "135",
+        "ewe_identifier": "71",
+        "date": "2026-09-05",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "3.135",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 50,
+          "sha256_short": "a68fb55213c9",
+          "candidate_id": 90
+        }
+      },
+      {
+        "lamb_id": 32,
+        "lambing_id": 30,
+        "code": "134",
+        "canonical_code": "134",
+        "ewe_identifier": "97",
+        "date": "2026-09-05",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "3.580",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 50,
+          "sha256_short": "a68fb55213c9",
+          "candidate_id": 89
+        }
+      },
+      {
+        "lamb_id": 31,
+        "lambing_id": 29,
+        "code": "132",
+        "canonical_code": "132",
+        "ewe_identifier": "55",
+        "date": "2026-09-05",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "3.585",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 50,
+          "sha256_short": "a68fb55213c9",
+          "candidate_id": 87
+        }
+      },
+      {
+        "lamb_id": 30,
+        "lambing_id": 28,
+        "code": "131",
+        "canonical_code": "131",
+        "ewe_identifier": "177",
+        "date": "2026-09-05",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "4.670",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 50,
+          "sha256_short": "a68fb55213c9",
+          "candidate_id": 86
+        }
+      },
+      {
+        "lamb_id": 29,
+        "lambing_id": 27,
+        "code": "130",
+        "canonical_code": "130",
+        "ewe_identifier": "22",
+        "date": "2026-09-05",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "3.535",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 50,
+          "sha256_short": "a68fb55213c9",
+          "candidate_id": 85
+        }
+      },
+      {
+        "lamb_id": 28,
+        "lambing_id": 26,
+        "code": "128",
+        "canonical_code": "128",
+        "ewe_identifier": "235",
+        "date": "2026-09-04",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 2,
+        "weight_kg": "3.300",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 49,
+          "sha256_short": "8b8f588b0416",
+          "candidate_id": 83
+        }
+      },
+      {
+        "lamb_id": 27,
+        "lambing_id": 26,
+        "code": "127",
+        "canonical_code": "127",
+        "ewe_identifier": "235",
+        "date": "2026-09-04",
+        "sex": "HEMBRA",
+        "alive_at_birth": null,
+        "birth_type": 2,
+        "weight_kg": "3.300",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 49,
+          "sha256_short": "8b8f588b0416",
+          "candidate_id": 82
+        }
+      },
+      {
+        "lamb_id": 26,
+        "lambing_id": 25,
+        "code": "126",
+        "canonical_code": "126",
+        "ewe_identifier": "78",
+        "date": "2026-09-04",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "3.530",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 48,
+          "sha256_short": "3fc9e6c08d2e",
+          "candidate_id": 81
+        }
+      },
+      {
+        "lamb_id": 25,
+        "lambing_id": 24,
+        "code": "125",
+        "canonical_code": "125",
+        "ewe_identifier": "167",
+        "date": "2026-09-04",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "3.145",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 48,
+          "sha256_short": "3fc9e6c08d2e",
+          "candidate_id": 80
+        }
+      },
+      {
+        "lamb_id": 24,
+        "lambing_id": 23,
+        "code": "124",
+        "canonical_code": "124",
+        "ewe_identifier": "9",
+        "date": "2026-09-04",
+        "sex": "HEMBRA",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "4.150",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 48,
+          "sha256_short": "3fc9e6c08d2e",
+          "candidate_id": 79
+        }
+      },
+      {
+        "lamb_id": 23,
+        "lambing_id": 22,
+        "code": "123",
+        "canonical_code": "123",
+        "ewe_identifier": "175",
+        "date": "2026-09-04",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "4.235",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 48,
+          "sha256_short": "3fc9e6c08d2e",
+          "candidate_id": 78
+        }
+      },
+      {
+        "lamb_id": 22,
+        "lambing_id": 21,
+        "code": "122",
+        "canonical_code": "122",
+        "ewe_identifier": "226",
+        "date": "2026-09-04",
+        "sex": "HEMBRA",
+        "alive_at_birth": null,
+        "birth_type": 2,
+        "weight_kg": "3.305",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 48,
+          "sha256_short": "3fc9e6c08d2e",
+          "candidate_id": 77
+        }
+      },
+      {
+        "lamb_id": 21,
+        "lambing_id": 21,
+        "code": "121",
+        "canonical_code": "121",
+        "ewe_identifier": "226",
+        "date": "2026-09-04",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 2,
+        "weight_kg": null,
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 48,
+          "sha256_short": "3fc9e6c08d2e",
+          "candidate_id": 76
+        }
+      },
+      {
+        "lamb_id": 20,
+        "lambing_id": 20,
+        "code": "120",
+        "canonical_code": "120",
+        "ewe_identifier": "215",
+        "date": "2026-09-04",
+        "sex": null,
+        "alive_at_birth": false,
+        "birth_type": 2,
+        "weight_kg": "0.884",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 48,
+          "sha256_short": "3fc9e6c08d2e",
+          "candidate_id": 75
+        }
+      },
+      {
+        "lamb_id": 19,
+        "lambing_id": 20,
+        "code": "119",
+        "canonical_code": "119",
+        "ewe_identifier": "215",
+        "date": "2026-09-04",
+        "sex": "HEMBRA",
+        "alive_at_birth": null,
+        "birth_type": 2,
+        "weight_kg": "2.940",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 48,
+          "sha256_short": "3fc9e6c08d2e",
+          "candidate_id": 74
+        }
+      },
+      {
+        "lamb_id": 18,
+        "lambing_id": 19,
+        "code": "118",
+        "canonical_code": "118",
+        "ewe_identifier": "192",
+        "date": "2026-09-04",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 2,
+        "weight_kg": "3.115",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 48,
+          "sha256_short": "3fc9e6c08d2e",
+          "candidate_id": 73
+        }
+      },
+      {
+        "lamb_id": 17,
+        "lambing_id": 19,
+        "code": "117",
+        "canonical_code": "117",
+        "ewe_identifier": "192",
+        "date": "2026-09-04",
+        "sex": "HEMBRA",
+        "alive_at_birth": null,
+        "birth_type": 2,
+        "weight_kg": "2.900",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 48,
+          "sha256_short": "3fc9e6c08d2e",
+          "candidate_id": 72
+        }
+      },
+      {
+        "lamb_id": 16,
+        "lambing_id": 18,
+        "code": "116",
+        "canonical_code": "116",
+        "ewe_identifier": "208",
+        "date": "2026-09-04",
+        "sex": "HEMBRA",
+        "alive_at_birth": null,
+        "birth_type": 2,
+        "weight_kg": "2.835",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 48,
+          "sha256_short": "3fc9e6c08d2e",
+          "candidate_id": 71
+        }
+      },
+      {
+        "lamb_id": 15,
+        "lambing_id": 18,
+        "code": "115",
+        "canonical_code": "115",
+        "ewe_identifier": "208",
+        "date": "2026-09-04",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 2,
+        "weight_kg": "2.575",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 48,
+          "sha256_short": "3fc9e6c08d2e",
+          "candidate_id": 70
+        }
+      },
+      {
+        "lamb_id": 14,
+        "lambing_id": 17,
+        "code": "114",
+        "canonical_code": "114",
+        "ewe_identifier": "34",
+        "date": "2026-09-04",
+        "sex": "HEMBRA",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "2.905",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 48,
+          "sha256_short": "3fc9e6c08d2e",
+          "candidate_id": 69
+        }
+      },
+      {
+        "lamb_id": 13,
+        "lambing_id": 16,
+        "code": "113",
+        "canonical_code": "113",
+        "ewe_identifier": "46",
+        "date": "2026-09-04",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "4.130",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 47,
+          "sha256_short": "444cecdb22ca",
+          "candidate_id": 68
+        }
+      },
+      {
+        "lamb_id": 12,
+        "lambing_id": 15,
+        "code": "112",
+        "canonical_code": "112",
+        "ewe_identifier": "13",
+        "date": "2026-09-04",
+        "sex": "MACHO",
+        "alive_at_birth": null,
+        "birth_type": 1,
+        "weight_kg": "3.600",
+        "has_notes": true,
+        "status": "CONFIRMED",
+        "source": "WHATSAPP",
+        "photo": {
+          "media_id": 47,
+          "sha256_short": "444cecdb22ca",
+          "candidate_id": 67
+        }
+      },
       {
         "lamb_id": 9,
         "lambing_id": 12,
@@ -5701,7 +6786,88 @@
         }
       }
     ],
-    "pending_rows": [],
+    "pending_rows": [
+      {
+        "candidate_id": 84,
+        "lamb_code": "129",
+        "ewe_identifier": null,
+        "date": "2026-09-04",
+        "uncertain_columns": [
+          "Nº MADRE"
+        ],
+        "reason": "Revisar «Nº MADRE»",
+        "has_photo": true
+      },
+      {
+        "candidate_id": 88,
+        "lamb_code": "133",
+        "ewe_identifier": null,
+        "date": "2026-09-05",
+        "uncertain_columns": [
+          "Nº MADRE"
+        ],
+        "reason": "Revisar «Nº MADRE»",
+        "has_photo": true
+      },
+      {
+        "candidate_id": 92,
+        "lamb_code": "137",
+        "ewe_identifier": "87",
+        "date": "2020-09-05",
+        "uncertain_columns": [
+          "FECHA NACIMIENTO"
+        ],
+        "reason": "Revisar «FECHA NACIMIENTO»",
+        "has_photo": true
+      },
+      {
+        "candidate_id": 101,
+        "lamb_code": "146",
+        "ewe_identifier": "218",
+        "date": "2026-09-05",
+        "uncertain_columns": [],
+        "reason": "Esperando confirmación",
+        "has_photo": true
+      },
+      {
+        "candidate_id": 102,
+        "lamb_code": "147",
+        "ewe_identifier": "213",
+        "date": "2026-09-05",
+        "uncertain_columns": [],
+        "reason": "Esperando confirmación",
+        "has_photo": true
+      },
+      {
+        "candidate_id": 105,
+        "lamb_code": "150",
+        "ewe_identifier": "252",
+        "date": "2026-09-05",
+        "uncertain_columns": [],
+        "reason": "Esperando confirmación",
+        "has_photo": true
+      },
+      {
+        "candidate_id": 106,
+        "lamb_code": "151",
+        "ewe_identifier": "42",
+        "date": "2026-09-05",
+        "uncertain_columns": [],
+        "reason": "Esperando confirmación",
+        "has_photo": true
+      },
+      {
+        "candidate_id": 114,
+        "lamb_code": "159",
+        "ewe_identifier": null,
+        "date": "2026-09-05",
+        "uncertain_columns": [
+          "Nº MADRE"
+        ],
+        "reason": "Revisar «Nº MADRE»",
+        "has_photo": true
+      }
+    ],
     "consistency": []
   },
   "field_controls": {
@@ -5723,7 +6889,7 @@
     },
     "MA": {
       "variable": "ovejas_paridas",
-      "calculated": 11,
+      "calculated": 50,
       "reported_accumulated": null,
       "reported_date": null,
       "difference": null,
@@ -6810,7 +7976,7 @@
   },
   "recent_records": [
     {
-      "date": "2026-09-03",
+      "date": "2026-09-05",
       "module_code": "MA",
       "event_type": "LAMBING",
       "event_label": "Parición",
@@ -6824,7 +7990,7 @@
       "source": "WHATSAPP"
     },
     {
-      "date": "2026-09-03",
+      "date": "2026-09-05",
       "module_code": "MA",
       "event_type": "LAMBING",
       "event_label": "Parición",
@@ -6838,21 +8004,35 @@
       "source": "WHATSAPP"
     },
     {
-      "date": "2026-09-03",
+      "date": "2026-09-05",
       "module_code": "MA",
       "event_type": "LAMBING",
       "event_label": "Parición",
-      "quantity": 1,
+      "quantity": 2,
       "ewes_lambed": 1,
-      "born_alive": 0,
-      "stillborn": 1,
+      "born_alive": null,
+      "stillborn": null,
       "cause_code": null,
       "cause_label": null,
       "validation_status": "CONFIRMED",
       "source": "WHATSAPP"
     },
     {
-      "date": "2026-09-03",
+      "date": "2026-09-05",
+      "module_code": "MA",
+      "event_type": "LAMBING",
+      "event_label": "Parición",
+      "quantity": 2,
+      "ewes_lambed": 1,
+      "born_alive": null,
+      "stillborn": null,
+      "cause_code": null,
+      "cause_label": null,
+      "validation_status": "CONFIRMED",
+      "source": "WHATSAPP"
+    },
+    {
+      "date": "2026-09-05",
       "module_code": "MA",
       "event_type": "LAMBING",
       "event_label": "Parición",
@@ -6866,7 +8046,7 @@
       "source": "WHATSAPP"
     },
     {
-      "date": "2026-09-03",
+      "date": "2026-09-05",
       "module_code": "MA",
       "event_type": "LAMBING",
       "event_label": "Parición",
@@ -6880,7 +8060,7 @@
       "source": "WHATSAPP"
     },
     {
-      "date": "2026-09-03",
+      "date": "2026-09-05",
       "module_code": "MA",
       "event_type": "LAMBING",
       "event_label": "Parición",
@@ -6894,7 +8074,7 @@
       "source": "WHATSAPP"
     },
     {
-      "date": "2026-09-03",
+      "date": "2026-09-05",
       "module_code": "MA",
       "event_type": "LAMBING",
       "event_label": "Parición",
@@ -6908,18 +8088,7 @@
       "source": "WHATSAPP"
     },
     {
-      "date": "2026-09-03",
-      "module_code": "GENERAL",
-      "event_type": "LAMB_DEATH",
-      "event_label": "Muerte de cordero",
-      "quantity": 1,
-      "cause_code": "CAUSA_NO_DETERMINADA",
-      "cause_label": "Causa no determinada",
-      "validation_status": "CONFIRMED",
-      "source": "ZAPIA_VALIDADO"
-    },
-    {
-      "date": "2026-09-02",
+      "date": "2026-09-05",
       "module_code": "MA",
       "event_type": "LAMBING",
       "event_label": "Parición",
@@ -6933,7 +8102,7 @@
       "source": "WHATSAPP"
     },
     {
-      "date": "2026-09-02",
+      "date": "2026-09-05",
       "module_code": "MA",
       "event_type": "LAMBING",
       "event_label": "Parición",
@@ -6947,7 +8116,7 @@
       "source": "WHATSAPP"
     },
     {
-      "date": "2026-09-02",
+      "date": "2026-09-05",
       "module_code": "MA",
       "event_type": "LAMBING",
       "event_label": "Parición",
@@ -6961,7 +8130,7 @@
       "source": "WHATSAPP"
     },
     {
-      "date": "2026-09-02",
+      "date": "2026-09-05",
       "module_code": "MA",
       "event_type": "LAMBING",
       "event_label": "Parición",
@@ -6975,74 +8144,8 @@
       "source": "WHATSAPP"
     },
     {
-      "date": "2026-09-01",
+      "date": "2026-09-05",
       "module_code": "MA",
-      "event_type": "LAMB_DEATH",
-      "event_label": "Muerte de cordero",
-      "quantity": 1,
-      "cause_code": "MALFORMACION_CONGENITA",
-      "cause_label": "Malformación congénita",
-      "validation_status": "CONFIRMED",
-      "source": "CONFIRMADO_LOCAL"
-    },
-    {
-      "date": "2026-09-01",
-      "module_code": "MA",
-      "event_type": "EWE_DEATH",
-      "event_label": "Muerte de oveja",
-      "quantity": 1,
-      "cause_code": "CAUSA_NO_DETERMINADA",
-      "cause_label": "Causa no determinada",
-      "validation_status": "CANDIDATE",
-      "source": "ZAPIA_VALIDADO"
-    },
-    {
-      "date": "2026-09-01",
-      "module_code": "MA",
-      "event_type": "LAMB_DEATH",
-      "event_label": "Muerte de cordero",
-      "quantity": 1,
-      "cause_code": "CAUSA_NO_DETERMINADA",
-      "cause_label": "Causa no determinada",
-      "validation_status": "CANDIDATE",
-      "source": "ZAPIA_VALIDADO"
-    },
-    {
-      "date": "2026-08-28",
-      "module_code": "DOHNE",
-      "event_type": "LAMB_DEATH",
-      "event_label": "Muerte de cordero",
-      "quantity": 1,
-      "cause_code": "CAUSA_NO_DETERMINADA",
-      "cause_label": "Causa no determinada",
-      "validation_status": "CANDIDATE",
-      "source": "ZAPIA_VALIDADO"
-    },
-    {
-      "date": "2026-08-27",
-      "module_code": "INTENSIVO",
-      "event_type": "LAMB_DEATH",
-      "event_label": "Muerte de cordero",
-      "quantity": 1,
-      "cause_code": "CAUSA_NO_DETERMINADA",
-      "cause_label": "Causa no determinada",
-      "validation_status": "CANDIDATE",
-      "source": "ZAPIA_VALIDADO"
-    },
-    {
-      "date": "2026-08-24",
-      "module_code": "INTENSIVO",
-      "event_type": "EWE_DEATH",
-      "event_label": "Muerte de oveja",
-      "quantity": 1,
-      "cause_code": "OTRA",
-      "cause_label": "Otra causa informada",
-      "validation_status": "CONFIRMED",
-      "source": "CONFIRMADO_LOCAL"
-    },
-    {
-      "date": "2026-08-21",
-      "module_code": "DOHNE",
       "event_type": "LAMBING",
       "event_label": "Parición",
       "quantity": 1,
@@ -7052,23 +8155,110 @@
       "cause_code": null,
       "cause_label": null,
       "validation_status": "CONFIRMED",
-      "source": "MANUAL"
+      "source": "WHATSAPP"
     },
     {
-      "date": "2026-08-21",
-      "module_code": "DOHNE",
-      "event_type": "EWE_DEATH",
-      "event_label": "Muerte de oveja",
-      "quantity": 1,
-      "cause_code": "DISTOCIA_PARTO",
-      "cause_label": "Distocia o problema de parto",
+      "date": "2026-09-05",
+      "module_code": "MA",
+      "event_type": "LAMBING",
+      "event_label": "Parición",
+      "quantity": 2,
+      "ewes_lambed": 1,
+      "born_alive": null,
+      "stillborn": null,
+      "cause_code": null,
+      "cause_label": null,
       "validation_status": "CONFIRMED",
-      "source": "CONFIRMADO_LOCAL"
+      "source": "WHATSAPP"
+    },
+    {
+      "date": "2026-09-05",
+      "module_code": "MA",
+      "event_type": "LAMBING",
+      "event_label": "Parición",
+      "quantity": 2,
+      "ewes_lambed": 1,
+      "born_alive": null,
+      "stillborn": null,
+      "cause_code": null,
+      "cause_label": null,
+      "validation_status": "CONFIRMED",
+      "source": "WHATSAPP"
+    },
+    {
+      "date": "2026-09-05",
+      "module_code": "MA",
+      "event_type": "LAMBING",
+      "event_label": "Parición",
+      "quantity": 1,
+      "ewes_lambed": 1,
+      "born_alive": null,
+      "stillborn": null,
+      "cause_code": null,
+      "cause_label": null,
+      "validation_status": "CONFIRMED",
+      "source": "WHATSAPP"
+    },
+    {
+      "date": "2026-09-05",
+      "module_code": "MA",
+      "event_type": "LAMBING",
+      "event_label": "Parición",
+      "quantity": 1,
+      "ewes_lambed": 1,
+      "born_alive": null,
+      "stillborn": null,
+      "cause_code": null,
+      "cause_label": null,
+      "validation_status": "CONFIRMED",
+      "source": "WHATSAPP"
+    },
+    {
+      "date": "2026-09-05",
+      "module_code": "MA",
+      "event_type": "LAMBING",
+      "event_label": "Parición",
+      "quantity": 1,
+      "ewes_lambed": 1,
+      "born_alive": null,
+      "stillborn": null,
+      "cause_code": null,
+      "cause_label": null,
+      "validation_status": "CONFIRMED",
+      "source": "WHATSAPP"
+    },
+    {
+      "date": "2026-09-05",
+      "module_code": "MA",
+      "event_type": "LAMBING",
+      "event_label": "Parición",
+      "quantity": 1,
+      "ewes_lambed": 1,
+      "born_alive": null,
+      "stillborn": null,
+      "cause_code": null,
+      "cause_label": null,
+      "validation_status": "CONFIRMED",
+      "source": "WHATSAPP"
+    },
+    {
+      "date": "2026-09-05",
+      "module_code": "MA",
+      "event_type": "LAMBING",
+      "event_label": "Parición",
+      "quantity": 1,
+      "ewes_lambed": 1,
+      "born_alive": null,
+      "stillborn": null,
+      "cause_code": null,
+      "cause_label": null,
+      "validation_status": "CONFIRMED",
+      "source": "WHATSAPP"
     }
   ],
   "automatic_provisional": {
     "notice": "Los datos pueden ajustarse si se recibe una corrección posterior.",
-    "pending_count": 0,
+    "pending_count": 8,
     "records": []
   },
   "update_status": {
@@ -7077,8 +8267,8 @@
       "processed_at": "2026-09-07T01:48:29.233497Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-09-07T00:00:38.277866-03:00",
-    "pending_operations": 0,
+    "last_sync_at": "2026-09-07T00:30:38.182065-03:00",
+    "pending_operations": 8,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
 }
