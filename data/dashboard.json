@@ -2,17 +2,12 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-09-07T23:10:23.162372-03:00",
+  "generated_at": "2026-09-07T23:10:39.242545-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
-    "headline": "Hay un reporte pendiente de contabilizar.",
+    "headline": "Hay archivos multimedia pendientes de revisión.",
     "reasons": [
-      {
-        "code": "PENDING_EVENT",
-        "message": "Hay un reporte pendiente de contabilizar.",
-        "severity": "OJO"
-      },
       {
         "code": "PENDING_MEDIA",
         "message": "Hay archivos multimedia pendientes de revisión.",
@@ -25,16 +20,16 @@
       }
     ],
     "pending_actions": {
-      "reports": 1,
+      "reports": 0,
       "links": 0,
       "media": 1,
-      "photos": 5,
+      "photos": 4,
       "technical": 0,
       "packages": 0,
       "unclassified": 4,
-      "total": 11
+      "total": 9
     },
-    "generated_at": "2026-09-07T23:10:23.162372-03:00",
+    "generated_at": "2026-09-07T23:10:39.242545-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -4644,8 +4639,8 @@
       {
         "key": "lamb_mortality_pct",
         "label": "Mortalidad de corderos (muertos acumulados sobre nacidos acumulados)",
-        "value": 6.7511,
-        "numerator": 16,
+        "value": 7.173,
+        "numerator": 17,
         "denominator": 237,
         "denominator_label": "corderos nacidos acumulados",
         "status": "OK",
@@ -6970,8 +6965,8 @@
     }
   },
   "mortality_summary": {
-    "total_deaths": 23,
-    "lamb_deaths": 16,
+    "total_deaths": 24,
+    "lamb_deaths": 17,
     "ewe_deaths": 7,
     "by_date": [
       {
@@ -7048,6 +7043,11 @@
         "date": "2026-09-03",
         "lamb": 1,
         "ewe": 0
+      },
+      {
+        "date": "2026-09-07",
+        "lamb": 1,
+        "ewe": 0
       }
     ],
     "by_lot": {
@@ -7064,47 +7064,47 @@
         "OVEJA": 1
       },
       "SIN_LOTE": {
-        "CORDERO": 1,
+        "CORDERO": 2,
         "OVEJA": 0
       }
     },
     "by_animal": {
-      "CORDERO": 16,
+      "CORDERO": 17,
       "OVEJA": 7
     },
     "by_cause": [
       {
         "cause_code": "CAUSA_NO_DETERMINADA",
         "cause_label": "Causa no determinada",
-        "count": 17,
-        "pct": 73.9
+        "count": 18,
+        "pct": 75.0
       },
       {
         "cause_code": "MALFORMACION_CONGENITA",
         "cause_label": "Malformación congénita",
         "count": 3,
-        "pct": 13.0
+        "pct": 12.5
       },
       {
         "cause_code": "DISTOCIA_PARTO",
         "cause_label": "Distocia o problema de parto",
         "count": 1,
-        "pct": 4.3
+        "pct": 4.2
       },
       {
         "cause_code": "OTRA",
         "cause_label": "Otra causa informada",
         "count": 1,
-        "pct": 4.3
+        "pct": 4.2
       },
       {
         "cause_code": "PREDACION_CARANCHO",
         "cause_label": "Predación por carancho",
         "count": 1,
-        "pct": 4.3
+        "pct": 4.2
       }
     ],
-    "undetermined": 17
+    "undetermined": 18
   },
   "mortality_daily": [
     {
@@ -7382,6 +7382,18 @@
       "death_moment_label": "Momento no determinado",
       "service_code": null,
       "service_label": "Sin servicio asociado"
+    },
+    {
+      "date": "2026-09-07",
+      "module_code": null,
+      "animal_type": "CORDERO",
+      "quantity": 1,
+      "cause_code": "CAUSA_NO_DETERMINADA",
+      "cause_label": "Causa no determinada",
+      "death_moment": "NO_DETERMINADO",
+      "death_moment_label": "Momento no determinado",
+      "service_code": null,
+      "service_label": "Sin servicio asociado"
     }
   ],
   "stillborn_daily": {
@@ -7406,9 +7418,24 @@
   },
   "campaign_milestones": {
     "status": "OK",
-    "total": 32,
+    "total": 33,
     "shown": 12,
     "items": [
+      {
+        "date": "2026-09-07",
+        "module_code": null,
+        "module_name": null,
+        "kind": "MORTALIDAD_DE_CORDEROS",
+        "kind_label": "Mortalidad de corderos",
+        "subtype": null,
+        "subtype_label": null,
+        "quantity": 1,
+        "animal_type": "CORDERO",
+        "animal_label": "cordero",
+        "cause_code": "CAUSA_NO_DETERMINADA",
+        "cause_label": "Causa no determinada",
+        "affects_counts": false
+      },
       {
         "date": "2026-09-03",
         "module_code": null,
@@ -7574,21 +7601,6 @@
         "animal_label": "oveja",
         "cause_code": "OTRA",
         "cause_label": "Otra causa informada",
-        "affects_counts": false
-      },
-      {
-        "date": "2026-08-21",
-        "module_code": "DOHNE",
-        "module_name": "Merino Dohne",
-        "kind": "MORTALIDAD_DE_OVEJAS",
-        "kind_label": "Mortalidad de ovejas",
-        "subtype": null,
-        "subtype_label": null,
-        "quantity": 1,
-        "animal_type": "OVEJA",
-        "animal_label": "oveja",
-        "cause_code": "DISTOCIA_PARTO",
-        "cause_label": "Distocia o problema de parto",
         "affects_counts": false
       }
     ],
@@ -8041,6 +8053,17 @@
   },
   "recent_records": [
     {
+      "date": "2026-09-07",
+      "module_code": "GENERAL",
+      "event_type": "LAMB_DEATH",
+      "event_label": "Muerte de cordero",
+      "quantity": 1,
+      "cause_code": "CAUSA_NO_DETERMINADA",
+      "cause_label": "Causa no determinada",
+      "validation_status": "CONFIRMED",
+      "source": "ZAPIA_VALIDADO"
+    },
+    {
       "date": "2026-09-05",
       "module_code": "MA",
       "event_type": "LAMBING",
@@ -8186,20 +8209,6 @@
       "event_type": "LAMBING",
       "event_label": "Parición",
       "quantity": 2,
-      "ewes_lambed": 1,
-      "born_alive": null,
-      "stillborn": null,
-      "cause_code": null,
-      "cause_label": null,
-      "validation_status": "CONFIRMED",
-      "source": "WHATSAPP"
-    },
-    {
-      "date": "2026-09-05",
-      "module_code": "MA",
-      "event_type": "LAMBING",
-      "event_label": "Parición",
-      "quantity": 1,
       "ewes_lambed": 1,
       "born_alive": null,
       "stillborn": null,
@@ -8323,7 +8332,7 @@
   ],
   "automatic_provisional": {
     "notice": "Los datos pueden ajustarse si se recibe una corrección posterior.",
-    "pending_count": 1,
+    "pending_count": 0,
     "records": []
   },
   "update_status": {
@@ -8332,8 +8341,8 @@
       "processed_at": "2026-09-07T21:56:39.272396Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-09-07T23:10:23.162372-03:00",
-    "pending_operations": 1,
+    "last_sync_at": "2026-09-07T23:10:39.242545-03:00",
+    "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
 }
