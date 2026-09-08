@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-09-08T10:41:35.327204-03:00",
+  "generated_at": "2026-09-08T10:47:41.869645-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -29,7 +29,7 @@
       "unclassified": 5,
       "total": 12
     },
-    "generated_at": "2026-09-08T10:41:35.327204-03:00",
+    "generated_at": "2026-09-08T10:47:41.869645-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -8339,9 +8339,9 @@
     "last_zip": {
       "name": "Reporte operativo diario",
       "processed_at": "2026-09-08T13:41:35.248023Z",
-      "status": "COMPLETADO"
+      "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-09-08T10:41:35.327204-03:00",
+    "last_sync_at": "2026-09-08T10:47:41.869645-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
