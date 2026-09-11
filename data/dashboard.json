@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-09-11T07:09:21.043298-03:00",
+  "generated_at": "2026-09-11T07:09:28.161623-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -22,24 +22,19 @@
         "code": "PENDING_PHOTO",
         "message": "Hay fotografías que nadie interpretó todavía.",
         "severity": "OJO"
-      },
-      {
-        "code": "INPUT_PENDING",
-        "message": "Hay un reporte en la carpeta de entrada sin registrar.",
-        "severity": "OJO"
       }
     ],
     "pending_actions": {
       "reports": 1,
       "links": 0,
       "media": 1,
-      "photos": 8,
+      "photos": 9,
       "technical": 0,
       "packages": 0,
-      "unclassified": 5,
-      "total": 15
+      "unclassified": 6,
+      "total": 17
     },
-    "generated_at": "2026-09-11T07:09:21.043298-03:00",
+    "generated_at": "2026-09-11T07:09:28.161623-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -5501,7 +5496,7 @@
       "ewes_today": 0,
       "born_today": 0,
       "pending": 0,
-      "pending_images": 9,
+      "pending_images": 10,
       "last_record_at": "2026-09-08T02:10:23.089889Z",
       "last_birth_date": "2026-09-05"
     },
@@ -8349,10 +8344,10 @@
   "update_status": {
     "last_zip": {
       "name": "Reporte operativo diario",
-      "processed_at": "2026-09-11T10:09:20.979827Z",
+      "processed_at": "2026-09-11T10:09:28.078236Z",
       "status": "COMPLETADO"
     },
-    "last_sync_at": "2026-09-11T07:09:21.043298-03:00",
+    "last_sync_at": "2026-09-11T07:09:28.161623-03:00",
     "pending_operations": 1,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
