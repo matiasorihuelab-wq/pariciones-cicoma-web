@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-09-08T21:02:46.137915-03:00",
+  "generated_at": "2026-09-11T07:05:30.847022-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -17,6 +17,11 @@
         "code": "PENDING_PHOTO",
         "message": "Hay fotografías que nadie interpretó todavía.",
         "severity": "OJO"
+      },
+      {
+        "code": "INPUT_PENDING",
+        "message": "Hay un reporte en la carpeta de entrada sin registrar.",
+        "severity": "OJO"
       }
     ],
     "pending_actions": {
@@ -29,7 +34,7 @@
       "unclassified": 5,
       "total": 12
     },
-    "generated_at": "2026-09-08T21:02:46.137915-03:00",
+    "generated_at": "2026-09-11T07:05:30.847022-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -1854,7 +1859,7 @@
           "remaining_lambs": null,
           "method": "normalizacion_pesos_futuros_v1",
           "source": "WHATSAPP",
-          "age_days": 44,
+          "age_days": 46,
           "warnings": []
         },
         "observed": {
@@ -2889,7 +2894,7 @@
           "remaining_lambs": 150.0,
           "method": "normalizacion_pesos_futuros_v1",
           "source": "WHATSAPP",
-          "age_days": 8,
+          "age_days": 10,
           "warnings": []
         },
         "observed": {
@@ -5479,7 +5484,7 @@
   "ma_tracking": {
     "module_code": "MA",
     "generated_from": "LAMBING_LAMB",
-    "today": "2026-09-08",
+    "today": "2026-09-11",
     "indicators": {
       "ewes_lambed": 58,
       "born_lambs": 71,
@@ -8342,7 +8347,7 @@
       "processed_at": "2026-09-08T13:41:35.248023Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-09-08T21:02:46.137915-03:00",
+    "last_sync_at": "2026-09-11T07:05:30.847022-03:00",
     "pending_operations": 0,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
