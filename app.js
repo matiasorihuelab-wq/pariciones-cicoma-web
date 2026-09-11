@@ -1258,47 +1258,35 @@ function onChillControl(event) {
 /* ------------------------------------------------------------ por lote --- */
 
 /* ===================================================================
- * MERINO AUSTRALIANO — tablero operativo de parición
+ * MERINO AUSTRALIANO — seguimiento de parición
  * ===================================================================
  *
- * MA no se sigue como Intensivo y Dohne. Los otros dos lotes se informan por
- * partes agregados —«nacieron 6 corderos»— y su vista publica totales. En MA se
- * fotografía la libreta de nacimientos y cada fila es un animal con caravana,
- * así que acá se puede publicar lo que en los otros no existe: quién nació, de
- * qué madre y qué día.
+ * El sitio público muestra de MA sólo TOTALES POR FECHA: ovejas paridas,
+ * corderos nacidos, partos simples y múltiples, y sus acumulados. Desde el
+ * 2026-09-11 no se publica ningún dato individual —ni fichas de cordero, ni
+ * Nº de madre, ni sexo, peso o estado de cada animal, ni la cola de revisión—:
+ * el contrato ya no los trae y esta vista tampoco sabe dibujarlos. Lo animal
+ * por animal se consulta en Gestión, dentro del establecimiento.
  *
  * Todo lo que se dibuja sale de `DASH.ma_tracking`, que el backend reconstruye
- * en cada corrida desde `Lambing` y `Lamb`. Este archivo NO calcula acumulados
- * ni totaliza series: si lo hiciera habría dos verdades —la de la base y la del
- * navegador— y tarde o temprano dejarían de coincidir. Acá sólo se ordena y se
- * dibuja lo que ya viene calculado.
+ * en cada corrida desde las pariciones consolidadas. Este archivo NO calcula
+ * acumulados ni totaliza series: si lo hiciera habría dos verdades —la de la
+ * base y la del navegador— y tarde o temprano dejarían de coincidir. Acá sólo
+ * se ordena y se dibuja lo que ya viene calculado.
  */
 
-//: Estado de la vista MA. Vive fuera del render porque el bloque se redibuja al
-//: filtrar y no puede perder lo que la persona eligió.
-//: Fichas por tanda. La lista se redibuja entera en cada tecla de la búsqueda,
-//: y con la campaña entera eso es medio megabyte de HTML por pulsación: a 500
-//: corderos son 323 KB y ~5000 nodos entre los que hay que rehacer el layout.
-//: Con una tanda el costo por tecla deja de depender del tamaño de la campaña.
-const MA_PAGINA = 60;
-
+//: Estado de la vista MA. Vive fuera del render porque la gráfica se redibuja
+//: al cambiar de magnitud y no puede perder lo que la persona eligió.
 const MA_STATE = {
   serie: "corderos", // corderos | ovejas
-  dias: {}, // fecha -> abierto
-  busqueda: "",
-  filtro: "TODOS",
-  // Cuántas fichas se PINTAN. La búsqueda y los filtros siguen operando sobre
-  // la lista completa: esto limita lo que se dibuja, no lo que se considera.
-  visibles: MA_PAGINA,
 };
 
 function maTracking() {
   return DASH.ma_tracking || null;
 }
 
-//: ¿Este lote tiene seguimiento individual publicado? La pregunta es por el
-//: DATO, no por el código del lote: el día que Dohne registre corderos
-//: individuales, su bloque aparece sin tocar esta condición.
+//: ¿Este lote tiene seguimiento de parición publicado? La pregunta es por el
+//: DATO, no por el código del lote: el bloque aparece donde el contrato lo trae.
 function maTieneSeguimiento(lotCode) {
   const t = maTracking();
   return Boolean(t && t.module_code === lotCode);
@@ -1325,35 +1313,18 @@ function maIndicatorCard(label, value, hint) {
 function maIndicators(tracking) {
   const ind = tracking.indicators || {};
   const hoy = tracking.today ? formatDayMonth(tracking.today) : null;
+  // Sólo totales del lote. No hay contador de corderos identificados ni de
+  // registros o fotos pendientes: son cuentas del registro animal por animal,
+  // que ya no se publica.
   const cards = [
     maIndicatorCard("Ovejas paridas", ind.ewes_lambed, "Acumulado confirmado"),
     maIndicatorCard("Corderos nacidos", ind.born_lambs, "Acumulado confirmado"),
-    // NACIDOS e IDENTIFICADOS coinciden mientras cada cría tenga su número, y
-    // entonces repetirlo sería ruido. En cuanto dejan de coincidir la
-    // diferencia importa: la gráfica de avance usa los NACIDOS y la lista
-    // individual sólo puede mostrar los IDENTIFICADOS.
-    Number(ind.pending_identification) > 0
-      ? maIndicatorCard(
-          "Corderos identificados",
-          ind.individualized_lambs,
-          "Con Nº de cordero en la libreta",
-        )
-      : "",
     maIndicatorCard("Paridas hoy", ind.ewes_today, hoy ? `Al ${hoy}` : null),
     maIndicatorCard("Nacidos hoy", ind.born_today, hoy ? `Al ${hoy}` : null),
-    maIndicatorCard("Pendientes de revisión", ind.pending, "No suman al acumulado"),
-    // Dos números que NO son lo mismo y que confundidos llevan a creer que no
-    // falta nada: éste dice si hay fotos que nadie miró todavía; el de arriba,
-    // si hay filas ya leídas esperando una decisión.
-    maIndicatorCard(
-      "Fotos pendientes de lectura",
-      ind.pending_images,
-      "Esperan procesamiento asistido",
-    ),
   ].join("");
 
-  // Dos fechas distintas que se confunden con facilidad: cuándo se cargó el
-  // último registro y de qué día es la última parición. Se rotulan las dos.
+  // Dos fechas distintas que se confunden con facilidad: cuándo se cargó la
+  // última parición y de qué día es. Se rotulan las dos.
   const meta = [];
   if (ind.last_birth_date) {
     meta.push(`Última parición registrada: ${formatDate(ind.last_birth_date, { short: true })}`);
@@ -1361,25 +1332,9 @@ function maIndicators(tracking) {
   if (ind.last_record_at) {
     meta.push(`Última incorporación: ${formatDateTime(ind.last_record_at, DASH.timezone)}`);
   }
-  const identificados = ind.individualized_lambs || 0;
-  // El faltante lo publica el backend y el contrato lo verifica contra nacidos
-  // menos identificados. Recalcularlo acá abriría la puerta a que la web
-  // mostrara una diferencia distinta de la que el contrato validó.
-  const faltan = Number(ind.pending_identification) || 0;
   return `
     <div class="ma-kpis">${cards}</div>
-    ${meta.length ? `<p class="ma-meta">${escapeHtml(meta.join(" · "))}</p>` : ""}
-    ${
-      faltan > 0
-        ? `<p class="ma-alert">IDENTIFICACIÓN INDIVIDUAL INCOMPLETA — se declararon ${formatInteger(
-            ind.born_lambs,
-          )} nacidos y hay ${formatInteger(
-            identificados,
-          )} cordero(s) con caravana registrada. Los ${formatInteger(
-            faltan,
-          )} restantes no se inventan: falta identificarlos.</p>`
-        : ""
-    }`;
+    ${meta.length ? `<p class="ma-meta">${escapeHtml(meta.join(" · "))}</p>` : ""}`;
 }
 
 /* ---------------------------------------------------------- gráfica --- */
@@ -1623,282 +1578,36 @@ function drawMaChart() {
 
 /* ------------------------------------------------------- día a día --- */
 
+/* Cada fecha con sus totales. No se despliega nada: el detalle animal por
+ * animal ya no se publica, y un botón que no abre nada sería un control sin
+ * dato detrás. */
 function maDaySection(tracking) {
   const dias = [...(tracking.daily || [])].reverse();
   if (!dias.length) return `<p class="empty-note">Sin pariciones registradas todavía.</p>`;
-  const registrosPorDia = new Map();
-  for (const registro of tracking.records || []) {
-    if (!registrosPorDia.has(registro.date)) registrosPorDia.set(registro.date, []);
-    registrosPorDia.get(registro.date).push(registro);
-  }
   return dias
     .map((dia) => {
-      const abierto = Boolean(MA_STATE.dias[dia.date]);
-      const registros = registrosPorDia.get(dia.date) || [];
       const partos = [];
       if (dia.simple) partos.push(`${formatInteger(dia.simple)} simple(s)`);
       if (dia.multiple) partos.push(`${formatInteger(dia.multiple)} múltiple(s)`);
-      const sexos = [];
-      if (dia.males) sexos.push(`${formatInteger(dia.males)} M`);
-      if (dia.females) sexos.push(`${formatInteger(dia.females)} H`);
-      if (dia.sex_unknown) sexos.push(`${formatInteger(dia.sex_unknown)} sin informar`);
-      // Estado vital al nacer. Sólo se nombra lo que la fuente informó: el
-      // resto queda como «sin informar», que no es lo mismo que vivo.
-      const vital = [];
-      if (dia.confirmed_live) vital.push(`${formatInteger(dia.confirmed_live)} nacidos vivos`);
-      if (dia.confirmed_stillborn) {
-        vital.push(`${formatInteger(dia.confirmed_stillborn)} nacidos muertos`);
-      }
-      if (dia.unknown_vital_status) {
-        vital.push(`${formatInteger(dia.unknown_vital_status)} sin informar`);
-      }
       return `
-      <article class="ma-day${abierto ? " is-open" : ""}">
-        <button type="button" class="ma-day__head" data-ma-day="${escapeHtml(dia.date)}" aria-expanded="${abierto}">
+      <article class="ma-day">
+        <header class="ma-day__head">
           <span class="ma-day__date">${escapeHtml(formatDate(dia.date, { short: true }))}</span>
           <span class="ma-day__totals">${formatInteger(dia.ewes)} oveja(s) · ${formatInteger(dia.born)} cordero(s)</span>
-          <span class="ma-day__chevron" aria-hidden="true"></span>
-        </button>
+        </header>
         <dl class="ma-day__meta">
           ${partos.length ? `<div><dt>Partos</dt><dd>${escapeHtml(partos.join(" · "))}</dd></div>` : ""}
-          ${sexos.length ? `<div><dt>Sexo</dt><dd>${escapeHtml(sexos.join(" · "))}</dd></div>` : ""}
-          ${vital.length ? `<div><dt>Al nacer</dt><dd>${escapeHtml(vital.join(" · "))}</dd></div>` : ""}
-          ${dia.pending ? `<div><dt>Pendientes</dt><dd>${formatInteger(dia.pending)}</dd></div>` : ""}
           <div><dt>Acumulado</dt><dd>${formatInteger(dia.cumulative_ewes)} ovejas · ${formatInteger(dia.cumulative_born)} corderos</dd></div>
         </dl>
-        ${
-          dia.identification_complete
-            ? ""
-            : `<p class="ma-day__warn">IDENTIFICACIÓN INDIVIDUAL INCOMPLETA — este día declara ${formatInteger(dia.born)} nacido(s) y tiene ${formatInteger(dia.individualized)} con caravana.</p>`
-        }
-        ${abierto ? `<div class="ma-day__rows">${registros.map(maRecordCard).join("")}</div>` : ""}
       </article>`;
     })
     .join("");
 }
 
-/* ------------------------------------------------- ficha de cordero --- */
-
-//: Un dato ausente se rotula, no se rellena. `SIN INFORMAR` es una respuesta.
-function maValue(value) {
-  return value === null || value === undefined || value === "" ? "SIN INFORMAR" : String(value);
-}
-
-//: El estado viene del modelo (`ValidationStatus`) y no se publica crudo: quien
-//: lee el tablero no tiene por qué saber qué significa `CORRECTED`.
-const MA_STATUS_LABEL = {
-  CONFIRMED: "Confirmado",
-  CORRECTED: "Confirmado con corrección",
-};
-
-function maStatusLabel(status) {
-  return MA_STATUS_LABEL[status] || maValue(status);
-}
-
-/* Cómo nació: vivo, muerto o sin informar.
- *
- * Las tres son respuestas distintas y `null` NO es «vivo por descarte». La
- * libreta no tiene columna de nacido muerto, así que la mayoría de las filas no
- * lo dicen: rotularlas como vivas inventaría un dato que nadie informó. */
-function maVitalLabel(aliveAtBirth) {
-  if (aliveAtBirth === true) return "Nació vivo";
-  if (aliveAtBirth === false) return "Nació muerto";
-  return "SIN INFORMAR";
-}
-
-function maSexLabel(sex) {
-  if (sex === "MACHO") return "Macho";
-  if (sex === "HEMBRA") return "Hembra";
-  return "Sexo sin informar";
-}
-
-function maRecordCard(registro) {
-  const tipo = registro.birth_type > 1 ? `Múltiple (${registro.birth_type})` : "Simple";
-  // La fotografía es la evidencia de la fila. NO se publica la imagen: se
-  // publica que existe y con qué huella, para poder pedirla en Gestión, que es
-  // donde además se corrige. Publicar las fotos de la libreta en un sitio
-  // abierto es otra decisión y no se toma acá.
-  const foto = registro.photo
-    ? `<p class="ma-record__photo">FOTO DE LIBRETA · ${escapeHtml(registro.photo.sha256_short)}</p>`
-    : "";
-  const peso =
-    registro.weight_kg === null || registro.weight_kg === undefined
-      ? "SIN INFORMAR"
-      : `${registro.weight_kg} kg`;
-  // El nacido muerto se marca en la cabecera y no sólo en una fila del detalle:
-  // es lo primero que hay que ver, y decirlo «muerte posterior» sería otra cosa.
-  const nacidoMuerto =
-    registro.alive_at_birth === false
-      ? '<span class="ma-record__flag">Nació muerto</span>'
-      : "";
-  return `
-    <article class="ma-record${registro.alive_at_birth === false ? " ma-record--stillborn" : ""}">
-      <header class="ma-record__head">
-        <span class="ma-record__code">${escapeHtml(registro.code)}</span>
-        <span class="ma-record__mother">Madre ${escapeHtml(maValue(registro.ewe_identifier))}</span>
-        ${nacidoMuerto}
-      </header>
-      <dl class="ma-record__grid">
-        <div><dt>Fecha</dt><dd>${escapeHtml(formatDate(registro.date, { short: true }))}</dd></div>
-        <div><dt>Sexo</dt><dd>${escapeHtml(maSexLabel(registro.sex))}</dd></div>
-        <div><dt>Tipo de parto</dt><dd>${escapeHtml(tipo)}</dd></div>
-        <div><dt>Peso al nacer</dt><dd>${escapeHtml(peso)}</dd></div>
-        <div><dt>Observaciones</dt><dd>${escapeHtml(registro.has_notes ? "Registradas (ver en Gestión)" : "SIN INFORMAR")}</dd></div>
-        <div><dt>Al nacer</dt><dd>${escapeHtml(maVitalLabel(registro.alive_at_birth))}</dd></div>
-        <div><dt>Estado</dt><dd>${escapeHtml(maStatusLabel(registro.status))}</dd></div>
-      </dl>
-      ${foto}
-    </article>`;
-}
-
-/* --------------------------------------------------------- pendientes --- */
-
-/* Las filas que esperan una decisión se muestran acá TAMBIÉN, no sólo en la
- * bandeja: quien mira el lote tiene que ver que hay animales leídos que todavía
- * no cuentan. La revisión sigue siendo una sola, la de Gestión; esto es la
- * misma cola vista desde el lote. */
-function maPendingSection(tracking) {
-  const filas = tracking.pending_rows || [];
-  const fotos = (tracking.indicators || {}).pending_images || 0;
-  // Aunque no haya nada que decidir, puede haber material sin leer. Decir sólo
-  // «no hay pendientes» ahí sería cierto y engañoso a la vez.
-  const aviso = fotos
-    ? `<p class="ma-pending__hint">${escapeHtml(
-        `Además hay ${formatInteger(fotos)} foto(s) esperando lectura: todavía no se sabe qué traen.`,
-      )}</p>`
-    : "";
-  if (!filas.length) {
-    return `<p class="ma-ok">No hay registros esperando revisión.</p>${aviso}`;
-  }
-  const items = filas
-    .map((fila) => {
-      const meta = [
-        fila.date ? formatDate(fila.date, { short: true }) : "Sin fecha",
-        fila.ewe_identifier ? `madre ${fila.ewe_identifier}` : null,
-        fila.has_photo ? "con foto de libreta" : null,
-      ]
-        .filter(Boolean)
-        .join(" · ");
-      return `
-        <article class="ma-pending__item">
-          <p class="ma-pending__code">${escapeHtml(fila.lamb_code ? `Cordero ${fila.lamb_code}` : "Cordero sin identificar")}</p>
-          <p class="ma-pending__reason">${escapeHtml(fila.reason)}</p>
-          <p class="ma-pending__meta">${escapeHtml(meta)}</p>
-        </article>`;
-    })
-    .join("");
-  return `
-    <p class="ma-pending__count">${formatInteger(filas.length)} registro(s) esperando revisión. No suman a los acumulados hasta confirmarse.</p>
-    <div class="ma-pending">${items}</div>
-    <p class="ma-pending__hint">Se revisan en Gestión → Bandeja de revisión, con la foto a la vista.</p>
-    ${aviso}`;
-}
-
-/* ------------------------------------------------- registro completo --- */
-
-const MA_FILTERS = [
-  ["TODOS", "Todos"],
-  ["HOY", "Hoy"],
-  ["MACHOS", "Machos"],
-  ["HEMBRAS", "Hembras"],
-  ["SIN_SEXO", "Sexo sin informar"],
-];
-
-function maFilteredRecords(tracking) {
-  const texto = MA_STATE.busqueda.trim().toUpperCase();
-  const hoy = tracking.today;
-  const canonicoBuscado = texto.replace(/^0+/, "");
-  return (tracking.records || []).filter((registro) => {
-    if (MA_STATE.filtro === "HOY" && registro.date !== hoy) return false;
-    if (MA_STATE.filtro === "MACHOS" && registro.sex !== "MACHO") return false;
-    if (MA_STATE.filtro === "HEMBRAS" && registro.sex !== "HEMBRA") return false;
-    if (MA_STATE.filtro === "SIN_SEXO" && registro.sex) return false;
-    if (!texto) return true;
-    // Se busca por cordero y por madre a la vez: quien tiene el número en la
-    // mano no siempre sabe cuál de los dos está mirando. La comparación del
-    // cordero usa la identidad canónica, así que «101» encuentra a «0101».
-    const codigo = String(registro.code || "").toUpperCase();
-    const canonico = String(registro.canonical_code || "").toUpperCase();
-    const madre = String(registro.ewe_identifier || "").toUpperCase();
-    return codigo.includes(texto) || canonico.includes(canonicoBuscado) || madre.includes(texto);
-  });
-}
-
-function maRecordsSection(tracking) {
-  const registros = maFilteredRecords(tracking);
-  const total = (tracking.records || []).length;
-  const pintados = registros.slice(0, MA_STATE.visibles);
-  const filtros = MA_FILTERS.map(
-    ([clave, texto]) =>
-      `<button type="button" class="ma-chip${MA_STATE.filtro === clave ? " is-active" : ""}" data-ma-filter="${clave}" aria-pressed="${MA_STATE.filtro === clave}">${escapeHtml(texto)}</button>`,
-  ).join("");
-  const alcance =
-    registros.length === total
-      ? `${formatInteger(total)} cordero(s) identificado(s).`
-      : `${formatInteger(registros.length)} de ${formatInteger(total)} cordero(s).`;
-  const conteo =
-    pintados.length < registros.length
-      ? `${alcance} Se muestran ${formatInteger(pintados.length)}.`
-      : alcance;
-  return `
-    <div class="ma-search">
-      <label class="ma-search__label" for="ma-search-input">Buscar por Nº de cordero o de madre</label>
-      <input id="ma-search-input" type="search" class="ma-search__input" placeholder="Ej.: 0101 o 128" value="${escapeHtml(MA_STATE.busqueda)}" autocomplete="off" />
-    </div>
-    <div class="ma-chips" role="group" aria-label="Filtros del registro">${filtros}</div>
-    <p class="ma-records__count">${escapeHtml(conteo)}</p>
-    ${
-      registros.length
-        ? `<div class="ma-records">${pintados.map(maRecordCard).join("")}</div>
-           ${
-             registros.length > pintados.length
-               ? `<button type="button" class="ma-more" data-ma-more="1">Mostrar ${escapeHtml(
-                   formatInteger(Math.min(MA_PAGINA, registros.length - pintados.length)),
-                 )} más · quedan ${escapeHtml(
-                   formatInteger(registros.length - pintados.length),
-                 )}</button>`
-               : ""
-           }`
-        : `<p class="empty-note">${escapeHtml(
-            MA_STATE.busqueda.trim()
-              ? "Ningún cordero coincide con la búsqueda."
-              : "Ningún cordero cumple este filtro.",
-          )}</p>`
-    }`;
-}
-
-/* ------------------------------------------------------ consistencia --- */
-
-/* Diferencias entre registros que alguien tiene que mirar. No se corrigen solas
- * ni se esconden: elegir cuál de los dos registros está mal es del responsable
- * del lote, no del tablero. */
-function maConsistencySection(tracking) {
-  const hallazgos = tracking.consistency || [];
-  if (!hallazgos.length) return "";
-  const items = hallazgos
-    .map(
-      (h) =>
-        `<li><span class="ma-consistency__code">${escapeHtml(String(h.code).replace(/_/g, " "))}</span><span class="ma-consistency__detail">${escapeHtml(h.detail)}</span></li>`,
-    )
-    .join("");
-  return `
-    <section class="panel panel--warn">
-      <div class="panel__head">
-        <div>
-          <p class="eyebrow">Control de consistencia</p>
-          <h2>${escapeHtml(formatInteger(hallazgos.length))} punto(s) para revisar</h2>
-        </div>
-      </div>
-      <ul class="ma-consistency">${items}</ul>
-    </section>`;
-}
-
 /* ------------------------------------------------------------ página --- */
 
-/* El orden es el de uso, no el de la base: primero cuánto va, después cómo
- * viene, después qué pasó cada día, qué falta revisar y por último el detalle
- * animal por animal. En un teléfono lo que está más abajo se lee menos, y lo
- * que menos se consulta es el listado completo. */
+/* El orden es el de uso: primero cuánto va, después cómo viene y por último
+ * qué pasó cada día. */
 function maTrackingPanels(tracking) {
   return `
     <section class="panel panel--ma-head">
@@ -1907,12 +1616,10 @@ function maTrackingPanels(tracking) {
           <p class="eyebrow">Seguimiento de parición</p>
           <h2>Estado actual</h2>
         </div>
-        <p>Registros individuales confirmados de la libreta de nacimientos.</p>
+        <p>Totales confirmados del lote, por fecha de nacimiento.</p>
       </div>
       ${maIndicators(tracking)}
     </section>
-
-    ${maConsistencySection(tracking)}
 
     <section class="panel">
       <div class="panel__head">
@@ -1925,48 +1632,10 @@ function maTrackingPanels(tracking) {
     <section class="panel">
       <div class="panel__head">
         <div><p class="eyebrow">Detalle</p><h2>Parición día a día</h2></div>
-        <p>Tocá una fecha para ver los corderos de ese día.</p>
+        <p>Ovejas paridas y corderos nacidos en cada fecha, con el acumulado de la campaña.</p>
       </div>
       <div id="ma-days">${maDaySection(tracking)}</div>
-    </section>
-
-    <section class="panel">
-      <div class="panel__head">
-        <div><p class="eyebrow">Revisión</p><h2>Registros a revisar</h2></div>
-      </div>
-      ${maPendingSection(tracking)}
-    </section>
-
-    <section class="panel">
-      <div class="panel__head">
-        <div><p class="eyebrow">Registro</p><h2>Registro de nacimientos</h2></div>
-        <p>Un cordero por ficha, con su madre y su evidencia.</p>
-      </div>
-      <div id="ma-records-body">${maRecordsSection(tracking)}</div>
     </section>`;
-}
-
-/* Redibujado parcial: la búsqueda no puede rehacer la página entera o el campo
- * de texto pierde el foco en cada tecla. */
-function renderMaRecords() {
-  const tracking = maTracking();
-  const body = byId("ma-records-body");
-  if (!tracking || !body) return;
-  const input = byId("ma-search-input");
-  const posicion = input ? input.selectionStart : null;
-  const activo = document.activeElement === input;
-  body.innerHTML = maRecordsSection(tracking);
-  if (!activo) return;
-  const nuevo = byId("ma-search-input");
-  if (!nuevo) return;
-  nuevo.focus();
-  if (posicion !== null) nuevo.setSelectionRange(posicion, posicion);
-}
-
-function renderMaDays() {
-  const tracking = maTracking();
-  const body = byId("ma-days");
-  if (tracking && body) body.innerHTML = maDaySection(tracking);
 }
 
 function renderMaChart() {
@@ -1977,39 +1646,12 @@ function renderMaChart() {
   drawMaChart();
 }
 
+//: El único control del bloque: la magnitud de la gráfica.
 function onMaClick(event) {
   const serie = event.target.closest("[data-ma-serie]");
-  if (serie) {
-    MA_STATE.serie = serie.dataset.maSerie;
-    renderMaChart();
-    return;
-  }
-  const dia = event.target.closest("[data-ma-day]");
-  if (dia) {
-    const clave = dia.dataset.maDay;
-    MA_STATE.dias[clave] = !MA_STATE.dias[clave];
-    renderMaDays();
-    return;
-  }
-  const filtro = event.target.closest("[data-ma-filter]");
-  if (filtro) {
-    MA_STATE.filtro = filtro.dataset.maFilter;
-    MA_STATE.visibles = MA_PAGINA;
-    renderMaRecords();
-    return;
-  }
-  if (event.target.closest("[data-ma-more]")) {
-    MA_STATE.visibles += MA_PAGINA;
-    renderMaRecords();
-  }
-}
-
-function onMaInput(event) {
-  if (event.target && event.target.id === "ma-search-input") {
-    MA_STATE.busqueda = event.target.value;
-    MA_STATE.visibles = MA_PAGINA;
-    renderMaRecords();
-  }
+  if (!serie) return;
+  MA_STATE.serie = serie.dataset.maSerie;
+  renderMaChart();
 }
 
 function renderLot(lot) {
@@ -3121,7 +2763,6 @@ function initRouter() {
   });
   document.addEventListener("click", onMortalityTile);
   document.addEventListener("click", onMaClick);
-  document.addEventListener("input", onMaInput);
   let resizeFrame = null;
   window.addEventListener("resize", () => {
     if (resizeFrame) cancelAnimationFrame(resizeFrame);

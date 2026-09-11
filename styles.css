@@ -1885,14 +1885,14 @@ h3 {
 }
 
 /* ===================================================================
- * MERINO AUSTRALIANO — tablero de parición
+ * MERINO AUSTRALIANO — seguimiento de parición
  * ===================================================================
  *
  * Se diseña para el teléfono primero porque ahí es donde se consulta: en el
- * campo, con una mano, mirando una libreta. Todo lo que en escritorio es una
- * tabla, acá es una ficha; las tablas anchas obligan a desplazarse en
- * horizontal y en un celular eso es perder la columna que se estaba leyendo.
- * En pantallas grandes las mismas fichas se acomodan en grilla, sin cambiar la
+ * campo, con una mano. El bloque publica sólo totales por fecha; las fichas de
+ * cordero, la búsqueda, los filtros y la cola de revisión se retiraron el
+ * 2026-09-11 junto con los datos individuales, y con ellas sus estilos. En
+ * pantallas grandes las mismas piezas se acomodan en grilla, sin cambiar la
  * jerarquía de la información. */
 
 /* --- Indicadores ------------------------------------------------------ */
@@ -1949,22 +1949,6 @@ h3 {
   color: var(--ink-600);
 }
 
-.ma-alert {
-  margin: 12px 0 0;
-  padding: 10px 12px;
-  border-left: 3px solid var(--amber);
-  background: var(--amber-soft);
-  border-radius: 0 8px 8px 0;
-  font-size: 0.82rem;
-  color: var(--ink-800);
-}
-
-.ma-ok {
-  margin: 0;
-  font-size: 0.9rem;
-  color: var(--ok);
-}
-
 /* --- Gráfica ---------------------------------------------------------- */
 
 .ma-toggles {
@@ -1973,10 +1957,9 @@ h3 {
   margin-bottom: 12px;
 }
 
-.ma-toggle,
-.ma-chip {
-  /* 44px de alto: el mínimo cómodo para el pulgar. Un filtro que hay que
-     apuntar dos veces es un filtro que no se usa. */
+.ma-toggle {
+  /* 44px de alto: el mínimo cómodo para el pulgar. Un control que hay que
+     apuntar dos veces es un control que no se usa. */
   min-height: 44px;
   padding: 8px 16px;
   border: 1px solid var(--border-strong);
@@ -1988,8 +1971,7 @@ h3 {
   cursor: pointer;
 }
 
-.ma-toggle.is-active,
-.ma-chip.is-active {
+.ma-toggle.is-active {
   background: var(--green);
   border-color: var(--green);
   color: #fff;
@@ -2031,6 +2013,14 @@ h3 {
 
 .ma-legend--line + * { margin-left: 0; }
 
+/* Referencia prevista: punteada y en gris, para que se lea como referencia y no
+   como un segundo resultado observado. */
+.ma-legend--expected {
+  height: 0;
+  border-top: 2px dashed var(--ink-400);
+  border-radius: 0;
+}
+
 .ma-chart-empty {
   padding: 20px 0;
   color: var(--ink-500);
@@ -2051,18 +2041,15 @@ h3 {
   overflow: hidden;
 }
 
+/* Cabecera informativa, no un botón: cada fecha muestra sus totales y no
+   despliega nada. */
 .ma-day__head {
   display: flex;
   align-items: center;
   gap: 10px;
-  width: 100%;
-  min-height: 48px;
+  min-height: 44px;
   padding: 10px 12px;
-  border: 0;
   background: var(--surface-2);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
 }
 
 .ma-day__date {
@@ -2075,17 +2062,6 @@ h3 {
   font-size: 0.85rem;
   color: var(--ink-600);
 }
-
-.ma-day__chevron {
-  width: 8px;
-  height: 8px;
-  border-right: 2px solid var(--ink-500);
-  border-bottom: 2px solid var(--ink-500);
-  transform: rotate(45deg);
-  transition: transform 0.15s ease;
-}
-
-.ma-day.is-open .ma-day__chevron { transform: rotate(-135deg); }
 
 .ma-day__meta {
   display: grid;
@@ -2110,251 +2086,10 @@ h3 {
   color: var(--ink-800);
 }
 
-.ma-day__warn {
-  margin: 0;
-  padding: 8px 12px;
-  background: var(--amber-soft);
-  font-size: 0.78rem;
-  color: var(--ink-800);
-}
-
-.ma-day__rows {
-  padding: 0 12px 12px;
-  display: grid;
-  gap: 8px;
-}
-
-/* --- Ficha de cordero ------------------------------------------------- */
-
-.ma-record {
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px 12px;
-  background: var(--surface);
-}
-
-.ma-record__head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.ma-record__code {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--green-dark);
-  font-variant-numeric: tabular-nums;
-}
-
-.ma-record__mother {
-  font-size: 0.85rem;
-  color: var(--ink-600);
-}
-
-.ma-record__grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px 12px;
-  margin: 0;
-}
-
-.ma-record__grid div { margin: 0; }
-
-.ma-record__grid dt {
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--ink-500);
-}
-
-.ma-record__grid dd {
-  margin: 2px 0 0;
-  font-size: 0.85rem;
-  color: var(--ink-800);
-}
-
-.ma-record__photo {
-  margin: 8px 0 0;
-  font-size: 0.7rem;
-  letter-spacing: 0.04em;
-  color: var(--ink-500);
-}
-
-/* --- Pendientes ------------------------------------------------------- */
-
-.ma-pending__count {
-  margin: 0 0 10px;
-  font-size: 0.85rem;
-  color: var(--ink-700);
-}
-
-.ma-pending {
-  display: grid;
-  gap: 8px;
-}
-
-.ma-pending__item {
-  border: 1px solid var(--amber);
-  border-left-width: 3px;
-  border-radius: 0 8px 8px 0;
-  background: var(--amber-soft);
-  padding: 10px 12px;
-}
-
-.ma-pending__code {
-  margin: 0;
-  font-weight: 700;
-  color: var(--ink-900);
-}
-
-.ma-pending__reason {
-  margin: 2px 0 0;
-  font-size: 0.85rem;
-  color: var(--ink-800);
-}
-
-.ma-pending__meta {
-  margin: 4px 0 0;
-  font-size: 0.75rem;
-  color: var(--ink-600);
-}
-
-.ma-pending__hint {
-  margin: 10px 0 0;
-  font-size: 0.78rem;
-  color: var(--ink-500);
-}
-
-/* --- Registro completo ------------------------------------------------ */
-
-.ma-search__label {
-  display: block;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--ink-500);
-  margin-bottom: 4px;
-}
-
-.ma-search__input {
-  width: 100%;
-  min-height: 44px;
-  padding: 8px 12px;
-  border: 1px solid var(--border-strong);
-  border-radius: 8px;
-  background: var(--surface);
-  font: inherit;
-  font-size: 1rem; /* 16px: por debajo, iOS hace zoom al enfocar el campo. */
-  color: var(--ink-900);
-}
-
-.ma-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 10px 0;
-}
-
-.ma-records__count {
-  margin: 0 0 10px;
-  font-size: 0.8rem;
-  color: var(--ink-500);
-}
-
-.ma-records {
-  display: grid;
-  gap: 8px;
-}
-
-/* --- Consistencia ----------------------------------------------------- */
-
-.panel--warn { border-left: 3px solid var(--amber); }
-
-.ma-consistency {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 8px;
-}
-
-.ma-consistency li {
-  padding: 8px 10px;
-  background: var(--amber-soft);
-  border-radius: 8px;
-}
-
-.ma-consistency__code {
-  display: block;
-  font-size: 0.68rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--ink-600);
-}
-
-.ma-consistency__detail {
-  display: block;
-  margin-top: 2px;
-  font-size: 0.85rem;
-  color: var(--ink-800);
-}
-
 /* --- Escritorio ------------------------------------------------------- */
 
-/* La jerarquía no cambia: se aprovecha el ancho para ver más de una ficha a la
-   vez, no para reordenar la página. */
+/* La jerarquía no cambia: se aprovecha el ancho, no se reordena la página.
+   Cuatro indicadores, cuatro columnas: una fila entera y sin huecos. */
 @media (min-width: 720px) {
-  .ma-kpis { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-  .ma-records { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .ma-day__rows { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .ma-pending { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .ma-record__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ma-kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
-
-@media (min-width: 1100px) {
-  .ma-records { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-}
-
-/* Referencia prevista: punteada y en gris, para que se lea como referencia y no
-   como un segundo resultado observado. */
-.ma-legend--expected {
-  height: 0;
-  border-top: 2px dashed var(--ink-400);
-  border-radius: 0;
-}
-
-/* Carga progresiva del registro: la tanda siguiente se pide, no se adivina por
-   scroll. Un botón explícito es más predecible en móvil que un infinite scroll,
-   y no pelea con el desplazamiento de la página. */
-.ma-more {
-  width: 100%;
-  min-height: 44px;
-  margin-top: 10px;
-  padding: 10px 16px;
-  border: 1px solid var(--border-strong);
-  border-radius: 8px;
-  background: var(--surface-2);
-  color: var(--ink-700);
-  font: inherit;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-
-.ma-more:hover { background: var(--green-pale); }
-
-/* Nacido muerto: se distingue en la cabecera de la ficha. No es un error ni una
-   alarma —es un nacimiento que cuenta como tal— así que se marca con el ámbar
-   de «prestá atención», no con el rojo de las bajas. */
-.ma-record__flag {
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: var(--amber-soft);
-  color: var(--ink-800);
-  font-size: 0.7rem;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-}
-
-.ma-record--stillborn { border-left: 3px solid var(--amber); }
