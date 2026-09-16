@@ -2,7 +2,7 @@
   "schema_version": "3.5.0",
   "data_mode": "OPERATIONAL",
   "data_notice": "DATOS ACTUALIZADOS AUTOMÁTICAMENTE DESDE LOS REGISTROS OPERATIVOS",
-  "generated_at": "2026-09-11T11:03:17.529474-03:00",
+  "generated_at": "2026-09-16T00:25:41.649265-03:00",
   "max_age_minutes": 60,
   "system_health": {
     "state": "OJO",
@@ -22,6 +22,11 @@
         "code": "PENDING_PHOTO",
         "message": "Hay fotografías que nadie interpretó todavía.",
         "severity": "OJO"
+      },
+      {
+        "code": "INPUT_PENDING",
+        "message": "Hay un reporte en la carpeta de entrada sin registrar.",
+        "severity": "OJO"
       }
     ],
     "pending_actions": {
@@ -34,7 +39,7 @@
       "unclassified": 6,
       "total": 17
     },
-    "generated_at": "2026-09-11T11:03:17.529474-03:00",
+    "generated_at": "2026-09-16T00:25:41.649265-03:00",
     "max_age_minutes": 60
   },
   "timezone": "America/Montevideo",
@@ -1859,7 +1864,7 @@
           "remaining_lambs": null,
           "method": "normalizacion_pesos_futuros_v1",
           "source": "WHATSAPP",
-          "age_days": 46,
+          "age_days": 51,
           "warnings": []
         },
         "observed": {
@@ -2894,7 +2899,7 @@
           "remaining_lambs": 150.0,
           "method": "normalizacion_pesos_futuros_v1",
           "source": "WHATSAPP",
-          "age_days": 10,
+          "age_days": 15,
           "warnings": []
         },
         "observed": {
@@ -5484,7 +5489,7 @@
   "ma_tracking": {
     "module_code": "MA",
     "generated_from": "LAMBING_AGREGADO_DIARIO",
-    "today": "2026-09-11",
+    "today": "2026-09-16",
     "indicators": {
       "ewes_lambed": 58,
       "born_lambs": 71,
@@ -6669,7 +6674,7 @@
       "processed_at": "2026-09-11T10:09:28.078236Z",
       "status": "YA_PROCESADO"
     },
-    "last_sync_at": "2026-09-11T11:03:17.529474-03:00",
+    "last_sync_at": "2026-09-16T00:25:41.649265-03:00",
     "pending_operations": 1,
     "public_message": "Los datos pueden ajustarse si se recibe una corrección posterior."
   }
